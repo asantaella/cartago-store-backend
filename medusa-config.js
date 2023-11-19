@@ -19,7 +19,8 @@ switch (process.env.NODE_ENV) {
 
 try {
   console.log("Loading ENV file: ", process.cwd() + "/" + ENV_FILE_NAME);
-  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME });
+  dotenv.config({ path: process.cwd() + "/.env" });
+  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME, override: true });
 } catch (e) {}
 
 // CORS when consuming Medusa from admin
