@@ -13,14 +13,23 @@ switch (process.env.NODE_ENV) {
     break;
   case "development":
   default:
-    ENV_FILE_NAME = ".env";
+    ENV_FILE_NAME = ".env.local";
     break;
 }
 
 try {
-  console.log("Loading ENV file: ", process.cwd() + "/" + ENV_FILE_NAME);
+  console.log("current ADMIN_CORS = ", process.env.ADMIN_CORS);
+  console.log("current STORE_CORS = ", process.env.STORE_CORS);
+  console.log(
+    "current MEDUSA_ADMIN_BACKEND = ",
+    process.env.MEDUSA_ADMIN_BACKEND_URL
+  );
   dotenv.config({ path: process.cwd() + "/.env" });
-  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME, override: true });
+  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME, override: false });
+  console.log("Loaded ENV file: ", process.cwd() + "/" + ENV_FILE_NAME);
+  console.log("ADMIN_CORS = ", process.env.ADMIN_CORS);
+  console.log("STORE_CORS = ", process.env.STORE_CORS);
+  console.log("MEDUSA_ADMIN_BACKEND = ", process.env.MEDUSA_ADMIN_BACKEND_URL);
 } catch (e) {}
 
 // CORS when consuming Medusa from admin
@@ -49,7 +58,8 @@ const plugins = [
     /** @type {import('@medusajs/admin').PluginOptions} */
     options: {
       serve: false,
-      autoRebuild: true,
+      path: "/app",
+      backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
       develop: {
         open: process.env.OPEN_BROWSER !== "false",
       },

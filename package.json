@@ -18,7 +18,7 @@
     "build:server": "cross-env npm run clean && tsc -p tsconfig.json",
     "build:server:staging": "cross-env NODE_ENV='staging' npm run build:server",
     "build:server:production": "cross-env NODE_ENV='production' npm run build:server",
-    "build:admin": "cross-env medusa-admin build --deployment",
+    "build:admin": "cross-env medusa-admin build",
     "build:admin:staging": "cross-env NODE_ENV='staging' npm run build:admin",
     "build:admin:production": "cross-env NODE_ENV='production' npm run build:admin",
     "watch": "cross-env tsc --watch",
@@ -30,7 +30,7 @@
     "start:server:custom": "cross-env npm run build && node --preserve-symlinks --trace-warnings index.js",
     "dev": "cross-env npm run build:server && medusa develop",
     "dev:admin": "medusa-admin develop",
-    "dev:admin:staging": "cross-env NODE_ENV='staging' medusa-admin develop --backend https://store-backend-staging.up.railway.app"
+    "dev:admin:staging": "cross-env NODE_ENV='staging' npm run dev:admin"
   },
   "dependencies": {
     "@medusajs/admin": "7.1.7",
