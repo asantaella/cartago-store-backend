@@ -58,7 +58,6 @@ const plugins = [
     /** @type {import('@medusajs/admin').PluginOptions} */
     options: {
       serve: false,
-      path: "/app",
       backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
       develop: {
         open: process.env.OPEN_BROWSER !== "false",
