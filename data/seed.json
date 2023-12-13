@@ -15,7 +15,7 @@
       "name": "EU",
       "currency_code": "eur",
       "tax_rate": 0,
-      "payment_providers": ["manual"],
+      "payment_providers": ["manual", "stripe", "paypal"],
       "fulfillment_providers": ["manual"],
       "countries": ["fr", "es", "it", "pt"]
     }
@@ -89,7 +89,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 18
+              "amount": 1800
             }
           ],
           "options": [],
@@ -134,7 +134,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 18
+              "amount": 1800
             }
           ],
           "options": [],
@@ -179,7 +179,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 20
+              "amount": 2000
             }
           ],
           "options": [],
@@ -224,7 +224,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 17
+              "amount": 1700
             }
           ],
           "options": [],
@@ -269,7 +269,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 22
+              "amount": 2200
             }
           ],
           "options": [],
@@ -305,7 +305,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 18
+              "amount": 1800
             }
           ],
           "options": [],
@@ -349,7 +349,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 18
+              "amount": 1800
             }
           ],
           "options": [],
@@ -393,7 +393,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 22
+              "amount": 2200
             }
           ],
           "options": [],
@@ -437,7 +437,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 38
+              "amount": 3800
             }
           ],
           "options": [],
@@ -481,7 +481,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 25
+              "amount": 2500
             }
           ],
           "options": [],
@@ -525,7 +525,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 22
+              "amount": 2200
             }
           ],
           "options": [],
@@ -569,7 +569,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 87
+              "amount": 8700
             }
           ],
           "options": [],
@@ -613,7 +613,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 30
+              "amount": 3000
             }
           ],
           "options": [],
@@ -657,7 +657,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 25
+              "amount": 2500
             }
           ],
           "options": [],
@@ -701,7 +701,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 30
+              "amount": 3000
             }
           ],
           "options": [],
@@ -745,7 +745,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 25
+              "amount": 2500
             }
           ],
           "options": [],
@@ -789,7 +789,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 25
+              "amount": 2500
             }
           ],
           "options": [],
@@ -802,50 +802,6 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/2.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Casquillo dirección",
-      "handle": "suzuki-samurai-casquillo-direccion-sj410",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-direccion"
-        },
-        {
-          "id": "pcat_accesorios-direccion"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Casquillo dirección",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 23
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion/thumb.jpg",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -877,7 +833,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 30
+              "amount": 3000
             }
           ],
           "options": [],
@@ -921,7 +877,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 22
+              "amount": 2200
             }
           ],
           "options": [],
@@ -965,7 +921,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 27
+              "amount": 2700
             }
           ],
           "options": [],
@@ -1009,7 +965,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 16
+              "amount": 1600
             }
           ],
           "options": [],
@@ -1053,7 +1009,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 12
+              "amount": 1200
             }
           ],
           "options": [],
@@ -1097,7 +1053,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 19
+              "amount": 1900
             }
           ],
           "options": [],
@@ -1141,7 +1097,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 32
+              "amount": 3200
             }
           ],
           "options": [],
@@ -1185,7 +1141,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 35
+              "amount": 3500
             }
           ],
           "options": [],
@@ -1229,7 +1185,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 18
+              "amount": 1800
             }
           ],
           "options": [],
@@ -1272,7 +1228,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 21
+              "amount": 2100
             }
           ],
           "options": [],
@@ -1316,7 +1272,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 16
+              "amount": 1600
             }
           ],
           "options": [],
@@ -1360,7 +1316,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 25
+              "amount": 2500
             }
           ],
           "options": [],
@@ -1404,7 +1360,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 65
+              "amount": 6500
             }
           ],
           "options": [],
@@ -1448,7 +1404,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 45
+              "amount": 4500
             }
           ],
           "options": [],
@@ -1493,7 +1449,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 35
+              "amount": 3500
             }
           ],
           "options": [],
@@ -1539,7 +1495,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 35
+              "amount": 3500
             }
           ],
           "options": [],
@@ -1585,7 +1541,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 25
+              "amount": 2500
             }
           ],
           "options": [],
@@ -1608,7 +1564,7 @@
     {
       "title": "Casquillo dirección",
       "description": "Compatible con los modelos Sj413",
-      "handle": "suzuki-samurai-casquillo-direccion-sj413",
+      "handle": "suzuki-samurai-casquillo-direccion-acetal",
       "categories": [
         {
           "id": "pcat_suzuki"
@@ -1632,7 +1588,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 23
+              "amount": 2300
             }
           ],
           "options": [],
@@ -1655,7 +1611,7 @@
     {
       "title": "Casquillo dirección",
       "description": "Compatible con los modelos Sj413",
-      "handle": "suzuki-samurai-casquillo-direccion-sj413",
+      "handle": "suzuki-samurai-casquillo-direccion-teflon",
       "categories": [
         {
           "id": "pcat_suzuki"
@@ -1679,7 +1635,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 23
+              "amount": 2300
             }
           ],
           "options": [],
@@ -1726,7 +1682,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 23
+              "amount": 2300
             }
           ],
           "options": [],
@@ -1772,7 +1728,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 23
+              "amount": 2300
             }
           ],
           "options": [],
@@ -1786,52 +1742,6 @@
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj413/thumb.jpg",
       "hs_code": "13780-79201",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Goma puertas",
-      "description": "Compatible con los modelos Sj410 Sj413",
-      "handle": "suzuki-samurai-goma-puertas",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-puertas-cristales"
-        },
-        {
-          "id": "pcat_accesorios-puertas-cristales"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Goma puertas",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 60
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_puertas/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_puertas/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_puertas/thumb.jpg",
-      "hs_code": null,
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -1864,7 +1774,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 75
+              "amount": 7500
             }
           ],
           "options": [],
@@ -1910,7 +1820,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 25
+              "amount": 2500
             }
           ],
           "options": [],
@@ -1956,7 +1866,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 13
+              "amount": 1300
             }
           ],
           "options": [],
@@ -2002,7 +1912,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 22
+              "amount": 2200
             }
           ],
           "options": [],
@@ -2048,7 +1958,7 @@
           "prices": [
             {
               "currency_code": "eur",
-              "amount": 60
+              "amount": 6000
             }
           ],
           "options": [],
