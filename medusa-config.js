@@ -30,6 +30,7 @@ try {
   console.log("ADMIN_CORS = ", process.env.ADMIN_CORS);
   console.log("STORE_CORS = ", process.env.STORE_CORS);
   console.log("MEDUSA_ADMIN_BACKEND = ", process.env.MEDUSA_ADMIN_BACKEND_URL);
+  console.log("BUCKET URL = ", process.env.R2_PUBLIC_URL);
 } catch (e) {}
 
 // CORS when consuming Medusa from admin
@@ -46,13 +47,12 @@ const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
 const plugins = [
   `medusa-fulfillment-manual`,
-  `medusa-payment-manual`,
-  {
-    resolve: `@medusajs/file-local`,
-    options: {
-      upload_dir: "uploads",
-    },
-  },
+  // {
+  //   resolve: `@medusajs/file-local`,
+  //   options: {
+  //     upload_dir: "uploads",
+  //   },
+  // },
   {
     resolve: "@medusajs/admin",
     /** @type {import('@medusajs/admin').PluginOptions} */
@@ -62,6 +62,33 @@ const plugins = [
       develop: {
         open: process.env.OPEN_BROWSER !== "false",
       },
+    },
+  },
+  {
+    resolve: "medusa-file-r2",
+    options: {
+      account_id: process.env.R2_ACCOUNT_ID,
+      access_key: process.env.R2_ACCESS_KEY,
+      secret_key: process.env.R2_SECRET_KEY,
+      bucket: process.env.R2_BUCKET_NAME,
+      public_url: process.env.R2_PUBLIC_URL,
+    },
+  },
+  `medusa-payment-manual`,
+  {
+    resolve: `medusa-payment-paypal`,
+    options: {
+      sandbox: process.env.PAYPAL_SANDBOX,
+      clientId: process.env.PAYPAL_CLIENT_ID,
+      clientSecret: process.env.PAYPAL_CLIENT_SECRET,
+      authWebhookId: process.env.PAYPAL_AUTH_WEBHOOK_ID,
+    },
+  },
+  {
+    resolve: `medusa-payment-stripe`,
+    options: {
+      api_key: process.env.STRIPE_API_KEY,
+      webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
     },
   },
 ];
