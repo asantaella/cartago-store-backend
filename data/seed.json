@@ -15,7 +15,7 @@
       "name": "EU",
       "currency_code": "eur",
       "tax_rate": 0,
-      "payment_providers": ["manual", "stripe", "paypal"],
+      "payment_providers": ["stripe", "paypal"],
       "fulfillment_providers": ["manual"],
       "countries": ["fr", "es", "it", "pt"]
     }
@@ -29,7 +29,7 @@
         "id": "manual-fulfillment"
       },
       "price_type": "flat_rate",
-      "amount": 10
+      "amount": 1000
     },
     {
       "name": "Envío Express",
@@ -39,7 +39,7 @@
         "id": "manual-fulfillment"
       },
       "price_type": "flat_rate",
-      "amount": 15
+      "amount": 1500
     },
     {
       "name": "Envío gratuito",
