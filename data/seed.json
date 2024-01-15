@@ -14,7 +14,7 @@
       "id": "test-region-eu",
       "name": "EU",
       "currency_code": "eur",
-      "tax_rate": 0,
+      "tax_rate": 2100,
       "payment_providers": ["stripe", "paypal"],
       "fulfillment_providers": ["manual"],
       "countries": ["fr", "es", "it", "pt"]
