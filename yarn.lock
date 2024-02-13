@@ -10564,6 +10564,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:16.4.3":
+  version: 16.4.3
+  resolution: "dotenv@npm:16.4.3"
+  checksum: c66d0b0d7160fe1ee90b219db2de7bf3037e3586195d2ccb5ed37260163616e9620f3f1b4d3319d506a23e8d4916531491285fec2f5fb4dc765702174173d1ae
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^8.2.0":
   version: 8.6.0
   resolution: "dotenv@npm:8.6.0"
@@ -14820,7 +14827,7 @@ __metadata:
     body-parser: ^1.19.0
     cors: ^2.8.5
     cross-env: ^7.0.3
-    dotenv: 16.0.3
+    dotenv: 16.4.3
     eslint: ^6.8.0
     express: ^4.17.2
     jest: ^27.3.1
