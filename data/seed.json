@@ -1,12 +1,13 @@
 {
   "store": {
     "name": "Cartago4x4",
-    "currencies": ["eur", "usd"]
+    "currencies": ["eur", "usd"],
+    "default_currency_code": "eur"
   },
   "users": [
     {
-      "email": "admin@medusa-test.com",
-      "password": "supersecret"
+      "email": "cartago4x4@gmail.com",
+      "password": "suru"
     }
   ],
   "regions": [
@@ -14,10 +15,11 @@
       "id": "test-region-eu",
       "name": "EU",
       "currency_code": "eur",
-      "tax_rate": 2100,
+      "tax_rate": 0.21,
       "payment_providers": ["stripe", "paypal"],
+      "shipping_providers": ["manual"],
       "fulfillment_providers": ["manual"],
-      "countries": ["fr", "es", "it", "pt"]
+      "countries": ["es", "fr", "it", "pt"]
     }
   ],
   "shipping_options": [
@@ -49,163 +51,110 @@
         "id": "manual-fulfillment"
       },
       "price_type": "flat_rate",
-      "amount": 0
+      "amount": 0,
+      "requirements": [
+        {
+          "type": "min_subtotal",
+          "amount": 12000
+        }
+      ]
+    }
+  ],
+  "product_tags": [
+    {
+      "id": "ptag_sj410",
+      "value": "sj410"
+    },
+    {
+      "id": "ptag_sj413",
+      "value": "sj413"
+    },
+    {
+      "id": "ptag_sj419",
+      "value": "sj419"
     }
   ],
   "products": [
     {
-      "title": "Manetas puertas",
+      "title": "Anclaje batería",
+      "handle": "suzuki-samurai-anclaje-bateria",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-exterior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-exterior"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-motor" },
+        { "id": "pcat_accesorios-motor" }
       ],
-      "subtitle": null,
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
-      "handle": "suzuki-samurai-manetas-puertas",
-      "is_giftcard": false,
-      "weight": null,
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manetas_puertas/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manetas_puertas/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manetas_puertas/thumb.jpg",
-      "options": [],
       "variants": [
         {
-          "title": "Manetas puertas",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1800
-            }
-          ],
+          "title": "Anclaje batería",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "63461-80000, 72511-78000, 72521-80001",
+          "barcode": "63461-80000, 72511-78000, 72521-80001"
         }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/anclaje_bateria/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/anclaje_bateria/2.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/anclaje_bateria/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
       ]
     },
     {
-      "title": "Manecillas elevalunas",
+      "title": "Bandeja bajo guantera",
+      "handle": "suzuki-samurai-bandeja-bajo-guantera",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-interior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-interior"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-interior" },
+        { "id": "pcat_accesorios-piezas-interior" }
       ],
-      "subtitle": null,
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
-      "handle": "suzuki-samurai-manecillas-elevalunas",
-      "is_giftcard": false,
-      "weight": null,
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manecillas_elevalunas/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manecillas_elevalunas/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manecillas_elevalunas/thumb.jpg",
-      "options": [],
       "variants": [
         {
-          "title": "Manecillas elevalunas",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1800
-            }
-          ],
+          "title": "Bandeja bajo guantera",
+          "prices": [{ "currency_code": "eur", "amount": 4500 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ]
-    },
-    {
-      "title": "Tirador interior puertas",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-interior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-interior"
+          "manage_inventory": true,
+          "mid_code": "75610-83020",
+          "barcode": "75610-83020"
         }
       ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bandeja_bajo_guantera/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bandeja_bajo_guantera/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bandeja_bajo_guantera/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bandeja_bajo_guantera/4.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bandeja_bajo_guantera/thumb.jpg",
       "subtitle": null,
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
-      "handle": "suzuki-samurai-tirador-interior-puertas",
       "is_giftcard": false,
       "weight": null,
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_interior_puertas/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_interior_puertas/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_interior_puertas/thumb.jpg",
       "options": [],
-      "variants": [
-        {
-          "title": "Tirador interior puertas",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2000
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
       ]
     },
     {
       "title": "Bisagras parabrisas",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-puertas-cristales"
-        },
-        {
-          "id": "pcat_accesorios-puertas-cristales"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
       ],
       "subtitle": null,
       "description": "Compatible con modelos Sj410 Sj413 Sj419",
@@ -221,1063 +170,146 @@
       "variants": [
         {
           "title": "Bisagras parabrisas",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1700
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 1700 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "72420-80010",
+          "barcode": "72420-80010"
         }
+      ],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
       ]
-    },
-    {
-      "title": "Fuelles transmisiones",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-eje"
-        },
-        {
-          "id": "pcat_accesorios-eje"
-        }
-      ],
-      "subtitle": null,
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
-      "handle": "suzuki-samurai-fuelles-transmisiones",
-      "is_giftcard": false,
-      "weight": null,
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/fuelles_transmisiones/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/fuelles_transmisiones/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/fuelles_transmisiones/thumb.jpg",
-      "options": [],
-      "variants": [
-        {
-          "title": "Fuelles transmisiones",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2200
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ]
-    },
-    {
-      "title": "Topes capó parabrisas",
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
-      "handle": "suzuki-samurai-topes-capo-parabrisas",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-puertas-cristales"
-        },
-        {
-          "id": "pcat_accesorios-puertas-cristales"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Topes capó parabrisa",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1800
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/topes_capo_parabrisas/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/topes_capo_parabrisas/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/topes_capo_parabrisas/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Tapón aceite",
-      "handle": "suzuki-samurai-tapon-aceite",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-motor"
-        },
-        {
-          "id": "pcat_accesorios-motor"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Tapón aceite",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1800
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Tapón depósito gasolina",
-      "handle": "suzuki-samurai-tapon-deposito-gasolina",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-exterior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-exterior"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Tapón depósito gasolina",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2200
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_deposito_gasolina/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_deposito_gasolina/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_deposito_gasolina/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Mando limpiaparabrisas",
-      "handle": "suzuki-samurai-mando-limpiaparabrisas",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-puertas-cristales"
-        },
-        {
-          "id": "pcat_accesorios-puertas-cristales"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Mando limpiaparabrisas",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3800
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mando_limpiaparabrisas/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mando_limpiaparabrisas/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mando_limpiaparabrisas/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Kit reparación palanca de cambios",
-      "handle": "suzuki-samurai-kit-reparacion-palanca-cambios",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-caja-cambios"
-        },
-        {
-          "id": "pcat_accesorios-caja-cambios"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Kit reparación palanca de cambios",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_cambios/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_cambios/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_cambios/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Pomo palanca de cambios",
-      "handle": "suzuki-samurai-pomo-palanca-de-cambios",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-caja-cambios"
-        },
-        {
-          "id": "pcat_accesorios-caja-cambios"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Pomo palanca de cambios",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2200
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_de_cambios/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_de_cambios/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_de_cambios/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Grifo calefacción",
-      "handle": "suzuki-samurai-grifo-calefaccion",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-calefaccion"
-        },
-        {
-          "id": "pcat_accesorios-calefaccion"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Grifo calefacción",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 8700
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/grifo_calefaccion/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/grifo_calefaccion/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/grifo_calefaccion/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Pomo palanca reductora",
-      "handle": "suzuki-samurai-pomo-palanca-reductora",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-transfer"
-        },
-        {
-          "id": "pcat_accesorios-transfer"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Pomo palanca reductora",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3000
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_reductora/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_reductora/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_reductora/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Kit reparación palanca reductora",
-      "handle": "suzuki-samurai-kit-reparacion-palanca-reductora",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-transfer"
-        },
-        {
-          "id": "pcat_accesorios-transfer"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Kit reparación palanca reductora",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_reductora/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_reductora/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_reductora/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Tapa guantera salpicadero",
-      "handle": "suzuki-samurai-tapa-guantera-salpicadero",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-interior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-interior"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Tapa guantera salpicadero",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3000
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera_salpicadero/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera_salpicadero/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera_salpicadero/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Guardapolvos palanca de cambios",
-      "handle": "suzuki-samurai-guardapolvos-palanca-de-cambios",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-caja-cambios"
-        },
-        {
-          "id": "pcat_accesorios-caja-cambios"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Guardapolvos palanca de cambios",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_de_cambios/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_de_cambios/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_de_cambios/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Guardapolvos palanca reductora",
-      "handle": "suzuki-samurai-guardapolvos-palanca-reductora",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-transfer"
-        },
-        {
-          "id": "pcat_accesorios-transfer"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Guardapolvos palanca reductora",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Emblema parrilla",
-      "handle": "suzuki-samurai-emblema-parrilla",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-exterior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-exterior"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Emblema parrilla",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3000
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Emblema parrilla \"S\"",
-      "handle": "suzuki-samurai-emblema-parrilla-s",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-exterior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-exterior"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Emblema parrilla \"S\"",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2200
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_s/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_s/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_s/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Goma dirección",
-      "handle": "suzuki-samurai-goma-direccion",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-direccion"
-        },
-        {
-          "id": "pcat_accesorios-direccion"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Goma dirección",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2700
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/goma_direccion/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/goma_direccion/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/goma_direccion/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Soporte reductora",
-      "handle": "suzuki-samurai-soporte-reductora",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-transfer"
-        },
-        {
-          "id": "pcat_accesorios-transfer"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Soporte reductora",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1600
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_reductora/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_reductora/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_reductora/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Soporte tubo de escape",
-      "handle": "suzuki-samurai-soporte-tubo-de-escape",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-exterior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-exterior"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Soporte tubo de escape",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1200
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_tubo_escape/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_tubo_escape/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_tubo_escape/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Tapa termostato",
-      "handle": "suzuki-samurai-tapa-termostato",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-refrigeracion"
-        },
-        {
-          "id": "pcat_accesorios-refrigeracion"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Tapa termostato",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1900
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_termostato/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_termostato/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_termostato/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Codo refrigeración",
-      "handle": "suzuki-samurai-codo-refrigeracion",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-refrigeracion"
-        },
-        {
-          "id": "pcat_accesorios-refrigeracion"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Codo refrigeración",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3200
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/codo_refrigeracion/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/codo_refrigeracion/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/codo_refrigeracion/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Kit reparación bola dirección",
-      "handle": "suzuki-samurai-kit-reparacion-bola-direccion",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-direccion"
-        },
-        {
-          "id": "pcat_accesorios-direccion"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Kit reparación bola dirección",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_bola_direccion/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_bola_direccion/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_bola_direccion/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Anclaje batería",
-      "handle": "suzuki-samurai-anclaje-bateria",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-motor"
-        },
-        {
-          "id": "pcat_accesorios-motor"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Anclaje batería",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1800
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/anclaje_bateria/1.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/anclaje_bateria/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
     },
     {
       "title": "Cable apertura capó",
       "handle": "suzuki-samurai-cable-apertura-capo",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-interior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-interior"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-interior" },
+        { "id": "pcat_accesorios-piezas-interior" }
       ],
       "variants": [
         {
           "title": "Cable apertura capó",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2100
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 2100 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "82191-82000",
+          "barcode": "82191-82000"
         }
       ],
       "images": [
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_apertura_capo/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_apertura_capo/2.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_apertura_capo/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_apertura_capo/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_apertura_capo/4.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_apertura_capo/thumb.jpg",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Cable embrague",
+      "description": "Compatible con los modelos Sj410",
+      "handle": "suzuki-samurai-cable-embrague-410",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-caja-cambios" },
+        { "id": "pcat_accesorios-caja-cambios" }
+      ],
+      "variants": [
+        {
+          "title": "Cable embrague",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "23710-80021",
+          "barcode": "23710-80021"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/thumb.jpg",
+      "hs_code": "23710-83024",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+    },
+    {
+      "title": "Cable embrague",
+      "description": "Compatible con los modelos Sj413",
+      "handle": "suzuki-samurai-cable-embrague-413",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-caja-cambios" },
+        { "id": "pcat_accesorios-caja-cambios" }
+      ],
+      "variants": [
+        {
+          "title": "Cable embrague",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "23710-83024",
+          "barcode": "23710-83024"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj413/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj413/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj413/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj413/thumb.jpg",
+      "hs_code": "23710-83024",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
     },
     {
       "title": "Cable seguridad portón trasero",
       "handle": "suzuki-samurai-cable-seguridad-porton-trasero",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-puertas-cristales"
-        },
-        {
-          "id": "pcat_accesorios-puertas-cristales"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
       ],
       "variants": [
         {
           "title": "Cable seguridad portón trasero",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1600
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 1600 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "72850-80002",
+          "barcode": "72850-80002"
         }
       ],
       "images": [
@@ -1288,317 +320,38 @@
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
-    },
-    {
-      "title": "Rótula dirección izquierda",
-      "handle": "suzuki-samurai-rotula-direccion-izquierda",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-direccion"
-        },
-        {
-          "id": "pcat_accesorios-direccion"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Rótula dirección izquierda",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_izquierda/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_izquierda/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_izquierda/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Rótula dirección derecha",
-      "handle": "suzuki-samurai-rotula-direccion-derecha",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-direccion"
-        },
-        {
-          "id": "pcat_accesorios-direccion"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Rótula dirección derecha",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 6500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_derecha/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_derecha/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_derecha/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Bandeja bajo guantera",
-      "handle": "suzuki-samurai-bandeja-bajo-guantera",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-interior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-interior"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Bandeja bajo guantera",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 4500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bandeja_bajo_guantera/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bandeja_bajo_guantera/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bandeja_bajo_guantera/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Cable embrague",
-      "description": "Compatible con los modelos Sj410",
-      "handle": "suzuki-samurai-cable-embrague-410",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-caja-cambios"
-        },
-        {
-          "id": "pcat_accesorios-caja-cambios"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Cable embrague",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/thumb.jpg",
-      "hs_code": "23710-83024",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Cable embrague",
-      "description": "Compatible con los modelos Sj413",
-      "handle": "suzuki-samurai-cable-embrague-413",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-caja-cambios"
-        },
-        {
-          "id": "pcat_accesorios-caja-cambios"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Cable embrague",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj413/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj413/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj413/thumb.jpg",
-      "hs_code": "23710-83024",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": []
-    },
-    {
-      "title": "Emblema salpicadero",
-      "description": "Compatible con los modelos Sj410 Sj413 Sj4129",
-      "handle": "suzuki-samurai-emblema-salpicadero",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-exterior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-exterior"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Emblema salpicadero",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2500
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 5,
-          "manage_inventory": true
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_salpicadero/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_salpicadero/2.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_salpicadero/thumb.jpg",
-      "hs_code": "77811-83060",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
       "options": [],
-      "material": null
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Casquillo dirección",
       "description": "Compatible con los modelos Sj413",
       "handle": "suzuki-samurai-casquillo-direccion-acetal",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-direccion"
-        },
-        {
-          "id": "pcat_accesorios-direccion"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-direccion" },
+        { "id": "pcat_accesorios-direccion" }
       ],
       "variants": [
         {
           "title": "Casquillo dirección",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2300
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 2300 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": null,
+          "barcode": null
         }
       ],
       "images": [
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/2.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/thumb.jpg",
       "hs_code": null,
@@ -1606,41 +359,32 @@
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "material": "Acetal / POM-C"
+      "material": "Acetal / POM-C",
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Casquillo dirección",
       "description": "Compatible con los modelos Sj413",
       "handle": "suzuki-samurai-casquillo-direccion-teflon",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-direccion"
-        },
-        {
-          "id": "pcat_accesorios-direccion"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-direccion" },
+        { "id": "pcat_accesorios-direccion" }
       ],
       "variants": [
         {
           "title": "Casquillo dirección",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2300
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 2300 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": null,
+          "barcode": null
         }
       ],
       "images": [
@@ -1653,133 +397,530 @@
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "material": "Teflón"
+      "material": "Teflón",
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Codo refrigeración",
+      "handle": "suzuki-samurai-codo-refrigeracion",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-refrigeracion" },
+        { "id": "pcat_accesorios-refrigeracion" }
+      ],
+      "variants": [
+        {
+          "title": "Codo refrigeración",
+          "prices": [{ "currency_code": "eur", "amount": 3200 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": null,
+          "barcode": null
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/codo_refrigeracion/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/codo_refrigeracion/2.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/codo_refrigeracion/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+    },
+    {
+      "title": "Emblema parrilla",
+      "handle": "suzuki-samurai-emblema-parrilla",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-exterior" },
+        { "id": "pcat_accesorios-piezas-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Emblema parrilla",
+          "prices": [{ "currency_code": "eur", "amount": 3000 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "77811-83000",
+          "barcode": "77811-83000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla/2.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Emblema parrilla S",
+      "handle": "suzuki-samurai-emblema-parrilla-s",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-exterior" },
+        { "id": "pcat_accesorios-piezas-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Emblema parrilla S",
+          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "77811-60G01",
+          "barcode": "77811-60G01"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_s/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_s/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_s/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_s/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Emblema salpicadero",
+      "description": "Compatible con los modelos Sj410 Sj413 Sj4129",
+      "handle": "suzuki-samurai-emblema-salpicadero",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-piezas-exterior" },
+        { "id": "pcat_accesorios-piezas-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Emblema salpicadero",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "77811-83060",
+          "barcode": "77811-83060"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_salpicadero/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_salpicadero/2.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_salpicadero/thumb.jpg",
+      "hs_code": "",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "material": null,
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Filtro aire",
       "description": "Compatible con los modelos Sj410",
       "handle": "suzuki-samurai-filtro-aire-sj410",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-filtros"
-        },
-        {
-          "id": "pcat_accesorios-filtros"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-filtros" },
+        { "id": "pcat_accesorios-filtros" }
       ],
       "variants": [
         {
           "title": "Filtro aire",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2300
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 2300 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "13780-79201",
+          "barcode": "13780-79201"
         }
       ],
       "images": [
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj410/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj410/2.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj410/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj410/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj410/thumb.jpg",
       "hs_code": "13780-79201",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
     },
     {
       "title": "Filtro aire",
       "description": "Compatible con los modelos Sj413",
       "handle": "suzuki-samurai-filtro-aire-sj413",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-filtros"
-        },
-        {
-          "id": "pcat_accesorios-filtros"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-filtros" },
+        { "id": "pcat_accesorios-filtros" }
       ],
       "variants": [
         {
           "title": "Filtro aire",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2300
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 2300 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "13780-83000",
+          "barcode": "13780-83000"
         }
       ],
       "images": [
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj413/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj413/2.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj413/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj413/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj413/thumb.jpg",
       "hs_code": "13780-79201",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
+      "title": "Fuelles transmisiones",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-eje" },
+        { "id": "pcat_accesorios-eje" }
+      ],
+      "subtitle": null,
+      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "handle": "suzuki-samurai-fuelles-transmisiones",
+      "is_giftcard": false,
+      "weight": null,
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/fuelles_transmisiones/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/fuelles_transmisiones/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/fuelles_transmisiones/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/fuelles_transmisiones/thumb.jpg",
+      "options": [],
+      "variants": [
+        {
+          "title": "Fuelles transmisiones",
+          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "27153-83001",
+          "barcode": "27153-83001"
+        }
+      ],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
+      ]
+    },
+    {
+      "title": "Goma dirección",
+      "handle": "suzuki-samurai-goma-direccion",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-direccion" },
+        { "id": "pcat_accesorios-direccion" }
+      ],
+      "variants": [
+        {
+          "title": "Goma dirección",
+          "prices": [{ "currency_code": "eur", "amount": 2700 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "48251-52000",
+          "barcode": "48251-52000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/goma_direccion/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/goma_direccion/2.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/goma_direccion/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Grifo calefacción",
+      "handle": "suzuki-samurai-grifo-calefaccion",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-calefaccion" },
+        { "id": "pcat_accesorios-calefaccion" }
+      ],
+      "variants": [
+        {
+          "title": "Grifo calefacción",
+          "prices": [{ "currency_code": "eur", "amount": 8700 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "74710-83020",
+          "barcode": "74710-83020"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/grifo_calefaccion/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/grifo_calefaccion/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/grifo_calefaccion/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/grifo_calefaccion/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Guardapolvos palanca de cambios",
+      "handle": "suzuki-samurai-guardapolvos-palanca-de-cambios",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-caja-cambios" },
+        { "id": "pcat_accesorios-caja-cambios" }
+      ],
+      "variants": [
+        {
+          "title": "Guardapolvos palanca de cambios",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "28136-83000",
+          "barcode": "28136-83000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_de_cambios/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_de_cambios/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_de_cambios/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_de_cambios/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Guardapolvos palanca reductora",
+      "handle": "suzuki-samurai-guardapolvos-palanca-reductora",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-transfer" },
+        { "id": "pcat_accesorios-transfer" }
+      ],
+      "variants": [
+        {
+          "title": "Guardapolvos palanca reductora",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": null,
+          "barcode": null
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Kit reparación bola dirección",
+      "handle": "suzuki-samurai-kit-reparacion-bola-direccion",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-direccion" },
+        { "id": "pcat_accesorios-direccion" }
+      ],
+      "variants": [
+        {
+          "title": "Kit reparación bola dirección",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "09285-00002,45623-80000,45624-63001,45625-63001",
+          "barcode": "09285-00002,45623-80000,45624-63001,45625-63001"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_bola_direccion/1.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_bola_direccion/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Kit reparación palanca de cambios",
+      "handle": "suzuki-samurai-kit-reparacion-palanca-cambios",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-caja-cambios" },
+        { "id": "pcat_accesorios-caja-cambios" }
+      ],
+      "variants": [
+        {
+          "title": "Kit reparación palanca de cambios",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "28135-80000",
+          "barcode": "28135-80000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_cambios/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_cambios/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_cambios/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_cambios/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Kit reparación palanca reductora",
+      "handle": "suzuki-samurai-kit-reparacion-palanca-reductora",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-transfer" },
+        { "id": "pcat_accesorios-transfer" }
+      ],
+      "variants": [
+        {
+          "title": "Kit reparación palanca reductora",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "29345-80000",
+          "barcode": "29345-80000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_reductora/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_reductora/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_reductora/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_reductora/4.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_palanca_reductora/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Lamelunas y guías ventanas",
       "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-lamelunas-y-guias-ventanas",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-puertas-cristales"
-        },
-        {
-          "id": "pcat_accesorios-puertas-cristales"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
       ],
       "variants": [
         {
           "title": "Lamelunas y guías ventanas",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 7500
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 7500 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "83811-80100 / 83850-80100 / 83661-83000",
+          "barcode": "83811-80100 / 83850-80100 / 83661-83000"
         }
       ],
       "images": [
@@ -1791,191 +932,799 @@
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Mando limpiaparabrisas",
+      "handle": "suzuki-samurai-mando-limpiaparabrisas",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
+      ],
+      "variants": [
+        {
+          "title": "Mando limpiaparabrisas",
+          "prices": [{ "currency_code": "eur", "amount": 3800 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": null,
+          "barcode": null
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mando_limpiaparabrisas/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mando_limpiaparabrisas/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mando_limpiaparabrisas/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mando_limpiaparabrisas/4.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mando_limpiaparabrisas/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Manecillas elevalunas",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-interior" },
+        { "id": "pcat_accesorios-piezas-interior" }
+      ],
+      "subtitle": null,
+      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "handle": "suzuki-samurai-manecillas-elevalunas",
+      "is_giftcard": false,
+      "weight": null,
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manecillas_elevalunas/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manecillas_elevalunas/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manecillas_elevalunas/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manecillas_elevalunas/thumb.jpg",
+      "options": [],
+      "variants": [
+        {
+          "title": "Manecillas elevalunas",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "82960 82100",
+          "barcode": "82960 82100"
+        }
+      ],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
+      ]
+    },
+    {
+      "title": "Manetas puertas",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-exterior" },
+        { "id": "pcat_accesorios-piezas-exterior" }
+      ],
+      "subtitle": "Suzuki",
+      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "handle": "suzuki-samurai-manetas-puertas",
+      "is_giftcard": false,
+      "weight": null,
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manetas_puertas/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manetas_puertas/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manetas_puertas/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manetas_puertas/thumb.jpg",
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
+      ],
+      "variants": [
+        {
+          "title": "Manetas puertas",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "barcode": "82810A80102-82820A80102",
+          "mid_code": "82810A80102-82820A80102"
+        }
+      ]
+    },
+    {
+      "title": "Marco guardapolvos palanca cambios",
+      "description": "Compatible con los modelos Sj410 Sj413",
+      "handle": "suzuki-samurai-marco-guardapolvos-palanca-cambios",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-caja-cambios" },
+        { "id": "pcat_accesorios-caja-cambios" }
+      ],
+      "variants": [
+        {
+          "title": "Marco guardapolvos palanca cambios",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "28137-83000",
+          "barcode": "28137-83000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_cambios/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_cambios/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_cambios/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_cambios/thumb.jpg",
+      "hs_code": null,
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Marco guardapolvos palanca reductora",
       "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-marco-guardapolvos-palanca-reductora",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-caja-cambios"
-        },
-        {
-          "id": "pcat_accesorios-caja-cambios"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-caja-cambios" },
+        { "id": "pcat_accesorios-caja-cambios" }
       ],
       "variants": [
         {
           "title": "Marco guardapolvos palanca reductora",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2500
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "29347-80001",
+          "barcode": "29347-80001"
         }
       ],
       "images": [
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_reductora/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_reductora/2.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_reductora/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_reductora/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/marco_guardapolvos_palanca_reductora/thumb.jpg",
       "hs_code": null,
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
-      "title": "Tornillo antiholgura palanca cambios",
-      "description": "Compatible con los modelos Sj410 Sj413",
-      "handle": "suzuki-samurai-tornillo-antiholgura-palanca-cambios",
+      "title": "Pomo palanca de cambios",
+      "handle": "suzuki-samurai-pomo-palanca-de-cambios",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-caja-cambios"
-        },
-        {
-          "id": "pcat_accesorios-caja-cambios"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-caja-cambios" },
+        { "id": "pcat_accesorios-caja-cambios" }
       ],
       "variants": [
         {
-          "title": "Tornillo antiholgura palanca cambios",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1300
-            }
-          ],
+          "title": "Pomo palanca de cambios",
+          "prices": [{ "currency_code": "eur", "amount": 2200 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "28113-83020",
+          "barcode": "28113-83020"
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_anti_holgura_palanca_cambios/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_anti_holgura_palanca_cambios/2.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_de_cambios/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_de_cambios/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_de_cambios/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_de_cambios/4.jpg"
       ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_anti_holgura_palanca_cambios/thumb.jpg",
-      "hs_code": null,
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_de_cambios/thumb.jpg",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
-      "title": "Varilla nivel de aceite",
-      "description": "Compatible con los modelos Sj410 Sj413 Sj419",
-      "handle": "suzuki-samurai-varilla-nivel-de-aceite",
+      "title": "Pomo palanca reductora",
+      "handle": "suzuki-samurai-pomo-palanca-reductora",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-motor"
-        },
-        {
-          "id": "pcat_accesorios-motor"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-transfer" },
+        { "id": "pcat_accesorios-transfer" }
       ],
       "variants": [
         {
-          "title": "Varilla nivel de aceite",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2200
-            }
-          ],
+          "title": "Pomo palanca reductora",
+          "prices": [{ "currency_code": "eur", "amount": 3000 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "29344-80050",
+          "barcode": "29344-80050"
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_nivel_de_aceite/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_nivel_de_aceite/2.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_reductora/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_reductora/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_reductora/3.jpg"
       ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_nivel_de_aceite/thumb.jpg",
-      "hs_code": null,
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pomo_palanca_reductora/thumb.jpg",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Rótula dirección derecha",
+      "handle": "suzuki-samurai-rotula-direccion-derecha",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-direccion" },
+        { "id": "pcat_accesorios-direccion" }
+      ],
+      "variants": [
+        {
+          "title": "Rótula dirección derecha",
+          "prices": [{ "currency_code": "eur", "amount": 6500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": null,
+          "barcode": null
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_derecha/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_derecha/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_derecha/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_derecha/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Rótula dirección izquierda",
+      "handle": "suzuki-samurai-rotula-direccion-izquierda",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-direccion" },
+        { "id": "pcat_accesorios-direccion" }
+      ],
+      "variants": [
+        {
+          "title": "Rótula dirección izquierda",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "48810-83300",
+          "barcode": "48810-83300"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_izquierda/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_izquierda/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_izquierda/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rotula_direccion_izquierda/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Soporte reductora",
+      "handle": "suzuki-samurai-soporte-reductora",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-transfer" },
+        { "id": "pcat_accesorios-transfer" }
+      ],
+      "variants": [
+        {
+          "title": "Soporte reductora",
+          "prices": [{ "currency_code": "eur", "amount": 1600 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "29650-83001",
+          "barcode": "29650-83001"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_reductora/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_reductora/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_reductora/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_reductora/4.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_reductora/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ],
+      "mid_code": "29650-83001",
+      "barcode": "29650-83001"
     },
     {
       "title": "Soporte rueda repuesto",
-      "description": "Compatible con los modelos Sj410 Sj413 Sj419",
+      "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-soporte-rueda-repuesto",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-santana"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-exterior"
-        },
-        {
-          "id": "pcat_accesorios-piezas-exterior"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-exterior" },
+        { "id": "pcat_accesorios-piezas-exterior" }
       ],
       "variants": [
         {
           "title": "Soporte rueda repuesto",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 6000
-            }
-          ],
+          "prices": [{ "currency_code": "eur", "amount": 6000 }],
           "options": [],
           "inventory_quantity": 5,
-          "manage_inventory": true
+          "manage_inventory": true,
+          "mid_code": "72810-80022",
+          "barcode": "72810-80022"
         }
       ],
       "images": [
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_rueda_repuesto/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_rueda_repuesto/2.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_rueda_repuesto/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_rueda_repuesto/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_rueda_repuesto/thumb.jpg",
       "hs_code": null,
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": []
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Soporte tubo de escape",
+      "handle": "suzuki-samurai-soporte-tubo-de-escape",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-exterior" },
+        { "id": "pcat_accesorios-piezas-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Soporte tubo de escape",
+          "prices": [{ "currency_code": "eur", "amount": 1200 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "14281-60G11",
+          "barcode": "14281-60G11"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_tubo_escape/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_tubo_escape/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_tubo_escape/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_tubo_escape/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Tapa guantera salpicadero",
+      "handle": "suzuki-samurai-tapa-guantera-salpicadero",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-interior" },
+        { "id": "pcat_accesorios-piezas-interior" }
+      ],
+      "variants": [
+        {
+          "title": "Tapa guantera salpicadero",
+          "prices": [{ "currency_code": "eur", "amount": 3000 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "73842-70A01",
+          "barcode": "73842-70A01"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera/4.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera/5.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_guantera/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Tapa termostato",
+      "handle": "suzuki-samurai-tapa-termostato",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-refrigeracion" },
+        { "id": "pcat_accesorios-refrigeracion" }
+      ],
+      "variants": [
+        {
+          "title": "Tapa termostato",
+          "prices": [{ "currency_code": "eur", "amount": 1900 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "17561-73000",
+          "barcode": "17561-73000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_termostato/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_termostato/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_termostato/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_termostato/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Tapón aceite",
+      "handle": "suzuki-samurai-tapon-aceite",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-motor" },
+        { "id": "pcat_accesorios-motor" }
+      ],
+      "variants": [
+        {
+          "title": "Tapón aceite",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "16920-50A01",
+          "barcode": "16920-50A01"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/4.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/5.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_aceite/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
+      ]
+    },
+    {
+      "title": "Tapón depósito gasolina",
+      "handle": "suzuki-samurai-tapon-deposito-gasolina",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-exterior" },
+        { "id": "pcat_accesorios-piezas-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Tapón depósito gasolina",
+          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "89260-83011",
+          "barcode": "89260-83011"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_deposito_gasolina/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_deposito_gasolina/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_deposito_gasolina/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapon_deposito_gasolina/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
+      ]
+    },
+    {
+      "title": "Tirador interior puertas",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-interior" },
+        { "id": "pcat_accesorios-piezas-interior" }
+      ],
+      "subtitle": null,
+      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "handle": "suzuki-samurai-tirador-interior-puertas",
+      "is_giftcard": false,
+      "weight": null,
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_interior_puertas/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_interior_puertas/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_interior_puertas/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_interior_puertas/4.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_interior_puertas/thumb.jpg",
+      "options": [],
+      "variants": [
+        {
+          "title": "Tirador interior puertas",
+          "prices": [{ "currency_code": "eur", "amount": 2000 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "78271 58053",
+          "barcode": "78271 58053"
+        }
+      ],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
+      ]
+    },
+    {
+      "title": "Tirador portón trasero",
+      "description": "Compatible con los modelos Sj410 Sj413 Sj419",
+      "handle": "suzuki-samurai-tirador-porton-trasero",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-piezas-exterior" },
+        { "id": "pcat_accesorios-piezas-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Tirador portón trasero",
+          "prices": [{ "currency_code": "eur", "amount": 1700 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "82592 80060",
+          "barcode": "82592 80060"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_porton/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_porton/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_porton/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tirador_porton/thumb.jpg",
+      "hs_code": null,
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "mid_code": "82592 80060",
+      "barcode": "82592 80060",
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
+      ]
+    },
+    {
+      "title": "Topes capó parabrisas",
+      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "handle": "suzuki-samurai-topes-capo-parabrisas",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
+      ],
+      "variants": [
+        {
+          "title": "Topes capó parabrisa",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "72414-80000",
+          "barcode": "72414-80000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/topes_capo_parabrisas/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/topes_capo_parabrisas/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/topes_capo_parabrisas/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/topes_capo_parabrisas/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_sj419", "value": "sj419" }
+      ]
+    },
+    {
+      "title": "Tornillo anti holgura palanca cambios",
+      "description": "Compatible con los modelos Sj410 Sj413",
+      "handle": "suzuki-samurai-tornillo-antiholgura-palanca-cambios",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-caja-cambios" },
+        { "id": "pcat_accesorios-caja-cambios" }
+      ],
+      "variants": [
+        {
+          "title": "Tornillo antiholgura palanca cambios",
+          "prices": [{ "currency_code": "eur", "amount": 1300 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "09135-08006",
+          "barcode": "09135-08006"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_anti_holgura_palanca_cambios/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_anti_holgura_palanca_cambios/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_anti_holgura_palanca_cambios/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_anti_holgura_palanca_cambios/thumb.jpg",
+      "hs_code": null,
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Varilla nivel de aceite",
+      "description": "Compatible con los modelos Sj413",
+      "handle": "suzuki-samurai-varilla-nivel-de-aceite",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-samurai-motor" },
+        { "id": "pcat_accesorios-motor" }
+      ],
+      "variants": [
+        {
+          "title": "Varilla nivel de aceite",
+          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "options": [],
+          "inventory_quantity": 5,
+          "manage_inventory": true,
+          "mid_code": "16910-60A11",
+          "barcode": "16910-60A11"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_nivel_de_aceite/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_nivel_de_aceite/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_nivel_de_aceite/3.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_nivel_de_aceite/thumb.jpg",
+      "hs_code": null,
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
     }
   ],
   "categories": [
@@ -2069,7 +1818,7 @@
     },
     {
       "id": "pcat_suzuki-samurai",
-      "name": "Suzuki Samurai",
+      "name": "Samurai",
       "rank": 0,
       "category_children": [
         {
@@ -2112,7 +1861,7 @@
     },
     {
       "id": "pcat_suzuki-santana",
-      "name": "Suzuki Santana",
+      "name": "Santana",
       "rank": 0,
       "parent_category_id": "pcat_suzuki",
       "handle": "suzuki/santana",
