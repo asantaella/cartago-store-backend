@@ -83,6 +83,7 @@
         { "id": "pcat_suzuki-samurai" },
         { "id": "pcat_suzuki-santana" },
         { "id": "pcat_suzuki-samurai-motor" },
+        { "id": "pcat_suzuki-santana-motor" },
         { "id": "pcat_accesorios-motor" }
       ],
       "variants": [
@@ -1817,6 +1818,94 @@
       "is_active": true
     },
     {
+      "id": "pcat_suzuki-santana-piezas-exterior",
+      "name": "Piezas exterior",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/piezas-exterior",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-piezas-interior",
+      "name": "Piezas interior",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/piezas-interior",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-direccion",
+      "name": "Direccion",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/direccion",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-motor",
+      "name": "Motor",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/motor",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-transfer",
+      "name": "Transfer",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/transfer",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-eje",
+      "name": "Eje",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/eje",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-calefaccion",
+      "name": "Calefaccion",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/calefaccion",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-caja-cambios",
+      "name": "Caja cambios",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/caja-cambios",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-puertas-cristales",
+      "name": "Puertas y cristales",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/puertas-cristales",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-refrigeracion",
+      "name": "Refrigeración",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/refrigeracion",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-santana-filtros",
+      "name": "Filtros",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-santana",
+      "handle": "suzuki/santana/filtros",
+      "is_active": true
+    },
+    {
       "id": "pcat_suzuki-samurai",
       "name": "Samurai",
       "rank": 0,
@@ -1863,6 +1952,41 @@
       "id": "pcat_suzuki-santana",
       "name": "Santana",
       "rank": 0,
+      "category_children": [
+        {
+          "id": "pcat_suzuki-santana-piezas-exterior"
+        },
+        {
+          "id": "pcat_suzuki-santana-piezas-interior"
+        },
+        {
+          "id": "pcat_suzuki-santana-direccion"
+        },
+        {
+          "id": "pcat_suzuki-santana-motor"
+        },
+        {
+          "id": "pcat_suzuki-santana-puertas-cristales"
+        },
+        {
+          "id": "pcat_suzuki-santana-eje"
+        },
+        {
+          "id": "pcat_suzuki-santana-transfer"
+        },
+        {
+          "id": "pcat_suzuki-santana-calefaccion"
+        },
+        {
+          "id": "pcat_suzuki-santana-caja-cambios"
+        },
+        {
+          "id": "pcat_suzuki-santana-refrigeracion"
+        },
+        {
+          "id": "pcat_suzuki-santana-filtros"
+        }
+      ],
       "parent_category_id": "pcat_suzuki",
       "handle": "suzuki/santana",
       "is_active": true
