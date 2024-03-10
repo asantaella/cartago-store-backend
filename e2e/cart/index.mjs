@@ -11,7 +11,7 @@ const customer_id = "cus_01HJE5FBTNTATPHDQPY0J22X6V";
 const items = [
   {
     variant_id: "variant_01HH82XAGFDEGV0KNZ93RYV15N",
-    quantity: 1,
+    quantity: 2,
   },
   {
     variant_id: "variant_01HH82XAMG2ATBBXZH2EZVCZEY",
