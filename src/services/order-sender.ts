@@ -17,7 +17,6 @@ class OrderSenderService extends AbstractNotificationService {
 
   constructor(container, options) {
     super(container);
-    console.log("[CREATING] ORDER SENDER SERVICE");
     this.sendGridService = new SendGridService(container, {
       ...options,
       api_key: process.env.SENDGRID_API_KEY,
@@ -25,13 +24,7 @@ class OrderSenderService extends AbstractNotificationService {
       order_placed_template: process.env.SENDGRID_ORDER_PLACED_ID,
     });
 
-    console.log("Sendgrid service Id", this.sendGridService.identifier);
-    // you can access options here in case you're
-    // using a plugin
-
     this.orderService = container.orderService;
-    //this.sendGridService = container.resolve(SendGridService);
-    console.log("[CREATED] ORDER SENDER SERVICE");
   }
 
   humanPrice_(amount: string, currency: string) {
@@ -94,30 +87,28 @@ class OrderSenderService extends AbstractNotificationService {
     const order = await this.orderService.retrieve(
       (data as Order).id as string
     );
-    // console.log("Order data => ", order);
+
     const currencyCode = order.currency_code.toUpperCase();
     const notificationData = await this.sendGridService.fetchData(
       "order.placed",
       order
     );
-
-    // console.log("Notifications data => ", notificationData);
     const orderItems = notificationData.items.map((item) => ({
       ...item,
       totals: {
         ...item.totals,
+        ref:
+          item.variants && item.variants.length > 0
+            ? item.variants[0].barcode
+            : undefined,
         total: this.humanPrice_(item.totals.total, currencyCode),
       },
     }));
-    // console.log(
-    //   "ORDER ITEMS TOTALS => ",
-    //   orderItems.map((items) => items.totals)
-    // );
-    const notificationOrder = { ...notificationData, items: orderItems };
 
+    const notificationOrder = { ...notificationData, items: orderItems };
     const sendOptions = this.createSendingOptions(notificationOrder);
 
-    console.log("SEND EMAIL => ", sendOptions);
+    console.log("[Send email] => ", sendOptions);
     const status = await this.sendGridService
       .sendEmail(sendOptions)
       .then(() => "sent")
@@ -150,7 +141,7 @@ class OrderSenderService extends AbstractNotificationService {
     status: string;
     data: Record<string, unknown>;
   }> {
-    console.log("[NOTIFICATION] [RESEND]: ", notification);
+    console.log("[Resend email admin]: ", notification);
     // check if the receiver should be changed
     const to: string = config.to ? config.to : notification.to;
 

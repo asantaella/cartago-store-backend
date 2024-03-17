@@ -82,7 +82,7 @@ const plugins = [
       clientId: process.env.PAYPAL_CLIENT_ID,
       clientSecret: process.env.PAYPAL_CLIENT_SECRET,
       authWebhookId: process.env.PAYPAL_AUTH_WEBHOOK_ID,
-      //capture: true,
+      capture: true,
     },
   },
   {
