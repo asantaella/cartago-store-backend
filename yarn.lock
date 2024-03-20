@@ -1541,6 +1541,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.24.0":
+  version: 7.24.1
+  resolution: "@babel/runtime@npm:7.24.1"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: 5c8f3b912ba949865f03b3cf8395c60e1f4ebd1033fbd835bdfe81b6cac8a87d85bc3c7aded5fcdf07be044c9ab8c818f467abe0deca50020c72496782639572
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.9.6":
   version: 7.23.5
   resolution: "@babel/runtime@npm:7.23.5"
@@ -3050,17 +3059,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/admin-ui@npm:^2.1.10":
-  version: 2.1.10
-  resolution: "@medusajs/admin-ui@npm:2.1.10"
+"@medusajs/admin-ui@npm:^2.1.12":
+  version: 2.1.12
+  resolution: "@medusajs/admin-ui@npm:2.1.12"
   dependencies:
     "@babel/parser": 7.22.5
     "@babel/traverse": 7.22.5
     "@hookform/error-message": ^2.0.1
     "@hookform/resolvers": ^3.3.1
     "@medusajs/icons": ^1.1.0
-    "@medusajs/ui": ^2.2.4
-    "@medusajs/ui-preset": ^1.0.2
+    "@medusajs/ui": ^2.4.0
+    "@medusajs/ui-preset": ^1.1.1
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@radix-ui/react-accordion": ^1.0.1
     "@radix-ui/react-avatar": ^1.0.1
@@ -3092,7 +3101,7 @@ __metadata:
     i18next-browser-languagedetector: ^7.0.1
     i18next-http-backend: ^2.2.1
     md5: ^2.3.0
-    medusa-react: ^9.0.12
+    medusa-react: ^9.0.13
     mini-css-extract-plugin: ^2.7.6
     moment: ^2.29.4
     path-browserify: ^1.0.1
@@ -3136,15 +3145,15 @@ __metadata:
     webpack-dev-server: 4.15.0
     webpackbar: ^5.0.2
     zod: ^3.22.2
-  checksum: 3e3e7cb81a9ce6881f5c5192557fe1e6f0477eaed2daa0c2ff7aa09c9ca6f6a833abcf06d8ec31286a95f866a2dc4db305c86f0ebb0eeaaea98d1d8959b50551
+  checksum: 5c8e0d93a3ca777269d656deaa2bea57307df1a4bd858b5801fd4d8dfbc3f25d47b0f04bcaaf3723e2805a45a67ee325d9b2156a466d41c0e343db34e6c1f249
   languageName: node
   linkType: hard
 
-"@medusajs/admin@npm:^7.1.9":
-  version: 7.1.9
-  resolution: "@medusajs/admin@npm:7.1.9"
+"@medusajs/admin@npm:^7.1.11":
+  version: 7.1.11
+  resolution: "@medusajs/admin@npm:7.1.11"
   dependencies:
-    "@medusajs/admin-ui": ^2.1.10
+    "@medusajs/admin-ui": ^2.1.12
     "@rollup/plugin-alias": 5.0.0
     "@rollup/plugin-commonjs": 24.1.0
     "@rollup/plugin-json": 6.0.0
@@ -3157,7 +3166,7 @@ __metadata:
     express: 4.18.2
     fs-extra: 11.1.0
     lodash: ^4.17.21
-    medusa-core-utils: 1.2.0
+    medusa-core-utils: 1.2.1
     rollup: 3.20.7
     rollup-plugin-esbuild: 5.0.0
     ts-dedent: ^2.2.0
@@ -3165,7 +3174,7 @@ __metadata:
     "@medusajs/medusa": ^1.14.0
   bin:
     medusa-admin: bin/medusa-admin.js
-  checksum: c71dc9a3520e38ec5f4a7b1474d5e13a2e54b932603aca4f41ebc56471731680c5abcd4cf75afc93aecd5d623bb893bc952e1be6b199ac1eeeff8ee5d919d64f
+  checksum: 353dc1e356c65682adbb6406ac94d3916218e4c5d6f401b380cd332220b463418e365754475cc30ba3f664155bc32d5ad55115f066d224751df75f36b705f3ad
   languageName: node
   linkType: hard
 
@@ -3189,17 +3198,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/core-flows@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@medusajs/core-flows@npm:0.0.3"
+"@medusajs/core-flows@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "@medusajs/core-flows@npm:0.0.6"
   dependencies:
-    "@medusajs/modules-sdk": ^1.12.5
-    "@medusajs/orchestration": ^0.5.1
-    "@medusajs/utils": ^1.11.2
-    "@medusajs/workflows-sdk": ^0.1.0
+    "@medusajs/modules-sdk": ^1.12.8
+    "@medusajs/orchestration": ^0.5.4
+    "@medusajs/utils": ^1.11.5
+    "@medusajs/workflows-sdk": ^0.1.3
     awilix: ^8.0.1
     ulid: ^2.3.0
-  checksum: 17bfbf4bdff95605a6d49a358a4fc730f3b733b50da414e0641c2c3ee0ece3d86436f1a31c50f852353afc89d3fcb2662cc04326d68fa3d87e4af085c6e3a686
+  checksum: bc02a0af5866bb47a2ad53fd4a35a27e159e2f438c440338fe3da16952b056929bb50ab016710bf42d8d40836f925cfa28c2a1fee2b1db92226dd5f86b89b740
   languageName: node
   linkType: hard
 
@@ -3245,17 +3254,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/link-modules@npm:^0.2.5":
-  version: 0.2.5
-  resolution: "@medusajs/link-modules@npm:0.2.5"
+"@medusajs/icons@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@medusajs/icons@npm:1.2.0"
+  peerDependencies:
+    react: ^16.x || ^17.x || ^18.x
+  checksum: d8a7698f1d25e9ceb9dd2d1624a300b32cfd7c8fe5449d92a19d6ddc23ecc087ba829dec310c5363dfcb6cd5fe6bf6d6cebb606866bb615bc48567a54b5a20be
+  languageName: node
+  linkType: hard
+
+"@medusajs/link-modules@npm:^0.2.8":
+  version: 0.2.8
+  resolution: "@medusajs/link-modules@npm:0.2.8"
   dependencies:
-    "@medusajs/modules-sdk": ^1.12.5
-    "@medusajs/types": ^1.11.9
-    "@medusajs/utils": ^1.11.2
-    "@mikro-orm/core": 5.7.12
-    "@mikro-orm/postgresql": 5.7.12
+    "@medusajs/modules-sdk": ^1.12.8
+    "@medusajs/types": ^1.11.12
+    "@medusajs/utils": ^1.11.5
+    "@mikro-orm/core": 5.9.7
+    "@mikro-orm/postgresql": 5.9.7
     awilix: ^8.0.0
-  checksum: ea57890c856f7a459f5a7595031b8fc947f42480595f19c3b7a6d40aa674495a1c699d2f248f3aa1693ba74d4526a5c711b023a97c23d29ed44ab4dad9d33655
+  checksum: 293010942d63ab877d7b4e45bf02e6a5e9950ed619a183a78664be15d94322e46af975b2c2df2ecae90a18639801aee91adca67e9c0309918cfbf04051c212ff
   languageName: node
   linkType: hard
 
@@ -3297,44 +3315,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/medusa-cli@npm:^1.3.21, @medusajs/medusa-cli@npm:^1.3.6":
-  version: 1.3.21
-  resolution: "@medusajs/medusa-cli@npm:1.3.21"
-  dependencies:
-    "@medusajs/utils": ^1.10.0
-    axios: ^0.21.4
-    chalk: ^4.0.0
-    configstore: 5.0.1
-    core-js: ^3.6.5
-    dotenv: 16.0.3
-    execa: ^5.1.1
-    fs-exists-cached: ^1.0.0
-    fs-extra: ^10.0.0
-    glob: ^7.1.6
-    hosted-git-info: ^4.0.2
-    inquirer: ^8.0.0
-    is-valid-path: ^0.1.1
-    meant: ^1.0.3
-    medusa-core-utils: ^1.2.0
-    medusa-telemetry: ^0.0.17
-    open: ^8.0.6
-    ora: ^5.4.1
-    pg: ^8.11.0
-    pg-god: ^1.0.12
-    prompts: ^2.4.2
-    regenerator-runtime: ^0.13.11
-    resolve-cwd: ^3.0.0
-    semver: ^7.3.8
-    stack-trace: ^0.0.10
-    ulid: ^2.3.0
-    winston: ^3.8.2
-    yargs: ^15.3.1
-  bin:
-    medusa: cli.js
-  checksum: 3ef0618bad8fdc661e65494fc6afa314d76e3b15d93edcf631c83817675c649af5997bde9f2341920c1371b16a7d76ee2701717d9b288b2683a9cf6c976b17eb
-  languageName: node
-  linkType: hard
-
 "@medusajs/medusa-cli@npm:^1.3.22":
   version: 1.3.22
   resolution: "@medusajs/medusa-cli@npm:1.3.22"
@@ -3373,7 +3353,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/medusa-js@npm:*, @medusajs/medusa-js@npm:6.1.4":
+"@medusajs/medusa-cli@npm:^1.3.6":
+  version: 1.3.21
+  resolution: "@medusajs/medusa-cli@npm:1.3.21"
+  dependencies:
+    "@medusajs/utils": ^1.10.0
+    axios: ^0.21.4
+    chalk: ^4.0.0
+    configstore: 5.0.1
+    core-js: ^3.6.5
+    dotenv: 16.0.3
+    execa: ^5.1.1
+    fs-exists-cached: ^1.0.0
+    fs-extra: ^10.0.0
+    glob: ^7.1.6
+    hosted-git-info: ^4.0.2
+    inquirer: ^8.0.0
+    is-valid-path: ^0.1.1
+    meant: ^1.0.3
+    medusa-core-utils: ^1.2.0
+    medusa-telemetry: ^0.0.17
+    open: ^8.0.6
+    ora: ^5.4.1
+    pg: ^8.11.0
+    pg-god: ^1.0.12
+    prompts: ^2.4.2
+    regenerator-runtime: ^0.13.11
+    resolve-cwd: ^3.0.0
+    semver: ^7.3.8
+    stack-trace: ^0.0.10
+    ulid: ^2.3.0
+    winston: ^3.8.2
+    yargs: ^15.3.1
+  bin:
+    medusa: cli.js
+  checksum: 3ef0618bad8fdc661e65494fc6afa314d76e3b15d93edcf631c83817675c649af5997bde9f2341920c1371b16a7d76ee2701717d9b288b2683a9cf6c976b17eb
+  languageName: node
+  linkType: hard
+
+"@medusajs/medusa-js@npm:*":
   version: 6.1.4
   resolution: "@medusajs/medusa-js@npm:6.1.4"
   dependencies:
@@ -3385,6 +3403,21 @@ __metadata:
   peerDependencies:
     "@medusajs/medusa": ^1.17.2
   checksum: 5bc3a4735fdfc64c93ea31fd784c746ca513c552089fc311239c42ea3dbdb71ee8e3823c593c3df13167a7fdfd01813501fc8dc170c5897809ac3043e9110207
+  languageName: node
+  linkType: hard
+
+"@medusajs/medusa-js@npm:^6.1.7":
+  version: 6.1.7
+  resolution: "@medusajs/medusa-js@npm:6.1.7"
+  dependencies:
+    axios: ^0.24.0
+    cross-env: ^5.2.1
+    qs: ^6.10.3
+    retry-axios: ^2.6.0
+    uuid: ^9.0.0
+  peerDependencies:
+    "@medusajs/medusa": ^1.17.2
+  checksum: 525530a37d69293e62eeff9a253fd9e3df7815c7cfa8be8eb0f9acf6088db77aae43b5d879caab30af8c757b4f01c361ba222082005010707a5a141d1d05ccc7
   languageName: node
   linkType: hard
 
@@ -3445,17 +3478,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/medusa@npm:^1.19.0":
-  version: 1.19.0
-  resolution: "@medusajs/medusa@npm:1.19.0"
+"@medusajs/medusa@npm:^1.20.2":
+  version: 1.20.2
+  resolution: "@medusajs/medusa@npm:1.20.2"
   dependencies:
-    "@medusajs/core-flows": ^0.0.3
-    "@medusajs/link-modules": ^0.2.5
+    "@medusajs/core-flows": ^0.0.6
+    "@medusajs/link-modules": ^0.2.8
     "@medusajs/medusa-cli": ^1.3.22
-    "@medusajs/modules-sdk": ^1.12.5
-    "@medusajs/orchestration": ^0.5.1
-    "@medusajs/utils": ^1.11.2
-    "@medusajs/workflows-sdk": ^0.1.0
+    "@medusajs/modules-sdk": ^1.12.8
+    "@medusajs/orchestration": ^0.5.4
+    "@medusajs/utils": ^1.11.5
+    "@medusajs/workflows-sdk": ^0.1.3
     awilix: ^8.0.0
     body-parser: ^1.19.0
     boxen: ^5.0.1
@@ -3479,9 +3512,9 @@ __metadata:
     iso8601-duration: ^1.3.0
     jsonwebtoken: ^9.0.0
     lodash: ^4.17.21
-    medusa-core-utils: ^1.2.0
+    medusa-core-utils: ^1.2.1
     medusa-telemetry: ^0.0.17
-    medusa-test-utils: ^1.1.40
+    medusa-test-utils: ^1.1.41
     morgan: ^1.9.1
     multer: ^1.4.5-lts.1
     node-schedule: ^2.1.1
@@ -3505,7 +3538,7 @@ __metadata:
     typeorm: ^0.3.16
   bin:
     medusa: cli.js
-  checksum: 09f517c615533e63cdb8409c1ec0896ba823532b6e6260af1479cd9d46a433e9894fdc4867aaabc135fe8be72d07a68a92dca7d163fca46d7ce3cdf98ae44dda
+  checksum: b508a60a116c4a4089e88a4476f6cc25a60c02796f6c5ade1d5957bc0969a4d6c62b7cd6ea888b0b3c2bd0b3dba5f472c5ecd89e7ef04d80f5eac521959c47f1
   languageName: node
   linkType: hard
 
@@ -3526,21 +3559,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/modules-sdk@npm:^1.12.4, @medusajs/modules-sdk@npm:^1.12.5":
-  version: 1.12.5
-  resolution: "@medusajs/modules-sdk@npm:1.12.5"
+"@medusajs/modules-sdk@npm:^1.12.8":
+  version: 1.12.8
+  resolution: "@medusajs/modules-sdk@npm:1.12.8"
   dependencies:
     "@graphql-tools/merge": ^9.0.0
     "@graphql-tools/schema": ^10.0.0
-    "@medusajs/orchestration": ^0.5.1
-    "@medusajs/types": ^1.11.9
-    "@medusajs/utils": ^1.11.2
+    "@medusajs/orchestration": ^0.5.4
+    "@medusajs/types": ^1.11.12
+    "@medusajs/utils": ^1.11.5
     awilix: ^8.0.0
     graphql: ^16.6.0
     knex: 2.4.2
     pg: ^8.11.2
     resolve-cwd: ^3.0.0
-  checksum: dadb9973226a3b9beeba9298f0422d705a5927c13dd344a97bbb7bc6dfa4b8b4f0838824f70c5b56fb9cecfa3ca28766a2cf672a3e0ec7d47e20f0fd163ee722
+  checksum: f5d5d0edde2b445742507a9e0cf889b2680f58dd8593d99b23704ca291f831edef5cc953e466e42e4921321fca3888ac0e7c595bdf3f561336df8e278060d867
   languageName: node
   linkType: hard
 
@@ -3556,19 +3589,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/orchestration@npm:^0.5.0, @medusajs/orchestration@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "@medusajs/orchestration@npm:0.5.1"
+"@medusajs/orchestration@npm:^0.5.4":
+  version: 0.5.4
+  resolution: "@medusajs/orchestration@npm:0.5.4"
   dependencies:
-    "@medusajs/types": ^1.11.9
-    "@medusajs/utils": ^1.11.2
+    "@medusajs/types": ^1.11.12
+    "@medusajs/utils": ^1.11.5
     awilix: ^8.0.0
     graphql: ^16.6.0
-  checksum: 9c62d9ad1388b2a2a573e3302d5a257f5c05771d7391a4c4d19f5616a0b03c3b164540b9f7db3e3f218291aa1eb58d7da96fb5f02810620fad42e0b239b871e4
+  checksum: 8ad0a49ef010f4394582be8accb8b34f3857f771a96fe93394f805412e8efa198e2a14d2d7eeb279340fa18945f35b3bbc9828ad891ce994fc5a2fe928f84102
   languageName: node
   linkType: hard
 
-"@medusajs/types@npm:^1.11.13":
+"@medusajs/types@npm:^1.11.12, @medusajs/types@npm:^1.11.13":
   version: 1.11.13
   resolution: "@medusajs/types@npm:1.11.13"
   checksum: 30320cd561ee5e859308e1cbb6f6a2123e0268dcd977fdce0223e5d91bc531936451a50b8b8f4e25b310fb8cd0b2adea5d4eb02c2e3019636f09b3703580f954
@@ -3589,23 +3622,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/ui-preset@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@medusajs/ui-preset@npm:1.0.2"
+"@medusajs/ui-preset@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "@medusajs/ui-preset@npm:1.1.2"
   dependencies:
     "@tailwindcss/forms": ^0.5.3
     tailwindcss-animate: ^1.0.6
   peerDependencies:
     tailwindcss: ">=3.0.0"
-  checksum: dbe490470236ddc40da1ca4d694f650b5f4c77ecb64b51c4c5a4b000ba647ecba23bd44df3136ad0c00808b82da2e2b04aee2f28ba2f93a5e5f7d49113762b4b
+  checksum: d11a4750e3df520bcc1d1b0e0bc4425a356243b71f092679422913760c4f388ef95b05cd9cad921afb435c2731df33fed992cad750f601edfe98fe5a506d8a25
   languageName: node
   linkType: hard
 
-"@medusajs/ui@npm:^2.2.4":
-  version: 2.2.4
-  resolution: "@medusajs/ui@npm:2.2.4"
+"@medusajs/ui@npm:^2.4.0":
+  version: 2.4.1
+  resolution: "@medusajs/ui@npm:2.4.1"
   dependencies:
-    "@medusajs/icons": ^1.1.0
+    "@medusajs/icons": ^1.2.0
     "@radix-ui/react-accordion": ^1.1.2
     "@radix-ui/react-alert-dialog": ^1.0.4
     "@radix-ui/react-avatar": ^1.0.3
@@ -3632,11 +3665,11 @@ __metadata:
     prism-react-renderer: ^2.0.6
     react-currency-input-field: ^3.6.11
     react-day-picker: ^8.8.0
-    tailwind-merge: ^1.13.2
+    tailwind-merge: ^2.2.1
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 769622b4012aca6742ef1f79610f4bbeb54d4187382b973071479b9d8f96711f23ce24d5d6d27b2ee783d1c72cfbec5acb59cbdbb93246602a7acad651f76f72
+  checksum: 754d0e840e815eff39296fdb7a3e9a647f61e9ed852334e0ca7fbdeb869b1c33b16214f17bd58fbe6ac994a75da40a31dba29554402946b9111011c0d58886cf
   languageName: node
   linkType: hard
 
@@ -3655,7 +3688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/utils@npm:^1.11.1, @medusajs/utils@npm:^1.11.2":
+"@medusajs/utils@npm:^1.11.2":
   version: 1.11.2
   resolution: "@medusajs/utils@npm:1.11.2"
   dependencies:
@@ -3670,7 +3703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/utils@npm:^1.11.3":
+"@medusajs/utils@npm:^1.11.3, @medusajs/utils@npm:^1.11.5":
   version: 1.11.6
   resolution: "@medusajs/utils@npm:1.11.6"
   dependencies:
@@ -3685,16 +3718,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/workflows-sdk@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@medusajs/workflows-sdk@npm:0.1.0"
+"@medusajs/workflows-sdk@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@medusajs/workflows-sdk@npm:0.1.3"
   dependencies:
-    "@medusajs/modules-sdk": ^1.12.4
-    "@medusajs/orchestration": ^0.5.0
-    "@medusajs/utils": ^1.11.1
+    "@medusajs/modules-sdk": ^1.12.8
+    "@medusajs/orchestration": ^0.5.4
+    "@medusajs/utils": ^1.11.5
     awilix: ^8.0.1
     ulid: ^2.3.0
-  checksum: bb9d22874d36dbae5cd238f903fab52667f463255d7848a7e80b2bb89cf05626b1dd587fe59ddd3b6f541dbed54b590b918c0703fc2a381ef63ddd8cfdd3d200
+  checksum: 087c09a7c1acb3c36a726fb2dc51effba3db30c2e4b49484595c6a7bfc628248789b045d97a659ae0c168e1cdd7bec6c6a730a3313d5a7bf1a115d72a992a17e
   languageName: node
   linkType: hard
 
@@ -10282,12 +10315,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:^2.29.3, date-fns@npm:^2.30.0":
+"date-fns@npm:^2.30.0":
   version: 2.30.0
   resolution: "date-fns@npm:2.30.0"
   dependencies:
     "@babel/runtime": ^7.21.0
   checksum: f7be01523282e9bb06c0cd2693d34f245247a29098527d4420628966a2d9aad154bd0e90a6b1cf66d37adcb769cd108cf8a7bd49d76db0fb119af5cdd13644f4
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.9":
+  version: 1.11.10
+  resolution: "dayjs@npm:1.11.10"
+  checksum: a6b5a3813b8884f5cd557e2e6b7fa569f4c5d0c97aca9558e38534af4f2d60daafd3ff8c2000fed3435cfcec9e805bcebd99f90130c6d1c5ef524084ced588c4
   languageName: node
   linkType: hard
 
@@ -12223,7 +12263,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^8.0.3, glob@npm:^8.1.0":
+"glob@npm:^8.0.3":
   version: 8.1.0
   resolution: "glob@npm:8.1.0"
   dependencies:
@@ -14830,7 +14870,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"medusa-core-utils@npm:1.2.0, medusa-core-utils@npm:^1.1.31, medusa-core-utils@npm:^1.1.37, medusa-core-utils@npm:^1.2.0":
+"medusa-core-utils@npm:1.2.1, medusa-core-utils@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "medusa-core-utils@npm:1.2.1"
+  checksum: 8181b0058769f83a83abf694fcfd9f0b9da1563af4ed3af06032a75feadd58d7994ddda3218798265e29c70ad28c8dfe8a577a56762ec85255309503bc8d20c7
+  languageName: node
+  linkType: hard
+
+"medusa-core-utils@npm:^1.1.31, medusa-core-utils@npm:^1.1.37, medusa-core-utils@npm:^1.2.0":
   version: 1.2.0
   resolution: "medusa-core-utils@npm:1.2.0"
   checksum: 2afd8e8ecfae3de11b307b8874949293b28fc7693726b3b893b88f0954acb494147614976f838ed543c1fb3682b7fca67a8a33545da99ade141a3fd42cef9bd2
@@ -14904,10 +14951,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"medusa-interfaces@npm:^1.3.3, medusa-interfaces@npm:^1.3.7":
+"medusa-interfaces@npm:^1.3.3":
   version: 1.3.7
   resolution: "medusa-interfaces@npm:1.3.7"
   checksum: 4dfa4a4a1c84a565fde3a76933c2bd042698647829ad98a487869032aed3e7b273c592807314f60a256f9e4aa03b0538c9aa01ae1de355849749ec7cfda16da8
+  languageName: node
+  linkType: hard
+
+"medusa-interfaces@npm:^1.3.8":
+  version: 1.3.8
+  resolution: "medusa-interfaces@npm:1.3.8"
+  checksum: c894d95271ce4a3dfc18a7e8afcca88cbaef886bf6b0975d38adeac79b26ec9f849a34ad17cdbd87a7a5a2a31185da53416362e5acd5b49669f961e9d0cb828b
   languageName: node
   linkType: hard
 
@@ -14972,9 +15026,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"medusa-react@npm:^9.0.12":
-  version: 9.0.12
-  resolution: "medusa-react@npm:9.0.12"
+"medusa-react@npm:^9.0.13":
+  version: 9.0.15
+  resolution: "medusa-react@npm:9.0.15"
   dependencies:
     "@medusajs/medusa-js": "*"
   peerDependencies:
@@ -14982,7 +15036,7 @@ __metadata:
     "@tanstack/react-query": ^4.22.0
     react: ^16.8 || ^17.0 || ^18.0
     react-dom: ^16.8 || ^17.0 || ^18.0
-  checksum: 40ad223780d74b34ee9ff824bdac2380ec5feaae8117cdec03174e24cc0620cacf82d8e22d689878f1799bee8c5a88db66edb113fe224550cf8c77319c1f26de
+  checksum: 763dd7cb8874da99f8e91d3c8b2fac3e40f4d0752243a095592eba9c4623d406c2a6cae72be2d654b0e0a8b19545bd61c45056ba8eb45b42203d85a54ef80940
   languageName: node
   linkType: hard
 
@@ -14993,15 +15047,15 @@ __metadata:
     "@babel/cli": ^7.14.3
     "@babel/core": ^7.14.3
     "@babel/preset-typescript": ^7.21.4
-    "@medusajs/admin": ^7.1.9
+    "@medusajs/admin": ^7.1.11
     "@medusajs/cache-inmemory": ^1.8.10
     "@medusajs/cache-redis": ^1.9.0
     "@medusajs/event-bus-local": ^1.9.7
     "@medusajs/event-bus-redis": ^1.8.10
     "@medusajs/file-local": ^1.0.2
-    "@medusajs/medusa": ^1.19.0
-    "@medusajs/medusa-cli": ^1.3.21
-    "@medusajs/medusa-js": 6.1.4
+    "@medusajs/medusa": ^1.20.2
+    "@medusajs/medusa-cli": ^1.3.22
+    "@medusajs/medusa-js": ^6.1.7
     "@sendgrid/mail": ^8.1.0
     "@tanstack/react-query": 4.22.0
     "@types/express": ^4.17.13
@@ -15019,7 +15073,7 @@ __metadata:
     medusa-file-minio: ^1.3.0
     medusa-file-r2: ^0.0.2
     medusa-fulfillment-manual: ^1.1.38
-    medusa-interfaces: ^1.3.7
+    medusa-interfaces: ^1.3.8
     medusa-payment-manual: ^1.0.24
     medusa-payment-paypal: ^6.0.2
     medusa-payment-stripe: ^6.0.7
@@ -15029,7 +15083,7 @@ __metadata:
     semver: ^7.5.4
     ts-jest: ^27.0.7
     ts-loader: ^9.2.6
-    typeorm: ^0.3.16
+    typeorm: ^0.3.20
     typescript: ^4.5.2
     wrangler: ^3.18.0
   languageName: unknown
@@ -15070,7 +15124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"medusa-test-utils@npm:^1.1.38, medusa-test-utils@npm:^1.1.40":
+"medusa-test-utils@npm:^1.1.38, medusa-test-utils@npm:^1.1.40, medusa-test-utils@npm:^1.1.41":
   version: 1.1.41
   resolution: "medusa-test-utils@npm:1.1.41"
   dependencies:
@@ -18062,6 +18116,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"reflect-metadata@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "reflect-metadata@npm:0.2.1"
+  checksum: 772f552a544e04b999c1bf2c868225fef10032274e9d9e315bc3e7a687a504b8b115fa71966665b9619acfd323123a941f892b593250140da809330d41564181
+  languageName: node
+  linkType: hard
+
 "regenerate-unicode-properties@npm:^10.1.0":
   version: 10.1.1
   resolution: "regenerate-unicode-properties@npm:10.1.1"
@@ -19450,10 +19511,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^1.13.2":
-  version: 1.14.0
-  resolution: "tailwind-merge@npm:1.14.0"
-  checksum: 8cf5d37f51b3b32e4bdd5544feaed34357bfba2f64f14834cc4a21ac29b0ae22d7255386467a0f1dadb3e38499389efbbabeddcd0b16571af5a0d346a4921877
+"tailwind-merge@npm:^2.2.1":
+  version: 2.2.2
+  resolution: "tailwind-merge@npm:2.2.2"
+  dependencies:
+    "@babel/runtime": ^7.24.0
+  checksum: 3ab9bfa50320cba77c929ebde42a0befb10c394de2a66a953f7db71f27ca1e96a5c7382a56d001545dbcb8721d8145394a7dfd41bb269a789fc37a3bfabd1f62
   languageName: node
   linkType: hard
 
@@ -20017,21 +20080,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typeorm@npm:^0.3.16":
-  version: 0.3.17
-  resolution: "typeorm@npm:0.3.17"
+"typeorm@npm:^0.3.20":
+  version: 0.3.20
+  resolution: "typeorm@npm:0.3.20"
   dependencies:
     "@sqltools/formatter": ^1.2.5
     app-root-path: ^3.1.0
     buffer: ^6.0.3
     chalk: ^4.1.2
     cli-highlight: ^2.1.11
-    date-fns: ^2.29.3
+    dayjs: ^1.11.9
     debug: ^4.3.4
     dotenv: ^16.0.3
-    glob: ^8.1.0
+    glob: ^10.3.10
     mkdirp: ^2.1.3
-    reflect-metadata: ^0.1.13
+    reflect-metadata: ^0.2.1
     sha.js: ^2.4.11
     tslib: ^2.5.0
     uuid: ^9.0.0
@@ -20039,13 +20102,13 @@ __metadata:
   peerDependencies:
     "@google-cloud/spanner": ^5.18.0
     "@sap/hana-client": ^2.12.25
-    better-sqlite3: ^7.1.2 || ^8.0.0
+    better-sqlite3: ^7.1.2 || ^8.0.0 || ^9.0.0
     hdb-pool: ^0.1.6
     ioredis: ^5.0.4
-    mongodb: ^5.2.0
-    mssql: ^9.1.1
+    mongodb: ^5.8.0
+    mssql: ^9.1.1 || ^10.0.1
     mysql2: ^2.2.5 || ^3.0.1
-    oracledb: ^5.1.0
+    oracledb: ^6.3.0
     pg: ^8.5.1
     pg-native: ^3.0.0
     pg-query-stream: ^4.0.0
@@ -20093,7 +20156,7 @@ __metadata:
     typeorm: cli.js
     typeorm-ts-node-commonjs: cli-ts-node-commonjs.js
     typeorm-ts-node-esm: cli-ts-node-esm.js
-  checksum: 71fcb2b2e889c759b24add6c6ab7938c9a52f7c206b055f3a2abd77725acfec125b8f303e263381258ee03e52f7d3eb88c1fb893b15750b5237c8fc9db31ed78
+  checksum: 9d6e5ecd0688eed5a151f33fb26b6d7c3e0af0eaf14ceaefe4c1c1863cdda6eabf2e865c9df2321f7dce26e40f320b76b811e2d1d58bf43f6ce19b36aa1ed1c4
   languageName: node
   linkType: hard
 
