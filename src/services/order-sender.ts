@@ -2,6 +2,8 @@ import {
   AbstractNotificationService,
   Order,
   OrderService,
+  Region,
+  RegionService,
 } from "@medusajs/medusa";
 
 import SendGridService from "medusa-plugin-sendgrid/services/sendgrid";
@@ -11,6 +13,7 @@ class OrderSenderService extends AbstractNotificationService {
   protected manager_: EntityManager;
   protected transactionManager_: EntityManager;
   protected orderService: OrderService;
+  protected regionService: RegionService;
   private sendGridService: any;
   static identifier = "order-sender";
   static is_installed = true;
@@ -25,6 +28,7 @@ class OrderSenderService extends AbstractNotificationService {
     });
 
     this.orderService = container.orderService;
+    this.regionService = container.regionService;
   }
 
   humanPrice_(amount: string, currency: string) {
@@ -64,7 +68,6 @@ class OrderSenderService extends AbstractNotificationService {
         total: notificationOrder.total,
         subtotal: notificationOrder.subtotal,
         tax_total: notificationOrder.tax_total,
-        tax_rate: notificationOrder.tax_rate,
         Sender_Name: "Cartago4x4",
         Sender_Address: "Avda de las Lomas S/N",
         Sender_City: "Cartagena",
@@ -84,10 +87,10 @@ class OrderSenderService extends AbstractNotificationService {
     status: string;
     data: Record<string, unknown>;
   }> {
-    const order = await this.orderService.retrieve(
+    const order: Order = await this.orderService.retrieve(
       (data as Order).id as string
     );
-
+    const region: Region = await this.regionService.retrieve(order.region_id);
     const currencyCode = order.currency_code.toUpperCase();
     const notificationData = await this.sendGridService.fetchData(
       "order.placed",
@@ -95,20 +98,51 @@ class OrderSenderService extends AbstractNotificationService {
     );
     const orderItems = notificationData.items.map((item) => ({
       ...item,
+      ref: item.variant ? item.variant.barcode : undefined,
       totals: {
         ...item.totals,
-        ref:
-          item.variants && item.variants.length > 0
-            ? item.variants[0].barcode
-            : undefined,
-        total: this.humanPrice_(item.totals.total, currencyCode),
+        total: this.humanPrice_(item.totals.subtotal, currencyCode),
       },
     }));
 
-    const notificationOrder = { ...notificationData, items: orderItems };
+    const subtotal = notificationData.items.reduce(
+      (total, item) => total + item.subtotal,
+      0
+    );
+    const tax_total = subtotal - subtotal / (1 + region.tax_rate / 100);
+    const subtotal_ex_taxes = subtotal - tax_total;
+    const shipping_total =
+      parseFloat(notificationData.shipping_total.split(" ")[0]) * 100;
+    const total = subtotal + shipping_total;
+    const customer = notificationData.customer;
+    customer.first_name =
+      customer.first_name || notificationData.shipping_address.first_name;
+    customer.last_name =
+      customer.last_name || notificationData.shipping_address.last_name;
+    const notificationOrder = {
+      ...notificationData,
+      customer,
+      items: orderItems,
+      total: this.humanPrice_(total, currencyCode),
+      subtotal: this.humanPrice_(
+        subtotal_ex_taxes.toPrecision(2),
+        currencyCode
+      ),
+      tax_total: this.humanPrice_(tax_total.toPrecision(2), currencyCode),
+      tax_rate: region.tax_rate,
+    };
     const sendOptions = this.createSendingOptions(notificationOrder);
 
-    console.log("[Send email] => ", sendOptions);
+    console.log("[Send email] => ", {
+      ...sendOptions,
+      dynamic_template_data: {
+        ...sendOptions.dynamic_template_data,
+        items: sendOptions.dynamic_template_data.items.map((item) =>
+          JSON.stringify(item)
+        ),
+      },
+    });
+
     const status = await this.sendGridService
       .sendEmail(sendOptions)
       .then(() => "sent")
