@@ -1,7 +1,7 @@
 {
   "store": {
     "name": "Cartago4x4",
-    "currencies": ["eur", "usd"],
+    "currencies": ["eur"],
     "default_currency_code": "eur"
   },
   "users": [
@@ -15,7 +15,7 @@
       "id": "test-region-eu",
       "name": "EU",
       "currency_code": "eur",
-      "tax_rate": 0.21,
+      "tax_rate": 21,
       "payment_providers": ["stripe", "paypal"],
       "shipping_providers": ["manual"],
       "fulfillment_providers": ["manual"],
@@ -81,9 +81,9 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-motor" },
-        { "id": "pcat_suzuki-santana-motor" },
+        { "id": "pcat_suzuki-vitara-motor" },
         { "id": "pcat_accesorios-motor" }
       ],
       "variants": [
@@ -91,7 +91,7 @@
           "title": "Anclaje batería",
           "prices": [{ "currency_code": "eur", "amount": 1800 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "63461-80000, 72511-78000, 72521-80001",
           "barcode": "63461-80000, 72511-78000, 72521-80001"
@@ -117,7 +117,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-interior" },
         { "id": "pcat_accesorios-piezas-interior" }
       ],
@@ -126,7 +126,7 @@
           "title": "Bandeja bajo guantera",
           "prices": [{ "currency_code": "eur", "amount": 4500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "75610-83020",
           "barcode": "75610-83020"
@@ -153,7 +153,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-puertas-cristales" },
         { "id": "pcat_accesorios-puertas-cristales" }
       ],
@@ -173,7 +173,7 @@
           "title": "Bisagras parabrisas",
           "prices": [{ "currency_code": "eur", "amount": 1700 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "72420-80010",
           "barcode": "72420-80010"
@@ -191,7 +191,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-interior" },
         { "id": "pcat_accesorios-piezas-interior" }
       ],
@@ -200,7 +200,7 @@
           "title": "Cable apertura capó",
           "prices": [{ "currency_code": "eur", "amount": 2100 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "82191-82000",
           "barcode": "82191-82000"
@@ -229,7 +229,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-caja-cambios" },
         { "id": "pcat_accesorios-caja-cambios" }
       ],
@@ -238,7 +238,7 @@
           "title": "Cable embrague",
           "prices": [{ "currency_code": "eur", "amount": 3500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "23710-80021",
           "barcode": "23710-80021"
@@ -264,7 +264,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-caja-cambios" },
         { "id": "pcat_accesorios-caja-cambios" }
       ],
@@ -273,7 +273,7 @@
           "title": "Cable embrague",
           "prices": [{ "currency_code": "eur", "amount": 3500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "23710-83024",
           "barcode": "23710-83024"
@@ -298,7 +298,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-puertas-cristales" },
         { "id": "pcat_accesorios-puertas-cristales" }
       ],
@@ -307,7 +307,7 @@
           "title": "Cable seguridad portón trasero",
           "prices": [{ "currency_code": "eur", "amount": 1600 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "72850-80002",
           "barcode": "72850-80002"
@@ -334,7 +334,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-direccion" },
         { "id": "pcat_accesorios-direccion" }
       ],
@@ -343,7 +343,7 @@
           "title": "Casquillo dirección",
           "prices": [{ "currency_code": "eur", "amount": 2300 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": null,
           "barcode": null
@@ -373,7 +373,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-direccion" },
         { "id": "pcat_accesorios-direccion" }
       ],
@@ -382,7 +382,7 @@
           "title": "Casquillo dirección",
           "prices": [{ "currency_code": "eur", "amount": 2300 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": null,
           "barcode": null
@@ -410,7 +410,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-refrigeracion" },
         { "id": "pcat_accesorios-refrigeracion" }
       ],
@@ -419,7 +419,7 @@
           "title": "Codo refrigeración",
           "prices": [{ "currency_code": "eur", "amount": 3200 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": null,
           "barcode": null
@@ -442,7 +442,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-exterior" },
         { "id": "pcat_accesorios-piezas-exterior" }
       ],
@@ -451,7 +451,7 @@
           "title": "Emblema parrilla",
           "prices": [{ "currency_code": "eur", "amount": 3000 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "77811-83000",
           "barcode": "77811-83000"
@@ -477,7 +477,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-exterior" },
         { "id": "pcat_accesorios-piezas-exterior" }
       ],
@@ -486,7 +486,7 @@
           "title": "Emblema parrilla S",
           "prices": [{ "currency_code": "eur", "amount": 2200 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "77811-60G01",
           "barcode": "77811-60G01"
@@ -522,7 +522,7 @@
           "title": "Emblema salpicadero",
           "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "77811-83060",
           "barcode": "77811-83060"
@@ -551,7 +551,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-filtros" },
         { "id": "pcat_accesorios-filtros" }
       ],
@@ -560,7 +560,7 @@
           "title": "Filtro aire",
           "prices": [{ "currency_code": "eur", "amount": 2300 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "13780-79201",
           "barcode": "13780-79201"
@@ -586,7 +586,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-filtros" },
         { "id": "pcat_accesorios-filtros" }
       ],
@@ -595,7 +595,7 @@
           "title": "Filtro aire",
           "prices": [{ "currency_code": "eur", "amount": 2300 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "13780-83000",
           "barcode": "13780-83000"
@@ -619,7 +619,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-eje" },
         { "id": "pcat_accesorios-eje" }
       ],
@@ -640,7 +640,7 @@
           "title": "Fuelles transmisiones",
           "prices": [{ "currency_code": "eur", "amount": 2200 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "27153-83001",
           "barcode": "27153-83001"
@@ -658,7 +658,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-direccion" },
         { "id": "pcat_accesorios-direccion" }
       ],
@@ -667,7 +667,7 @@
           "title": "Goma dirección",
           "prices": [{ "currency_code": "eur", "amount": 2700 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "48251-52000",
           "barcode": "48251-52000"
@@ -693,7 +693,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-calefaccion" },
         { "id": "pcat_accesorios-calefaccion" }
       ],
@@ -702,7 +702,7 @@
           "title": "Grifo calefacción",
           "prices": [{ "currency_code": "eur", "amount": 8700 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "74710-83020",
           "barcode": "74710-83020"
@@ -729,7 +729,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-caja-cambios" },
         { "id": "pcat_accesorios-caja-cambios" }
       ],
@@ -738,7 +738,7 @@
           "title": "Guardapolvos palanca de cambios",
           "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "28136-83000",
           "barcode": "28136-83000"
@@ -765,7 +765,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-transfer" },
         { "id": "pcat_accesorios-transfer" }
       ],
@@ -774,7 +774,7 @@
           "title": "Guardapolvos palanca reductora",
           "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": null,
           "barcode": null
@@ -801,7 +801,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-direccion" },
         { "id": "pcat_accesorios-direccion" }
       ],
@@ -810,7 +810,7 @@
           "title": "Kit reparación bola dirección",
           "prices": [{ "currency_code": "eur", "amount": 3500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "09285-00002,45623-80000,45624-63001,45625-63001",
           "barcode": "09285-00002,45623-80000,45624-63001,45625-63001"
@@ -835,7 +835,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-caja-cambios" },
         { "id": "pcat_accesorios-caja-cambios" }
       ],
@@ -844,7 +844,7 @@
           "title": "Kit reparación palanca de cambios",
           "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "28135-80000",
           "barcode": "28135-80000"
@@ -871,7 +871,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-transfer" },
         { "id": "pcat_accesorios-transfer" }
       ],
@@ -880,7 +880,7 @@
           "title": "Kit reparación palanca reductora",
           "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "29345-80000",
           "barcode": "29345-80000"
@@ -909,7 +909,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-puertas-cristales" },
         { "id": "pcat_accesorios-puertas-cristales" }
       ],
@@ -918,7 +918,7 @@
           "title": "Lamelunas y guías ventanas",
           "prices": [{ "currency_code": "eur", "amount": 7500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "83811-80100 / 83850-80100 / 83661-83000",
           "barcode": "83811-80100 / 83850-80100 / 83661-83000"
@@ -945,7 +945,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-puertas-cristales" },
         { "id": "pcat_accesorios-puertas-cristales" }
       ],
@@ -954,7 +954,7 @@
           "title": "Mando limpiaparabrisas",
           "prices": [{ "currency_code": "eur", "amount": 3800 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": null,
           "barcode": null
@@ -981,7 +981,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-interior" },
         { "id": "pcat_accesorios-piezas-interior" }
       ],
@@ -1002,7 +1002,7 @@
           "title": "Manecillas elevalunas",
           "prices": [{ "currency_code": "eur", "amount": 1800 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "82960 82100",
           "barcode": "82960 82100"
@@ -1019,7 +1019,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-exterior" },
         { "id": "pcat_accesorios-piezas-exterior" }
       ],
@@ -1045,7 +1045,7 @@
           "title": "Manetas puertas",
           "prices": [{ "currency_code": "eur", "amount": 1800 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "barcode": "82810A80102-82820A80102",
           "mid_code": "82810A80102-82820A80102"
@@ -1059,7 +1059,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-caja-cambios" },
         { "id": "pcat_accesorios-caja-cambios" }
       ],
@@ -1068,7 +1068,7 @@
           "title": "Marco guardapolvos palanca cambios",
           "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "28137-83000",
           "barcode": "28137-83000"
@@ -1097,7 +1097,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-caja-cambios" },
         { "id": "pcat_accesorios-caja-cambios" }
       ],
@@ -1106,7 +1106,7 @@
           "title": "Marco guardapolvos palanca reductora",
           "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "29347-80001",
           "barcode": "29347-80001"
@@ -1134,7 +1134,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-caja-cambios" },
         { "id": "pcat_accesorios-caja-cambios" }
       ],
@@ -1143,7 +1143,7 @@
           "title": "Pomo palanca de cambios",
           "prices": [{ "currency_code": "eur", "amount": 2200 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "28113-83020",
           "barcode": "28113-83020"
@@ -1171,7 +1171,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-transfer" },
         { "id": "pcat_accesorios-transfer" }
       ],
@@ -1180,7 +1180,7 @@
           "title": "Pomo palanca reductora",
           "prices": [{ "currency_code": "eur", "amount": 3000 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "29344-80050",
           "barcode": "29344-80050"
@@ -1207,7 +1207,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-direccion" },
         { "id": "pcat_accesorios-direccion" }
       ],
@@ -1216,7 +1216,7 @@
           "title": "Rótula dirección derecha",
           "prices": [{ "currency_code": "eur", "amount": 6500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": null,
           "barcode": null
@@ -1243,7 +1243,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-direccion" },
         { "id": "pcat_accesorios-direccion" }
       ],
@@ -1252,7 +1252,7 @@
           "title": "Rótula dirección izquierda",
           "prices": [{ "currency_code": "eur", "amount": 2500 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "48810-83300",
           "barcode": "48810-83300"
@@ -1279,7 +1279,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-transfer" },
         { "id": "pcat_accesorios-transfer" }
       ],
@@ -1288,7 +1288,7 @@
           "title": "Soporte reductora",
           "prices": [{ "currency_code": "eur", "amount": 1600 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "29650-83001",
           "barcode": "29650-83001"
@@ -1319,7 +1319,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-exterior" },
         { "id": "pcat_accesorios-piezas-exterior" }
       ],
@@ -1328,7 +1328,7 @@
           "title": "Soporte rueda repuesto",
           "prices": [{ "currency_code": "eur", "amount": 6000 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "72810-80022",
           "barcode": "72810-80022"
@@ -1356,7 +1356,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-exterior" },
         { "id": "pcat_accesorios-piezas-exterior" }
       ],
@@ -1365,7 +1365,7 @@
           "title": "Soporte tubo de escape",
           "prices": [{ "currency_code": "eur", "amount": 1200 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "14281-60G11",
           "barcode": "14281-60G11"
@@ -1392,7 +1392,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-interior" },
         { "id": "pcat_accesorios-piezas-interior" }
       ],
@@ -1401,7 +1401,7 @@
           "title": "Tapa guantera salpicadero",
           "prices": [{ "currency_code": "eur", "amount": 3000 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "73842-70A01",
           "barcode": "73842-70A01"
@@ -1430,7 +1430,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-refrigeracion" },
         { "id": "pcat_accesorios-refrigeracion" }
       ],
@@ -1439,7 +1439,7 @@
           "title": "Tapa termostato",
           "prices": [{ "currency_code": "eur", "amount": 1900 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "17561-73000",
           "barcode": "17561-73000"
@@ -1466,7 +1466,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-motor" },
         { "id": "pcat_accesorios-motor" }
       ],
@@ -1475,7 +1475,7 @@
           "title": "Tapón aceite",
           "prices": [{ "currency_code": "eur", "amount": 1800 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "16920-50A01",
           "barcode": "16920-50A01"
@@ -1505,7 +1505,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-exterior" },
         { "id": "pcat_accesorios-piezas-exterior" }
       ],
@@ -1514,7 +1514,7 @@
           "title": "Tapón depósito gasolina",
           "prices": [{ "currency_code": "eur", "amount": 2200 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "89260-83011",
           "barcode": "89260-83011"
@@ -1541,7 +1541,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-interior" },
         { "id": "pcat_accesorios-piezas-interior" }
       ],
@@ -1563,7 +1563,7 @@
           "title": "Tirador interior puertas",
           "prices": [{ "currency_code": "eur", "amount": 2000 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "78271 58053",
           "barcode": "78271 58053"
@@ -1582,7 +1582,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-piezas-exterior" },
         { "id": "pcat_accesorios-piezas-exterior" }
       ],
@@ -1591,7 +1591,7 @@
           "title": "Tirador portón trasero",
           "prices": [{ "currency_code": "eur", "amount": 1700 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "82592 80060",
           "barcode": "82592 80060"
@@ -1623,7 +1623,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-puertas-cristales" },
         { "id": "pcat_accesorios-puertas-cristales" }
       ],
@@ -1632,7 +1632,7 @@
           "title": "Topes capó parabrisa",
           "prices": [{ "currency_code": "eur", "amount": 1800 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "72414-80000",
           "barcode": "72414-80000"
@@ -1661,7 +1661,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-caja-cambios" },
         { "id": "pcat_accesorios-caja-cambios" }
       ],
@@ -1670,7 +1670,7 @@
           "title": "Tornillo antiholgura palanca cambios",
           "prices": [{ "currency_code": "eur", "amount": 1300 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "09135-08006",
           "barcode": "09135-08006"
@@ -1699,7 +1699,7 @@
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-santana" },
+        { "id": "pcat_suzuki-vitara" },
         { "id": "pcat_suzuki-samurai-motor" },
         { "id": "pcat_accesorios-motor" }
       ],
@@ -1708,7 +1708,7 @@
           "title": "Varilla nivel de aceite",
           "prices": [{ "currency_code": "eur", "amount": 2200 }],
           "options": [],
-          "inventory_quantity": 5,
+          "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "16910-60A11",
           "barcode": "16910-60A11"
@@ -1818,91 +1818,91 @@
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-piezas-exterior",
+      "id": "pcat_suzuki-vitara-piezas-exterior",
       "name": "Piezas exterior",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/piezas-exterior",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/piezas-exterior",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-piezas-interior",
+      "id": "pcat_suzuki-vitara-piezas-interior",
       "name": "Piezas interior",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/piezas-interior",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/piezas-interior",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-direccion",
+      "id": "pcat_suzuki-vitara-direccion",
       "name": "Direccion",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/direccion",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/direccion",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-motor",
+      "id": "pcat_suzuki-vitara-motor",
       "name": "Motor",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/motor",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/motor",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-transfer",
+      "id": "pcat_suzuki-vitara-transfer",
       "name": "Transfer",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/transfer",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/transfer",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-eje",
+      "id": "pcat_suzuki-vitara-eje",
       "name": "Eje",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/eje",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/eje",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-calefaccion",
+      "id": "pcat_suzuki-vitara-calefaccion",
       "name": "Calefaccion",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/calefaccion",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/calefaccion",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-caja-cambios",
+      "id": "pcat_suzuki-vitara-caja-cambios",
       "name": "Caja cambios",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/caja-cambios",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/caja-cambios",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-puertas-cristales",
+      "id": "pcat_suzuki-vitara-puertas-cristales",
       "name": "Puertas y cristales",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/puertas-cristales",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/puertas-cristales",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-refrigeracion",
+      "id": "pcat_suzuki-vitara-refrigeracion",
       "name": "Refrigeración",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/refrigeracion",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/refrigeracion",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana-filtros",
+      "id": "pcat_suzuki-vitara-filtros",
       "name": "Filtros",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-santana",
-      "handle": "suzuki/santana/filtros",
+      "parent_category_id": "pcat_suzuki-vitara",
+      "handle": "suzuki/vitara/filtros",
       "is_active": true
     },
     {
@@ -1949,46 +1949,46 @@
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-santana",
-      "name": "Santana",
+      "id": "pcat_suzuki-vitara",
+      "name": "Vitara",
       "rank": 0,
       "category_children": [
         {
-          "id": "pcat_suzuki-santana-piezas-exterior"
+          "id": "pcat_suzuki-vitara-piezas-exterior"
         },
         {
-          "id": "pcat_suzuki-santana-piezas-interior"
+          "id": "pcat_suzuki-vitara-piezas-interior"
         },
         {
-          "id": "pcat_suzuki-santana-direccion"
+          "id": "pcat_suzuki-vitara-direccion"
         },
         {
-          "id": "pcat_suzuki-santana-motor"
+          "id": "pcat_suzuki-vitara-motor"
         },
         {
-          "id": "pcat_suzuki-santana-puertas-cristales"
+          "id": "pcat_suzuki-vitara-puertas-cristales"
         },
         {
-          "id": "pcat_suzuki-santana-eje"
+          "id": "pcat_suzuki-vitara-eje"
         },
         {
-          "id": "pcat_suzuki-santana-transfer"
+          "id": "pcat_suzuki-vitara-transfer"
         },
         {
-          "id": "pcat_suzuki-santana-calefaccion"
+          "id": "pcat_suzuki-vitara-calefaccion"
         },
         {
-          "id": "pcat_suzuki-santana-caja-cambios"
+          "id": "pcat_suzuki-vitara-caja-cambios"
         },
         {
-          "id": "pcat_suzuki-santana-refrigeracion"
+          "id": "pcat_suzuki-vitara-refrigeracion"
         },
         {
-          "id": "pcat_suzuki-santana-filtros"
+          "id": "pcat_suzuki-vitara-filtros"
         }
       ],
       "parent_category_id": "pcat_suzuki",
-      "handle": "suzuki/santana",
+      "handle": "suzuki/vitara",
       "is_active": true
     },
     {
@@ -2000,7 +2000,7 @@
           "id": "pcat_suzuki-samurai"
         },
         {
-          "id": "pcat_suzuki-santana"
+          "id": "pcat_suzuki-vitara"
         }
       ],
       "handle": "suzuki",
