@@ -7,22 +7,22 @@ import {
   createPaymentSession,
 } from "./payment-session.mjs";
 
-const customer_id = "cus_01HJE5FBTNTATPHDQPY0J22X6V";
+const customer_id = "cus_01HT074PQ9W5PFAJ4ZXCZVN5CH";
 const items = [
   {
-    variant_id: "variant_01HH82XAGFDEGV0KNZ93RYV15N",
-    quantity: 2,
-  },
-  {
-    variant_id: "variant_01HH82XAMG2ATBBXZH2EZVCZEY",
+    variant_id: "variant_01HSM89Y2E3NM9VPZSA1JHF7G2",
     quantity: 1,
   },
+  // {
+  //   variant_id: "variant_01HS6P594QGDEGABNDCFXW7A6C",
+  //   quantity: 1,
+  // },
 ];
 const provider_id = "manual";
 
 await medusa.admin.auth.getToken({
   email: "cartago4x4@gmail.com",
-  password: "powerade",
+  password: "suru",
 });
 
 console.log("ORDER [COMPLETING]...");

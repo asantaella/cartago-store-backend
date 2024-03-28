@@ -101,6 +101,7 @@ class OrderSenderService extends AbstractNotificationService {
       ref: item.variant ? item.variant.barcode : undefined,
       totals: {
         ...item.totals,
+        unit_price: this.humanPrice_(item.unit_price, currencyCode),
         total: this.humanPrice_(item.totals.subtotal, currencyCode),
       },
     }));
