@@ -176,7 +176,7 @@ class OrderSenderService extends AbstractNotificationService {
     status: string;
     data: Record<string, unknown>;
   }> {
-    console.log("[Resend email admin]: ", notification);
+    console.log("[Resend notifications][Order placed]: ", notification);
     // check if the receiver should be changed
     const to: string = config.to ? config.to : notification.to;
 
