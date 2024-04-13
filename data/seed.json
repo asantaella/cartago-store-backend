@@ -1,9 +1,7 @@
 {
   "store": {
     "name": "Cartago4x4",
-    "currencies": [
-      "eur"
-    ],
+    "currencies": ["eur"],
     "default_currency_code": "eur"
   },
   "users": [
@@ -18,22 +16,10 @@
       "name": "EU",
       "currency_code": "eur",
       "tax_rate": 21,
-      "payment_providers": [
-        "stripe",
-        "paypal"
-      ],
-      "shipping_providers": [
-        "manual"
-      ],
-      "fulfillment_providers": [
-        "manual"
-      ],
-      "countries": [
-        "es",
-        "fr",
-        "it",
-        "pt"
-      ]
+      "payment_providers": ["stripe", "paypal"],
+      "shipping_providers": ["manual"],
+      "fulfillment_providers": ["manual"],
+      "countries": ["es", "fr", "it", "pt"]
     }
   ],
   "shipping_options": [
@@ -223,36 +209,7 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bisagras_parabrisas/2.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bisagras_parabrisas/thumb.jpg",
-      "variants": [
-        {
-          "title": "Bisagras luna sin tornillos",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1000
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 500,
-          "manage_inventory": true,
-          "mid_code": "72420-80010",
-          "barcode": "72420-80010"
-        },
-        {
-          "title": "Bisagras parabrisas con tornillos",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 1200
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 1000,
-          "manage_inventory": true,
-          "mid_code": "72420-80010",
-          "barcode": "72420-80010"
-        }
-      ],
+      "variants": [],
       "tags": [
         {
           "id": "ptag_sj410",
@@ -477,7 +434,7 @@
       ]
     },
     {
-      "title": "Casquillo dirección",
+      "title": "Casquillo dirección Acetal",
       "description": "Compatible con los modelos Sj410 y Sj413",
       "handle": "suzuki-samurai-casquillo-direccion-acetal",
       "categories": [
@@ -496,7 +453,7 @@
       ],
       "variants": [
         {
-          "title": "Casquillo dirección",
+          "title": "Casquillo dirección Acetal",
           "prices": [
             {
               "currency_code": "eur",
@@ -506,8 +463,8 @@
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": "48381-51040",
-          "barcode": "48381-51040"
+          "mid_code": "48381-51040/SS-040",
+          "barcode": "48381-51040/SS-040"
         }
       ],
       "images": [
@@ -534,7 +491,7 @@
       ]
     },
     {
-      "title": "Casquillo dirección",
+      "title": "Casquillo dirección Teflón",
       "description": "Compatible con los modelos Sj410 y Sj413",
       "handle": "suzuki-samurai-casquillo-direccion-teflon",
       "categories": [
@@ -553,7 +510,7 @@
       ],
       "variants": [
         {
-          "title": "Casquillo dirección",
+          "title": "Casquillo dirección Teflón",
           "prices": [
             {
               "currency_code": "eur",
@@ -563,8 +520,8 @@
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": "48381-51040",
-          "barcode": "48381-51040"
+          "mid_code": "48381-51040/SS-024",
+          "barcode": "48381-51040/SS-024"
         }
       ],
       "images": [
@@ -1038,7 +995,7 @@
           "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
         },
         {
-          "id": "pcat_accesorios-refrigeracion-calefaccion-calefaccion"
+          "id": "pcat_accesorios-refrigeracion-calefaccion"
         }
       ],
       "variants": [
@@ -1092,7 +1049,7 @@
           "id": "pcat_suzuki-samurai-caja-cambios-reductora"
         },
         {
-          "id": "pcat_accesorios-caja-cambios-reductora-reductora"
+          "id": "pcat_accesorios-caja-cambios-reductora"
         }
       ],
       "variants": [
@@ -1143,10 +1100,10 @@
           "id": "pcat_suzuki-samurai"
         },
         {
-          "id": "pcat_suzuki-samurai-transfer"
+          "id": "pcat_suzuki-samurai-caja-cambios-reductora"
         },
         {
-          "id": "pcat_accesorios-transfer"
+          "id": "pcat_accesorios-caja-cambios-reductora"
         }
       ],
       "variants": [
@@ -2834,6 +2791,14 @@
       "is_active": true
     },
     {
+      "id": "pcat_suzuki-samurai-escape",
+      "name": "Escape",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-samurai",
+      "handle": "suzuki/samurai/escape",
+      "is_active": true
+    },
+    {
       "id": "pcat_suzuki-samurai-exterior",
       "name": "Exterior",
       "rank": 0,
@@ -3098,6 +3063,9 @@
             "id": "pcat_suzuki-samurai-encendido"
           },
           {
+            "id": "pcat_suzuki-samurai-escape"
+          },
+          {
             "id": "pcat_suzuki-samurai-exterior"
           },
           {
@@ -3266,6 +3234,14 @@
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
       "handle": "accesorios/encencido",
+      "is_active": true
+    },
+    {
+      "id": "pcat_accesorios-escape",
+      "name": "Escape",
+      "rank": 0,
+      "parent_category_id": "pcat_accesorios",
+      "handle": "accesorios/escape",
       "is_active": true
     },
     {
