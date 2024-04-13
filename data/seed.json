@@ -1,7 +1,9 @@
 {
   "store": {
     "name": "Cartago4x4",
-    "currencies": ["eur"],
+    "currencies": [
+      "eur"
+    ],
     "default_currency_code": "eur"
   },
   "users": [
@@ -16,10 +18,22 @@
       "name": "EU",
       "currency_code": "eur",
       "tax_rate": 21,
-      "payment_providers": ["stripe", "paypal"],
-      "shipping_providers": ["manual"],
-      "fulfillment_providers": ["manual"],
-      "countries": ["es", "fr", "it", "pt"]
+      "payment_providers": [
+        "stripe",
+        "paypal"
+      ],
+      "shipping_providers": [
+        "manual"
+      ],
+      "fulfillment_providers": [
+        "manual"
+      ],
+      "countries": [
+        "es",
+        "fr",
+        "it",
+        "pt"
+      ]
     }
   ],
   "shipping_options": [
@@ -79,22 +93,33 @@
       "title": "Anclaje batería",
       "handle": "suzuki-samurai-anclaje-bateria",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-motor" },
-        { "id": "pcat_suzuki-vitara-motor" },
-        { "id": "pcat_accesorios-motor" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-electricidad-iluminacion"
+        },
+        {
+          "id": "pcat_accesorios-electricidad-iluminacion"
+        }
       ],
       "variants": [
         {
           "title": "Anclaje batería",
-          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1200
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": "63461-80000, 72511-78000, 72521-80001",
-          "barcode": "63461-80000, 72511-78000, 72521-80001"
+          "mid_code": "72511-78001",
+          "barcode": "72511-78001"
         }
       ],
       "images": [
@@ -107,24 +132,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Bandeja bajo guantera",
       "handle": "suzuki-samurai-bandeja-bajo-guantera",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-interior" },
-        { "id": "pcat_accesorios-piezas-interior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-interior"
+        },
+        {
+          "id": "pcat_accesorios-interior"
+        }
       ],
       "variants": [
         {
           "title": "Bandeja bajo guantera",
-          "prices": [{ "currency_code": "eur", "amount": 4500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 3500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -144,22 +187,35 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
-      "title": "Bisagras parabrisas",
+      "title": "Bisagras luna",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-puertas-cristales" },
-        { "id": "pcat_accesorios-puertas-cristales" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-puertas-cristales"
+        },
+        {
+          "id": "pcat_accesorios-puertas-cristales"
+        }
       ],
       "subtitle": null,
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
-      "handle": "suzuki-samurai-bisagras-parabrisas",
+      "description": "Compatible con modelos Sj410 Sj413",
+      "handle": "suzuki-samurai-bisagras-luna",
       "is_giftcard": false,
       "weight": null,
       "images": [
@@ -167,43 +223,78 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bisagras_parabrisas/2.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bisagras_parabrisas/thumb.jpg",
-      "options": [],
       "variants": [
         {
-          "title": "Bisagras parabrisas",
-          "prices": [{ "currency_code": "eur", "amount": 1700 }],
+          "title": "Bisagras luna sin tornillos",
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "72420-80010",
+          "barcode": "72420-80010"
+        },
+        {
+          "title": "Bisagras parabrisas con tornillos",
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1200
+            }
+          ],
+          "options": [],
+          "inventory_quantity": 1000,
           "manage_inventory": true,
           "mid_code": "72420-80010",
           "barcode": "72420-80010"
         }
       ],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Cable apertura capó",
       "handle": "suzuki-samurai-cable-apertura-capo",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-interior" },
-        { "id": "pcat_accesorios-piezas-interior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-cables"
+        },
+        {
+          "id": "pcat_accesorios-cables"
+        }
       ],
       "variants": [
         {
           "title": "Cable apertura capó",
-          "prices": [{ "currency_code": "eur", "amount": 2100 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1800
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": "82191-82000",
-          "barcode": "82191-82000"
+          "mid_code": "82160-80011",
+          "barcode": "82160-80011"
         }
       ],
       "images": [
@@ -218,8 +309,14 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
@@ -227,16 +324,28 @@
       "description": "Compatible con los modelos Sj410",
       "handle": "suzuki-samurai-cable-embrague-410",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-caja-cambios" },
-        { "id": "pcat_accesorios-caja-cambios" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-cables"
+        },
+        {
+          "id": "pcat_accesorios-cables"
+        }
       ],
       "variants": [
         {
           "title": "Cable embrague",
-          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -250,28 +359,45 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cable_embrague_sj410/thumb.jpg",
-      "hs_code": "23710-83024",
+      "hs_code": "23710-80021",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+      "tags": [
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        }
+      ]
     },
     {
       "title": "Cable embrague",
       "description": "Compatible con los modelos Sj413",
       "handle": "suzuki-samurai-cable-embrague-413",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-caja-cambios" },
-        { "id": "pcat_accesorios-caja-cambios" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-cables"
+        },
+        {
+          "id": "pcat_accesorios-cables"
+        }
       ],
       "variants": [
         {
           "title": "Cable embrague",
-          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -290,22 +416,39 @@
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+      "tags": [
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
+      ]
     },
     {
       "title": "Cable seguridad portón trasero",
       "handle": "suzuki-samurai-cable-seguridad-porton-trasero",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-puertas-cristales" },
-        { "id": "pcat_accesorios-puertas-cristales" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-cables"
+        },
+        {
+          "id": "pcat_accesorios-cables"
+        }
       ],
       "variants": [
         {
           "title": "Cable seguridad portón trasero",
-          "prices": [{ "currency_code": "eur", "amount": 1600 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 800
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -323,30 +466,48 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Casquillo dirección",
-      "description": "Compatible con los modelos Sj413",
+      "description": "Compatible con los modelos Sj410 y Sj413",
       "handle": "suzuki-samurai-casquillo-direccion-acetal",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-direccion" },
-        { "id": "pcat_accesorios-direccion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-suspension-direccion"
+        },
+        {
+          "id": "pcat_accesorios-suspension-direccion"
+        }
       ],
       "variants": [
         {
           "title": "Casquillo dirección",
-          "prices": [{ "currency_code": "eur", "amount": 2300 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": null,
-          "barcode": null
+          "mid_code": "48381-51040",
+          "barcode": "48381-51040"
         }
       ],
       "images": [
@@ -355,37 +516,55 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/thumb.jpg",
-      "hs_code": null,
+      "hs_code": "48381-51040",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
       "material": "Acetal / POM-C",
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Casquillo dirección",
-      "description": "Compatible con los modelos Sj413",
+      "description": "Compatible con los modelos Sj410 y Sj413",
       "handle": "suzuki-samurai-casquillo-direccion-teflon",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-direccion" },
-        { "id": "pcat_accesorios-direccion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-suspension-direccion"
+        },
+        {
+          "id": "pcat_accesorios-suspension-direccion"
+        }
       ],
       "variants": [
         {
           "title": "Casquillo dirección",
-          "prices": [{ "currency_code": "eur", "amount": 2300 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": null,
-          "barcode": null
+          "mid_code": "48381-51040",
+          "barcode": "48381-51040"
         }
       ],
       "images": [
@@ -400,29 +579,47 @@
       "options": [],
       "material": "Teflón",
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Codo refrigeración",
       "handle": "suzuki-samurai-codo-refrigeracion",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-refrigeracion" },
-        { "id": "pcat_accesorios-refrigeracion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
+        },
+        {
+          "id": "pcat_accesorios-refrigeracion-calefaccion"
+        }
       ],
       "variants": [
         {
           "title": "Codo refrigeración",
-          "prices": [{ "currency_code": "eur", "amount": 3200 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": null,
-          "barcode": null
+          "mid_code": "17550-80000",
+          "barcode": "17550-80000"
         }
       ],
       "images": [
@@ -434,22 +631,39 @@
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+      "tags": [
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        }
+      ]
     },
     {
       "title": "Emblema parrilla",
       "handle": "suzuki-samurai-emblema-parrilla",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-exterior" },
-        { "id": "pcat_accesorios-piezas-exterior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-emblemas-adhesivos"
+        },
+        {
+          "id": "pcat_accesorios-emblemas-adhesivos"
+        }
       ],
       "variants": [
         {
           "title": "Emblema parrilla",
-          "prices": [{ "currency_code": "eur", "amount": 3000 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2200
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -467,24 +681,48 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Emblema parrilla S",
       "handle": "suzuki-samurai-emblema-parrilla-s",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-exterior" },
-        { "id": "pcat_accesorios-piezas-exterior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-vitara"
+        },
+        {
+          "id": "pcat_suzuki-samurai-emblemas-adhesivos"
+        },
+        {
+          "id": "pcat_suzuki-vitara-emblemas-adhesivos"
+        },
+        {
+          "id": "pcat_accesorios-emblemas-adhesivos"
+        }
       ],
       "variants": [
         {
           "title": "Emblema parrilla S",
-          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -503,8 +741,18 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        },
+        {
+          "id": "ptag_8v",
+          "value": "8v"
+        }
       ]
     },
     {
@@ -512,15 +760,28 @@
       "description": "Compatible con los modelos Sj410 Sj413 Sj4129",
       "handle": "suzuki-samurai-emblema-salpicadero",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-samurai-piezas-exterior" },
-        { "id": "pcat_accesorios-piezas-exterior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-emblemas-adhesivos"
+        },
+        {
+          "id": "pcat_accesorios-emblemas-adhesivos"
+        }
       ],
       "variants": [
         {
           "title": "Emblema salpicadero",
-          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -540,8 +801,14 @@
       "options": [],
       "material": null,
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
@@ -549,21 +816,33 @@
       "description": "Compatible con los modelos Sj410",
       "handle": "suzuki-samurai-filtro-aire-sj410",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-filtros" },
-        { "id": "pcat_accesorios-filtros" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-filtros-correas"
+        },
+        {
+          "id": "pcat_accesorios-filtros-correas"
+        }
       ],
       "variants": [
         {
           "title": "Filtro aire",
-          "prices": [{ "currency_code": "eur", "amount": 2300 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": "13780-79201",
-          "barcode": "13780-79201"
+          "mid_code": "13780-79250",
+          "barcode": "13780-79250"
         }
       ],
       "images": [
@@ -572,28 +851,45 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj410/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj410/thumb.jpg",
-      "hs_code": "13780-79201",
+      "hs_code": "13780-79250",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+      "tags": [
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        }
+      ]
     },
     {
       "title": "Filtro aire",
       "description": "Compatible con los modelos Sj413",
       "handle": "suzuki-samurai-filtro-aire-sj413",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-filtros" },
-        { "id": "pcat_accesorios-filtros" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-filtros-correas"
+        },
+        {
+          "id": "pcat_accesorios-filtros-correas"
+        }
       ],
       "variants": [
         {
           "title": "Filtro aire",
-          "prices": [{ "currency_code": "eur", "amount": 2300 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -607,24 +903,36 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj413/3.jpg"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_aire_sj413/thumb.jpg",
-      "hs_code": "13780-79201",
+      "hs_code": "13780-83000",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+      "tags": [
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
+      ]
     },
     {
       "title": "Fuelles transmisiones",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-eje" },
-        { "id": "pcat_accesorios-eje" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-transmision"
+        },
+        {
+          "id": "pcat_accesorios-transmision"
+        }
       ],
       "subtitle": null,
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "description": "Compatible con modelos Sj410 Sj413",
       "handle": "suzuki-samurai-fuelles-transmisiones",
       "is_giftcard": false,
       "weight": null,
@@ -638,7 +946,12 @@
       "variants": [
         {
           "title": "Fuelles transmisiones",
-          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -647,25 +960,43 @@
         }
       ],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
-      "title": "Goma dirección",
+      "title": "Goma dirección genérica",
+      "description": "Acople de la barra de dirección",
       "handle": "suzuki-samurai-goma-direccion",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-direccion" },
-        { "id": "pcat_accesorios-direccion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-suspension-direccion"
+        },
+        {
+          "id": "pcat_accesorios-suspension-direccion"
+        }
       ],
       "variants": [
         {
           "title": "Goma dirección",
-          "prices": [{ "currency_code": "eur", "amount": 2700 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1800
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -683,24 +1014,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Grifo calefacción",
       "handle": "suzuki-samurai-grifo-calefaccion",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-calefaccion" },
-        { "id": "pcat_accesorios-calefaccion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
+        },
+        {
+          "id": "pcat_accesorios-refrigeracion-calefaccion-calefaccion"
+        }
       ],
       "variants": [
         {
           "title": "Grifo calefacción",
-          "prices": [{ "currency_code": "eur", "amount": 8700 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 6500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -719,24 +1068,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Guardapolvos palanca de cambios",
       "handle": "suzuki-samurai-guardapolvos-palanca-de-cambios",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-caja-cambios" },
-        { "id": "pcat_accesorios-caja-cambios" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-caja-cambios-reductora"
+        },
+        {
+          "id": "pcat_accesorios-caja-cambios-reductora-reductora"
+        }
       ],
       "variants": [
         {
           "title": "Guardapolvos palanca de cambios",
-          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -755,29 +1122,47 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Guardapolvos palanca reductora",
       "handle": "suzuki-samurai-guardapolvos-palanca-reductora",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-transfer" },
-        { "id": "pcat_accesorios-transfer" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-transfer"
+        },
+        {
+          "id": "pcat_accesorios-transfer"
+        }
       ],
       "variants": [
         {
           "title": "Guardapolvos palanca reductora",
-          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": null,
-          "barcode": null
+          "mid_code": "29346-80100",
+          "barcode": "29346-80100"
         }
       ],
       "images": [
@@ -791,24 +1176,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Kit reparación bola dirección",
       "handle": "suzuki-samurai-kit-reparacion-bola-direccion",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-direccion" },
-        { "id": "pcat_accesorios-direccion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-kit-completos"
+        },
+        {
+          "id": "pcat_accesorios-kit-completos"
+        }
       ],
       "variants": [
         {
           "title": "Kit reparación bola dirección",
-          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -825,24 +1228,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Kit reparación palanca de cambios",
       "handle": "suzuki-samurai-kit-reparacion-palanca-cambios",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-caja-cambios" },
-        { "id": "pcat_accesorios-caja-cambios" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-kit-completos"
+        },
+        {
+          "id": "pcat_accesorios-kit-completos"
+        }
       ],
       "variants": [
         {
           "title": "Kit reparación palanca de cambios",
-          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1600
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -861,24 +1282,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
-      "title": "Kit reparación palanca reductora",
-      "handle": "suzuki-samurai-kit-reparacion-palanca-reductora",
+      "title": "Kit reparación palanca transfer",
+      "handle": "suzuki-samurai-kit-reparacion-palanca-transfer",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-transfer" },
-        { "id": "pcat_accesorios-transfer" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-kit-completos"
+        },
+        {
+          "id": "pcat_accesorios-kit-completos"
+        }
       ],
       "variants": [
         {
-          "title": "Kit reparación palanca reductora",
-          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "title": "Kit reparación palanca transfer",
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -898,8 +1337,14 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
@@ -907,16 +1352,28 @@
       "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-lamelunas-y-guias-ventanas",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-puertas-cristales" },
-        { "id": "pcat_accesorios-puertas-cristales" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-puertas-cristales"
+        },
+        {
+          "id": "pcat_accesorios-puertas-cristales"
+        }
       ],
       "variants": [
         {
           "title": "Lamelunas y guías ventanas",
-          "prices": [{ "currency_code": "eur", "amount": 7500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 3900
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -935,24 +1392,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Mando limpiaparabrisas",
       "handle": "suzuki-samurai-mando-limpiaparabrisas",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-puertas-cristales" },
-        { "id": "pcat_accesorios-puertas-cristales" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-puertas-cristales"
+        },
+        {
+          "id": "pcat_accesorios-puertas-cristales"
+        }
       ],
       "variants": [
         {
           "title": "Mando limpiaparabrisas",
-          "prices": [{ "currency_code": "eur", "amount": 3800 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 3000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -972,21 +1447,40 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Manecillas elevalunas",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-interior" },
-        { "id": "pcat_accesorios-piezas-interior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-vitara"
+        },
+        {
+          "id": "pcat_suzuki-samurai-puertas-cristales"
+        },
+        {
+          "id": "pcat_suzuki-vitara-puertas-cristales"
+        },
+        {
+          "id": "pcat_accesorios-puertas-cristales"
+        }
       ],
       "subtitle": null,
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "description": "Compatible con modelos Sj410 Sj413 y Vitara 8v",
       "handle": "suzuki-samurai-manecillas-elevalunas",
       "is_giftcard": false,
       "weight": null,
@@ -1000,7 +1494,12 @@
       "variants": [
         {
           "title": "Manecillas elevalunas",
-          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1009,19 +1508,35 @@
         }
       ],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        },
+        {
+          "id": "ptag_8v",
+          "value": "8v"
+        }
       ]
     },
     {
       "title": "Manetas puertas",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-exterior" },
-        { "id": "pcat_accesorios-piezas-exterior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-exterior"
+        },
+        {
+          "id": "pcat_accesorios-exterior"
+        }
       ],
       "subtitle": "Suzuki",
       "description": "Compatible con modelos Sj410 Sj413 Sj419",
@@ -1036,19 +1551,33 @@
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/manetas_puertas/thumb.jpg",
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        },
+        {
+          "id": "ptag_sj419",
+          "value": "sj419"
+        }
       ],
       "variants": [
         {
           "title": "Manetas puertas",
-          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "barcode": "82810A80102-82820A80102",
-          "mid_code": "82810A80102-82820A80102"
+          "barcode": "82820-83000",
+          "mid_code": "82820-83000"
         }
       ]
     },
@@ -1057,16 +1586,28 @@
       "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-marco-guardapolvos-palanca-cambios",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-caja-cambios" },
-        { "id": "pcat_accesorios-caja-cambios" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-caja-cambios-reductora"
+        },
+        {
+          "id": "pcat_accesorios-caja-cambios-reductora"
+        }
       ],
       "variants": [
         {
           "title": "Marco guardapolvos palanca cambios",
-          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1086,8 +1627,14 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
@@ -1095,16 +1642,28 @@
       "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-marco-guardapolvos-palanca-reductora",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-caja-cambios" },
-        { "id": "pcat_accesorios-caja-cambios" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-caja-cambios-reductora"
+        },
+        {
+          "id": "pcat_accesorios-caja-cambios-reductora"
+        }
       ],
       "variants": [
         {
           "title": "Marco guardapolvos palanca reductora",
-          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1124,24 +1683,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Pomo palanca de cambios",
       "handle": "suzuki-samurai-pomo-palanca-de-cambios",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-caja-cambios" },
-        { "id": "pcat_accesorios-caja-cambios" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-caja-cambios-reductora"
+        },
+        {
+          "id": "pcat_accesorios-caja-cambios-reductora"
+        }
       ],
       "variants": [
         {
           "title": "Pomo palanca de cambios",
-          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1161,24 +1738,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Pomo palanca reductora",
       "handle": "suzuki-samurai-pomo-palanca-reductora",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-transfer" },
-        { "id": "pcat_accesorios-transfer" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-caja-cambios-reductora"
+        },
+        {
+          "id": "pcat_accesorios-caja-cambios-reductora"
+        }
       ],
       "variants": [
         {
           "title": "Pomo palanca reductora",
-          "prices": [{ "currency_code": "eur", "amount": 3000 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1197,29 +1792,47 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Rótula dirección derecha",
       "handle": "suzuki-samurai-rotula-direccion-derecha",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-direccion" },
-        { "id": "pcat_accesorios-direccion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-suspension-direccion"
+        },
+        {
+          "id": "pcat_accesorios-suspension-direccion"
+        }
       ],
       "variants": [
         {
           "title": "Rótula dirección derecha",
-          "prices": [{ "currency_code": "eur", "amount": 6500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 5000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": null,
-          "barcode": null
+          "mid_code": "48870-84C50",
+          "barcode": "48870-84C50"
         }
       ],
       "images": [
@@ -1233,24 +1846,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Rótula dirección izquierda",
       "handle": "suzuki-samurai-rotula-direccion-izquierda",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-direccion" },
-        { "id": "pcat_accesorios-direccion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-suspension-direccion"
+        },
+        {
+          "id": "pcat_accesorios-suspension-direccion"
+        }
       ],
       "variants": [
         {
           "title": "Rótula dirección izquierda",
-          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1269,24 +1900,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Soporte reductora",
       "handle": "suzuki-samurai-soporte-reductora",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-transfer" },
-        { "id": "pcat_accesorios-transfer" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-silentblock"
+        },
+        {
+          "id": "pcat_accesorios-silentblock"
+        }
       ],
       "variants": [
         {
           "title": "Soporte reductora",
-          "prices": [{ "currency_code": "eur", "amount": 1600 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 900
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1306,8 +1955,14 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ],
       "mid_code": "29650-83001",
       "barcode": "29650-83001"
@@ -1317,16 +1972,28 @@
       "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-soporte-rueda-repuesto",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-exterior" },
-        { "id": "pcat_accesorios-piezas-exterior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-exterior"
+        },
+        {
+          "id": "pcat_accesorios-exterior"
+        }
       ],
       "variants": [
         {
           "title": "Soporte rueda repuesto",
-          "prices": [{ "currency_code": "eur", "amount": 6000 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 4500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1346,24 +2013,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Soporte tubo de escape",
       "handle": "suzuki-samurai-soporte-tubo-de-escape",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-exterior" },
-        { "id": "pcat_accesorios-piezas-exterior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-escape"
+        },
+        {
+          "id": "pcat_accesorios-escape"
+        }
       ],
       "variants": [
         {
-          "title": "Soporte tubo de escape",
-          "prices": [{ "currency_code": "eur", "amount": 1200 }],
+          "title": "Soporte goma tubo de escape",
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 300
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1382,24 +2067,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Tapa guantera salpicadero",
       "handle": "suzuki-samurai-tapa-guantera-salpicadero",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-interior" },
-        { "id": "pcat_accesorios-piezas-interior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-interior"
+        },
+        {
+          "id": "pcat_accesorios-interior"
+        }
       ],
       "variants": [
         {
           "title": "Tapa guantera salpicadero",
-          "prices": [{ "currency_code": "eur", "amount": 3000 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2000
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1420,24 +2123,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
-      "title": "Tapa termostato",
+      "title": "Tapa termostato con junta",
       "handle": "suzuki-samurai-tapa-termostato",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-refrigeracion" },
-        { "id": "pcat_accesorios-refrigeracion" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
+        },
+        {
+          "id": "pcat_accesorios-refrigeracion-calefaccion"
+        }
       ],
       "variants": [
         {
           "title": "Tapa termostato",
-          "prices": [{ "currency_code": "eur", "amount": 1900 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1200
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1456,24 +2177,42 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Tapón aceite",
       "handle": "suzuki-samurai-tapon-aceite",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-motor" },
-        { "id": "pcat_accesorios-motor" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-motor-juntas"
+        },
+        {
+          "id": "pcat_accesorios-motor-juntas"
+        }
       ],
       "variants": [
         {
           "title": "Tapón aceite",
-          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1300
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1494,25 +2233,46 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        },
+        {
+          "id": "ptag_sj419",
+          "value": "sj419"
+        }
       ]
     },
     {
       "title": "Tapón depósito gasolina",
       "handle": "suzuki-samurai-tapon-deposito-gasolina",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-exterior" },
-        { "id": "pcat_accesorios-piezas-exterior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-combustible"
+        },
+        {
+          "id": "pcat_accesorios-combustible"
+        }
       ],
       "variants": [
         {
           "title": "Tapón depósito gasolina",
-          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1531,22 +2291,34 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Tirador interior puertas",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-interior" },
-        { "id": "pcat_accesorios-piezas-interior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-puertas-cristales"
+        },
+        {
+          "id": "pcat_accesorios-puertas-cristales"
+        }
       ],
       "subtitle": null,
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "description": "Compatible con modelos Sj410 Sj413",
       "handle": "suzuki-samurai-tirador-interior-puertas",
       "is_giftcard": false,
       "weight": null,
@@ -1561,7 +2333,12 @@
       "variants": [
         {
           "title": "Tirador interior puertas",
-          "prices": [{ "currency_code": "eur", "amount": 2000 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1200
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1570,26 +2347,43 @@
         }
       ],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Tirador portón trasero",
-      "description": "Compatible con los modelos Sj410 Sj413 Sj419",
+      "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-tirador-porton-trasero",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-piezas-exterior" },
-        { "id": "pcat_accesorios-piezas-exterior" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-puertas-cristales"
+        },
+        {
+          "id": "pcat_accesorios-puertas-cristales"
+        }
       ],
       "variants": [
         {
           "title": "Tirador portón trasero",
-          "prices": [{ "currency_code": "eur", "amount": 1700 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 800
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1611,26 +2405,43 @@
       "mid_code": "82592 80060",
       "barcode": "82592 80060",
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
       "title": "Topes capó parabrisas",
-      "description": "Compatible con modelos Sj410 Sj413 Sj419",
+      "description": "Compatible con modelos Sj410 Sj413",
       "handle": "suzuki-samurai-topes-capo-parabrisas",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-puertas-cristales" },
-        { "id": "pcat_accesorios-puertas-cristales" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-puertas-cristales"
+        },
+        {
+          "id": "pcat_accesorios-puertas-cristales"
+        }
       ],
       "variants": [
         {
           "title": "Topes capó parabrisa",
-          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 900
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1649,9 +2460,14 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" },
-        { "id": "ptag_sj419", "value": "sj419" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
@@ -1659,16 +2475,28 @@
       "description": "Compatible con los modelos Sj410 Sj413",
       "handle": "suzuki-samurai-tornillo-antiholgura-palanca-cambios",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-caja-cambios" },
-        { "id": "pcat_accesorios-caja-cambios" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-caja-cambios-reductora"
+        },
+        {
+          "id": "pcat_accesorios-caja-cambios-reductora"
+        }
       ],
       "variants": [
         {
           "title": "Tornillo antiholgura palanca cambios",
-          "prices": [{ "currency_code": "eur", "amount": 1300 }],
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
@@ -1688,30 +2516,51 @@
       "weight": null,
       "options": [],
       "tags": [
-        { "id": "ptag_sj410", "value": "sj410" },
-        { "id": "ptag_sj413", "value": "sj413" }
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        }
       ]
     },
     {
-      "title": "Varilla nivel de aceite",
-      "description": "Compatible con los modelos Sj413",
-      "handle": "suzuki-samurai-varilla-nivel-de-aceite",
+      "title": "Varilla nivel de aceite 1.3",
+      "description": "Compatible con los modelos Sj413 y Vitara 8v",
+      "handle": "suzuki-sj413-8v-varilla-nivel-de-aceite",
       "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-vitara" },
-        { "id": "pcat_suzuki-samurai-motor" },
-        { "id": "pcat_accesorios-motor" }
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-vitara"
+        },
+        {
+          "id": "pcat_suzuki-vitara-motor-juntas"
+        },
+        {
+          "id": "pcat_accesorios-motor-juntas"
+        }
       ],
       "variants": [
         {
-          "title": "Varilla nivel de aceite",
-          "prices": [{ "currency_code": "eur", "amount": 2200 }],
+          "title": "Varilla nivel de aceite 1.3",
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 1500
+            }
+          ],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
-          "mid_code": "16910-60A11",
-          "barcode": "16910-60A11"
+          "mid_code": "16910-60A01",
+          "barcode": "16910-60A01"
         }
       ],
       "images": [
@@ -1725,72 +2574,303 @@
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+      "tags": [
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        },
+        {
+          "id": "ptag_8v",
+          "value": "8v"
+        }
+      ]
+    },
+    {
+      "title": "Bomba agua 1.3",
+      "handle": "suzuki-samurai-bomba-agua-1.3",
+      "categories": [
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
+        },
+        {
+          "id": "pcat_suzuki-vitara"
+        },
+        {
+          "id": "pcat_suzuki-vitara-refrigeracion-calefaccion"
+        },
+        {
+          "id": "pcat_accesorios-refrigeracion-calefaccion"
+        }
+      ],
+      "variants": [
+        {
+          "title": "Bomba agua 1.3",
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 3500
+            }
+          ],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "17400-83815",
+          "midcode": "17400-83815"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/4.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        },
+        {
+          "id": "ptag_8v",
+          "value": "8v"
+        }
+      ]
+    },
+    {
+      "title": "Cables distribuidor BOSCH",
+      "handle": "suzuki-samurai-cables-distribuidor-bosch",
+      "categories": [
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-encendido"
+        },
+        {
+          "id": "pcat_suzuki-vitara"
+        },
+        {
+          "id": "pcat_suzuki-vitara-encendido"
+        },
+        {
+          "id": "pcat_accesorios-encencido"
+        }
+      ],
+      "variants": [
+        {
+          "title": "Cables distribuidor BOSCH",
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2000
+            }
+          ],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "33700M80050",
+          "midcode": "33700M80050"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/4.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        },
+        {
+          "id": "ptag_8v",
+          "value": "8v"
+        }
+      ]
+    },
+    {
+      "title": "Cruceta 64X25 Con engrasador",
+      "handle": "suzuki-samurai-cruceta-64x25-con-engrasador",
+      "categories": [
+        {
+          "id": "pcat_suzuki"
+        },
+        {
+          "id": "pcat_suzuki-samurai"
+        },
+        {
+          "id": "pcat_suzuki-samurai-transmision"
+        },
+        {
+          "id": "pcat_suzuki-vitara"
+        },
+        {
+          "id": "pcat_suzuki-vitara-transmision"
+        },
+        {
+          "id": "pcat_accesorios-transmision"
+        }
+      ],
+      "variants": [
+        {
+          "title": "Cruceta 64X25 Con engrasador",
+          "prices": [
+            {
+              "currency_code": "eur",
+              "amount": 2000
+            }
+          ],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "27200M83810",
+          "midcode": "27200M83810"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/3.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/4.jpg"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/thumb.jpg",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        {
+          "id": "ptag_sj410",
+          "value": "sj410"
+        },
+        {
+          "id": "ptag_sj413",
+          "value": "sj413"
+        },
+        {
+          "id": "ptag_8v",
+          "value": "8v"
+        }
+      ]
     }
   ],
   "categories": [
     {
-      "id": "pcat_suzuki-samurai-piezas-exterior",
-      "name": "Piezas exterior",
+      "id": "pcat_suzuki-samurai-cables",
+      "name": "Cables",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/piezas-exterior",
+      "handle": "suzuki/samurai/cables",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-piezas-interior",
-      "name": "Piezas interior",
+      "id": "pcat_suzuki-samurai-caja-cambios-reductora",
+      "name": "Caja cambios y reductora",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/piezas-interior",
+      "handle": "suzuki/samurai/caja-cambios-reductora",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-direccion",
-      "name": "Direccion",
+      "id": "pcat_suzuki-samurai-combustible",
+      "name": "Combustible",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/direccion",
+      "handle": "suzuki/samurai/combustible",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-motor",
-      "name": "Motor",
+      "id": "pcat_suzuki-samurai-electricidad-iluminacion",
+      "name": "Electricidad e iluminacion",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/motor",
+      "handle": "suzuki/samurai/electricidad-iluminacion",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-transfer",
-      "name": "Transfer",
+      "id": "pcat_suzuki-samurai-emblemas-adhesivos",
+      "name": "Emblemas y adhesivos",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/transfer",
+      "handle": "suzuki/samurai/emblemas-adhesivos",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-eje",
-      "name": "Eje",
+      "id": "pcat_suzuki-samurai-encendido",
+      "name": "Encendido",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/eje",
+      "handle": "suzuki/samurai/encendido",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-calefaccion",
-      "name": "Calefaccion",
+      "id": "pcat_suzuki-samurai-exterior",
+      "name": "Exterior",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/calefaccion",
+      "handle": "suzuki/samurai/exterior",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-caja-cambios",
-      "name": "Caja cambios",
+      "id": "pcat_suzuki-samurai-filtros-correas",
+      "name": "Filtros y correas",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/caja-cambios",
+      "handle": "suzuki/samurai/filtros-correas",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-samurai-interior",
+      "name": "Interior",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-samurai",
+      "handle": "suzuki/samurai/interior",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-samurai-kit-completos",
+      "name": "Kit completos",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-samurai",
+      "handle": "suzuki/samurai/kit-completos",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-samurai-motor-juntas",
+      "name": "Motor y juntas",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-samurai",
+      "handle": "suzuki/samurai/motor-juntas",
       "is_active": true
     },
     {
@@ -1802,107 +2882,195 @@
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-refrigeracion",
-      "name": "Refrigeración",
+      "id": "pcat_suzuki-samurai-refrigeracion-calefaccion",
+      "name": "Refrigeracion y calefaccion",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/refrigeracion",
+      "handle": "suzuki/samurai/refrigeracion-calefaccion",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-samurai-filtros",
-      "name": "Filtros",
+      "id": "pcat_suzuki-samurai-retenes",
+      "name": "Retenes",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
-      "handle": "suzuki/samurai/filtros",
+      "handle": "suzuki/samurai/retenes",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-piezas-exterior",
-      "name": "Piezas exterior",
+      "id": "pcat_suzuki-samurai-ruedas-frenos",
+      "name": "Ruedas y frenos",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/piezas-exterior",
+      "parent_category_id": "pcat_suzuki-samurai",
+      "handle": "suzuki/samurai/ruedas-frenos",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-piezas-interior",
-      "name": "Piezas interior",
+      "id": "pcat_suzuki-samurai-silentblock",
+      "name": "Silentblock",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/piezas-interior",
+      "parent_category_id": "pcat_suzuki-samurai",
+      "handle": "suzuki/samurai/silentblock",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-direccion",
-      "name": "Direccion",
+      "id": "pcat_suzuki-samurai-suspension-direccion",
+      "name": "Suspension y dirección",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/direccion",
+      "parent_category_id": "pcat_suzuki-samurai",
+      "handle": "suzuki/samurai/suspension-direccion",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-motor",
-      "name": "Motor",
+      "id": "pcat_suzuki-samurai-transmision",
+      "name": "Transmisión",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/motor",
+      "parent_category_id": "pcat_suzuki-samurai",
+      "handle": "suzuki/samurai/transmision",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-transfer",
-      "name": "Transfer",
+      "id": "pcat_suzuki-vitara-cables",
+      "name": "Cables",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/transfer",
+      "parent_category_id": "pcat_suzuki-vitara-cables",
+      "handle": "suzuki/vitara/cables",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-eje",
-      "name": "Eje",
+      "id": "pcat_suzuki-vitara-caja-cambios-reductora",
+      "name": "Caja cambios y reductora",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/eje",
+      "parent_category_id": "pcat_suzuki-vitara-caja-cambios-reductora",
+      "handle": "suzuki/vitara/caja-cambios-reductora",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-calefaccion",
-      "name": "Calefaccion",
+      "id": "pcat_suzuki-vitara-combustible",
+      "name": "Combustible",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/calefaccion",
+      "parent_category_id": "pcat_suzuki-vitara-combustible",
+      "handle": "suzuki/vitara/combustible",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-caja-cambios",
-      "name": "Caja cambios",
+      "id": "pcat_suzuki-vitara-electricidad-iluminacion",
+      "name": "Electricidad e iluminacion",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/caja-cambios",
+      "parent_category_id": "pcat_suzuki-vitara-electricidad-iluminacion",
+      "handle": "suzuki/vitara/electricidad-iluminacion",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-emblemas-adhesivos",
+      "name": "Emblemas y adhesivos",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-emblemas-adhesivos",
+      "handle": "suzuki/vitara/emblemas-adhesivos",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-encendido",
+      "name": "Encendido",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-encendido",
+      "handle": "suzuki/vitara/encendido",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-exterior",
+      "name": "Exterior",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-exterior",
+      "handle": "suzuki/vitara/exterior",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-filtros-correas",
+      "name": "Filtros y correas",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-filtros-correas",
+      "handle": "suzuki/vitara/filtros-correas",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-interior",
+      "name": "Interior",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-interior",
+      "handle": "suzuki/vitara/interior",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-kit-completos",
+      "name": "Kit completos",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-kit-completos",
+      "handle": "suzuki/vitara/kit-completos",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-motor-juntas",
+      "name": "Motor y juntas",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-motor-juntas",
+      "handle": "suzuki/vitara/motor-juntas",
       "is_active": true
     },
     {
       "id": "pcat_suzuki-vitara-puertas-cristales",
       "name": "Puertas y cristales",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
+      "parent_category_id": "pcat_suzuki-vitara-puertas-cristales",
       "handle": "suzuki/vitara/puertas-cristales",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-refrigeracion",
-      "name": "Refrigeración",
+      "id": "pcat_suzuki-vitara-refrigeracion-calefaccion",
+      "name": "Refrigeracion y calefaccion",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/refrigeracion",
+      "parent_category_id": "pcat_suzuki-vitara-refrigeracion-calefaccion",
+      "handle": "suzuki/vitara/refrigeracion-calefaccion",
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-filtros",
-      "name": "Filtros",
+      "id": "pcat_suzuki-vitara-retenes",
+      "name": "Retenes",
       "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara",
-      "handle": "suzuki/vitara/filtros",
+      "parent_category_id": "pcat_suzuki-vitara-retenes",
+      "handle": "suzuki/vitara/retenes",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-ruedas-frenos",
+      "name": "Ruedas y frenos",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-ruedas-frenos",
+      "handle": "suzuki/vitara/ruedas-frenos",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-silentblock",
+      "name": "Silentblock",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-silentblock",
+      "handle": "suzuki/vitara/silentblock",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-suspension-direccion",
+      "name": "Suspension y dirección",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-suspension-direccion",
+      "handle": "suzuki/vitara/suspension-direccion",
+      "is_active": true
+    },
+    {
+      "id": "pcat_suzuki-vitara-transmision",
+      "name": "Transmisión",
+      "rank": 0,
+      "parent_category_id": "pcat_suzuki-vitara-transmision",
+      "handle": "suzuki/vitara/transmision",
       "is_active": true
     },
     {
@@ -1910,39 +3078,62 @@
       "name": "Samurai",
       "rank": 0,
       "category_children": [
-        {
-          "id": "pcat_suzuki-samurai-piezas-exterior"
-        },
-        {
-          "id": "pcat_suzuki-samurai-piezas-interior"
-        },
-        {
-          "id": "pcat_suzuki-samurai-direccion"
-        },
-        {
-          "id": "pcat_suzuki-samurai-motor"
-        },
-        {
-          "id": "pcat_suzuki-samurai-puertas-cristales"
-        },
-        {
-          "id": "pcat_suzuki-samurai-eje"
-        },
-        {
-          "id": "pcat_suzuki-samurai-transfer"
-        },
-        {
-          "id": "pcat_suzuki-samurai-calefaccion"
-        },
-        {
-          "id": "pcat_suzuki-samurai-caja-cambios"
-        },
-        {
-          "id": "pcat_suzuki-samurai-refrigeracion"
-        },
-        {
-          "id": "pcat_suzuki-samurai-filtros"
-        }
+        [
+          {
+            "id": "pcat_suzuki-samurai-cables"
+          },
+          {
+            "id": "pcat_suzuki-samurai-caja-cambios-reductora"
+          },
+          {
+            "id": "pcat_suzuki-samurai-combustible"
+          },
+          {
+            "id": "pcat_suzuki-samurai-electricidad-iluminacion"
+          },
+          {
+            "id": "pcat_suzuki-samurai-emblemas-adhesivos"
+          },
+          {
+            "id": "pcat_suzuki-samurai-encendido"
+          },
+          {
+            "id": "pcat_suzuki-samurai-exterior"
+          },
+          {
+            "id": "pcat_suzuki-samurai-filtros-correas"
+          },
+          {
+            "id": "pcat_suzuki-samurai-interior"
+          },
+          {
+            "id": "pcat_suzuki-samurai-kit-completos"
+          },
+          {
+            "id": "pcat_suzuki-samurai-motor-juntas"
+          },
+          {
+            "id": "pcat_suzuki-samurai-puertas-cristales"
+          },
+          {
+            "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
+          },
+          {
+            "id": "pcat_suzuki-samurai-retenes"
+          },
+          {
+            "id": "pcat_suzuki-samurai-ruedas-frenos"
+          },
+          {
+            "id": "pcat_suzuki-samurai-silentblock"
+          },
+          {
+            "id": "pcat_suzuki-samurai-suspension-direccion"
+          },
+          {
+            "id": "pcat_suzuki-samurai-transmision"
+          }
+        ]
       ],
       "parent_category_id": "pcat_suzuki",
       "handle": "suzuki/samurai",
@@ -1953,39 +3144,62 @@
       "name": "Vitara",
       "rank": 0,
       "category_children": [
-        {
-          "id": "pcat_suzuki-vitara-piezas-exterior"
-        },
-        {
-          "id": "pcat_suzuki-vitara-piezas-interior"
-        },
-        {
-          "id": "pcat_suzuki-vitara-direccion"
-        },
-        {
-          "id": "pcat_suzuki-vitara-motor"
-        },
-        {
-          "id": "pcat_suzuki-vitara-puertas-cristales"
-        },
-        {
-          "id": "pcat_suzuki-vitara-eje"
-        },
-        {
-          "id": "pcat_suzuki-vitara-transfer"
-        },
-        {
-          "id": "pcat_suzuki-vitara-calefaccion"
-        },
-        {
-          "id": "pcat_suzuki-vitara-caja-cambios"
-        },
-        {
-          "id": "pcat_suzuki-vitara-refrigeracion"
-        },
-        {
-          "id": "pcat_suzuki-vitara-filtros"
-        }
+        [
+          {
+            "id": "pcat_suzuki-vitara-cables"
+          },
+          {
+            "id": "pcat_suzuki-vitara-caja-cambios-reductora"
+          },
+          {
+            "id": "pcat_suzuki-vitara-combustible"
+          },
+          {
+            "id": "pcat_suzuki-vitara-electricidad-iluminacion"
+          },
+          {
+            "id": "pcat_suzuki-vitara-emblemas-adhesivos"
+          },
+          {
+            "id": "pcat_suzuki-vitara-encendido"
+          },
+          {
+            "id": "pcat_suzuki-vitara-exterior"
+          },
+          {
+            "id": "pcat_suzuki-vitara-filtros-correas"
+          },
+          {
+            "id": "pcat_suzuki-vitara-interior"
+          },
+          {
+            "id": "pcat_suzuki-vitara-kit-completos"
+          },
+          {
+            "id": "pcat_suzuki-vitara-motor-juntas"
+          },
+          {
+            "id": "pcat_suzuki-vitara-puertas-cristales"
+          },
+          {
+            "id": "pcat_suzuki-vitara-refrigeracion-calefaccion"
+          },
+          {
+            "id": "pcat_suzuki-vitara-retenes"
+          },
+          {
+            "id": "pcat_suzuki-vitara-ruedas-frenos"
+          },
+          {
+            "id": "pcat_suzuki-vitara-silentblock"
+          },
+          {
+            "id": "pcat_suzuki-vitara-suspension-direccion"
+          },
+          {
+            "id": "pcat_suzuki-vitara-transmision"
+          }
+        ]
       ],
       "parent_category_id": "pcat_suzuki",
       "handle": "suzuki/vitara",
@@ -2007,67 +3221,91 @@
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-piezas-exterior",
-      "name": "Piezas exterior",
+      "id": "pcat_accesorios-cables",
+      "name": "Cables",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/piezas-exterior",
+      "handle": "accesorios/cables",
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-piezas-interior",
-      "name": "Piezas interior",
+      "id": "pcat_accesorios-caja-cambios-reductora",
+      "name": "Caja cambios y reductora",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/piezas-interior",
+      "handle": "accesorios/caja-cambios-reductora",
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-direccion",
-      "name": "Direccion",
+      "id": "pcat_accesorios-combustible",
+      "name": "Combustible",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/direccion",
+      "handle": "accesorios/combustible",
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-motor",
-      "name": "Motor",
+      "id": "pcat_accesorios-electricidad-iluminacion",
+      "name": "Electricidad e iluminacion",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/motor",
+      "handle": "accesorios/electricidad-iluminacion",
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-transfer",
-      "name": "Transfer",
+      "id": "pcat_accesorios-emblemas-adhesivos",
+      "name": "Emblemas y adhesivos",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/transfer",
+      "handle": "accesorios/emblemas-adhesivos",
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-eje",
-      "name": "Eje",
+      "id": "pcat_accesorios-encencido",
+      "name": "Encencido",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/eje",
+      "handle": "accesorios/encencido",
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-calefaccion",
-      "name": "Calefaccion",
+      "id": "pcat_accesorios-exterior",
+      "name": "Piezas de exterior",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/calefaccion",
+      "handle": "accesorios/exterior",
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-caja-cambios",
-      "name": "Caja cambios",
+      "id": "pcat_accesorios-filtros-correas",
+      "name": "Filtros correas",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/caja-cambios",
+      "handle": "accesorios/filtros-correas",
+      "is_active": true
+    },
+    {
+      "id": "pcat_accesorios-interior",
+      "name": "Piezas de interior",
+      "rank": 0,
+      "parent_category_id": "pcat_accesorios",
+      "handle": "accesorios/interior",
+      "is_active": true
+    },
+    {
+      "id": "pcat_accesorios-kit-completos",
+      "name": "Kit completos",
+      "rank": 0,
+      "parent_category_id": "pcat_accesorios",
+      "handle": "accesorios/kit-completos",
+      "is_active": true
+    },
+    {
+      "id": "pcat_accesorios-motor-juntas",
+      "name": "Motor y juntas",
+      "rank": 0,
+      "parent_category_id": "pcat_accesorios",
+      "handle": "accesorios/motor-juntas",
       "is_active": true
     },
     {
@@ -2079,19 +3317,51 @@
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-refrigeracion",
-      "name": "Refrigeración",
+      "id": "pcat_accesorios-refrigeracion-calefaccion",
+      "name": "Refrigeracion y calefaccion",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/refrigeracion",
+      "handle": "accesorios/refrigeracion-calefaccion",
       "is_active": true
     },
     {
-      "id": "pcat_accesorios-filtros",
-      "name": "Filtros",
+      "id": "pcat_accesorios-retenes",
+      "name": "Retenes",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
-      "handle": "accesorios/filtros",
+      "handle": "accesorios/retenes",
+      "is_active": true
+    },
+    {
+      "id": "pcat_accesorios-ruedas-frenos",
+      "name": "Ruedas y frenos",
+      "rank": 0,
+      "parent_category_id": "pcat_accesorios",
+      "handle": "accesorios/ruedas-frenos",
+      "is_active": true
+    },
+    {
+      "id": "pcat_accesorios-silentblock",
+      "name": "Silentblock",
+      "rank": 0,
+      "parent_category_id": "pcat_accesorios",
+      "handle": "accesorios/silentblock",
+      "is_active": true
+    },
+    {
+      "id": "pcat_accesorios-suspension-direccion",
+      "name": "Suspension y dirección",
+      "rank": 0,
+      "parent_category_id": "pcat_accesorios",
+      "handle": "accesorios/suspension-direccion",
+      "is_active": true
+    },
+    {
+      "id": "pcat_accesorios-transmision",
+      "name": "Transmisión",
+      "rank": 0,
+      "parent_category_id": "pcat_accesorios",
+      "handle": "accesorios/transmision",
       "is_active": true
     },
     {
@@ -2100,37 +3370,58 @@
       "rank": 0,
       "category_children": [
         {
-          "id": "pcat_accesorios-piezas-exterior"
+          "id": "pcat_accesorios-cables"
         },
         {
-          "id": "pcat_accesorios-piezas-interior"
+          "id": "pcat_accesorios-caja-cambios-reductora"
         },
         {
-          "id": "pcat_accesorios-direccion"
+          "id": "pcat_accesorios-combustible"
         },
         {
-          "id": "pcat_accesorios-motor"
+          "id": "pcat_accesorios-electricidad-iluminacion"
+        },
+        {
+          "id": "pcat_accesorios-emblemas-adhesivos"
+        },
+        {
+          "id": "pcat_accesorios-encencido"
+        },
+        {
+          "id": "pcat_accesorios-exterior"
+        },
+        {
+          "id": "pcat_accesorios-filtros-correas"
+        },
+        {
+          "id": "pcat_accesorios-interior"
+        },
+        {
+          "id": "pcat_accesorios-kit-completos"
+        },
+        {
+          "id": "pcat_accesorios-motor-juntas"
         },
         {
           "id": "pcat_accesorios-puertas-cristales"
         },
         {
-          "id": "pcat_accesorios-eje"
+          "id": "pcat_accesorios-refrigeracion-calefaccion"
         },
         {
-          "id": "pcat_accesorios-transfer"
+          "id": "pcat_accesorios-retenes"
         },
         {
-          "id": "pcat_accesorios-calefaccion"
+          "id": "pcat_accesorios-ruedas-frenos"
         },
         {
-          "id": "pcat_accesorios-caja-cambios"
+          "id": "pcat_accesorios-silentblock"
         },
         {
-          "id": "pcat_accesorios-refrigeracion"
+          "id": "pcat_accesorios-suspension-direccion"
         },
         {
-          "id": "pcat_accesorios-filtros"
+          "id": "pcat_accesorios-transmision"
         }
       ],
       "handle": "accesorios",
