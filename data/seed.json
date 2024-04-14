@@ -2768,7 +2768,7 @@
     },
     {
       "id": "pcat_suzuki-samurai-electricidad-iluminacion",
-      "name": "Electricidad e iluminacion",
+      "name": "Electricidad e iluminación",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-samurai",
       "handle": "suzuki/samurai/electricidad-iluminacion",
@@ -2920,7 +2920,7 @@
     },
     {
       "id": "pcat_suzuki-vitara-electricidad-iluminacion",
-      "name": "Electricidad e iluminacion",
+      "name": "Electricidad e iluminación",
       "rank": 0,
       "parent_category_id": "pcat_suzuki-vitara-electricidad-iluminacion",
       "handle": "suzuki/vitara/electricidad-iluminacion",
@@ -3043,65 +3043,63 @@
       "name": "Samurai",
       "rank": 0,
       "category_children": [
-        [
-          {
-            "id": "pcat_suzuki-samurai-cables"
-          },
-          {
-            "id": "pcat_suzuki-samurai-caja-cambios-reductora"
-          },
-          {
-            "id": "pcat_suzuki-samurai-combustible"
-          },
-          {
-            "id": "pcat_suzuki-samurai-electricidad-iluminacion"
-          },
-          {
-            "id": "pcat_suzuki-samurai-emblemas-adhesivos"
-          },
-          {
-            "id": "pcat_suzuki-samurai-encendido"
-          },
-          {
-            "id": "pcat_suzuki-samurai-escape"
-          },
-          {
-            "id": "pcat_suzuki-samurai-exterior"
-          },
-          {
-            "id": "pcat_suzuki-samurai-filtros-correas"
-          },
-          {
-            "id": "pcat_suzuki-samurai-interior"
-          },
-          {
-            "id": "pcat_suzuki-samurai-kit-completos"
-          },
-          {
-            "id": "pcat_suzuki-samurai-motor-juntas"
-          },
-          {
-            "id": "pcat_suzuki-samurai-puertas-cristales"
-          },
-          {
-            "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
-          },
-          {
-            "id": "pcat_suzuki-samurai-retenes"
-          },
-          {
-            "id": "pcat_suzuki-samurai-ruedas-frenos"
-          },
-          {
-            "id": "pcat_suzuki-samurai-silentblock"
-          },
-          {
-            "id": "pcat_suzuki-samurai-suspension-direccion"
-          },
-          {
-            "id": "pcat_suzuki-samurai-transmision"
-          }
-        ]
+        {
+          "id": "pcat_suzuki-samurai-cables"
+        },
+        {
+          "id": "pcat_suzuki-samurai-caja-cambios-reductora"
+        },
+        {
+          "id": "pcat_suzuki-samurai-combustible"
+        },
+        {
+          "id": "pcat_suzuki-samurai-electricidad-iluminacion"
+        },
+        {
+          "id": "pcat_suzuki-samurai-emblemas-adhesivos"
+        },
+        {
+          "id": "pcat_suzuki-samurai-encendido"
+        },
+        {
+          "id": "pcat_suzuki-samurai-escape"
+        },
+        {
+          "id": "pcat_suzuki-samurai-exterior"
+        },
+        {
+          "id": "pcat_suzuki-samurai-filtros-correas"
+        },
+        {
+          "id": "pcat_suzuki-samurai-interior"
+        },
+        {
+          "id": "pcat_suzuki-samurai-kit-completos"
+        },
+        {
+          "id": "pcat_suzuki-samurai-motor-juntas"
+        },
+        {
+          "id": "pcat_suzuki-samurai-puertas-cristales"
+        },
+        {
+          "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
+        },
+        {
+          "id": "pcat_suzuki-samurai-retenes"
+        },
+        {
+          "id": "pcat_suzuki-samurai-ruedas-frenos"
+        },
+        {
+          "id": "pcat_suzuki-samurai-silentblock"
+        },
+        {
+          "id": "pcat_suzuki-samurai-suspension-direccion"
+        },
+        {
+          "id": "pcat_suzuki-samurai-transmision"
+        }
       ],
       "parent_category_id": "pcat_suzuki",
       "handle": "suzuki/samurai",
@@ -3214,7 +3212,7 @@
     },
     {
       "id": "pcat_accesorios-electricidad-iluminacion",
-      "name": "Electricidad e iluminacion",
+      "name": "Electricidad e iluminación",
       "rank": 0,
       "parent_category_id": "pcat_accesorios",
       "handle": "accesorios/electricidad-iluminacion",
