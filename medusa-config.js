@@ -57,7 +57,8 @@ const plugins = [
     resolve: "@medusajs/admin",
     /** @type {import('@medusajs/admin').PluginOptions} */
     options: {
-      serve: false,
+      serve: true,
+      autoRebuild: true,
       backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
       develop: {
         open: process.env.OPEN_BROWSER !== "false",
@@ -140,4 +141,8 @@ module.exports = {
   projectConfig,
   plugins,
   modules,
+  featureFlags: {
+    tax_inclusive_pricing: true,
+    product_categories: true,
+  },
 };

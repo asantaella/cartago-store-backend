@@ -31,6 +31,7 @@
         "id": "manual-fulfillment"
       },
       "price_type": "flat_rate",
+      "includes_tax": true,
       "amount": 1000
     },
     {
@@ -41,6 +42,7 @@
         "id": "manual-fulfillment"
       },
       "price_type": "flat_rate",
+      "includes_tax": true,
       "amount": 1500
     },
     {
@@ -2495,6 +2497,9 @@
           "id": "pcat_suzuki-samurai"
         },
         {
+          "id": "pcat_suzuki-samurai-motor-juntas"
+        },
+        {
           "id": "pcat_suzuki-vitara"
         },
         {
@@ -2542,202 +2547,44 @@
         }
       ]
     },
+
     {
-      "title": "Bomba agua 1.3",
-      "handle": "suzuki-samurai-bomba-agua-1.3",
+      "title": "Gomas cubre pedales Samurai (3pcs)",
+      "handle": "suzuki-samurai-gomas-cubre-pedales-samurai-(3pcs)",
       "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-samurai-refrigeracion-calefaccion"
-        },
-        {
-          "id": "pcat_suzuki-vitara"
-        },
-        {
-          "id": "pcat_suzuki-vitara-refrigeracion-calefaccion"
-        },
-        {
-          "id": "pcat_accesorios-refrigeracion-calefaccion"
-        }
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-interior" },
+        { "id": "pcat_suzuki-vitara" },
+        { "id": "pcat_suzuki-vitara-interior" },
+        { "id": "pcat_accesorios-interior" }
       ],
       "variants": [
         {
-          "title": "Bomba agua 1.3",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 3500
-            }
-          ],
+          "title": "Gomas cubre pedales Samurai (3pcs)",
+          "prices": [{ "currency_code": "eur", "amount": 900 }],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "17400-83815",
-          "midcode": "17400-83815"
+          "barcode": "49751-79001",
+          "midcode": "49751-79001"
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/2.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/3.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/4.jpg"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_pedales/1.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_pedales/2.jpg",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_pedales/3.jpg"
       ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_1.3/thumb.jpg",
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_pedales/thumb.jpg",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
       "tags": [
-        {
-          "id": "ptag_sj410",
-          "value": "sj410"
-        },
-        {
-          "id": "ptag_sj413",
-          "value": "sj413"
-        },
-        {
-          "id": "ptag_8v",
-          "value": "8v"
-        }
-      ]
-    },
-    {
-      "title": "Cables distribuidor BOSCH",
-      "handle": "suzuki-samurai-cables-distribuidor-bosch",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-samurai-encendido"
-        },
-        {
-          "id": "pcat_suzuki-vitara"
-        },
-        {
-          "id": "pcat_suzuki-vitara-encendido"
-        },
-        {
-          "id": "pcat_accesorios-encencido"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Cables distribuidor BOSCH",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2000
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 500,
-          "manage_inventory": true,
-          "mid_code": "",
-          "barcode": "33700M80050",
-          "midcode": "33700M80050"
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/2.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/3.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/4.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor_bosch/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": [],
-      "tags": [
-        {
-          "id": "ptag_sj410",
-          "value": "sj410"
-        },
-        {
-          "id": "ptag_sj413",
-          "value": "sj413"
-        },
-        {
-          "id": "ptag_8v",
-          "value": "8v"
-        }
-      ]
-    },
-    {
-      "title": "Cruceta 64X25 Con engrasador",
-      "handle": "suzuki-samurai-cruceta-64x25-con-engrasador",
-      "categories": [
-        {
-          "id": "pcat_suzuki"
-        },
-        {
-          "id": "pcat_suzuki-samurai"
-        },
-        {
-          "id": "pcat_suzuki-samurai-transmision"
-        },
-        {
-          "id": "pcat_suzuki-vitara"
-        },
-        {
-          "id": "pcat_suzuki-vitara-transmision"
-        },
-        {
-          "id": "pcat_accesorios-transmision"
-        }
-      ],
-      "variants": [
-        {
-          "title": "Cruceta 64X25 Con engrasador",
-          "prices": [
-            {
-              "currency_code": "eur",
-              "amount": 2000
-            }
-          ],
-          "options": [],
-          "inventory_quantity": 500,
-          "manage_inventory": true,
-          "mid_code": "",
-          "barcode": "27200M83810",
-          "midcode": "27200M83810"
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/1.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/2.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/3.jpg",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/4.jpg"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_64x25_con_engrasador/thumb.jpg",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": [],
-      "tags": [
-        {
-          "id": "ptag_sj410",
-          "value": "sj410"
-        },
-        {
-          "id": "ptag_sj413",
-          "value": "sj413"
-        },
-        {
-          "id": "ptag_8v",
-          "value": "8v"
-        }
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_8v", "value": "8v" }
       ]
     }
   ],
@@ -2895,38 +2742,6 @@
       "is_active": true
     },
     {
-      "id": "pcat_suzuki-vitara-cables",
-      "name": "Cables",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-cables",
-      "handle": "suzuki/vitara/cables",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-caja-cambios-reductora",
-      "name": "Caja cambios y reductora",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-caja-cambios-reductora",
-      "handle": "suzuki/vitara/caja-cambios-reductora",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-combustible",
-      "name": "Combustible",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-combustible",
-      "handle": "suzuki/vitara/combustible",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-electricidad-iluminacion",
-      "name": "Electricidad e iluminación",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-electricidad-iluminacion",
-      "handle": "suzuki/vitara/electricidad-iluminacion",
-      "is_active": true
-    },
-    {
       "id": "pcat_suzuki-vitara-emblemas-adhesivos",
       "name": "Emblemas y adhesivos",
       "rank": 0,
@@ -2934,30 +2749,7 @@
       "handle": "suzuki/vitara/emblemas-adhesivos",
       "is_active": true
     },
-    {
-      "id": "pcat_suzuki-vitara-encendido",
-      "name": "Encendido",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-encendido",
-      "handle": "suzuki/vitara/encendido",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-exterior",
-      "name": "Exterior",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-exterior",
-      "handle": "suzuki/vitara/exterior",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-filtros-correas",
-      "name": "Filtros y correas",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-filtros-correas",
-      "handle": "suzuki/vitara/filtros-correas",
-      "is_active": true
-    },
+
     {
       "id": "pcat_suzuki-vitara-interior",
       "name": "Interior",
@@ -2966,14 +2758,7 @@
       "handle": "suzuki/vitara/interior",
       "is_active": true
     },
-    {
-      "id": "pcat_suzuki-vitara-kit-completos",
-      "name": "Kit completos",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-kit-completos",
-      "handle": "suzuki/vitara/kit-completos",
-      "is_active": true
-    },
+
     {
       "id": "pcat_suzuki-vitara-motor-juntas",
       "name": "Motor y juntas",
@@ -2988,54 +2773,6 @@
       "rank": 0,
       "parent_category_id": "pcat_suzuki-vitara-puertas-cristales",
       "handle": "suzuki/vitara/puertas-cristales",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-refrigeracion-calefaccion",
-      "name": "Refrigeracion y calefaccion",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-refrigeracion-calefaccion",
-      "handle": "suzuki/vitara/refrigeracion-calefaccion",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-retenes",
-      "name": "Retenes",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-retenes",
-      "handle": "suzuki/vitara/retenes",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-ruedas-frenos",
-      "name": "Ruedas y frenos",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-ruedas-frenos",
-      "handle": "suzuki/vitara/ruedas-frenos",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-silentblock",
-      "name": "Silentblock",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-silentblock",
-      "handle": "suzuki/vitara/silentblock",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-suspension-direccion",
-      "name": "Suspension y dirección",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-suspension-direccion",
-      "handle": "suzuki/vitara/suspension-direccion",
-      "is_active": true
-    },
-    {
-      "id": "pcat_suzuki-vitara-transmision",
-      "name": "Transmisión",
-      "rank": 0,
-      "parent_category_id": "pcat_suzuki-vitara-transmision",
-      "handle": "suzuki/vitara/transmision",
       "is_active": true
     },
     {
@@ -3110,62 +2847,20 @@
       "name": "Vitara",
       "rank": 0,
       "category_children": [
-        [
-          {
-            "id": "pcat_suzuki-vitara-cables"
-          },
-          {
-            "id": "pcat_suzuki-vitara-caja-cambios-reductora"
-          },
-          {
-            "id": "pcat_suzuki-vitara-combustible"
-          },
-          {
-            "id": "pcat_suzuki-vitara-electricidad-iluminacion"
-          },
-          {
-            "id": "pcat_suzuki-vitara-emblemas-adhesivos"
-          },
-          {
-            "id": "pcat_suzuki-vitara-encendido"
-          },
-          {
-            "id": "pcat_suzuki-vitara-exterior"
-          },
-          {
-            "id": "pcat_suzuki-vitara-filtros-correas"
-          },
-          {
-            "id": "pcat_suzuki-vitara-interior"
-          },
-          {
-            "id": "pcat_suzuki-vitara-kit-completos"
-          },
-          {
-            "id": "pcat_suzuki-vitara-motor-juntas"
-          },
-          {
-            "id": "pcat_suzuki-vitara-puertas-cristales"
-          },
-          {
-            "id": "pcat_suzuki-vitara-refrigeracion-calefaccion"
-          },
-          {
-            "id": "pcat_suzuki-vitara-retenes"
-          },
-          {
-            "id": "pcat_suzuki-vitara-ruedas-frenos"
-          },
-          {
-            "id": "pcat_suzuki-vitara-silentblock"
-          },
-          {
-            "id": "pcat_suzuki-vitara-suspension-direccion"
-          },
-          {
-            "id": "pcat_suzuki-vitara-transmision"
-          }
-        ]
+        {
+          "id": "pcat_suzuki-vitara-emblemas-adhesivos"
+        },
+
+        {
+          "id": "pcat_suzuki-vitara-interior"
+        },
+
+        {
+          "id": "pcat_suzuki-vitara-motor-juntas"
+        },
+        {
+          "id": "pcat_suzuki-vitara-puertas-cristales"
+        }
       ],
       "parent_category_id": "pcat_suzuki",
       "handle": "suzuki/vitara",
