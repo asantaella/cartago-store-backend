@@ -48,7 +48,7 @@ class OrderSenderService extends AbstractNotificationService {
     ];
   }
 
-  createSendingOptions(notificationOrder: Order) {
+  createSendingOptions(notificationOrder: Order & { subtotal_ex_tax }) {
     return {
       api_key: process.env.SENDGRID_API_KEY,
       templateId: process.env.SENDGRID_ORDER_PLACED_ID,
@@ -59,6 +59,7 @@ class OrderSenderService extends AbstractNotificationService {
       ),
       dynamic_template_data: {
         display_id: notificationOrder.display_id,
+        external_id: notificationOrder.external_id,
         date: notificationOrder.created_at,
         items: notificationOrder.items,
         status: notificationOrder.status,
@@ -67,13 +68,15 @@ class OrderSenderService extends AbstractNotificationService {
         shipping_total: notificationOrder.shipping_total,
         total: notificationOrder.total,
         subtotal: notificationOrder.subtotal,
+        subtotal_ex_tax: notificationOrder.subtotal_ex_tax,
         tax_total: notificationOrder.tax_total,
+        tax_rate: notificationOrder.tax_rate,
         Sender_Name: "Cartago4x4",
-        Sender_Address: "Avda de las Lomas S/N",
+        Sender_Address: "Alameda de San Anton 23, Apartado de Correos 5085",
         Sender_City: "Cartagena",
-        Sender_State: "Murcia",
-        Sender_Zip: "1234",
-        dateFormat: "DD/MM/YYYY HH:mm:ss",
+        Sender_State: "Murcia, España",
+        Sender_Zip: "30205",
+        dateFormat: "DD/MM/YYYY",
       },
     };
   }
@@ -100,37 +103,33 @@ class OrderSenderService extends AbstractNotificationService {
       ...item,
       ref: item.variant ? item.variant.barcode : undefined,
       totals: {
-        ...item.totals,
+        unit_price_ex_tax: this.humanPrice_(
+          (item.subtotal / item.quantity).toString(),
+          currencyCode
+        ),
         unit_price: this.humanPrice_(item.unit_price, currencyCode),
-        total: this.humanPrice_(item.totals.subtotal, currencyCode),
+        subtotal: this.humanPrice_(item.totals.subtotal, currencyCode),
+        total: this.humanPrice_(item.totals.total, currencyCode),
       },
     }));
 
-    const subtotal = notificationData.items.reduce(
-      (total, item) => total + item.subtotal,
-      0
-    );
-    const tax_total = subtotal - subtotal / (1 + region.tax_rate / 100);
-    const subtotal_ex_taxes = subtotal - tax_total;
-    const shipping_total =
-      parseFloat(notificationData.shipping_total.split(" ")[0]) * 100;
-    const total = subtotal + shipping_total;
     const customer = notificationData.customer;
     customer.first_name =
       customer.first_name || notificationData.shipping_address.first_name;
     customer.last_name =
       customer.last_name || notificationData.shipping_address.last_name;
+    const invoiceStartRef = parseInt(process.env.INVOICE_START_REF);
+    const year = new Date().getFullYear();
+    const invoiceNumber =
+      invoiceStartRef + parseInt(notificationData.display_id);
+    const invoiceRef = invoiceNumber.toString().padStart(5, "0");
+    const externalId = `${year}-${invoiceRef}`;
     const notificationOrder = {
       ...notificationData,
       customer,
       items: orderItems,
-      total: this.humanPrice_(total, currencyCode),
-      subtotal: this.humanPrice_(
-        subtotal_ex_taxes.toPrecision(2),
-        currencyCode
-      ),
-      tax_total: this.humanPrice_(tax_total.toPrecision(2), currencyCode),
       tax_rate: region.tax_rate,
+      external_id: externalId,
     };
     const sendOptions = this.createSendingOptions(notificationOrder);
 
