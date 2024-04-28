@@ -7,11 +7,11 @@ import {
   createPaymentSession,
 } from "./payment-session.mjs";
 
-const customer_id = "cus_01HT074PQ9W5PFAJ4ZXCZVN5CH";
+const customer_id = "cus_01HW1A728M85HXJQVPDENRVDRA";
 const items = [
   {
-    variant_id: "variant_01HSM89Y2E3NM9VPZSA1JHF7G2",
-    quantity: 1,
+    variant_id: "variant_01HW1A0RSRNX2J9XQHAMX383GN",
+    quantity: 2,
   },
   // {
   //   variant_id: "variant_01HS6P594QGDEGABNDCFXW7A6C",
