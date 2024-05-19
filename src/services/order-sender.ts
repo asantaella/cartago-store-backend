@@ -48,7 +48,9 @@ class OrderSenderService extends AbstractNotificationService {
     ];
   }
 
-  createSendingOptions(notificationOrder: Order & { subtotal_ex_tax }) {
+  createSendingOptions(
+    notificationOrder: Order & { subtotal_ex_tax; shipping_method }
+  ) {
     return {
       api_key: process.env.SENDGRID_API_KEY,
       templateId: process.env.SENDGRID_ORDER_PLACED_ID,
@@ -64,8 +66,9 @@ class OrderSenderService extends AbstractNotificationService {
         items: notificationOrder.items,
         status: notificationOrder.status,
         shipping_address: notificationOrder.shipping_address,
-        customer: notificationOrder.customer,
         shipping_total: notificationOrder.shipping_total,
+        shipping_method: notificationOrder.shipping_method,
+        customer: notificationOrder.customer,
         total: notificationOrder.total,
         subtotal: notificationOrder.subtotal,
         subtotal_ex_tax: notificationOrder.subtotal_ex_tax,
@@ -124,13 +127,19 @@ class OrderSenderService extends AbstractNotificationService {
       invoiceStartRef + parseInt(notificationData.display_id);
     const invoiceRef = invoiceNumber.toString().padStart(5, "0");
     const externalId = `${year}-${invoiceRef}`;
+    const shippingMethod =
+      notificationData.shipping_methods.length > 0
+        ? notificationData.shipping_methods[0].shipping_option?.name
+        : "";
     const notificationOrder = {
       ...notificationData,
       customer,
       items: orderItems,
       tax_rate: region.tax_rate,
       external_id: externalId,
+      shipping_method: shippingMethod,
     };
+
     const sendOptions = this.createSendingOptions(notificationOrder);
 
     console.log("[Send email] => ", {
