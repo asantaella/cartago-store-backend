@@ -7369,6 +7369,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.38.0":
+  version: 5.38.0
+  resolution: "@tanstack/query-core@npm:5.38.0"
+  checksum: 65ad1affab2aedc91843f387e5b1e374187e4f83262905a781d76ba4576789466ef541d99c5121dac03f6dbffbfbd569fa1da0aa59b0556336395986051a1b3c
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-query@npm:4.22.0":
   version: 4.22.0
   resolution: "@tanstack/react-query@npm:4.22.0"
@@ -7385,6 +7392,17 @@ __metadata:
     react-native:
       optional: true
   checksum: b146774b44a79dd5a6412d981ce04790e66da5a36f907a03c85c36f50a38fb4e4dfbfca7b1561c86b39fb0df1c0c1ae0a0ef2930c06b444da3f430b9bad450f1
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:5.39.0":
+  version: 5.39.0
+  resolution: "@tanstack/react-query@npm:5.39.0"
+  dependencies:
+    "@tanstack/query-core": 5.38.0
+  peerDependencies:
+    react: ^18.0.0
+  checksum: d43022347a93d55700fb51e29fcb9c81bae55fc8395b066b9b37bda698ca25655affba03e40acfec668a5c1c26420bb1075fd5845658d9e4a30b966cc9d99512
   languageName: node
   linkType: hard
 
@@ -15083,7 +15101,7 @@ __metadata:
     "@medusajs/medusa-cli": ^1.3.22
     "@medusajs/medusa-js": ^6.1.7
     "@sendgrid/mail": ^8.1.0
-    "@tanstack/react-query": 4.22.0
+    "@tanstack/react-query": 5.39.0
     "@types/express": ^4.17.13
     "@types/jest": ^27.4.0
     "@types/node": ^17.0.8
