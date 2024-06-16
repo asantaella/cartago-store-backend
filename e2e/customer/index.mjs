@@ -1,5 +1,5 @@
 import { medusa } from "../auth/index.mjs";
-import { createCustomer } from "../customer/create.mjs";
+import { createCustomer as create } from "../customer/create.mjs";
 
 await medusa.admin.auth.getToken({
   email: "cartago4x4@gmail.com",
@@ -14,6 +14,7 @@ let customer_data = {
   password: "supersecret",
 };
 
-customer = createCustomer(medusa, { customer: customer_data });
-
-console.log("[CREATED] Customer: ", customer);
+export const createCustomer = () =>
+  create(medusa, { customer: customer_data }).then((customer) =>
+    console.log("[CREATED] Customer: ", customer)
+  );
