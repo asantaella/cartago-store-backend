@@ -150,8 +150,8 @@
       ]
     },
     {
-      "title": "Aforador depósito 1.0 / 1.3",
-      "handle": "suzuki-samurai-aforador-deposito-1.0-/-1.3",
+      "title": "Aforador depósito 1.0 1.3",
+      "handle": "suzuki-samurai-aforador-deposito-1.0-1.3",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -160,7 +160,7 @@
       ],
       "variants": [
         {
-          "title": "Aforador depósito 1.0 / 1.3",
+          "title": "Aforador depósito 1.0 1.3",
           "prices": [{ "currency_code": "eur", "amount": 4000 }],
           "options": [],
           "inventory_quantity": 500,
@@ -890,6 +890,107 @@
       ]
     },
     {
+      "title": "Bomba agua 1.0",
+      "handle": "suzuki-samurai-bomba-agua-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-refrigeracion-calefaccion" },
+        { "id": "pcat_accesorios-refrigeracion-calefaccion" }
+      ],
+      "variants": [
+        {
+          "title": "Bomba agua 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 3000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "17400-78311",
+          "midcode": "17400-78311"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_sj410/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_sj410/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+    },
+    {
+      "title": "Bomba agua 1.3",
+      "handle": "suzuki-samurai-bomba-agua-1.3",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-refrigeracion-calefaccion" },
+        { "id": "pcat_accesorios-refrigeracion-calefaccion" }
+      ],
+      "variants": [
+        {
+          "title": "Bomba agua 1.3",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "17400-83815",
+          "midcode": "17400-83815"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_sj413/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_sj413/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_agua_sj413/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_8v", "value": "8v" }
+      ]
+    },
+    {
+      "title": "Bomba freno 1.0",
+      "handle": "suzuki-samurai-bomba-freno-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-ruedas-frenos" },
+        { "id": "pcat_accesorios-ruedas-frenos" }
+      ],
+      "variants": [
+        {
+          "title": "Bomba freno 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 9000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "51100M80720",
+          "midcode": "51100M80720"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_freno_sj410/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_freno_sj410/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_freno_sj410/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_freno_sj410/04.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_freno_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+    },
+    {
       "title": "Bomba gasolina 1.0",
       "handle": "suzuki-samurai-bomba-gasolina-1.0",
       "categories": [
@@ -952,6 +1053,40 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_gasolina_sj413_carburador/04.webp"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_gasolina_sj413_carburador/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
+      "title": "Bomba limpiaparabrisas",
+      "handle": "suzuki-samurai-bomba-limpiaparabrisas",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-exterior" },
+        { "id": "pcat_accesorios-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Bomba limpiaparabrisas",
+          "prices": [{ "currency_code": "eur", "amount": 1000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "38410-66112",
+          "midcode": "38410-66112"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_limpiaparabrisas/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_limpiaparabrisas/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_limpiaparabrisas/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_limpiaparabrisas/04.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/bomba_limpiaparabrisas/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -1460,6 +1595,43 @@
       ]
     },
     {
+      "title": "Cables distribuidor BOSCH",
+      "handle": "suzuki-samurai-cables-distribuidor-bosch",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-encendido" },
+        { "id": "pcat_accesorios-encencido" }
+      ],
+      "variants": [
+        {
+          "title": "Cables distribuidor BOSCH",
+          "prices": [{ "currency_code": "eur", "amount": 2000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "33700M80050",
+          "midcode": "33700M80050"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cables_distribuidor/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_8v", "value": "8v" }
+      ]
+    },
+    {
       "title": "Casquillo dirección Samurai diésel",
       "handle": "suzuki-samurai-casquillo-direccion-samurai-diesel",
       "categories": [
@@ -1523,6 +1695,42 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/03.webp"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_acetal/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Casquillo dirección Santana Nylon",
+      "handle": "suzuki-samurai-casquillo-direccion-santana-nylon",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-suspension-direccion" },
+        { "id": "pcat_accesorios-suspension-direccion" }
+      ],
+      "variants": [
+        {
+          "title": "Casquillo dirección Santana Nylon",
+          "prices": [{ "currency_code": "eur", "amount": 1000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "48381-51040 /51",
+          "midcode": "48381-51040 /51"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_nylon/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_nylon/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_nylon/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/casquillo_direccion_nylon/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -1716,8 +1924,8 @@
       ]
     },
     {
-      "title": "Cinturón delantero LH / RH",
-      "handle": "suzuki-samurai-cinturon-delantero-lh-/-rh",
+      "title": "Cinturón delantero LH RH",
+      "handle": "suzuki-samurai-cinturon-delantero-lh-rh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -1726,7 +1934,7 @@
       ],
       "variants": [
         {
-          "title": "Cinturón delantero LH / RH",
+          "title": "Cinturón delantero LH RH",
           "prices": [{ "currency_code": "eur", "amount": 6000 }],
           "options": [],
           "inventory_quantity": 500,
@@ -1802,8 +2010,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "37100-85210",
-          "midcode": "37100-85210"
+          "barcode": "37100-85210 /60",
+          "midcode": "37100-85210 /60"
         }
       ],
       "images": [
@@ -1907,8 +2115,12 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/consola_calefaccion/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/consola_calefaccion/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/consola_calefaccion/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/consola_calefaccion/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/consola_calefaccion/04.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/consola_calefaccion/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -1916,8 +2128,7 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Corchetes techo lona (16 pcs)",
@@ -1955,6 +2166,166 @@
       "status": "draft"
     },
     {
+      "title": "Correa accesorios 730 BOSCH",
+      "handle": "suzuki-samurai-correa-accesorios-730-bosch",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-filtros-correas" },
+        { "id": "pcat_accesorios-filtros-correas" }
+      ],
+      "variants": [
+        {
+          "title": "Correa accesorios 730 BOSCH",
+          "prices": [{ "currency_code": "eur", "amount": 1000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x730/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x730/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x730/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x730/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Correa accesorios 762 JP",
+      "handle": "suzuki-samurai-correa-accesorios-762-jp",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-filtros-correas" },
+        { "id": "pcat_accesorios-filtros-correas" }
+      ],
+      "variants": [
+        {
+          "title": "Correa accesorios 762 JP",
+          "prices": [{ "currency_code": "eur", "amount": 1000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x762/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x762/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x762/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x762/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Correa accesorios 825 BOSCH",
+      "handle": "suzuki-samurai-correa-accesorios-825-bosch",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-filtros-correas" },
+        { "id": "pcat_accesorios-filtros-correas" }
+      ],
+      "variants": [
+        {
+          "title": "Correa accesorios 825 BOSCH",
+          "prices": [{ "currency_code": "eur", "amount": 1200 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x825/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x825/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x825/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
+      "title": "Correa accesorios 838 BOSCH",
+      "handle": "suzuki-samurai-correa-accesorios-838-bosch",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-filtros-correas" },
+        { "id": "pcat_accesorios-filtros-correas" }
+      ],
+      "variants": [
+        {
+          "title": "Correa accesorios 838 BOSCH",
+          "prices": [{ "currency_code": "eur", "amount": 1200 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x838/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x838/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x838/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x838/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
+      "title": "Correa accesorios 875 BOSCH",
+      "handle": "suzuki-samurai-correa-accesorios-875-bosch",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-filtros-correas" },
+        { "id": "pcat_accesorios-filtros-correas" }
+      ],
+      "variants": [
+        {
+          "title": "Correa accesorios 875 BOSCH",
+          "prices": [{ "currency_code": "eur", "amount": 1200 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x875/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x875/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x875/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/correa_alternador_10x875/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
       "title": "Cruceta 64X25 Con engrasador",
       "handle": "suzuki-samurai-cruceta-64x25-con-engrasador",
       "categories": [
@@ -1981,6 +2352,44 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_25x64_con_enrasador/04.webp"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_25x64_con_enrasador/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_8v", "value": "8v" }
+      ]
+    },
+    {
+      "title": "Cruceta 64X25 Sin engrasador",
+      "handle": "suzuki-samurai-cruceta-64x25-sin-engrasador",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-transmision" },
+        { "id": "pcat_accesorios-transmision" }
+      ],
+      "variants": [
+        {
+          "title": "Cruceta 64X25 Sin engrasador",
+          "prices": [{ "currency_code": "eur", "amount": 1400 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "27200M83810",
+          "midcode": "27200M83810"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_25x64_sin_engrasador/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_25x64_sin_engrasador/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_25x64_sin_engrasador/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_25x64_sin_engrasador/04.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/cruceta_25x64_sin_engrasador/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -2024,6 +2433,149 @@
       "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
     },
     {
+      "title": "Difusor limpiaparabrisas",
+      "handle": "suzuki-samurai-difusor-limpiaparabrisas",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-exterior" },
+        { "id": "pcat_accesorios-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Difusor limpiaparabrisas",
+          "prices": [{ "currency_code": "eur", "amount": 800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "38480-80101",
+          "midcode": "38480-80101"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/difusor_limpiaparabrisas_delantero/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/difusor_limpiaparabrisas_delantero/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/difusor_limpiaparabrisas_delantero/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Elevalunas OEM LH",
+      "handle": "suzuki-samurai-elevalunas-oem-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
+      ],
+      "variants": [
+        {
+          "title": "Elevalunas OEM LH",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "83440-80112",
+          "midcode": "83440-80112"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_izquierdo/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_izquierdo/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_izquierdo/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_izquierdo/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Elevalunas OEM RH",
+      "handle": "suzuki-samurai-elevalunas-oem-rh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
+      ],
+      "variants": [
+        {
+          "title": "Elevalunas OEM RH",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "83410-80112",
+          "midcode": "83410-80112"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_derecho/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_derecho/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_derecho/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_derecho/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Elevalunas OEM LH RH",
+      "handle": "suzuki-samurai-elevalunas-oem-lh-rh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
+      ],
+      "variants": [
+        {
+          "title": "Elevalunas OEM LH RH",
+          "prices": [{ "currency_code": "eur", "amount": 7000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "83410-80112,83440-80112",
+          "midcode": "83410-80112,83440-80112"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_rhylh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_rhylh/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_rhylh/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/elevalunas_rhylh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
       "title": "Embellecedor faro LH",
       "handle": "suzuki-samurai-embellecedor-faro-lh",
       "categories": [
@@ -2040,8 +2592,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "72161M80002 /81",
-          "midcode": "72161M80002 /81"
+          "barcode": "72161M80002 /82",
+          "midcode": "72161M80002 /82"
         }
       ],
       "images": [
@@ -2075,8 +2627,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "72161M80002 /82",
-          "midcode": "72161M80002 /82"
+          "barcode": "72161M80002 /83",
+          "midcode": "72161M80002 /83"
         }
       ],
       "images": [
@@ -2200,7 +2752,7 @@
     },
     {
       "title": "Emblema Suzuki \"S\"",
-      "handle": "suzuki-samurai-emblema-suzuki-\"s\"",
+      "handle": "suzuki-samurai-emblema-suzuki-s",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -2237,7 +2789,7 @@
     },
     {
       "title": "Emblema Suzuki \"SUZUKI\"",
-      "handle": "suzuki-samurai-emblema-suzuki-\"suzuki\"",
+      "handle": "suzuki-samurai-emblema-suzuki-suzuki",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -2260,6 +2812,7 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_suzuki/01.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_suzuki/02.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/emblema_parrilla_suzuki/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -2463,8 +3016,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "72261-80002 /98",
-          "midcode": "72261-80002 /98"
+          "barcode": "72261-80002 /99",
+          "midcode": "72261-80002 /99"
         }
       ],
       "images": [
@@ -2498,8 +3051,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "72261-80002 /99",
-          "midcode": "72261-80002 /99"
+          "barcode": "72261-80002 /100",
+          "midcode": "72261-80002 /100"
         }
       ],
       "images": [
@@ -2606,8 +3159,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "16510-61A31 /103",
-          "midcode": "16510-61A31 /103"
+          "barcode": "16510-61A31 /104",
+          "midcode": "16510-61A31 /104"
         }
       ],
       "images": [
@@ -2692,6 +3245,43 @@
       "weight": null,
       "options": [],
       "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
+      "title": "Filtro gasolina OEM",
+      "handle": "suzuki-samurai-filtro-gasolina-oem",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-filtros-correas" },
+        { "id": "pcat_accesorios-filtros-correas" }
+      ],
+      "variants": [
+        {
+          "title": "Filtro gasolina OEM",
+          "prices": [{ "currency_code": "eur", "amount": 1000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "15410-79100, 15410M79100 ",
+          "midcode": "15410-79100, 15410M79100 "
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_gasolina_tipo_2/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_gasolina_tipo_2/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_gasolina_tipo_2/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_gasolina_tipo_2/04.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/filtro_gasolina_tipo_2/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Filtro gasolina VALEO",
@@ -3150,8 +3740,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "49751-79001 /123",
-          "midcode": "49751-79001 /123"
+          "barcode": "49751-79001 /124",
+          "midcode": "49751-79001 /124"
         }
       ],
       "images": [
@@ -3187,8 +3777,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "49751-79001 /124",
-          "midcode": "49751-79001 /124"
+          "barcode": "49751-79001 /125",
+          "midcode": "49751-79001 /125"
         }
       ],
       "images": [
@@ -3204,6 +3794,42 @@
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" },
         { "id": "ptag_8v", "value": "8v" }
+      ]
+    },
+    {
+      "title": "Gomas topes puertas (2 pcs)",
+      "handle": "suzuki-samurai-gomas-topes-puertas-(2-pcs)",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-puertas-cristales" },
+        { "id": "pcat_accesorios-puertas-cristales" }
+      ],
+      "variants": [
+        {
+          "title": "Gomas topes puertas (2 pcs)",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "81811-80100",
+          "midcode": "81811-80100"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_tope_puertas/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_tope_puertas/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_tope_puertas/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/gomas_tope_puertas/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
       ]
     },
     {
@@ -3260,8 +3886,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "28136-83000 /127",
-          "midcode": "28136-83000 /127"
+          "barcode": "28136-83000 /128",
+          "midcode": "28136-83000 /128"
         }
       ],
       "images": [
@@ -3296,8 +3922,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "28136-83000 /128",
-          "midcode": "28136-83000 /128"
+          "barcode": "28136-83000 /129",
+          "midcode": "28136-83000 /129"
         }
       ],
       "images": [
@@ -3367,8 +3993,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "29346-80100 /130",
-          "midcode": "29346-80100 /130"
+          "barcode": "29346-80100 /131",
+          "midcode": "29346-80100 /131"
         }
       ],
       "images": [
@@ -3403,8 +4029,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "29346-80100 /131",
-          "midcode": "29346-80100 /131"
+          "barcode": "29346-80100 /132",
+          "midcode": "29346-80100 /132"
         }
       ],
       "images": [
@@ -3412,6 +4038,111 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora_pro/02.webp"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/guardapolvos_palanca_reductora_pro/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Intermitentes laterales LH",
+      "handle": "suzuki-samurai-intermitentes-laterales-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Intermitentes laterales LH",
+          "prices": [{ "currency_code": "eur", "amount": 900 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "36430-80001",
+          "midcode": "36430-80001"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitente_lateral_lh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitente_lateral_lh/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitente_lateral_lh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Intermitentes laterales RH",
+      "handle": "suzuki-samurai-intermitentes-laterales-rh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Intermitentes laterales RH",
+          "prices": [{ "currency_code": "eur", "amount": 900 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "36410-80001",
+          "midcode": "36410-80001"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitente_lateral_rh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitente_lateral_rh/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitente_lateral_rh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Intermitentes laterales RH LH",
+      "handle": "suzuki-samurai-intermitentes-laterales-rh-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Intermitentes laterales RH LH",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "36410-80001, 36430-80001",
+          "midcode": "36410-80001, 36430-80001"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitentes_laterales_rhylh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitentes_laterales_rhylh/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/intermitentes_laterales_rhylh/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -3494,6 +4225,105 @@
       ]
     },
     {
+      "title": "Junta cárter aceite 1.0",
+      "handle": "suzuki-samurai-junta-carter-aceite-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-motor-juntas" },
+        { "id": "pcat_accesorios-motor-juntas" }
+      ],
+      "variants": [
+        {
+          "title": "Junta cárter aceite 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 1000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "11529-73001",
+          "midcode": "11529-73001"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_carter_aceite_sj410/01.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_carter_aceite_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }],
+      "status": "draft"
+    },
+    {
+      "title": "Junta cárter aceite 1.3",
+      "handle": "suzuki-samurai-junta-carter-aceite-1.3",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-motor-juntas" },
+        { "id": "pcat_accesorios-motor-juntas" }
+      ],
+      "variants": [
+        {
+          "title": "Junta cárter aceite 1.3",
+          "prices": [{ "currency_code": "eur", "amount": 1000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "11529M79140",
+          "midcode": "11529M79140"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_carter_aceite_sj413/01.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_carter_aceite_sj413/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj413", "value": "sj413" },
+        { "id": "ptag_8v", "value": "8v" }
+      ],
+      "status": "draft"
+    },
+    {
+      "title": "Junta colector admisión 1.0",
+      "handle": "suzuki-samurai-junta-colector-admision-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-motor-juntas" },
+        { "id": "pcat_accesorios-motor-juntas" }
+      ],
+      "variants": [
+        {
+          "title": "Junta colector admisión 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "13119-73001",
+          "midcode": "13119-73001"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_colector_admision_sj410/01.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_colector_admision_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }],
+      "status": "draft"
+    },
+    {
       "title": "Junta colector admisión 1.3",
       "handle": "suzuki-samurai-junta-colector-admision-1.3",
       "categories": [
@@ -3515,14 +4345,16 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_colector_admision_sj413/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_colector_admision_sj413/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_colector_admision_sj413/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_colector_admision_sj413/03.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_colector_admision_sj413/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj413", "value": "sj413" }],
-      "status": "draft"
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
     },
     {
       "title": "Junta colector escape 1.0",
@@ -3591,6 +4423,38 @@
       "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
     },
     {
+      "title": "Junta culata 1.0",
+      "handle": "suzuki-samurai-junta-culata-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-motor-juntas" },
+        { "id": "pcat_accesorios-motor-juntas" }
+      ],
+      "variants": [
+        {
+          "title": "Junta culata 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 2000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "11141-75101",
+          "midcode": "11141-75101"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_culata_sj410/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_culata_sj410/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_culata_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+    },
+    {
       "title": "Junta culata 1.3",
       "handle": "suzuki-samurai-junta-culata-1.3",
       "categories": [
@@ -3612,7 +4476,6 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_culata_sj413/00.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_culata_sj413/01.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_culata_sj413/02.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_culata_sj413/03.webp"
@@ -3697,6 +4560,38 @@
       ]
     },
     {
+      "title": "Junta tapa balancines 1.0",
+      "handle": "suzuki-samurai-junta-tapa-balancines-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-motor-juntas" },
+        { "id": "pcat_accesorios-motor-juntas" }
+      ],
+      "variants": [
+        {
+          "title": "Junta tapa balancines 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 1000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "11189-73000",
+          "midcode": "11189-73000"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_tapa_balancines_sj410/01.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_tapa_balancines_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }],
+      "status": "draft"
+    },
+    {
       "title": "Junta tapa balancines 1.3",
       "handle": "suzuki-samurai-junta-tapa-balancines-1.3",
       "categories": [
@@ -3718,8 +4613,10 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_tapa_balancines_sj413/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_tapa_balancines_sj413/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_tapa_balancines_sj413/02.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/junta_tapa_balancines_sj413/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -3727,8 +4624,7 @@
       "tags": [
         { "id": "ptag_sj413", "value": "sj413" },
         { "id": "ptag_8v", "value": "8v" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Junta tórica distribuidor 33278-85310",
@@ -3817,8 +4713,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "37100-85210,   ",
-          "midcode": "37100-85210,   "
+          "barcode": "37100-85210 /156",
+          "midcode": "37100-85210 /156"
         }
       ],
       "images": [
@@ -3857,14 +4753,18 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj410/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj410/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj410/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj410/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj410/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj410/05.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj410/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj410", "value": "sj410" }],
-      "status": "draft"
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
     },
     {
       "title": "Kit correa distribución 1.3",
@@ -3886,14 +4786,55 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj413/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj413/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj413/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj413/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj413/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj413/05.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_distribucion_sj413/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj413", "value": "sj413" }],
-      "status": "draft"
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
+      "title": "Kit depósito limpiaparabrisas",
+      "handle": "suzuki-samurai-kit-deposito-limpiaparabrisas",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-kit-completos" },
+        { "id": "pcat_accesorios-kit-completos" }
+      ],
+      "variants": [
+        {
+          "title": "Kit depósito limpiaparabrisas",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_deposito_limpiaparabrisas/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_deposito_limpiaparabrisas/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_deposito_limpiaparabrisas/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_deposito_limpiaparabrisas/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_deposito_limpiaparabrisas/05.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_deposito_limpiaparabrisas/06.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_deposito_limpiaparabrisas/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Kit goma y junquillo hard top - arco central",
@@ -3928,6 +4869,142 @@
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
       ]
+    },
+    {
+      "title": "Kit juntas carburador 1.0",
+      "handle": "suzuki-samurai-kit-juntas-carburador-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-kit-completos" },
+        { "id": "pcat_accesorios-kit-completos" }
+      ],
+      "variants": [
+        {
+          "title": "Kit juntas carburador 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "13200-80000 /161",
+          "midcode": "13200-80000 /161"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj410/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj410/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj410/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj410/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj410/05.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj410/06.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+    },
+    {
+      "title": "Kit juntas carburador 1.3",
+      "handle": "suzuki-samurai-kit-juntas-carburador-1.3",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-kit-completos" },
+        { "id": "pcat_accesorios-kit-completos" }
+      ],
+      "variants": [
+        {
+          "title": "Kit juntas carburador 1.3",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "13200-83010 /162",
+          "midcode": "13200-83010 /162"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj413/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj413/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj413/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj413/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj413/05.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj413/06.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_carburador_sj413/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
+      "title": "Kit juntas motor 1.0",
+      "handle": "suzuki-samurai-kit-juntas-motor-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-kit-completos" },
+        { "id": "pcat_accesorios-kit-completos" }
+      ],
+      "variants": [
+        {
+          "title": "Kit juntas motor 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 4800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "11400-80861",
+          "midcode": "11400-80861"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_motor_sj410/01.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_motor_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }],
+      "status": "draft"
+    },
+    {
+      "title": "Kit juntas motor 1.3",
+      "handle": "suzuki-samurai-kit-juntas-motor-1.3",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-kit-completos" },
+        { "id": "pcat_accesorios-kit-completos" }
+      ],
+      "variants": [
+        {
+          "title": "Kit juntas motor 1.3",
+          "prices": [{ "currency_code": "eur", "amount": 4800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "11400-83890",
+          "midcode": "11400-83890"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_motor_sj413/01.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_juntas_motor_sj413/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }],
+      "status": "draft"
     },
     {
       "title": "Kit reparación bola dirección genérico",
@@ -4021,8 +5098,11 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_eje_delantero/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_eje_delantero/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_eje_delantero/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_eje_delantero/03.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_eje_delantero/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -4030,7 +5110,70 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Kit reparación integral carburador 1.0",
+      "handle": "suzuki-samurai-kit-reparacion-integral-carburador-1.0",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-kit-completos" },
+        { "id": "pcat_accesorios-kit-completos" }
       ],
+      "variants": [
+        {
+          "title": "Kit reparación integral carburador 1.0",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "13200-80000 /170",
+          "midcode": "13200-80000 /170"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_carburador_sj410/01.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_carburador_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }],
+      "status": "draft"
+    },
+    {
+      "title": "Kit reparación integral carburador 1.3",
+      "handle": "suzuki-samurai-kit-reparacion-integral-carburador-1.3",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-kit-completos" },
+        { "id": "pcat_accesorios-kit-completos" }
+      ],
+      "variants": [
+        {
+          "title": "Kit reparación integral carburador 1.3",
+          "prices": [{ "currency_code": "eur", "amount": 3500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "13200-83010 /171",
+          "midcode": "13200-83010 /171"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_carburador_sj413/01.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/kit_reparacion_carburador_sj413/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }],
       "status": "draft"
     },
     {
@@ -4123,8 +5266,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "42400-83001 /172",
-          "midcode": "42400-83001 /172"
+          "barcode": "42400-83001 /174",
+          "midcode": "42400-83001 /174"
         }
       ],
       "images": [
@@ -4159,8 +5302,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "42400-83001 /173",
-          "midcode": "42400-83001 /173"
+          "barcode": "42400-83001 /175",
+          "midcode": "42400-83001 /175"
         }
       ],
       "images": [
@@ -4446,8 +5589,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78460-78002 /181",
-          "midcode": "78460-78002 /181"
+          "barcode": "78460-78002 /183",
+          "midcode": "78460-78002 /183"
         }
       ],
       "images": [
@@ -4483,8 +5626,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78460-78002 /182",
-          "midcode": "78460-78002 /182"
+          "barcode": "78460-78002 /184",
+          "midcode": "78460-78002 /184"
         }
       ],
       "images": [
@@ -4520,8 +5663,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78460-78002 /183",
-          "midcode": "78460-78002 /183"
+          "barcode": "78460-78002 /185",
+          "midcode": "78460-78002 /185"
         }
       ],
       "images": [
@@ -4541,8 +5684,8 @@
       ]
     },
     {
-      "title": "Manecilla elevalunas plastico negra LH o RH",
-      "handle": "suzuki-samurai-manecilla-elevalunas-plastico-negra-lh-o-rh",
+      "title": "Manecilla elevalunas plastico negra LH o RH (Tipo 2)",
+      "handle": "suzuki-samurai-manecilla-elevalunas-plastico-negra-lh-o-rh-(tipo-2)",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -4551,14 +5694,14 @@
       ],
       "variants": [
         {
-          "title": "Manecilla elevalunas plastico negra LH o RH",
+          "title": "Manecilla elevalunas plastico negra LH o RH (Tipo 2)",
           "prices": [{ "currency_code": "eur", "amount": 500 }],
           "options": [],
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78460-78002 /185",
-          "midcode": "78460-78002 /185"
+          "barcode": "78460-78002 /187",
+          "midcode": "78460-78002 /187"
         }
       ],
       "images": [
@@ -4579,7 +5722,7 @@
     },
     {
       "title": "Maneta metálicas puertas cromo LH,RH",
-      "handle": "suzuki-samurai-maneta-metalicas-puertas-cromo-lh,rh",
+      "handle": "suzuki-samurai-maneta-metalicas-puertas-cromo-lhrh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -4594,8 +5737,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "82820-83000, 82810-83000 /188",
-          "midcode": "82820-83000, 82810-83000 /188"
+          "barcode": "82820-83000, 82810-83000 /191",
+          "midcode": "82820-83000, 82810-83000 /191"
         }
       ],
       "images": [
@@ -4615,7 +5758,7 @@
     },
     {
       "title": "Maneta metálicas puertas negro LH, RH",
-      "handle": "suzuki-samurai-maneta-metalicas-puertas-negro-lh,-rh",
+      "handle": "suzuki-samurai-maneta-metalicas-puertas-negro-lh-rh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -4666,8 +5809,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "82820-83000, 82810-83000 /193",
-          "midcode": "82820-83000, 82810-83000 /193"
+          "barcode": "82820-83000, 82810-83000 /196",
+          "midcode": "82820-83000, 82810-83000 /196"
         }
       ],
       "images": [
@@ -4687,7 +5830,7 @@
     },
     {
       "title": "Maneta puertas plástico LH,RH",
-      "handle": "suzuki-samurai-maneta-puertas-plastico-lh,rh",
+      "handle": "suzuki-samurai-maneta-puertas-plastico-lhrh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -4702,8 +5845,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "82820-83000, 82810-83000 /195",
-          "midcode": "82820-83000, 82810-83000 /195"
+          "barcode": "82820-83000, 82810-83000 /198",
+          "midcode": "82820-83000, 82810-83000 /198"
         }
       ],
       "images": [
@@ -5087,7 +6230,7 @@
     },
     {
       "title": "Mecanismo apertura puerta con varilla LH,RH",
-      "handle": "suzuki-samurai-mecanismo-apertura-puerta-con-varilla-lh,rh",
+      "handle": "suzuki-samurai-mecanismo-apertura-puerta-con-varilla-lhrh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -5102,13 +6245,15 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78481-79001, 78471-79001 /212",
-          "midcode": "78481-79001, 78471-79001 /212"
+          "barcode": "78481-79001, 78471-79001 /215",
+          "midcode": "78481-79001, 78471-79001 /215"
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mecanismo_interior_apertura_puertas/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mecanismo_interior_apertura_puertas/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mecanismo_interior_apertura_puertas/02.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/mecanismo_interior_apertura_puertas/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -5116,12 +6261,11 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Mecanismo apertura puerta metal cromo LH, RH",
-      "handle": "suzuki-samurai-mecanismo-apertura-puerta-metal-cromo-lh,-rh",
+      "handle": "suzuki-samurai-mecanismo-apertura-puerta-metal-cromo-lh-rh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -5156,7 +6300,7 @@
     },
     {
       "title": "Mecanismo apertura puerta sin varilla LH, RH",
-      "handle": "suzuki-samurai-mecanismo-apertura-puerta-sin-varilla-lh,-rh",
+      "handle": "suzuki-samurai-mecanismo-apertura-puerta-sin-varilla-lh-rh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -5171,8 +6315,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78481-79001, 78471-79001 /218",
-          "midcode": "78481-79001, 78471-79001 /218"
+          "barcode": "78481-79001, 78471-79001 /221",
+          "midcode": "78481-79001, 78471-79001 /221"
         }
       ],
       "images": [
@@ -5426,8 +6570,13 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/palanca_cambios/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/palanca_cambios/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/palanca_cambios/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/palanca_cambios/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/palanca_cambios/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/palanca_cambios/05.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/palanca_cambios/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -5435,8 +6584,7 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Palanca freno de mano genérica",
@@ -5528,8 +6676,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "84802-80011, 84801-80011 /231",
-          "midcode": "84802-80011, 84801-80011 /231"
+          "barcode": "84802-80011, 84801-80011 /234",
+          "midcode": "84802-80011, 84801-80011 /234"
         }
       ],
       "images": [
@@ -5546,6 +6694,104 @@
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
       ]
+    },
+    {
+      "title": "Parasoles Suzuki Maruti (2 pcs)",
+      "handle": "suzuki-samurai-parasoles-suzuki-maruti-(2-pcs)",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-interior" },
+        { "id": "pcat_accesorios-interior" }
+      ],
+      "variants": [
+        {
+          "title": "Parasoles Suzuki Maruti (2 pcs)",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "84802-80011, 84801-80011 /235",
+          "midcode": "84802-80011, 84801-80011 /235"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/parasoles_grises/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/parasoles_grises/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/parasoles_grises/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/parasoles_grises/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Pastillas de freno delanteras 1.0 (4 pcs)",
+      "handle": "suzuki-samurai-pastillas-de-freno-delanteras-1.0-(4-pcs)",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-ruedas-frenos" },
+        { "id": "pcat_accesorios-ruedas-frenos" }
+      ],
+      "variants": [
+        {
+          "title": "Pastillas de freno delanteras 1.0 (4 pcs)",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pastillas_freno_sj410/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pastillas_freno_sj410/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pastillas_freno_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+    },
+    {
+      "title": "Pastillas de freno delanteras 1.3 (4 pcs)",
+      "handle": "suzuki-samurai-pastillas-de-freno-delanteras-1.3-(4-pcs)",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-ruedas-frenos" },
+        { "id": "pcat_accesorios-ruedas-frenos" }
+      ],
+      "variants": [
+        {
+          "title": "Pastillas de freno delanteras 1.3 (4 pcs)",
+          "prices": [{ "currency_code": "eur", "amount": 3000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "55810M70A00",
+          "midcode": "55810M70A00"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pastillas_freno_sj413/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pastillas_freno_sj413/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pastillas_freno_sj413/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
     },
     {
       "title": "Pegatina portón trasero SAMURAI",
@@ -5602,9 +6848,7 @@
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": [
-        { "title": "Color", "values": ["Amarillo", "Blanco", "Negro", "Rojo"] }
-      ],
+      "options": [{ "title": "Color", "values": "Amarillo,Blanco,Negro,Rojo" }],
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
@@ -5663,7 +6907,7 @@
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
-      "options": [{ "title": "Color" }],
+      "options": [{ "title": "Color", "values": "Amarillo,Blanco,Negro,Rojo" }],
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
@@ -5738,8 +6982,78 @@
       ]
     },
     {
+      "title": "Piloto delantero interm + posición LH",
+      "handle": "suzuki-samurai-piloto-delantero-interm-+-posicion-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Piloto delantero interm + posición LH",
+          "prices": [{ "currency_code": "eur", "amount": 1200 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "35602-80052",
+          "midcode": "35602-80052"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_delantero_intermitente_y_posicion_lh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_delantero_intermitente_y_posicion_lh/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_delantero_intermitente_y_posicion_lh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Piloto delantero interm + posición RH",
+      "handle": "suzuki-samurai-piloto-delantero-interm-+-posicion-rh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Piloto delantero interm + posición RH",
+          "prices": [{ "currency_code": "eur", "amount": 1200 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "35601-80052",
+          "midcode": "35601-80052"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_delantero_intermitente_y_posicion_rh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_delantero_intermitente_y_posicion_rh/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_delantero_intermitente_y_posicion_rh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
       "title": "Pilotos delanteros interm + posición LH,RH",
-      "handle": "suzuki-samurai-pilotos-delanteros-interm-+-posicion-lh,rh",
+      "handle": "suzuki-samurai-pilotos-delanteros-interm-+-posicion-lhrh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -5759,11 +7073,232 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion/01.webp",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion/02.webp",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion/03.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion_lhyrh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion_lhyrh/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion_lhyrh/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion_lhyrh/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion_lhyrh/05.webp"
       ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion/thumb.webp",
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_delanteros_intermitente_y_posicion_lhyrh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Piloto trasero homologado LH",
+      "handle": "suzuki-samurai-piloto-trasero-homologado-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Piloto trasero homologado LH",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "35604-80040 /250",
+          "midcode": "35604-80040 /250"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_lh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_lh/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_lh/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_lh/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_lh/05.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_lh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Piloto trasero homologado RH",
+      "handle": "suzuki-samurai-piloto-trasero-homologado-rh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Piloto trasero homologado RH",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "35603-80040 /251",
+          "midcode": "35603-80040 /251"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_rh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_rh/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_rh/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_rh/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_rh/05.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_homologado_rh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Pilotos traseros homologados RH LH",
+      "handle": "suzuki-samurai-pilotos-traseros-homologados-rh-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Pilotos traseros homologados RH LH",
+          "prices": [{ "currency_code": "eur", "amount": 5000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "35603-80040, 35604-80040 /252",
+          "midcode": "35603-80040, 35604-80040 /252"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_homologados_lhyrh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_homologados_lhyrh/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_homologados_lhyrh/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_homologados_lhyrh/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_homologados_lhyrh/05.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_homologados_lhyrh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Piloto trasero no homologado LH",
+      "handle": "suzuki-samurai-piloto-trasero-no-homologado-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Piloto trasero no homologado LH",
+          "prices": [{ "currency_code": "eur", "amount": 5000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "35604-80040 /253",
+          "midcode": "35604-80040 /253"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_lh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_lh/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_lh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Piloto trasero no homologado RH",
+      "handle": "suzuki-samurai-piloto-trasero-no-homologado-rh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Piloto trasero no homologado RH",
+          "prices": [{ "currency_code": "eur", "amount": 5000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "35603-80040 /254",
+          "midcode": "35603-80040 /254"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_rh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_rh/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/piloto_trasero_rh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Pilotos traseros no homologado RH LH",
+      "handle": "suzuki-samurai-pilotos-traseros-no-homologado-rh-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-electricidad-iluminacion" },
+        { "id": "pcat_accesorios-electricidad-iluminacion" }
+      ],
+      "variants": [
+        {
+          "title": "Pilotos traseros no homologado RH LH",
+          "prices": [{ "currency_code": "eur", "amount": 10000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "35603-80040, 35604-80040 /255",
+          "midcode": "35603-80040, 35604-80040 /255"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_lhyrh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_lhyrh/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/pilotos_traseros_lhyrh/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -5914,7 +7449,7 @@
     },
     {
       "title": "Puntera parachoques delantero genérico LH,RH",
-      "handle": "suzuki-samurai-puntera-parachoques-delantero-generico-lh,rh",
+      "handle": "suzuki-samurai-puntera-parachoques-delantero-generico-lhrh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -5949,7 +7484,7 @@
     },
     {
       "title": "Puntera parachoques trasero generico LH,RH",
-      "handle": "suzuki-samurai-puntera-parachoques-trasero-generico-lh,rh",
+      "handle": "suzuki-samurai-puntera-parachoques-trasero-generico-lhrh",
       "categories": [
         { "id": "pcat_suzuki" },
         { "id": "pcat_suzuki-samurai" },
@@ -5973,6 +7508,113 @@
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/punteras_parachoques_trasero/02.webp"
       ],
       "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/punteras_parachoques_trasero/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Puntera parachoques trasero Long Body LH",
+      "handle": "suzuki-samurai-puntera-parachoques-trasero-long-body-lh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-exterior" },
+        { "id": "pcat_accesorios-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Puntera parachoques trasero Long Body LH",
+          "prices": [{ "currency_code": "eur", "amount": 3100 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "71832-74A20 /268",
+          "midcode": "71832-74A20 /268"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/puntera_parachoques_trasero_long_body_lh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/puntera_parachoques_trasero_long_body_lh/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/puntera_parachoques_trasero_long_body_lh/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/puntera_parachoques_trasero_long_body_lh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Puntera parachoques trasero Long Body RH",
+      "handle": "suzuki-samurai-puntera-parachoques-trasero-long-body-rh",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-exterior" },
+        { "id": "pcat_accesorios-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Puntera parachoques trasero Long Body RH",
+          "prices": [{ "currency_code": "eur", "amount": 3100 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "71830-70A20 /269",
+          "midcode": "71830-70A20 /269"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/puntera_parachoques_trasero_long_body_rh/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/puntera_parachoques_trasero_long_body_rh/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/puntera_parachoques_trasero_long_body_rh/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/puntera_parachoques_trasero_long_body_rh/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Punteras parachoques traseros Long Body",
+      "handle": "suzuki-samurai-punteras-parachoques-traseros-long-body",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-exterior" },
+        { "id": "pcat_accesorios-exterior" }
+      ],
+      "variants": [
+        {
+          "title": "Punteras parachoques traseros Long Body",
+          "prices": [{ "currency_code": "eur", "amount": 3100 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "71830-70A20,71832-74A20",
+          "midcode": "71830-70A20,71832-74A20"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/punteras_parachoques_trasero_long_body/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/punteras_parachoques_trasero_long_body/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/punteras_parachoques_trasero_long_body/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -6105,8 +7747,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "77810-60021 /270",
-          "midcode": "77810-60021 /270"
+          "barcode": "77810-60021 /276",
+          "midcode": "77810-60021 /276"
         }
       ],
       "images": [
@@ -6141,8 +7783,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "77810-60021 /271",
-          "midcode": "77810-60021 /271"
+          "barcode": "77810-60021 /277",
+          "midcode": "77810-60021 /277"
         }
       ],
       "images": [
@@ -6255,8 +7897,10 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_salida_caja_cambios_2478083000/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_caja_cambios_0928325088/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_caja_cambios_0928325088/02.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_caja_cambios_0928325088/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -6264,8 +7908,7 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Retén cigüeñal 09283-68001",
@@ -6395,6 +8038,7 @@
         }
       ],
       "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_palier_trasero_0928348007/00.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_palier_trasero_0928348007/01.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_palier_trasero_0928348007/02.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_palier_trasero_0928348007/03.webp"
@@ -6446,6 +8090,41 @@
       ]
     },
     {
+      "title": "Retén transfer 29971-83050",
+      "handle": "suzuki-samurai-reten-transfer-29971-83050",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-retenes" },
+        { "id": "pcat_accesorios-retenes" }
+      ],
+      "variants": [
+        {
+          "title": "Retén transfer 29971-83050",
+          "prices": [{ "currency_code": "eur", "amount": 800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "29971-83050",
+          "midcode": "29971-83050"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_transfer_2997183050/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_transfer_2997183050/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_transfer_2997183050/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
       "title": "Retén transmisión 29972-80050",
       "handle": "suzuki-samurai-reten-transmision-29972-80050",
       "categories": [
@@ -6467,6 +8146,38 @@
         }
       ],
       "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_transmision_2997280050/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_transmision_2997280050/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_transmision_2997280050/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
+      "title": "Retén velocímetro 29973-80050",
+      "handle": "suzuki-samurai-reten-velocimetro-29973-80050",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-retenes" },
+        { "id": "pcat_accesorios-retenes" }
+      ],
+      "variants": [
+        {
+          "title": "Retén velocímetro 29973-80050",
+          "prices": [{ "currency_code": "eur", "amount": 600 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "29973-80050",
+          "midcode": "29973-80050"
+        }
+      ],
+      "images": [
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_velocimetro_reductora_2997380050/01.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_velocimetro_reductora_2997380050/02.webp",
         "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/reten_velocimetro_reductora_2997380050/03.webp"
@@ -6476,41 +8187,10 @@
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
-    },
-    {
-      "title": "Rodamiento cigüeñal 12623-60A00",
-      "handle": "suzuki-samurai-rodamiento-ciguenal-12623-60a00",
-      "categories": [
-        { "id": "pcat_suzuki" },
-        { "id": "pcat_suzuki-samurai" },
-        { "id": "pcat_suzuki-samurai-motor-juntas" },
-        { "id": "pcat_accesorios-motor-juntas" }
-      ],
-      "variants": [
-        {
-          "title": "Rodamiento cigüeñal 12623-60A00",
-          "prices": [{ "currency_code": "eur", "amount": 0 }],
-          "options": [],
-          "inventory_quantity": 500,
-          "manage_inventory": true,
-          "mid_code": "",
-          "barcode": "12623-60A00",
-          "midcode": "12623-60A00"
-        }
-      ],
-      "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_cigueñal_126236oa00/01.webp",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_cigueñal_126236oa00/02.webp",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_cigueñal_126236oa00/03.webp",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_cigueñal_126236oa00/04.webp"
-      ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_cigueñal_126236oa00/thumb.webp",
-      "subtitle": null,
-      "is_giftcard": false,
-      "weight": null,
-      "options": [],
-      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Rodamientos pivotes dirección",
@@ -6534,8 +8214,11 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_pivote_direccion/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_pivote_direccion/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_pivote_direccion/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_pivote_direccion/03.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/rodamiento_pivote_direccion/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -6543,8 +8226,7 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Rodamientos traseros",
@@ -6759,6 +8441,107 @@
       "status": "draft"
     },
     {
+      "title": "Silentblock carrocería (set)",
+      "handle": "suzuki-samurai-silentblock-carroceria-(set)",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-silentblock" },
+        { "id": "pcat_accesorios-silentblock" }
+      ],
+      "variants": [
+        {
+          "title": "Silentblock carrocería (set)",
+          "prices": [{ "currency_code": "eur", "amount": 4000 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_carroceria_generico/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_carroceria_generico/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_carroceria_generico/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Silentblock carrocería OEM (set)",
+      "handle": "suzuki-samurai-silentblock-carroceria-oem-(set)",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-silentblock" },
+        { "id": "pcat_accesorios-silentblock" }
+      ],
+      "variants": [
+        {
+          "title": "Silentblock carrocería OEM (set)",
+          "prices": [{ "currency_code": "eur", "amount": 5500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_carroceria_calidad/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_carroceria_calidad/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_carroceria_calidad/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Silentblock motor con protector",
+      "handle": "suzuki-samurai-silentblock-motor-con-protector",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-silentblock" },
+        { "id": "pcat_accesorios-silentblock" }
+      ],
+      "variants": [
+        {
+          "title": "Silentblock motor con protector",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "11610-82C00 ",
+          "midcode": "11610-82C00 "
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_motor_con_protector/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_motor_con_protector/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_motor_con_protector/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
       "title": "Silentblock motor sin protector",
       "handle": "suzuki-samurai-silentblock-motor-sin-protector",
       "categories": [
@@ -6848,14 +8631,15 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "09305-13002, 41331-62020 /305",
-          "midcode": "09305-13002, 41331-62020 /305"
+          "barcode": "09305-13002, 41331-62020 /311",
+          "midcode": "09305-13002, 41331-62020 /311"
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_suspension/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_suspension_generico/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_suspension_generico/02.webp"
       ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_suspension/thumb.webp",
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/silentblock_suspension_generico/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -6863,8 +8647,7 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Silentblock transfer genérico",
@@ -6920,13 +8703,16 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "42400-83001 /316",
-          "midcode": "42400-83001 /316"
+          "barcode": "42400-83001 /322",
+          "midcode": "42400-83001 /322"
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_barra_estabilizadora/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_barra_estabilizadora/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_barra_estabilizadora/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_barra_estabilizadora/03.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/soporte_barra_estabilizadora/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -6934,8 +8720,7 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Soporte caja cambios",
@@ -6991,8 +8776,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78710-78000 /319",
-          "midcode": "78710-78000 /319"
+          "barcode": "78710-78000 /325",
+          "midcode": "78710-78000 /325"
         }
       ],
       "images": [
@@ -7028,8 +8813,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "35131-61530 /322",
-          "midcode": "35131-61530 /322"
+          "barcode": "35131-61530 /328",
+          "midcode": "35131-61530 /328"
         }
       ],
       "images": [
@@ -7063,8 +8848,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "35131-61530 /323",
-          "midcode": "35131-61530 /323"
+          "barcode": "35131-61530 /329",
+          "midcode": "35131-61530 /329"
         }
       ],
       "images": [
@@ -7293,6 +9078,39 @@
       "status": "draft"
     },
     {
+      "title": "Tapa distribuidor 1.3i",
+      "handle": "suzuki-samurai-tapa-distribuidor-1.3i",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-encendido" },
+        { "id": "pcat_accesorios-encencido" }
+      ],
+      "variants": [
+        {
+          "title": "Tapa distribuidor 1.3i",
+          "prices": [{ "currency_code": "eur", "amount": 1800 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "33321-80C10",
+          "midcode": "33321-80C10"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_distribuidor_sj413_inyeccion/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_distribuidor_sj413_inyeccion/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_distribuidor_sj413_inyeccion/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tapa_distribuidor_sj413_inyeccion/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
+    },
+    {
       "title": "Tapa distribuidor grapas",
       "handle": "suzuki-samurai-tapa-distribuidor-grapas",
       "categories": [
@@ -7309,8 +9127,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "33321-60A10 /333",
-          "midcode": "33321-60A10 /333"
+          "barcode": "33321-60A10 /339",
+          "midcode": "33321-60A10 /339"
         }
       ],
       "images": [
@@ -7600,8 +9418,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "89260-83011 /342",
-          "midcode": "89260-83011 /342"
+          "barcode": "89260-83011 /348",
+          "midcode": "89260-83011 /348"
         }
       ],
       "images": [
@@ -7637,8 +9455,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "89260-83011 /343",
-          "midcode": "89260-83011 /343"
+          "barcode": "89260-83011 /349",
+          "midcode": "89260-83011 /349"
         }
       ],
       "images": [
@@ -7780,8 +9598,12 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/termostato/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/termostato/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/termostato/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/termostato/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/termostato/04.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/termostato/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -7790,8 +9612,7 @@
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" },
         { "id": "ptag_8v", "value": "8v" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Tirador interior puertas gris",
@@ -7810,8 +9631,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78271-58053 /348",
-          "midcode": "78271-58053 /348"
+          "barcode": "78271-58053 /354",
+          "midcode": "78271-58053 /354"
         }
       ],
       "images": [
@@ -7847,8 +9668,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "78271-58053 /349",
-          "midcode": "78271-58053 /349"
+          "barcode": "78271-58053 /355",
+          "midcode": "78271-58053 /355"
         }
       ],
       "images": [
@@ -7922,8 +9743,12 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_bisagra_puerta/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_bisagra_puerta/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_bisagra_puerta/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_bisagra_puerta/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_bisagra_puerta/04.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_bisagra_puerta/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -7931,8 +9756,42 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Tornillo cárter de aceite",
+      "handle": "suzuki-samurai-tornillo-carter-de-aceite",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-motor-juntas" },
+        { "id": "pcat_accesorios-motor-juntas" }
       ],
-      "status": "draft"
+      "variants": [
+        {
+          "title": "Tornillo cárter de aceite",
+          "prices": [{ "currency_code": "eur", "amount": 500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "09247-14044",
+          "midcode": "09247-14044"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_carter_aceite/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_carter_aceite/02.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillo_carter_aceite/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
     },
     {
       "title": "Tornillo palanca cambios",
@@ -8041,6 +9900,37 @@
       ]
     },
     {
+      "title": "Tornillos culata 1.0 (10 uds)",
+      "handle": "suzuki-samurai-tornillos-culata-1.0-(10-uds)",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-motor-juntas" },
+        { "id": "pcat_accesorios-motor-juntas" }
+      ],
+      "variants": [
+        {
+          "title": "Tornillos culata 1.0 (10 uds)",
+          "prices": [{ "currency_code": "eur", "amount": 4200 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": ""
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj410/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj410/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj410/03.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj410/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [{ "id": "ptag_sj410", "value": "sj410" }]
+    },
+    {
       "title": "Tornillos culata 1.3 (10 uds)",
       "handle": "suzuki-samurai-tornillos-culata-1.3-(10-uds)",
       "categories": [
@@ -8060,14 +9950,17 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj413/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj413/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj413/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj413/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj413/04.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tornillos_culata_sj413/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
       "options": [],
-      "tags": [{ "id": "ptag_sj413", "value": "sj413" }],
-      "status": "draft"
+      "tags": [{ "id": "ptag_sj413", "value": "sj413" }]
     },
     {
       "title": "Tubo depósito gasolina",
@@ -8124,17 +10017,55 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "13840-83011 /363",
-          "midcode": "13840-83011 /363"
+          "barcode": "13840-83011 /369",
+          "midcode": "13840-83011 /369"
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire/01.webp",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire/02.webp",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire/03.webp",
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire/04.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_b/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_b/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_b/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_b/04.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_b/05.webp"
       ],
-      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire/thumb.webp",
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_b/thumb.webp",
+      "subtitle": null,
+      "is_giftcard": false,
+      "weight": null,
+      "options": [],
+      "tags": [
+        { "id": "ptag_sj410", "value": "sj410" },
+        { "id": "ptag_sj413", "value": "sj413" }
+      ]
+    },
+    {
+      "title": "Tubo recirculación aire M",
+      "handle": "suzuki-samurai-tubo-recirculacion-aire-m",
+      "categories": [
+        { "id": "pcat_suzuki" },
+        { "id": "pcat_suzuki-samurai" },
+        { "id": "pcat_suzuki-samurai-motor-juntas" },
+        { "id": "pcat_accesorios-motor-juntas" }
+      ],
+      "variants": [
+        {
+          "title": "Tubo recirculación aire M",
+          "prices": [{ "currency_code": "eur", "amount": 2500 }],
+          "options": [],
+          "inventory_quantity": 500,
+          "manage_inventory": true,
+          "mid_code": "",
+          "barcode": "13840-83011 /370",
+          "midcode": "13840-83011 /370"
+        }
+      ],
+      "images": [
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_m/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_m/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_m/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_m/04.webp"
+      ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/tubo_recirculacion_aire_m/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -8452,8 +10383,12 @@
         }
       ],
       "images": [
-        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_sujecion_capo/01.webp"
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_sujecion_capo/01.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_sujecion_capo/02.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_sujecion_capo/03.webp",
+        "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_sujecion_capo/04.webp"
       ],
+      "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/samurai/products/varilla_sujecion_capo/thumb.webp",
       "subtitle": null,
       "is_giftcard": false,
       "weight": null,
@@ -8461,8 +10396,7 @@
       "tags": [
         { "id": "ptag_sj410", "value": "sj410" },
         { "id": "ptag_sj413", "value": "sj413" }
-      ],
-      "status": "draft"
+      ]
     },
     {
       "title": "Varilla nivel de aceite 1.3",
@@ -8517,8 +10451,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "17931-80001 /380",
-          "midcode": "17931-80001 /380"
+          "barcode": "17931-80001 /386",
+          "midcode": "17931-80001 /386"
         }
       ],
       "images": [
@@ -8555,8 +10489,8 @@
           "inventory_quantity": 500,
           "manage_inventory": true,
           "mid_code": "",
-          "barcode": "17931-80001 /381",
-          "midcode": "17931-80001 /381"
+          "barcode": "17931-80001 /387",
+          "midcode": "17931-80001 /387"
         }
       ],
       "images": [
