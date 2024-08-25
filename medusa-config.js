@@ -57,11 +57,11 @@ const plugins = [
     resolve: "@medusajs/admin",
     /** @type {import('@medusajs/admin').PluginOptions} */
     options: {
-      serve: true,
+      serve: false,
       autoRebuild: true,
       backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
       develop: {
-        open: process.env.OPEN_BROWSER !== "false",
+        //open: process.env.OPEN_BROWSER !== "false",
       },
     },
   },
@@ -78,8 +78,7 @@ const plugins = [
   `medusa-payment-manual`,
   {
     resolve: `medusa-payment-paypal`,
-    options: {
-      sandbox: process.env.PAYPAL_SANDBOX,
+    options: {     
       clientId: process.env.PAYPAL_CLIENT_ID,
       clientSecret: process.env.PAYPAL_CLIENT_SECRET,
       authWebhookId: process.env.PAYPAL_AUTH_WEBHOOK_ID,
@@ -133,7 +132,7 @@ const projectConfig = {
   store_cors: STORE_CORS,
   admin_cors: ADMIN_CORS,
   database_url: DATABASE_URL,
-  redis_url: REDIS_URL,
+  redis_url: REDIS_URL
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule} */
