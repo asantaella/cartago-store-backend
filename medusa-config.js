@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const path = require("path");
 
 let ENV_FILE_NAME = "";
 switch (process.env.NODE_ENV) {
@@ -61,7 +62,7 @@ const plugins = [
       autoRebuild: true,
       backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
       develop: {
-        //open: process.env.OPEN_BROWSER !== "false",
+        open: process.env.OPEN_BROWSER !== "false",
       },
     },
   },
@@ -78,11 +79,9 @@ const plugins = [
   `medusa-payment-manual`,
   {
     resolve: `medusa-payment-paypal`,
-    options: {     
+    options: {
       clientId: process.env.PAYPAL_CLIENT_ID,
       clientSecret: process.env.PAYPAL_CLIENT_SECRET,
-      authWebhookId: process.env.PAYPAL_AUTH_WEBHOOK_ID,
-      capture: true,
     },
   },
   {
