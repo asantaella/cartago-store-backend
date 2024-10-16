@@ -50,33 +50,27 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
   const postalCode = cart.shipping_address?.postal_code;
 
-  if (!postalCode) {
-    throw new MedusaError(
-      MedusaError.Types.INVALID_DATA,
-      "Postal code is required in shipping address"
-    );
+  let data = [];
+
+  if (postalCode) {
+    let options: ShippingOption[] =
+      await shippingProfileService.fetchCartOptions(cart);
+
+    options = options.filter((option) => {
+      const postalCodeConstraints = option.metadata?.postal_code_constraints as
+        | string
+        | undefined;
+      if (!postalCodeConstraints) {
+        return false;
+      }
+
+      return new RegExp(postalCodeConstraints).test(postalCode);
+    });
+
+    data = await pricingService.setShippingOptionPrices(options, {
+      cart_id,
+    });
   }
-
-  let options: ShippingOption[] = await shippingProfileService.fetchCartOptions(
-    cart
-  );
-
-  options = options.filter((option) => {
-    const postalCodeConstraints = option.metadata?.postal_code_constraints as
-      | string
-      | undefined;
-    if (!postalCodeConstraints) {
-      return false;
-    }
-
-    return new RegExp(postalCodeConstraints).test(postalCode);
-  });
-
-  const data = await pricingService.setShippingOptionPrices(options, {
-    cart_id,
-  });
-
-  
 
   res.status(200).json({ shipping_options: data });
 };
