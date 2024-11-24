@@ -8,7 +8,7 @@ import {
   createPaymentSession,
 } from "./payment-session.mjs";
 
-const customer_id = "cus_01HW1A728M85HXJQVPDENRVDRA";
+const customer_id = "cus_01J0EGE34SG2VB3T04DKZ6CFWB";
 
 const provider_id = "manual";
 

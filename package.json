@@ -41,7 +41,7 @@
     "@medusajs/event-bus-redis": "^1.8.10",
     "@medusajs/file-local": "^1.0.2",
     "@medusajs/medusa": "^1.20.10",
-    "@medusajs/medusa-js": "^6.1.7",
+    "@medusajs/medusa-js": "^6.1.8",
     "@medusajs/modules-sdk": "^1.12.12",
     "@medusajs/types": "^1.11.17",
     "@medusajs/utils": "^1.11.11",

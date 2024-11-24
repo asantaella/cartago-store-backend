@@ -3470,9 +3470,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/medusa-js@npm:^6.1.7":
-  version: 6.1.7
-  resolution: "@medusajs/medusa-js@npm:6.1.7"
+"@medusajs/medusa-js@npm:^6.1.8":
+  version: 6.1.9
+  resolution: "@medusajs/medusa-js@npm:6.1.9"
   dependencies:
     axios: ^0.24.0
     cross-env: ^5.2.1
@@ -3481,7 +3481,7 @@ __metadata:
     uuid: ^9.0.0
   peerDependencies:
     "@medusajs/medusa": ^1.17.2
-  checksum: 525530a37d69293e62eeff9a253fd9e3df7815c7cfa8be8eb0f9acf6088db77aae43b5d879caab30af8c757b4f01c361ba222082005010707a5a141d1d05ccc7
+  checksum: c17623606433a8f2b8f8fe0e0e07949636d1794149071f82e9ddf3a490f0ea68b69c461902a9f536cdcbb46bb9c4cf496931d4ccf17ece5924886b01b4217ca6
   languageName: node
   linkType: hard
 
@@ -15192,7 +15192,7 @@ __metadata:
     "@medusajs/file-local": ^1.0.2
     "@medusajs/medusa": ^1.20.10
     "@medusajs/medusa-cli": ^1.3.22
-    "@medusajs/medusa-js": ^6.1.7
+    "@medusajs/medusa-js": ^6.1.8
     "@medusajs/modules-sdk": ^1.12.12
     "@medusajs/types": ^1.11.17
     "@medusajs/utils": ^1.11.11

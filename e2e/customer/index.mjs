@@ -1,20 +1,43 @@
 import { medusa } from "../auth/index.mjs";
-import { createCustomer as create } from "../customer/create.mjs";
 
 await medusa.admin.auth.getToken({
   email: "cartago4x4@gmail.com",
   password: "suru",
 });
 
-let customer = null;
 let customer_data = {
   first_name: "John",
   last_name: "McClain",
-  email: "a.santaella.m+3@gmail.com",
+  email: "a.santaella.m@gmail.com",
   password: "supersecret",
 };
 
+const _createCustomer = (medusa, { customer }) =>
+  medusa.customers.create({ ...customer }).then(({ customer }) => {
+    return customer;
+  });
+
+const _generatePasswordToken = (medusa, { email }) =>
+  medusa.customers.generatePasswordToken({
+    email,
+  });
+
 export const createCustomer = () =>
-  create(medusa, { customer: customer_data }).then((customer) =>
-    console.log("[CREATED] Customer: ", customer)
-  );
+  _createCustomer(medusa, { customer: customer_data })
+    .then(() => {
+      console.log("[CUSTOMER] Customer created successfully");
+    })
+    .catch((e) => {
+      console.error("[CUSTOMER] Failed customer create", e);
+    });
+
+export const generatePasswordToken = async () =>
+  _generatePasswordToken(medusa, { email: customer_data.email })
+    .then(() => {
+      console.log("[CUSTOMER] Password token generated successfully");
+    })
+    .catch((e) => {
+      console.error("[CUSTOMER] Failed password token generate", e);
+    });
+
+await generatePasswordToken();
