@@ -2,7 +2,7 @@ import Medusa from "@medusajs/medusa-js";
 import dotenv from "dotenv";
 
 //dotenv.config({ path: process.cwd() + "/.env" });
-dotenv.config({ path: process.cwd() + "/.env.production" });
+dotenv.config({ path: process.cwd() + "/.env.local" });
 
 console.log("Connecting to... ", process.env.MEDUSA_BACKEND_URL);
 const medusa = new Medusa({

@@ -23,7 +23,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch e2e",
-            "program": "${workspaceFolder}/e2e/cart/index.mjs",
+            "program": "${workspaceFolder}/e2e/customer/index.mjs",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false,

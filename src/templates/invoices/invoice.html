@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Invoice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Invoice</h1>
+    <p><strong>Order ID:</strong> {{orderId}}</p>
+    <p><strong>Customer Name:</strong> {{customerName}}</p>
+    <p><strong>Order Date:</strong> {{orderDate}}</p>
+    <p><strong>Shipping Address:</strong> {{shippingAddress}}</p>
+    <h2>Order Items</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{items}}
+      </tbody>
+    </table>
+    <p><strong>Total:</strong> {{total}}</p>
+  </body>
+</html>
