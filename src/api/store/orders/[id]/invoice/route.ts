@@ -7,10 +7,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const invoiceService = req.scope.resolve("invoiceGeneratorService");
    
     const pdf = await invoiceService.generateInvoice(id);
+    console.log("PDF filename =>>", pdf.fileName);
 
     res.set({
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${pdf.fileName}"`,
+      "Content-Disposition": `attachment; filename="${pdf.fileName}"`,      
       "Content-Length": pdf.buffer.length,
     });
 

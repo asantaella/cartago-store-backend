@@ -1,5 +1,6 @@
 import { BaseService } from "medusa-interfaces";
 import { LineItem, Order, OrderService } from "@medusajs/medusa";
+import path from "path";
 
 class InvoiceGeneratorService extends BaseService {
   static identifier = "invoice-generator";
@@ -72,8 +73,16 @@ class InvoiceGeneratorService extends BaseService {
       order.shipping_address.metadata?.nif_cif ||
       order.customer.metadata?.nif_cif;
     const billingAddress = order.billing_address
-      ? `${order.billing_address.address_1} ${order.billing_address.address_2}`
-      : `${order.shipping_address.address_1} ${order.shipping_address.address_2}`;
+      ? `${order.billing_address.address_1}${
+          order.billing_address.address_2
+            ? " " + order.billing_address.address_2
+            : ""
+        }`
+      : `${order.shipping_address.address_1}${
+          order.shipping_address.address_2
+            ? " " + order.shipping_address.address_2
+            : ""
+        }`;
     const billingCountryLabel =
       this.countryLabel[
         order.billing_address
@@ -104,7 +113,13 @@ class InvoiceGeneratorService extends BaseService {
     }, 0);
     const subtotalAfterDiscount = subtotal - discount;
     const invoiceCreatedAt = new Date(order.created_at).toLocaleDateString();
-    const invoiceFileName = `Cartago4x4_${order.display_id}_${invoiceCreatedAt.replace(/-/g, "")}.pdf`;
+    const invoiceFileName = `Cartago4x4_${invoiceCreatedAt.replace(
+      /\//g,
+      ""
+    )}_${order.display_id}.pdf`;
+    const invoiceId =
+      order.billing_address?.metadata?.invoice_id ||
+      order.shipping_address?.metadata?.invoice_id;
     const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -147,6 +162,7 @@ class InvoiceGeneratorService extends BaseService {
 
       .company-info {  
       margin-right: 10px;
+      width: ${invoiceId ? "auto" : "100%"}
       }
 
       .company-logo {
@@ -154,6 +170,10 @@ class InvoiceGeneratorService extends BaseService {
       width: 64px;
       height: 64px;
       border-radius: 50%;
+      }
+
+      .invoice-ref {
+      display: ${invoiceId ? "block" : "none"}
       }
 
       .invoice-data-box {
@@ -230,18 +250,18 @@ class InvoiceGeneratorService extends BaseService {
       <br><span class="invoice-field">NIF/CIF:</span> 23036207-M
       <br><span class="invoice-field">Mail:</span> contacto@cartago4x4.es</p>
       </div>
-      <div class="invoice-data-box">
+      <div class="invoice-ref invoice-data-box">
       <p><span class="invoice-field">Fecha de factura:</span> 
-      ${invoiceCreatedAt}</p>
+      ${invoiceId ? invoiceCreatedAt : ""}</p>
       <p><span class="invoice-field">Fecha de cargo:</span> 
-      ${invoiceCreatedAt}</p>
+      ${invoiceId ? invoiceCreatedAt : ""}</p>
       <p><span class="invoice-field">Número de factura:</span> 
-      ${order.display_id}</p>
+      ${invoiceId || ""}</p>
       </div>
       </div>
     
       <div>
-        <h3>Facturar a:</h3>
+        <h3 class="invoice-ref">Facturar a:</h3>
         <div class="billing-info">
           <div>
             <p><span class="invoice-field">Nombre del cliente:</span> ${customerName}
@@ -280,7 +300,7 @@ class InvoiceGeneratorService extends BaseService {
           const parentCategories = item.variant.product.categories
             .slice(0, 2)
             .map((cat) => cat.name)
-            .join(", ");
+            .join(" ");
           return `
         <tr>
         <td>${item.title}<br><small>${parentCategories}</small></td>
@@ -322,7 +342,7 @@ class InvoiceGeneratorService extends BaseService {
 
     await page.setContent(htmlContent, { waitUntil: "load" });
 
-    const pdfBuffer = await page.pdf({     
+    const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
     });
@@ -331,7 +351,7 @@ class InvoiceGeneratorService extends BaseService {
 
     return {
       buffer: pdfBuffer,
-      fileName: invoiceFileName
+      fileName: invoiceFileName,
     };
   }
 }
