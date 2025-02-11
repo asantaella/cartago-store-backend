@@ -1,6 +1,7 @@
 import { BaseService } from "medusa-interfaces";
 import { LineItem, Order, OrderService } from "@medusajs/medusa";
-
+import pdfmake from "pdfmake";
+import Roboto from "../fonts/Roboto";
 class InvoiceGeneratorService extends BaseService {
   static identifier = "invoice-generator";
 
@@ -119,246 +120,282 @@ class InvoiceGeneratorService extends BaseService {
     const invoiceId =
       order.billing_address?.metadata?.invoice_id ||
       order.shipping_address?.metadata?.invoice_id;
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-      <style>
-      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-      body {
-      font-family: 'Roboto', sans-serif;
-      font-size: 14px;
-      margin: 0;
-      padding: 0;
-      background-color: #f9f9f9;
-      color: #333;
-      }
-
-      h1, h2, h3, h4, h5, h6 {
-      color: #0f172a;
-      }
-
-      h1 {
-      line-height: 20px;
-      }
-
-      p, span {
-      line-height: 20px;
-      }
-
-      .invoice-container {
-      width: 90%;
-      margin: 15px auto;
-      background: #fff;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      }
-
-      .invoice-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #ddd;
-      }
-
-      .invoice-footer {      
-      display: flex;
-      justify-content: center;
-      }
-
-      .company-info {  
-      margin-right: 10px;
-      width: ${invoiceId ? "auto" : "100%"}
-      }
-
-      .company-logo {
-      background-color: #0f172a;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      }
-
-      .invoice-ref {
-      display: ${invoiceId ? "block" : "none"}
-      }
-
-      .invoice-data-box {
-      background-color: #f0f0f0;
-      padding: 0 15px;
-      }
-
-      .invoice-details, .billing-info {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-      gap: 0 15px; 
-      }
-
-      .billing-info {
-      margin-top: -15px;
-      padding: 0px 15px;
-      }      
-
-      .invoice-field {
-      font-weight: 600;
-      color: #0f172a;      
-      }
-      
-      .invoice-value {      
-      background-color:#f0f0f0;
-      padding: 5px;       
-      }
-
-      .invoice-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-      }
-
-      .invoice-table th, .invoice-table td {
-      border: 1px solid #ddd;
-      text-align: center;
-      padding: 8px;
-      }
-
-      .invoice-table th {
-      background-color: #f0f0f0;
-      }
-
-      .summary {      
-      display: grid;
-      grid-template-columns: 6fr 1fr;
-      gap: 10px;
-      justify-content: end;
-      text-align: center;
-      }
-
-      .summary p, .summary h2 {
-      text-align: right;
-      margin: 5px 0;
-      padding: 2px;
-      }
-
-      </style>
-      </head>
-      <body>
-      <div class="invoice-container">
-      <header class="invoice-header">
-      <h1>Cartago4x4</h1>
-      <div class="company-logo">
-      <img src="https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/logo_96x96.png" width="56" height="56"></img>
-      </div>
-      </header>
-      <div class="invoice-details">
-      <div class="company-info invoice-data-box">
-      <p><span class="invoice-field">Dirección:</span> 
-      Alameda San Antón 23 (Apdo. Correos 5085)
-      <br><span class="invoice-field">Ciudad, País:</span> Cartagena, Murcia, España
-      <br><span class="invoice-field">Código Postal:</span> 30205  
-      <br><span class="invoice-field">NIF/CIF:</span> 23036207-M
-      <br><span class="invoice-field">Mail:</span> contacto@cartago4x4.es</p>
-      </div>
-      <div class="invoice-ref invoice-data-box">
-      <p><span class="invoice-field">Fecha de factura:</span> 
-      ${invoiceId ? invoiceCreatedAt : ""}</p>
-      <p><span class="invoice-field">Fecha de cargo:</span> 
-      ${invoiceId ? invoiceCreatedAt : ""}</p>
-      <p><span class="invoice-field">Número de factura:</span> 
-      ${invoiceId || ""}</p>
-      </div>
-      </div>
-    
-      <div>
-      <h3 class="invoice-ref">Facturar a:</h3>
-      <div class="billing-info">
-        <div>
-        <p><span class="invoice-field">Nombre del cliente:</span> ${customerName}
-        <br><span class="invoice-field">NIF/CIF:</span> ${customerNifCif}
-        <br><span class="invoice-field">Teléfono:</span> ${billingPhone}</p>
-        </div>
-        <div>
-        <p><span class="invoice-field">Dirección:</span> ${billingAddress}
-        <br><span class="invoice-field">Ciudad/País:</span> ${billingCityCountry}
-        <br><span class="invoice-field">Código Postal:</span> ${billingPostalCode}
-        </p>
-        </div>      
-      </div>     
-      </div> 
-     
-      <table class="invoice-table">
-      <thead>
-      <tr>
-      <th>Descripción</th>
-      <th>Unidades</th>
-      <th>Precio Unitario</th>
-      <th>Precio</th>
-      </tr>
-      </thead>
-      <tbody>
-      ${order.items
-        .map((item: LineItem) => {
-          const includeTaxes = item.includes_tax || false;
-          const taxRate =
-            item.tax_lines.length > 0 ? item.tax_lines[0].rate / 100 : 0;
-          const unitPriceWithoutTax = includeTaxes
-            ? item.unit_price / (1 + taxRate)
-            : item.unit_price;
-          const itemTotalWithoutTax =
-            (unitPriceWithoutTax * item.quantity) / 100;
-
-          const parentCategories = item.variant.product.categories
-            .slice(0, 2)
-            .map((cat) => cat.name)
-            .join(" ");
-          return `
-        <tr>
-        <td>${item.title}<br><small>${parentCategories}</small></td>
-        <td>${item.quantity}</td>
-        <td>${(unitPriceWithoutTax / 100).toFixed(2)}</td>
-        <td>${itemTotalWithoutTax.toFixed(2)}</td>
-        </tr>`;
-        })
-        .join("")}
-      </tbody>
-      </table>
-    
-      <div class="summary">
-      <p>SUBTOTAL:</p><p class="invoice-value">€${subtotal.toFixed(2)}</p>
-      <p>DESCUENTO:</p><p class="invoice-value">€${discount.toFixed(2)}</p>
-      <p>SUBTOTAL MENOS DESCUENTO:</p><p class="invoice-value">€${subtotalAfterDiscount.toFixed(
-        2
-      )}</p>
-      <p>ENVÍO:</p><p class="invoice-value">€${shipping.toFixed(2)}</p>      
-      <p>IVA (21%):</p><p class="invoice-value">€${taxes.toFixed(2)}</p>      
-      <h2>TOTAL:</h2><h2 class="invoice-value">€${(
-        subtotalAfterDiscount +
-        taxes +
-        shipping
-      ).toFixed(2)}</h2>
-      </div>
-      </div>
-      <div class="invoice-footer">
-      <p>¡Gracias por su compra!</p>
-      </div>
-      </body>
-      </html>
-    `;
-
-    // Generate PDF using html-pdf-node
-    const htmlPdf = require("html-pdf-node");
-
-    const options = { format: "A4", printBackground: true };
-    const file = { content: htmlContent };
-
-    const pdfBuffer = await htmlPdf.generatePdf(file, options);
-
-    return {
-      buffer: pdfBuffer,
-      fileName: invoiceFileName,
+    const fonts = {
+      Roboto: {
+        normal: "fonts/Roboto-Regular.ttf",
+        bold: "fonts/Roboto-Medium.ttf",
+      },
     };
+
+    const printer = new pdfmake(Roboto);
+
+    const docDefinition = {
+      content: [
+        {
+          text: "Cartago4x4",
+          style: "header",
+        },
+        {
+          canvas: [
+            {
+              type: "line",
+              x1: 0,
+              y1: 0,
+              x2: 515,
+              y2: 0,
+              lineWidth: 1,
+              lineColor: "#333",
+            },
+          ],
+          margin: [0, 0, 0, 10],
+        },
+        {
+          columns: [
+            {
+              width: "*",
+              text: [
+                { text: "Dirección: ", bold: true },
+                "Alameda San Antón 23 (Apdo. Correos 5085)\n",
+                { text: "Ciudad, País: ", bold: true },
+                "Cartagena, Murcia, España\n",
+                { text: "Código Postal: ", bold: true },
+                "30205\n",
+                { text: "NIF/CIF: ", bold: true },
+                "23036207-M\n",
+                { text: "Mail: ", bold: true },
+                "contacto@cartago4x4.es",
+              ],
+              style: "columnStyle",
+            },
+            {
+              width: "auto",
+              text: [
+                { text: "Fecha de factura: ", bold: true },
+                invoiceId ? invoiceCreatedAt : "",
+                "\n",
+                { text: "Fecha de cargo: ", bold: true },
+                invoiceId ? invoiceCreatedAt : "",
+                "\n",
+                { text: "Número de factura: ", bold: true },
+                invoiceId || "",
+              ],
+              alignment: "right",
+              style: "columnStyle",
+            },
+          ],
+        },
+        {
+          text: "Facturar a:",
+          style: "subheader",
+        },
+        {
+          columns: [
+            {
+              width: "*",
+              text: [
+                { text: "Nombre del cliente: ", bold: true },
+                customerName,
+                "\n",
+                { text: "NIF/CIF: ", bold: true },
+                customerNifCif,
+                "\n",
+                { text: "Teléfono: ", bold: true },
+                billingPhone,
+              ],
+              alignment: "left",
+              style: "columnStyle",
+            },
+            {
+              width: "auto",
+              text: [
+                { text: "Dirección: ", bold: true },
+                billingAddress,
+                "\n",
+                { text: "Ciudad/País: ", bold: true },
+                billingCityCountry,
+                "\n",
+                { text: "Código Postal: ", bold: true },
+                billingPostalCode,
+              ],
+              alignment: "left",
+              style: "columnStyle",
+            },
+          ],
+        },
+        {
+          style: "tableExample",
+          table: {
+            headerRows: 1,
+            widths: ["*", "auto", "auto", "auto"],
+            body: [
+              [
+                { text: "Descripción", style: "tableHeader" },
+                {
+                  text: "Unidades",
+                  style: ["tableHeader", "centerText"],
+                  alignment: "center",
+                },
+                {
+                  text: "Precio Unitario",
+                  style: ["tableHeader", "centerText"],
+                },
+                { text: "Precio", style: ["tableHeader", "centerText"] },
+              ],
+              ...order.items.map((item: LineItem) => {
+                const includeTaxes = item.includes_tax || false;
+                const taxRate =
+                  item.tax_lines.length > 0 ? item.tax_lines[0].rate / 100 : 0;
+                const unitPriceWithoutTax = includeTaxes
+                  ? item.unit_price / (1 + taxRate)
+                  : item.unit_price;
+                const itemTotalWithoutTax =
+                  (unitPriceWithoutTax * item.quantity) / 100;
+
+                const parentCategories = item.variant.product.categories
+                  .slice(0, 2)
+                  .map((cat) => cat.name)
+                  .join(" ");
+                return [
+                  {
+                    text: `${item.title}\n${parentCategories}`,
+                    style: "centerText",
+                  },
+                  {
+                    text: item.quantity,
+                    style: "centerText",
+                    alignment: "center",
+                  },
+                  {
+                    text: (unitPriceWithoutTax / 100).toFixed(2),
+                    style: "centerText",
+                    alignment: "center",
+                  },
+                  {
+                    text: itemTotalWithoutTax.toFixed(2),
+                    style: "centerText",
+                    alignment: "center",
+                  },
+                ];
+              }),
+            ],
+          },
+        },
+        {
+          columns: [
+            { text: "SUBTOTAL:", style: "summaryLabel" },
+            { text: `€${subtotal.toFixed(2)}`, style: "summaryValue" },
+          ],
+        },
+        {
+          columns: [
+            { text: "DESCUENTO:", style: "summaryLabel" },
+            { text: `€${discount.toFixed(2)}`, style: "summaryValue" },
+          ],
+        },
+        {
+          columns: [
+            { text: "SUBTOTAL MENOS DESCUENTO:", style: "summaryLabel" },
+            {
+              text: `€${subtotalAfterDiscount.toFixed(2)}`,
+              style: "summaryValue",
+            },
+          ],
+        },
+        {
+          columns: [
+            { text: "ENVÍO:", style: "summaryLabel" },
+            {
+              text: `€${shipping.toFixed(2)}`,
+              style: "summaryValue",
+            },
+          ],
+        },
+        {
+          columns: [
+            { text: "IVA (21%):", style: "summaryLabel" },
+            { text: `€${taxes.toFixed(2)}`, style: "summaryValue" },
+          ],
+        },
+        {
+          columns: [
+            { text: "TOTAL:", style: "summaryLabelBold" },
+            {
+              text: `€${(subtotalAfterDiscount + taxes + shipping).toFixed(2)}`,
+              style: "summaryValueBold",
+            },
+          ],
+        },
+        {
+          text: "¡Gracias por su compra!",
+          style: "footer",
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10],
+        },
+        subheader: {
+          fontSize: 16,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 13,
+          color: "#333",
+          fillColor: "#f0f0f0",
+        },
+        summaryLabel: {
+          fontSize: 12,
+          bold: true,
+          alignment: "right",
+        },
+        summaryValue: {
+          fontSize: 12,
+          alignment: "right",
+        },
+        summaryLabelBold: {
+          fontSize: 14,
+          bold: true,
+          alignment: "right",
+        },
+        summaryValueBold: {
+          fontSize: 14,
+          bold: true,
+          alignment: "right",
+        },
+        footer: {
+          margin: [0, 50, 0, 0],
+          alignment: "center",
+        },
+        columnStyle: {
+          fillColor: "#f0f0f0",
+        },
+        centerText: {
+          alignment: "center",
+          valign: "middle",
+        },
+      },
+    };
+
+    const pdfDoc = printer.createPdfKitDocument(docDefinition);
+    const chunks = [];
+    pdfDoc.on("data", (chunk) => chunks.push(chunk));
+    return new Promise((resolve, reject) => {
+      pdfDoc.on("end", () => {
+        const pdfBuffer = Buffer.concat(chunks);
+        resolve({ buffer: pdfBuffer, fileName: invoiceFileName });
+      });
+      pdfDoc.on("error", (err) => {
+        reject(err);
+      });
+      pdfDoc.end();
+    });
   }
 }
 

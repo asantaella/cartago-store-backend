@@ -11,7 +11,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     res.set({
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${pdf.fileName}"`,      
+      "Content-Disposition": `attachment; filename="Cartago4x4"`,      
       "Content-Length": pdf.buffer.length,
     });
 
