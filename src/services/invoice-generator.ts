@@ -1,6 +1,5 @@
 import { BaseService } from "medusa-interfaces";
 import { LineItem, Order, OrderService } from "@medusajs/medusa";
-import path from "path";
 
 class InvoiceGeneratorService extends BaseService {
   static identifier = "invoice-generator";
@@ -129,6 +128,7 @@ class InvoiceGeneratorService extends BaseService {
 
       body {
       font-family: 'Roboto', sans-serif;
+      font-size: 14px;
       margin: 0;
       padding: 0;
       background-color: #f9f9f9;
@@ -137,6 +137,14 @@ class InvoiceGeneratorService extends BaseService {
 
       h1, h2, h3, h4, h5, h6 {
       color: #0f172a;
+      }
+
+      h1 {
+      line-height: 20px;
+      }
+
+      p, span {
+      line-height: 20px;
       }
 
       .invoice-container {
@@ -151,6 +159,7 @@ class InvoiceGeneratorService extends BaseService {
       .invoice-header {
       display: flex;
       justify-content: space-between;
+      align-items: baseline;
       margin-bottom: 20px;
       border-bottom: 1px solid #ddd;
       }
@@ -167,8 +176,8 @@ class InvoiceGeneratorService extends BaseService {
 
       .company-logo {
       background-color: #0f172a;
-      width: 64px;
-      height: 64px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       }
 
@@ -185,12 +194,13 @@ class InvoiceGeneratorService extends BaseService {
       display: flex;
       justify-content: space-between;
       margin-bottom: 15px;
-      width:100%;
+      gap: 0 15px; 
       }
 
       .billing-info {
       margin-top: -15px;
-      }
+      padding: 0px 15px;
+      }      
 
       .invoice-field {
       font-weight: 600;
@@ -199,7 +209,7 @@ class InvoiceGeneratorService extends BaseService {
       
       .invoice-value {      
       background-color:#f0f0f0;
-      padding: 2px;      
+      padding: 5px;       
       }
 
       .invoice-table {
@@ -231,6 +241,7 @@ class InvoiceGeneratorService extends BaseService {
       margin: 5px 0;
       padding: 2px;
       }
+
       </style>
       </head>
       <body>
@@ -238,7 +249,7 @@ class InvoiceGeneratorService extends BaseService {
       <header class="invoice-header">
       <h1>Cartago4x4</h1>
       <div class="company-logo">
-      <img src="https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/logo_96x96.png" width="64" height="64"></img>
+      <img src="https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/logo_96x96.png" width="56" height="56"></img>
       </div>
       </header>
       <div class="invoice-details">
@@ -261,19 +272,20 @@ class InvoiceGeneratorService extends BaseService {
       </div>
     
       <div>
-        <h3 class="invoice-ref">Facturar a:</h3>
-        <div class="billing-info">
-          <div>
-            <p><span class="invoice-field">Nombre del cliente:</span> ${customerName}
-            <br><span class="invoice-field">NIF/CIF:</span> ${customerNifCif}
-            <br><span class="invoice-field">Teléfono:</span> ${billingPhone}</p>
-          </div>
-          <div>
-            <br><span class="invoice-field">Dirección:</span> ${billingAddress} 
-            <br><span class="invoice-field">Ciudad/País:</span> ${billingCityCountry}
-            <br><span class="invoice-field">Código Postal:</span> ${billingPostalCode}
-          </div>      
-        </div>     
+      <h3 class="invoice-ref">Facturar a:</h3>
+      <div class="billing-info">
+        <div>
+        <p><span class="invoice-field">Nombre del cliente:</span> ${customerName}
+        <br><span class="invoice-field">NIF/CIF:</span> ${customerNifCif}
+        <br><span class="invoice-field">Teléfono:</span> ${billingPhone}</p>
+        </div>
+        <div>
+        <p><span class="invoice-field">Dirección:</span> ${billingAddress}
+        <br><span class="invoice-field">Ciudad/País:</span> ${billingCityCountry}
+        <br><span class="invoice-field">Código Postal:</span> ${billingPostalCode}
+        </p>
+        </div>      
+      </div>     
       </div> 
      
       <table class="invoice-table">
@@ -335,22 +347,13 @@ class InvoiceGeneratorService extends BaseService {
       </html>
     `;
 
-    // Generate PDF using Puppeteer
-    const puppeteer = require("puppeteer");
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-    const page = await browser.newPage();
+    // Generate PDF using html-pdf-node
+    const htmlPdf = require("html-pdf-node");
 
-    await page.setContent(htmlContent, { waitUntil: "load" });
+    const options = { format: "A4", printBackground: true };
+    const file = { content: htmlContent };
 
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-    });
-
-    await browser.close();
+    const pdfBuffer = await htmlPdf.generatePdf(file, options);
 
     return {
       buffer: pdfBuffer,
