@@ -2,6 +2,7 @@ import { BaseService } from "medusa-interfaces";
 import { LineItem, Order, OrderService } from "@medusajs/medusa";
 import pdfmake from "pdfmake";
 import Roboto from "../fonts/Roboto";
+import LogoCartago from "../types/logo";
 class InvoiceGeneratorService extends BaseService {
   static identifier = "invoice-generator";
 
@@ -132,8 +133,42 @@ class InvoiceGeneratorService extends BaseService {
     const docDefinition = {
       content: [
         {
-          text: "Cartago4x4",
-          style: "header",
+          columns: [
+            {
+              text: "Cartago4x4",
+              style: "header",
+              margin: [0, 40, 0, 0], // Ajusta el margen superior para alinear con el logo
+            },
+            {
+              stack: [
+                {
+                  canvas: [
+                    {
+                      type: "ellipse",
+                      x: 30,
+                      y: 30,
+                      color: "#090000",
+                      r1: 30,
+                      r2: 30,
+                    },
+                  ],
+                  width: 60,
+                  height: 60,
+                  alignment: "right",
+                },
+                {
+                  image: "logo",
+                  width: 42,
+                  height: 42,
+                  alignment: "right",
+                  fit: [42, 42],
+                  margin: [9, -50, 0, 0], // Ajusta la posición del logo sobre el círculo
+                },
+              ],
+            },
+          ],
+          columnGap: 10,
+          margin: [0, -25, 0, 10],
         },
         {
           canvas: [
@@ -150,39 +185,60 @@ class InvoiceGeneratorService extends BaseService {
           margin: [0, 0, 0, 10],
         },
         {
-          columns: [
-            {
-              width: "*",
-              text: [
-                { text: "Dirección: ", bold: true },
-                "Alameda San Antón 23 (Apdo. Correos 5085)\n",
-                { text: "Ciudad, País: ", bold: true },
-                "Cartagena, Murcia, España\n",
-                { text: "Código Postal: ", bold: true },
-                "30205\n",
-                { text: "NIF/CIF: ", bold: true },
-                "23036207-M\n",
-                { text: "Mail: ", bold: true },
-                "contacto@cartago4x4.es",
+          table: {
+            widths: ["*", "auto"],
+            body: [
+              [
+                {
+                  text: [
+                    { text: "Dirección: ", bold: true },
+                    "Alameda San Antón 23 (Apdo. Correos 5085)\n",
+                    { text: "Ciudad, País: ", bold: true },
+                    "Cartagena, Murcia, España\n",
+                    { text: "Código Postal: ", bold: true },
+                    "30205\n",
+                    { text: "NIF/CIF: ", bold: true },
+                    "23036207-M\n",
+                    { text: "Mail: ", bold: true },
+                    "contacto@cartago4x4.es",
+                  ],
+                  style: "columnStyle",
+                },
+                {
+                  text: [
+                    { text: "Fecha de factura: ", bold: true },
+                    invoiceId ? invoiceCreatedAt : "",
+                    "\n\n",
+                    { text: "Fecha de cargo: ", bold: true },
+                    invoiceId ? invoiceCreatedAt : "",
+                    "\n\n",
+                    { text: "Nº de factura: ", bold: true },
+                    invoiceId || "",
+                  ],
+                  alignment: "left",
+                  style: "columnStyle",
+                },
               ],
-              style: "columnStyle",
+            ],
+          },
+          layout: {
+            fillColor: function (rowIndex, node, columnIndex) {
+              return "#f1f1f1";
             },
-            {
-              width: "auto",
-              text: [
-                { text: "Fecha de factura: ", bold: true },
-                invoiceId ? invoiceCreatedAt : "",
-                "\n",
-                { text: "Fecha de cargo: ", bold: true },
-                invoiceId ? invoiceCreatedAt : "",
-                "\n",
-                { text: "Número de factura: ", bold: true },
-                invoiceId || "",
-              ],
-              alignment: "right",
-              style: "columnStyle",
+            paddingLeft: function (i, node) {
+              return 10;
             },
-          ],
+            paddingRight: function (i, node) {
+              return 10;
+            },
+            paddingTop: function (i, node) {
+              return 5;
+            },
+            paddingBottom: function (i, node) {
+              return 5;
+            },
+          },
+          margin: [0, 10, 0, 10],
         },
         {
           text: "Facturar a:",
@@ -221,6 +277,7 @@ class InvoiceGeneratorService extends BaseService {
               style: "columnStyle",
             },
           ],
+          margin: [0, 0, 0, 10],
         },
         {
           style: "tableExample",
@@ -257,23 +314,29 @@ class InvoiceGeneratorService extends BaseService {
                   .join(" ");
                 return [
                   {
-                    text: `${item.title}\n${parentCategories}`,
-                    style: "centerText",
+                    text: [
+                      { text: `${item.title}\n`, bold: true },
+                      { text: parentCategories, fontSize: 10 },
+                    ],
+                    margin: [0, 5],
                   },
                   {
                     text: item.quantity,
                     style: "centerText",
                     alignment: "center",
+                    margin: [0, 10],
                   },
                   {
                     text: (unitPriceWithoutTax / 100).toFixed(2),
                     style: "centerText",
                     alignment: "center",
+                    margin: [0, 10],
                   },
                   {
                     text: itemTotalWithoutTax.toFixed(2),
                     style: "centerText",
                     alignment: "center",
+                    margin: [0, 10],
                   },
                 ];
               }),
@@ -281,55 +344,119 @@ class InvoiceGeneratorService extends BaseService {
           },
         },
         {
-          columns: [
-            { text: "SUBTOTAL:", style: "summaryLabel" },
-            { text: `€${subtotal.toFixed(2)}`, style: "summaryValue" },
-          ],
-        },
-        {
-          columns: [
-            { text: "DESCUENTO:", style: "summaryLabel" },
-            { text: `€${discount.toFixed(2)}`, style: "summaryValue" },
-          ],
-        },
-        {
-          columns: [
-            { text: "SUBTOTAL MENOS DESCUENTO:", style: "summaryLabel" },
-            {
-              text: `€${subtotalAfterDiscount.toFixed(2)}`,
-              style: "summaryValue",
+          table: {
+            widths: ["*", "auto"],
+            body: [
+              [
+                {
+                  text: "SUBTOTAL:",
+                  style: "summaryLabel",
+                  margin: [0, 0, 15, 0],
+                },
+                {
+                  text: `€${subtotal.toFixed(2)}`,
+                  style: "summaryValue",
+                  margin: [0, 0, 5, 0],
+                },
+              ],
+              [
+                {
+                  text: "DESCUENTO:",
+                  style: "summaryLabel",
+                  margin: [0, 0, 15, 0],
+                },
+                {
+                  text: `€${discount.toFixed(2)}`,
+                  style: "summaryValue",
+                  margin: [0, 0, 5, 0],
+                },
+              ],
+              [
+                {
+                  text: "SUBTOTAL MENOS DESCUENTO:",
+                  style: "summaryLabel",
+                  margin: [0, 0, 15, 0],
+                },
+                {
+                  text: `€${subtotalAfterDiscount.toFixed(2)}`,
+                  style: "summaryValue",
+                  margin: [0, 0, 5, 0],
+                },
+              ],
+              [
+                {
+                  text: "ENVÍO:",
+                  style: "summaryLabel",
+                  margin: [0, 0, 15, 0],
+                },
+                {
+                  text: `€${shipping.toFixed(2)}`,
+                  style: "summaryValue",
+                  margin: [0, 0, 5, 0],
+                },
+              ],
+              [
+                {
+                  text: "IVA (21%):",
+                  style: "summaryLabel",
+                  margin: [0, 0, 15, 0],
+                },
+                {
+                  text: `€${taxes.toFixed(2)}`,
+                  style: "summaryValue",
+                  margin: [0, 0, 5, 0],
+                },
+              ],
+              [
+                {
+                  text: "TOTAL:",
+                  style: "summaryLabelBold",
+                  margin: [0, 0, 15, 0],
+                },
+                {
+                  text: `€${(subtotalAfterDiscount + taxes + shipping).toFixed(
+                    2
+                  )}`,
+                  style: "summaryValueBold",
+                  margin: [0, 0, 5, 0],
+                },
+              ],
+            ],
+          },
+          layout: {
+            defaultBorder: false,
+            hLineWidth: function (i, node) {
+              return i === node.table.body.length ? 1 : 0;
             },
-          ],
-        },
-        {
-          columns: [
-            { text: "ENVÍO:", style: "summaryLabel" },
-            {
-              text: `€${shipping.toFixed(2)}`,
-              style: "summaryValue",
+            vLineWidth: function () {
+              return 0;
             },
-          ],
-        },
-        {
-          columns: [
-            { text: "IVA (21%):", style: "summaryLabel" },
-            { text: `€${taxes.toFixed(2)}`, style: "summaryValue" },
-          ],
-        },
-        {
-          columns: [
-            { text: "TOTAL:", style: "summaryLabelBold" },
-            {
-              text: `€${(subtotalAfterDiscount + taxes + shipping).toFixed(2)}`,
-              style: "summaryValueBold",
+            hLineColor: function (i, node) {
+              return i === node.table.body.length ? "#333" : "white";
             },
-          ],
+            paddingLeft: function () {
+              return 0;
+            },
+            paddingRight: function () {
+              return 0;
+            },
+            paddingTop: function () {
+              return 5;
+            },
+            paddingBottom: function () {
+              return 5;
+            },
+          },
+          alignment: "right",
         },
         {
           text: "¡Gracias por su compra!",
           style: "footer",
         },
       ],
+      images: {
+        logo: LogoCartago,
+      },
       styles: {
         header: {
           fontSize: 18,
@@ -340,6 +467,9 @@ class InvoiceGeneratorService extends BaseService {
           fontSize: 16,
           bold: true,
           margin: [0, 10, 0, 5],
+        },
+        invoiceDataBox: {
+          background: "#f0f0f0",
         },
         tableExample: {
           margin: [0, 5, 0, 15],
@@ -378,6 +508,10 @@ class InvoiceGeneratorService extends BaseService {
         },
         centerText: {
           alignment: "center",
+          valign: "middle",
+        },
+        leftText: {
+          alignment: "left",
           valign: "middle",
         },
       },
