@@ -102,10 +102,8 @@ class InvoiceGeneratorService extends BaseService {
       : order.shipping_address.phone
       ? `${order.shipping_address.phone}`
       : `${order.customer.phone}`;
-    console.log("billingCityCountry", billingCityCountry);
-    console.log("shipping method", order.shipping_methods[0].tax_lines[0]);
-    console.log("shipping tax total", order.shipping_tax_total);
-    // Calcular subtotal, taxes y shipping
+  
+  
     const subtotal = order.subtotal / 100;
     const taxes = order.tax_total / 100;
     const shipping = (order.shipping_total + shippingTaxTotal) / 100;

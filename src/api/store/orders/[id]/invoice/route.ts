@@ -1,19 +1,23 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import cors from "cors";
 
-const origin = process.env.STORE_CORS
-  ? process.env.STORE_CORS.split(",")
-  : /\.cartago4x4\.es$/;
-
-console.log("Origin CORS => ", origin);
 const corsOptions = {
-  origin,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
+  origin: (origin, callback) => {
+    const allowedOrigins = process.env.STORE_CORS
+      ? process.env.STORE_CORS.split(",").map(
+          (pattern) => new RegExp(pattern.trim())
+        )
+      : [/\.cartago4x4\.es$/];
 
+    console.log("VALIDATING CORS...", origin);
+    console.log("ALLOWED ORIGINS...", allowedOrigins);
+    if (!origin || allowedOrigins.some((o) => o.test(origin))) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   cors(corsOptions)(req, res, async () => {
     const { id } = req.params;
