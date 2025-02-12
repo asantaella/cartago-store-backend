@@ -10,7 +10,8 @@ const corsOptions = {
   origin,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  preflightContinue: true,
+  credentials: true,
+  optionsSuccessStatus: 200,
 };
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
