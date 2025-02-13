@@ -13,6 +13,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="Cartago4x4"`,
       "Content-Length": pdf.buffer.length,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
     });
 
     // Enviar el PDF como respuesta
