@@ -21,6 +21,19 @@ class InvoiceGeneratorService extends BaseService {
     PT: "Portugal",
   };
 
+  private businessInfoContent = [
+    { text: "Dirección: ", bold: true },
+    "Alameda San Antón 23 (Apdo. Correos 5085)\n",
+    { text: "Ciudad, País: ", bold: true },
+    "Cartagena, Murcia, España\n",
+    { text: "Código Postal: ", bold: true },
+    "30205\n",
+    { text: "NIF/CIF: ", bold: true },
+    "23036207-M\n",
+    { text: "Mail: ", bold: true },
+    "contacto@cartago4x4.es",
+  ];
+
   /**
    * Fills the HTML template with order data.
    * @param {string} template - The HTML template string.
@@ -102,8 +115,7 @@ class InvoiceGeneratorService extends BaseService {
       : order.shipping_address.phone
       ? `${order.shipping_address.phone}`
       : `${order.customer.phone}`;
-  
-  
+
     const subtotal = order.subtotal / 100;
     const taxes = order.tax_total / 100;
     const shipping = (order.shipping_total + shippingTaxTotal) / 100;
@@ -119,12 +131,43 @@ class InvoiceGeneratorService extends BaseService {
     const invoiceId =
       order.billing_address?.metadata?.invoice_id ||
       order.shipping_address?.metadata?.invoice_id;
-    const fonts = {
-      Roboto: {
-        normal: "fonts/Roboto-Regular.ttf",
-        bold: "fonts/Roboto-Medium.ttf",
-      },
-    };
+
+    const invoiceDatesTextContent = [
+      { text: "Fecha de factura: ", bold: true },
+      invoiceCreatedAt,
+      "\n\n",
+      { text: "Fecha de cargo: ", bold: true },
+      invoiceCreatedAt,
+      "\n\n",
+      { text: "Nº de factura: ", bold: true },
+      invoiceId,
+    ];
+
+    const receiptDatesTextContent = [
+      { text: "Fecha: ", bold: true },
+      invoiceCreatedAt,
+    ];
+
+    let orderInfoTable = [
+      [
+        {
+          text: this.businessInfoContent,
+          alignment: "left",
+          style: "columnStyle",
+        },
+      ],
+    ];
+
+    if (invoiceId) {
+      orderInfoTable[0].push({
+        text: invoiceDatesTextContent as (
+          | string
+          | { text: string; bold: boolean }
+        )[],
+        alignment: "left",
+        style: "columnStyle",
+      });
+    }
 
     const printer = new pdfmake(Roboto);
 
@@ -135,7 +178,7 @@ class InvoiceGeneratorService extends BaseService {
             {
               text: "Cartago4x4",
               style: "header",
-              margin: [0, 40, 0, 0], // Ajusta el margen superior para alinear con el logo
+              margin: [0, 38, 0, 0], // Ajusta el margen superior para alinear con el logo
             },
             {
               stack: [
@@ -143,30 +186,30 @@ class InvoiceGeneratorService extends BaseService {
                   canvas: [
                     {
                       type: "ellipse",
-                      x: 30,
-                      y: 30,
+                      x: 28,
+                      y: 28,
                       color: "#090000",
-                      r1: 30,
-                      r2: 30,
+                      r1: 28,
+                      r2: 28,
                     },
                   ],
-                  width: 60,
-                  height: 60,
+                  width: 56,
+                  height: 56,
                   alignment: "right",
                 },
                 {
                   image: "logo",
-                  width: 42,
-                  height: 42,
+                  width: 36,
+                  height: 36,
                   alignment: "right",
-                  fit: [42, 42],
-                  margin: [9, -50, 0, 0], // Ajusta la posición del logo sobre el círculo
+                  fit: [36, 36],
+                  margin: [10, -46, 0, 0], // Ajusta la posición del logo sobre el círculo
                 },
               ],
             },
           ],
           columnGap: 10,
-          margin: [0, -25, 0, 10],
+          margin: [0, -28, 0, 10],
         },
         {
           canvas: [
@@ -182,42 +225,11 @@ class InvoiceGeneratorService extends BaseService {
           ],
           margin: [0, 0, 0, 10],
         },
+        { text: invoiceId ? "" : receiptDatesTextContent, alignment: "right" },
         {
           table: {
-            widths: ["*", "auto"],
-            body: [
-              [
-                {
-                  text: [
-                    { text: "Dirección: ", bold: true },
-                    "Alameda San Antón 23 (Apdo. Correos 5085)\n",
-                    { text: "Ciudad, País: ", bold: true },
-                    "Cartagena, Murcia, España\n",
-                    { text: "Código Postal: ", bold: true },
-                    "30205\n",
-                    { text: "NIF/CIF: ", bold: true },
-                    "23036207-M\n",
-                    { text: "Mail: ", bold: true },
-                    "contacto@cartago4x4.es",
-                  ],
-                  style: "columnStyle",
-                },
-                {
-                  text: [
-                    { text: "Fecha de factura: ", bold: true },
-                    invoiceId ? invoiceCreatedAt : "",
-                    "\n\n",
-                    { text: "Fecha de cargo: ", bold: true },
-                    invoiceId ? invoiceCreatedAt : "",
-                    "\n\n",
-                    { text: "Nº de factura: ", bold: true },
-                    invoiceId || "",
-                  ],
-                  alignment: "left",
-                  style: "columnStyle",
-                },
-              ],
-            ],
+            widths: invoiceId ? ["*", "auto"] : ["*"],
+            body: orderInfoTable,
           },
           layout: {
             fillColor: function (rowIndex, node, columnIndex) {
@@ -239,7 +251,7 @@ class InvoiceGeneratorService extends BaseService {
           margin: [0, 10, 0, 10],
         },
         {
-          text: "Facturar a:",
+          text: invoiceId ? "Facturar a:" : "",
           style: "subheader",
         },
         {
@@ -457,7 +469,7 @@ class InvoiceGeneratorService extends BaseService {
       },
       styles: {
         header: {
-          fontSize: 18,
+          fontSize: 22,
           bold: true,
           margin: [0, 0, 0, 10],
         },
