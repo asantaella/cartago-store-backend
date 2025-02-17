@@ -22,15 +22,15 @@ class InvoiceGeneratorService extends BaseService {
   };
 
   private businessInfoContent = [
+    { text: "Razón social: ", bold: true },
+    "Arturo Verdú Pérez\n",
     { text: "Dirección: ", bold: true },
     "Alameda San Antón 23 (Apdo. Correos 5085)\n",
     { text: "Ciudad, País: ", bold: true },
     "Cartagena, Murcia, España\n",
     { text: "Código Postal: ", bold: true },
     "30205\n",
-    { text: "NIF/CIF: ", bold: true },
-    "23036207-M\n",
-    { text: "Mail: ", bold: true },
+    { text: "Email: ", bold: true },
     "contacto@cartago4x4.es",
   ];
 
@@ -123,7 +123,14 @@ class InvoiceGeneratorService extends BaseService {
       return acc + (discount.rule.value / 100) * subtotal;
     }, 0);
     const subtotalAfterDiscount = subtotal - discount;
-    const invoiceCreatedAt = new Date(order.created_at).toLocaleDateString();
+    const invoiceCreatedAt = new Date(order.created_at).toLocaleDateString(
+      "es-ES",
+      {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      }
+    );
     const invoiceFileName = `Cartago4x4_${invoiceCreatedAt.replace(
       /\//g,
       ""
@@ -133,12 +140,15 @@ class InvoiceGeneratorService extends BaseService {
       order.shipping_address?.metadata?.invoice_id;
 
     const invoiceDatesTextContent = [
+      { text: "NIF/CIF: ", bold: true },
+      "23036207-M",
+      "\n\n",
       { text: "Fecha de factura: ", bold: true },
       invoiceCreatedAt,
-      "\n\n",
+      "\n",
       { text: "Fecha de cargo: ", bold: true },
       invoiceCreatedAt,
-      "\n\n",
+      "\n",
       { text: "Nº de factura: ", bold: true },
       invoiceId,
     ];
@@ -178,7 +188,7 @@ class InvoiceGeneratorService extends BaseService {
             {
               text: "Cartago4x4",
               style: "header",
-              margin: [0, 38, 0, 0], // Ajusta el margen superior para alinear con el logo
+              margin: [0, 36, 0, 0], // Ajusta el margen superior para alinear con el logo
             },
             {
               stack: [
@@ -209,7 +219,7 @@ class InvoiceGeneratorService extends BaseService {
             },
           ],
           columnGap: 10,
-          margin: [0, -28, 0, 10],
+          margin: [0, -26, 0, 10],
         },
         {
           canvas: [
@@ -259,7 +269,7 @@ class InvoiceGeneratorService extends BaseService {
             {
               width: "*",
               text: [
-                { text: "Nombre del cliente: ", bold: true },
+                { text: "Razón social: ", bold: true },
                 customerName,
                 "\n",
                 { text: "NIF/CIF: ", bold: true },
