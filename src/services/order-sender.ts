@@ -4,10 +4,13 @@ import {
   OrderService,
   Region,
   RegionService,
+  ShippingMethod,
 } from "@medusajs/medusa";
 
 import SendGridService from "medusa-plugin-sendgrid/services/sendgrid";
 import { EntityManager } from "typeorm";
+import { Parser } from "json2csv";
+import { NotificationContent, NotificationOrder } from "../types/notifications";
 
 class OrderSenderService extends AbstractNotificationService {
   protected manager_: EntityManager;
@@ -48,9 +51,20 @@ class OrderSenderService extends AbstractNotificationService {
     ];
   }
 
-  createSendingOptions(
-    notificationOrder: Order & { subtotal_ex_tax; shipping_method }
-  ) {
+  createSendingOptions(notificationOrder: NotificationOrder): {
+    api_key: string;
+    templateId: string;
+    from: string;
+    to: string;
+    personalizations: { to: string; from: { name: string; email: string } }[];
+    dynamic_template_data: NotificationContent;
+    attachments?: {
+      content: string;
+      filename: string;
+      type: string;
+      disposition: string;
+    }[];
+  } {
     return {
       api_key: process.env.SENDGRID_API_KEY,
       templateId: process.env.SENDGRID_ORDER_PLACED_ID,
@@ -78,10 +92,26 @@ class OrderSenderService extends AbstractNotificationService {
         Sender_Address: "Alameda de San Anton 23, Apartado de Correos 5085",
         Sender_City: "Cartagena",
         Sender_State: "Murcia, España",
-        Sender_Zip: "30205",
         dateFormat: "DD/MM/YYYY",
       },
     };
+  }
+
+  buildCSVAttachment(notificationContent: NotificationContent) {
+    const fields = [
+      { label: "title", value: "title" },
+      { label: "quantity", value: "quantity" },
+      { label: "unit_price_subtotal", value: "totals.unit_price_ex_tax" },
+      { label: "unit_price", value: "totals.unit_price_ex_tax" },
+      { label: "subtotal", value: "totals.subtotal" },
+      { label: "total", value: "totals.total" },
+      { label: "ref", value: "ref" },
+    ];
+    const opts = { fields };
+    const parser = new Parser(opts);
+    const csv = parser.parse(notificationContent.items);
+
+    return Buffer.from(csv).toString("base64");
   }
 
   async sendNotification(
@@ -93,6 +123,7 @@ class OrderSenderService extends AbstractNotificationService {
     status: string;
     data: Record<string, unknown>;
   }> {
+    console.log("Send Notification... ", (data as Order).id as string);
     const order: Order = await this.orderService.retrieve(
       (data as Order).id as string
     );
@@ -156,6 +187,24 @@ class OrderSenderService extends AbstractNotificationService {
       .sendEmail(sendOptions)
       .then(() => "sent")
       .catch(() => "failed");
+
+    return await this.sendNotificationToAdmin(order, sendOptions, status);
+  }
+
+  async sendNotificationToAdmin(order, sendOptions, status) {
+    const csvContent = this.buildCSVAttachment(
+      sendOptions.dynamic_template_data
+    );
+    sendOptions.attachments = [
+      {
+        content: csvContent,
+        filename: `order_${order.display_id}_${order.created_at
+          .toLocaleDateString()
+          .replace(/[\/,\-]/g, "")}.csv`,
+        type: "text/csv",
+        disposition: "attachment",
+      },
+    ];
 
     await this.sendGridService
       .sendEmail({
