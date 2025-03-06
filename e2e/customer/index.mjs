@@ -13,7 +13,7 @@ let customer_data = {
 };
 
 const _createCustomer = (medusa, { customer }) =>
-  medusa.customers.create({ ...customer }).then(({ customer }) => {
+   medusa.customers.create({ ...customer }).then(({ customer }) => {
     return customer;
   });
 

@@ -1,0 +1,451 @@
+[
+  {
+    "title": "Bombin freno derecho trasero",
+    "handle": "suzuki-vitara-bombin-freno-derecho-trasero",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01JCRNDAM3SRC4B3SVSMH2XV3T" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-ruedas-frenos" }
+    ],
+    "variants": [
+      {
+        "title": "Bombin freno derecho trasero",
+        "prices": [{ "currency_code": "eur", "amount": 1500 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "53401-56B00",
+        "barcode": "53401-56B00"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/bombin_freno_derecho_trasero/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/bombin_freno_derecho_trasero/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/bombin_freno_derecho_trasero/03.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/bombin_freno_derecho_trasero/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [
+      { "id": "ptag_sj410", "value": "sj410" },
+      { "id": "ptag_sj413", "value": "sj413" },
+      { "id": "ptag_se416", "value": "SE416" },
+      { "id": "ptag_se419", "value": "SE419" },
+      { "id": "ptag_se420", "value": "SE420" }
+    ],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Bombin freno izquierdo trasero",
+    "handle": "suzuki-vitara-bombin-freno-izquierdo-trasero",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01JCRNDAM3SRC4B3SVSMH2XV3T" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-ruedas-frenos" }
+    ],
+    "variants": [
+      {
+        "title": "Bombin freno izquierdo trasero",
+        "prices": [{ "currency_code": "eur", "amount": 1500 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "53402-56B60",
+        "barcode": "53402-56B60"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/bombin_freno_izquierdo_trasero/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/bombin_freno_izquierdo_trasero/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/bombin_freno_izquierdo_trasero/03.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/bombin_freno_izquierdo_trasero/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [
+      { "id": "ptag_sj410", "value": "sj410" },
+      { "id": "ptag_sj413", "value": "sj413" },
+      { "id": "ptag_se416", "value": "SE416" },
+      { "id": "ptag_se419", "value": "SE419" },
+      { "id": "ptag_se420", "value": "SE420" }
+    ],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Carter aceite",
+    "handle": "suzuki-vitara-carter-aceite",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_suzuki-vitara-motor-juntas" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-motor-juntas" }
+    ],
+    "variants": [
+      {
+        "title": "Carter aceite",
+        "prices": [{ "currency_code": "eur", "amount": 4800 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "11510-60A01",
+        "barcode": "11510-60A01"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/carter_aceite/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/carter_aceite/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/carter_aceite/03.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/carter_aceite/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [{ "id": "ptag_se416", "value": "SE416" }],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Disco freno delantero",
+    "handle": "suzuki-vitara-disco-freno-delantero",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01JCRNDAM3SRC4B3SVSMH2XV3T" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-ruedas-frenos" }
+    ],
+    "variants": [
+      {
+        "title": "Disco freno delantero",
+        "prices": [{ "currency_code": "eur", "amount": 2800 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "55211-60A00",
+        "barcode": "55211-60A00"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/disco_freno_delantero/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/disco_freno_delantero/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/disco_freno_delantero/03.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/disco_freno_delantero/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [
+      { "id": "ptag_sj413", "value": "sj413" },
+      { "id": "ptag_se416", "value": "SE416" },
+      { "id": "ptag_se420", "value": "SE420" }
+    ],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Filtro aire",
+    "handle": "suzuki-vitara-filtro-aire",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01J3WS866R94RRBZB4E05QD5CS" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-filtros-correas" }
+    ],
+    "variants": [
+      {
+        "title": "Filtro aire",
+        "prices": [{ "currency_code": "eur", "amount": 1800 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "13780-60A00",
+        "barcode": "13780-60A00"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/filtro_aire/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/filtro_aire/02.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/filtro_aire/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [{ "id": "ptag_se416", "value": "SE416" }],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Guardapolvos cambio",
+    "handle": "suzuki-vitara-guardapolvos-cambio",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01JEKY9VC0TXPJV66A48WTKSYE" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-caja-cambios-reductora" }
+    ],
+    "variants": [
+      {
+        "title": "Guardapolvos cambio",
+        "prices": [{ "currency_code": "eur", "amount": 3500 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "28138-60A01",
+        "barcode": "28138-60A01"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/guardapolvos_cambio/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/guardapolvos_cambio/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/guardapolvos_cambio/03.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/guardapolvos_cambio/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [
+      { "id": "ptag_se416", "value": "SE416" },
+      { "id": "ptag_se419", "value": "SE419" },
+      { "id": "ptag_se420", "value": "SE420" }
+    ],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Kit distribucion",
+    "handle": "suzuki-vitara-kit-distribucion",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_suzuki-vitara-motor-juntas" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-motor-juntas" }
+    ],
+    "variants": [
+      {
+        "title": "Kit distribucion",
+        "prices": [{ "currency_code": "eur", "amount": 3800 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "12761-60A00, 12810-82003",
+        "barcode": "12761-60A00, 12810-82003"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/kit_distribucion/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/kit_distribucion/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/kit_distribucion/03.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/kit_distribucion/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [{ "id": "ptag_se416", "value": "SE416" }],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Kit juntas motor",
+    "handle": "suzuki-vitara-kit-juntas-motor",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_suzuki-vitara-motor-juntas" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-motor-juntas" }
+    ],
+    "variants": [
+      {
+        "title": "Kit juntas motor",
+        "prices": [{ "currency_code": "eur", "amount": 7000 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/kit_juntas_motor/01.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/kit_juntas_motor/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [{ "id": "ptag_se416", "value": "SE416" }],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Pinza freno delantera derecha",
+    "handle": "suzuki-vitara-pinza-freno-delantera-derecha",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01JCRNDAM3SRC4B3SVSMH2XV3T" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-ruedas-frenos" }
+    ],
+    "variants": [
+      {
+        "title": "Pinza freno delantera derecha",
+        "prices": [{ "currency_code": "eur", "amount": 6500 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_derecha/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_derecha/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_derecha/03.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_derecha/04.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_derecha/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [
+      { "id": "ptag_se416", "value": "SE416" },
+      { "id": "ptag_se419", "value": "SE419" },
+      { "id": "ptag_se420", "value": "SE420" }
+    ],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Pinza freno delantera izquierda",
+    "handle": "suzuki-vitara-pinza-freno-delantera-izquierda",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01JCRNDAM3SRC4B3SVSMH2XV3T" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-ruedas-frenos" }
+    ],
+    "variants": [
+      {
+        "title": "Pinza freno delantera izquierda",
+        "prices": [{ "currency_code": "eur", "amount": 6500 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_izquierda/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_izquierda/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_izquierda/03.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_izquierda/04.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/pinza_freno_delantera_izquierda/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [
+      { "id": "ptag_se416", "value": "SE416" },
+      { "id": "ptag_se419", "value": "SE419" },
+      { "id": "ptag_se420", "value": "SE420" }
+    ],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Tambor freno trasero",
+    "handle": "suzuki-vitara-tambor-freno-trasero",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01JCRNDAM3SRC4B3SVSMH2XV3T" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-ruedas-frenos" }
+    ],
+    "variants": [
+      {
+        "title": "Tambor freno trasero",
+        "prices": [{ "currency_code": "eur", "amount": 4900 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "43511-60A00",
+        "barcode": "43511-60A00"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/tambor_freno_trasero/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/tambor_freno_trasero/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/tambor_freno_trasero/03.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/tambor_freno_trasero/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [
+      { "id": "ptag_se416", "value": "SE416" },
+      { "id": "ptag_se419", "value": "SE419" }
+    ],
+    "description": "",
+    "status": "draft"
+  },
+  {
+    "title": "Zapatas de freno traseras",
+    "handle": "suzuki-vitara-zapatas-de-freno-traseras",
+    "categories": [
+      { "id": "pcat_suzuki" },
+      { "id": "pcat_suzuki-vitara" },
+      { "id": "pcat_01JCRNDAM3SRC4B3SVSMH2XV3T" },
+      { "id": "pcat_accesorios" },
+      { "id": "pcat_accesorios-ruedas-frenos" }
+    ],
+    "variants": [
+      {
+        "title": "Zapatas de freno traseras",
+        "prices": [{ "currency_code": "eur", "amount": 2800 }],
+        "options": [],
+        "inventory_quantity": 500,
+        "manage_inventory": true,
+        "mid_code": "53200-60812",
+        "barcode": "53200-60812"
+      }
+    ],
+    "images": [
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/zapatas_de_freno_traseras/01.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/zapatas_de_freno_traseras/02.webp",
+      "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/zapatas_de_freno_traseras/03.webp"
+    ],
+    "thumbnail": "https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/suzuki/vitara/products/zapatas_de_freno_traseras/thumb.webp",
+    "subtitle": null,
+    "is_giftcard": false,
+    "weight": null,
+    "options": [],
+    "tags": [
+      { "id": "ptag_sj413", "value": "sj413" },
+      { "id": "ptag_se416", "value": "SE416" },
+      { "id": "ptag_se419", "value": "SE419" },
+      { "id": "ptag_se420", "value": "SE420" }
+    ],
+    "description": "",
+    "status": "draft"
+  }
+]

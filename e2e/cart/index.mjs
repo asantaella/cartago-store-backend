@@ -2,13 +2,13 @@ import { medusa } from "../auth/index.mjs";
 import { createCart } from "./create.mjs";
 import { completeCart } from "./complete.mjs";
 import { updateCart } from "./update.mjs";
-import { createCustomer } from "../customer/index.mjs";
+
 import {
   selectPaymentSession,
   createPaymentSession,
 } from "./payment-session.mjs";
 
-const customer_id = "cus_01J0EGE34SG2VB3T04DKZ6CFWB";
+const customer_id = "cus_01JC1NKNV78B8Z6ZZW7Q6TFAWP";
 
 const provider_id = "manual";
 
@@ -21,16 +21,14 @@ console.log("ORDER [COMPLETING]...");
 
 let cart = null;
 
-let customers = await medusa.admin.customers.list({ limit: 5 });
-let customer;
+const { customer } = await medusa.admin.customers.retrieve(customer_id);
 
-if (customers.count === 0) {
-  await createCustomer();
-  customers = await medusa.admin.customers.list({ limit: 1 });
-  customer = customers.customers[0];
-} else {
-  customer = customers.customers[0];
-}
+// if (!customers) {
+//   const customer = await createCustomer();
+//   customer = await medusa.admin.customers.retrieve(customer.id);
+// } else {
+// customer = customers.customers[0];
+//}
 
 const products = await medusa.admin.products.list({ limit: 5 });
 

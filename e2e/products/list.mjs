@@ -7,9 +7,7 @@ async function getProducts() {
       password: "suru",
     });
     const { products } = await medusa.admin.products.list();
-    return products.filter(
-      (product) => product.thumbnail && product.thumbnail.includes("tmp4")
-    );
+    console.log("Products: ", products.length);
   } catch (error) {
     console.error("Error al listar productos:", error);
   }
@@ -78,4 +76,4 @@ const main = async () => {
   }
 };
 
-main();
+getProducts();
