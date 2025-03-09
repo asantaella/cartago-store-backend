@@ -3,6 +3,7 @@ import { Order, ShippingMethod } from "@medusajs/medusa";
 export type NotificationSender = {
   Sender_Name: string;
   Sender_Address: string;
+  Sender_Zip: string;
   Sender_City: string;
   Sender_State: string;
 };

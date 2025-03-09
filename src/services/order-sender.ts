@@ -96,6 +96,7 @@ class OrderSenderService extends AbstractNotificationService {
         tax_rate: notificationOrder.tax_rate,
         Sender_Name: "Cartago4x4",
         Sender_Address: "Alameda de San Anton 23, Apartado de Correos 5085",
+        Sender_Zip: "30205",
         Sender_City: "Cartagena",
         Sender_State: "Murcia, España",
         dateFormat: "DD/MM/YYYY",
