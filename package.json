@@ -33,6 +33,7 @@
     "dev:admin:staging": "cross-env NODE_ENV='staging' npm run dev:admin"
   },
   "dependencies": {
+    "@json2csv/node": "^7.0.6",
     "@medusajs/admin": "^7.1.11",
     "@medusajs/cache-inmemory": "^1.8.10",
     "@medusajs/cache-redis": "^1.9.2",

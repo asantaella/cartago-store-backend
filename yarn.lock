@@ -3096,6 +3096,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@json2csv/formatters@npm:^7.0.6":
+  version: 7.0.6
+  resolution: "@json2csv/formatters@npm:7.0.6"
+  checksum: 9589566ea925f19597664f7a253624f4392c0b5da4bca709cbca188761c9d8068e275e26829d3bc0b386ad1872295acf2c5d4da097026fd3ac4423690c5eff9b
+  languageName: node
+  linkType: hard
+
+"@json2csv/node@npm:^7.0.6":
+  version: 7.0.6
+  resolution: "@json2csv/node@npm:7.0.6"
+  dependencies:
+    "@json2csv/plainjs": ^7.0.6
+  checksum: 80c2a2314280cdbbd3b265b7c08b36eb27a70616aec7aebcd3ec03c766646ea6d10c1f655eaae9423f4153f4a4348f2047268fb10184396ed1b1e6e81c54dae3
+  languageName: node
+  linkType: hard
+
+"@json2csv/plainjs@npm:^7.0.6":
+  version: 7.0.6
+  resolution: "@json2csv/plainjs@npm:7.0.6"
+  dependencies:
+    "@json2csv/formatters": ^7.0.6
+    "@streamparser/json": ^0.0.20
+  checksum: e02ba6e5ea554493c60f4767a93d21a7c61a377591e6cb0e0768aeeeef82c4b3adb5c0decc4c70077bf1ff30015379aea32f97f8e6e781672184b30de1f9bc78
+  languageName: node
+  linkType: hard
+
 "@leichtgewicht/ip-codec@npm:^2.0.1":
   version: 2.0.4
   resolution: "@leichtgewicht/ip-codec@npm:2.0.4"
@@ -7161,6 +7187,13 @@ __metadata:
     "@stdlib/utils-global": ^0.0.x
   checksum: de4e2a5c797010060107ae620de4b64f198f9b28a4e4a6910a6ae310b3a28594fbe47c7ab701ad2dc5d58076b5ed06e7fcf77e89ca609980aa0367c7bfcf4dcd
   conditions: (os=aix | os=darwin | os=freebsd | os=linux | os=macos | os=openbsd | os=sunos | os=win32 | os=windows)
+  languageName: node
+  linkType: hard
+
+"@streamparser/json@npm:^0.0.20":
+  version: 0.0.20
+  resolution: "@streamparser/json@npm:0.0.20"
+  checksum: fd17c94c03411cc852512bd196a9ea2e85a3404391b64525384821d3b04b1cd03f5899d51da135a4bf9d88185acb5de42d1a99a9ea440d652555ef70e0a9a081
   languageName: node
   linkType: hard
 
@@ -15891,6 +15924,7 @@ __metadata:
     "@babel/cli": ^7.14.3
     "@babel/core": ^7.14.3
     "@babel/preset-typescript": ^7.21.4
+    "@json2csv/node": ^7.0.6
     "@medusajs/admin": ^7.1.11
     "@medusajs/cache-inmemory": ^1.8.10
     "@medusajs/cache-redis": ^1.9.2
