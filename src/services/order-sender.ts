@@ -1,5 +1,6 @@
 import {
   AbstractNotificationService,
+  Address,
   Order,
   OrderService,
   Region,
@@ -9,7 +10,7 @@ import {
 
 import SendGridService from "medusa-plugin-sendgrid/services/sendgrid";
 import { EntityManager } from "typeorm";
-import { Parser } from "json2csv";
+import { AsyncParser } from "@json2csv/node";
 import { NotificationContent, NotificationOrder } from "../types/notifications";
 
 class OrderSenderService extends AbstractNotificationService {
@@ -34,9 +35,13 @@ class OrderSenderService extends AbstractNotificationService {
     this.regionService = container.regionService;
   }
 
-  humanPrice_(amount: string, currency: string) {
-    const humanPrice = this.sendGridService.humanPrice_(amount, currency);
+  humanPriceWithCurrency_(amount: string, currency: string) {
+    const humanPrice = this.humanPrice_(amount, currency);
     return `${humanPrice} ${currency}`;
+  }
+  humanPrice_(amount: string, currency: string) {
+    const price = this.sendGridService.humanPrice_(amount, currency);
+    return price.replace(".", ",");
   }
 
   createCustomSendingOptions(toEmail: string) {
@@ -80,6 +85,7 @@ class OrderSenderService extends AbstractNotificationService {
         items: notificationOrder.items,
         status: notificationOrder.status,
         shipping_address: notificationOrder.shipping_address,
+        billing_address: notificationOrder.billing_address,
         shipping_total: notificationOrder.shipping_total,
         shipping_method: notificationOrder.shipping_method,
         customer: notificationOrder.customer,
@@ -97,21 +103,63 @@ class OrderSenderService extends AbstractNotificationService {
     };
   }
 
-  buildCSVAttachment(notificationContent: NotificationContent) {
-    const fields = [
+  async buildCSVAttachment(notificationContent: NotificationContent) {
+    const itemFields = [
       { label: "title", value: "title" },
       { label: "quantity", value: "quantity" },
       { label: "unit_price_subtotal", value: "totals.unit_price_ex_tax" },
-      { label: "unit_price", value: "totals.unit_price_ex_tax" },
+      { label: "unit_price", value: "totals.unit_price" },
       { label: "subtotal", value: "totals.subtotal" },
       { label: "total", value: "totals.total" },
       { label: "ref", value: "ref" },
     ];
-    const opts = { fields };
-    const parser = new Parser(opts);
-    const csv = parser.parse(notificationContent.items);
 
-    return Buffer.from(csv).toString("base64");
+    const customerInfo: Address =
+      notificationContent.billing_address ||
+      notificationContent.shipping_address;
+
+    const customer = [
+      {
+        customer:
+          `${customerInfo.first_name} ${customerInfo.last_name}`.toLocaleUpperCase(),
+      },
+      {
+        customer:
+          `${customerInfo.address_1} ${customerInfo.address_2}`.toLocaleUpperCase(),
+      },
+      {
+        customer:
+          `${customerInfo.postal_code} ${customerInfo.city}, ${customerInfo.province}`.toLocaleUpperCase(),
+      },
+      {
+        customer: `${
+          customerInfo?.metadata?.nif_cif ||
+          notificationContent?.customer.metadata?.nif_cif
+        }`,
+      },
+      {
+        customer: `${notificationContent.date.toLocaleDateString()}`,
+      },
+    ];
+
+    const customerFields = [{ label: "customer", value: "customer" }];
+
+    const itemOpts = { fields: itemFields, delimiter: ";" };
+    const customerOpts = { fields: customerFields, delimiter: ";" };
+
+    const itemParser = new AsyncParser(itemOpts);
+    const customerParser = new AsyncParser(customerOpts);
+
+    const itemsCsv = await itemParser
+      .parse(notificationContent.items)
+      .promise();
+    const customerCsv = await customerParser.parse(customer).promise();
+    const shippingMethodCsv = `${notificationContent.shipping_method ?? " "};1`;
+    const csvContent = `${customerCsv}\n\n${itemsCsv}\n${shippingMethodCsv}`;
+    const csvContentSanitized = csvContent.replace(/ EUR/g, "");
+
+    console.log("CSV created..", csvContentSanitized);
+    return Buffer.from(csvContentSanitized).toString("base64");
   }
 
   async sendNotification(
@@ -137,13 +185,16 @@ class OrderSenderService extends AbstractNotificationService {
       ...item,
       ref: item.variant ? item.variant.barcode : undefined,
       totals: {
-        unit_price_ex_tax: this.humanPrice_(
+        unit_price_ex_tax: this.humanPriceWithCurrency_(
           (item.subtotal / item.quantity).toString(),
           currencyCode
         ),
-        unit_price: this.humanPrice_(item.unit_price, currencyCode),
-        subtotal: this.humanPrice_(item.totals.subtotal, currencyCode),
-        total: this.humanPrice_(item.totals.total, currencyCode),
+        unit_price: this.humanPriceWithCurrency_(item.unit_price, currencyCode),
+        subtotal: this.humanPriceWithCurrency_(
+          item.totals.subtotal,
+          currencyCode
+        ),
+        total: this.humanPriceWithCurrency_(item.totals.total, currencyCode),
       },
     }));
 
@@ -188,11 +239,11 @@ class OrderSenderService extends AbstractNotificationService {
       .then(() => "sent")
       .catch(() => "failed");
 
-    return await this.sendNotificationToAdmin(order, sendOptions, status);
+    return await this.sendNotificationToAdmin(order, sendOptions, "sent");
   }
 
   async sendNotificationToAdmin(order, sendOptions, status) {
-    const csvContent = this.buildCSVAttachment(
+    const csvContent = await this.buildCSVAttachment(
       sendOptions.dynamic_template_data
     );
     sendOptions.attachments = [

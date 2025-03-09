@@ -4,12 +4,12 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Node.js Backend",
-            "program": "${workspaceFolder}/index.js",
+            "name": "Create Order",
+            "program": "${workspaceFolder}/e2e/cart/index.mjs",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false,
-            "runtimeExecutable": "/home/parker/.nvm/versions/node/v18.17.0/bin/node",
+            "runtimeExecutable": "/home/parker/.nvm/versions/node/v20.18.0/bin/node",
             "runtimeArgs": [
                 "--inspect-brk"
             ],
@@ -22,12 +22,12 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch e2e",
+            "name": "Create customer",
             "program": "${workspaceFolder}/e2e/customer/index.mjs",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false,
-            "runtimeExecutable": "/home/parker/.nvm/versions/node/v18.17.0/bin/node",
+            "runtimeExecutable": "/home/parker/.nvm/versions/node/v20.18.0/bin/node",
             "runtimeArgs": [
                 "--inspect-brk"
             ],
