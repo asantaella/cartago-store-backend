@@ -107,6 +107,7 @@ class OrderSenderService extends AbstractNotificationService {
   async buildCSVAttachment(notificationContent: NotificationContent) {
     const itemFields = [
       { label: "title", value: "title" },
+      { label: "sku", value: "sku" },
       { label: "quantity", value: "quantity" },
       { label: "unit_price_subtotal", value: "totals.unit_price_ex_tax" },
       { label: "unit_price", value: "totals.unit_price" },
@@ -185,6 +186,7 @@ class OrderSenderService extends AbstractNotificationService {
     const orderItems = notificationData.items.map((item) => ({
       ...item,
       ref: item.variant ? item.variant.barcode : undefined,
+      sku: item.variant ? item.variant.sku : undefined,
       totals: {
         unit_price_ex_tax: this.humanPriceWithCurrency_(
           (item.subtotal / item.quantity).toString(),
