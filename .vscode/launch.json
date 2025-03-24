@@ -36,6 +36,98 @@
             "outFiles": [],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Medusa Server",
+            "program": "${workspaceFolder}/index.js",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "/home/parker/.nvm/versions/node/v20.18.0/bin/node",
+            "runtimeArgs": [
+                "--inspect-brk=9229"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "restart": true
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Reset Password Service",
+            "program": "${workspaceFolder}/index.js",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "/home/parker/.nvm/versions/node/v20.18.0/bin/node",
+            "runtimeArgs": [
+                "--inspect-brk=9229"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "restart": true,
+            "env": {
+                "DEBUG": "medusa:services:reset-password"
+            },
+            "smartStep": true
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Medusa Server",
+            "port": 9229,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "restart": true,
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Test Reset Password Flow",
+            "program": "${workspaceFolder}/e2e/reset-password/index.mjs",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false,
+            "runtimeExecutable": "/home/parker/.nvm/versions/node/v20.18.0/bin/node",
+            "runtimeArgs": [
+                "--inspect-brk"
+            ],
+            "env": {
+                "BACKEND_URL": "http://localhost:9000",
+                "DEBUG": "medusa:services:*"
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
         }
     ]
 }

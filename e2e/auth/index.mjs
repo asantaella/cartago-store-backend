@@ -10,4 +10,11 @@ const medusa = new Medusa({
   maxRetries: 3,
 });
 
+const { access_token } = await medusa.admin.auth.getToken({
+  email: "cartago4x4@gmail.com",
+  password: "suru",
+});
+
+console.log("Token response:", JSON.stringify(access_token, null, 2));
+
 export { medusa };
