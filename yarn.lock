@@ -9848,6 +9848,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "clsx@npm:2.1.0"
+  checksum: 43fefc29b6b49c9476fbce4f8b1cc75c27b67747738e598e6651dd40d63692135dc60b18fa1c5b78a2a9ba8ae6fd2055a068924b94e20b42039bd53b78b98e1d
+  languageName: node
+  linkType: hard
+
 "cluster-key-slot@npm:^1.1.0":
   version: 1.1.2
   resolution: "cluster-key-slot@npm:1.1.2"
@@ -18199,14 +18206,14 @@ __metadata:
   linkType: hard
 
 "prism-react-renderer@npm:^2.0.4, prism-react-renderer@npm:^2.0.6":
-  version: 2.2.0
-  resolution: "prism-react-renderer@npm:2.2.0"
+  version: 2.3.1
+  resolution: "prism-react-renderer@npm:2.3.1"
   dependencies:
     "@types/prismjs": ^1.26.0
-    clsx: ^1.2.1
+    clsx: ^2.0.0
   peerDependencies:
     react: ">=16.0.0"
-  checksum: 6169791b721a320c3205a5e187511d4087fe6fca340a2c218f2a32d0c2d839a68029a00259d40865abff5a93d828caebffad3f017b23c83954b05f675a55bce9
+  checksum: b12a7d502c1e764d94f7d3c84aee9cd6fccc676bb7e21dee94d37eb2e7e62e097a343999e1979887cb83a57cbdea48d2046aa74d07bce05caa25f4c296df30b6
   languageName: node
   linkType: hard
 
