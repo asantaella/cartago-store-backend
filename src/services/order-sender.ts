@@ -1,124 +1,214 @@
 import {
   AbstractNotificationService,
   Address,
+  LineItem,
   Order,
   OrderService,
-  Region,
-  RegionService,
-  ShippingMethod,
 } from "@medusajs/medusa";
-
-import SendGridService from "medusa-plugin-sendgrid/services/sendgrid";
 import { EntityManager } from "typeorm";
 import { AsyncParser } from "@json2csv/node";
-import { NotificationContent, NotificationOrder } from "../types/notifications";
+import { MailerSend, Recipient, EmailParams } from "mailersend";
+// Importar las utilidades
+import { formatMoney, formatDate, formatAddress } from "../utils/format-utils";
+import {
+  getCustomerNifCif,
+  getShippingMethodName,
+  buildShippingMethodCsv,
+} from "../utils/order-utils";
+
+interface MailerSendOrderPlacedNotification {
+  to_email: string;
+  from_email: string;
+  to_name: string;
+  template_id: string;
+  data?: MailerSendOrderData;
+}
+
+interface MailerSendOrderData {
+  company_name: string;
+  display_id: number;
+  order_date: string;
+  customer: {
+    first_name: string;
+    last_name: string;
+    full_name: string;
+    email: string;
+    phone?: string;
+    nif_cif?: string;
+  };
+  shipping_address: string;
+  billing_address?: string;
+  shipping_method: string;
+  shipping_total: string;
+  currency: string;
+  subtotal_ex_tax: string;
+  subtotal: string;
+  tax_total: string;
+  tax_rate?: number;
+  total: string;
+  items: Array<{
+    title: string;
+    quantity: number;
+    variant: string;
+    price: string;
+    ref: string;
+    sku?: string;
+    unit_price_ex_tax: string;
+    unit_price: string;
+    totals: {
+      tax_total: string;
+      discount_total: string;
+      subtotal: string;
+      total: string;
+    };
+  }>;
+  discount_total?: string;
+  order_url?: string;
+}
 
 class OrderSenderService extends AbstractNotificationService {
   protected manager_: EntityManager;
   protected transactionManager_: EntityManager;
-  protected orderService: OrderService;
-  protected regionService: RegionService;
-  private sendGridService: any;
   static identifier = "order-sender";
   static is_installed = true;
+  protected config: any;
+  protected orderService: OrderService;
+  private mailerSendService: MailerSend;
 
   constructor(container, options) {
     super(container);
-    this.sendGridService = new SendGridService(container, {
-      ...options,
-      api_key: process.env.SENDGRID_API_KEY,
-      from: process.env.SENDGRID_FROM,
-      order_placed_template: process.env.SENDGRID_ORDER_PLACED_ID,
-    });
-
     this.orderService = container.orderService;
-    this.regionService = container.regionService;
-  }
-
-  humanPriceWithCurrency_(amount: string, currency: string) {
-    const humanPrice = this.humanPrice_(amount, currency);
-    return `${humanPrice} ${currency}`;
-  }
-  humanPrice_(amount: string, currency: string) {
-    const price = this.sendGridService.humanPrice_(amount, currency);
-    return price.replace(".", ",");
-  }
-
-  createCustomSendingOptions(toEmail: string) {
-    return [
-      {
-        to: toEmail,
-        from: {
-          name: process.env.SENDGRID_SENDER_NAME,
-          email: process.env.SENDGRID_FROM,
-        },
+    // Inicializar la configuración
+    this.config = {
+      order_placed_url: process.env.MAILERSEND_ORDER_PLACED_URL,
+      support_url: process.env.MAILERSEND_SUPPORT_URL,
+      account_name: process.env.MAILERSEND_SENDER_NAME,
+      company_name: process.env.MAILERSEND_COMPANY_NAME,
+      sender_name: process.env.MAILERSEND_SENDER_NAME,
+      sender_email: process.env.MAILERSEND_SENDER_EMAIL,
+      sender_address: process.env.MAILERSEND_SENDER_ADDRESS,
+      admin_email: process.env.MAILERSEND_ADMIN_EMAIL,
+      template_overrides: {
+        "order.placed": process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
       },
-    ];
+    };
+
+    console.log("[NOTIFICATION] Order sender service initialized");
+
+    try {
+      this.mailerSendService = new MailerSend({
+        apiKey: process.env.MAILERSEND_API_KEY,
+      });
+      console.log(
+        "[NOTIFICATION] MailerSend client initialized successfully for order notifications"
+      );
+    } catch (error) {
+      console.error(
+        "[NOTIFICATION] Error initializing MailerSend client for orders:",
+        error
+      );
+    }
   }
 
-  createSendingOptions(notificationOrder: NotificationOrder): {
-    api_key: string;
-    templateId: string;
-    from: string;
-    to: string;
-    personalizations: { to: string; from: { name: string; email: string } }[];
-    dynamic_template_data: NotificationContent;
-    attachments?: {
-      content: string;
-      filename: string;
-      type: string;
-      disposition: string;
-    }[];
-  } {
+  private getTemplateData(
+    event: string,
+    order: Order
+  ): MailerSendOrderPlacedNotification {
+    if (!order || typeof order !== "object") {
+      return {
+        to_email: "",
+        from_email: "",
+        to_name: "",
+        template_id: "",
+        data: undefined,
+      };
+    }
+
+    const templateId = this.config?.template_overrides?.[event];
+    const currencyCode = order.currency_code?.toUpperCase();
+
+    if (!templateId) {
+      console.warn(`[NOTIFICATION] No template ID found for event: ${event}`);
+    }
+
+    const formattedItems =
+      order.items?.map((item: LineItem) => ({
+        title: item.title,
+        quantity: item.quantity,
+        variant: item.variant?.title || "",
+        price: formatMoney(item.unit_price * item.quantity, currencyCode),
+        ref: item.variant.barcode,
+        sku: item.variant ? item.variant.sku : undefined,
+        unit_price_ex_tax: formatMoney(
+          item.subtotal / item.quantity,
+          currencyCode
+        ),
+        unit_price: formatMoney(item.total / item.quantity, currencyCode),        
+        totals: {
+          tax_total: formatMoney(item.tax_total, currencyCode),
+          discount_total: formatMoney(item.discount_total, currencyCode),
+          subtotal: formatMoney(item.subtotal, currencyCode),
+          total: formatMoney(item.total, currencyCode),
+        },
+      })) || [];
+
     return {
-      api_key: process.env.SENDGRID_API_KEY,
-      templateId: process.env.SENDGRID_ORDER_PLACED_ID,
-      from: process.env.SENDGRID_FROM,
-      to: notificationOrder.customer.email,
-      personalizations: this.createCustomSendingOptions(
-        notificationOrder.customer.email
-      ),
-      dynamic_template_data: {
-        display_id: notificationOrder.display_id,
-        external_id: notificationOrder.external_id,
-        date: notificationOrder.created_at,
-        items: notificationOrder.items,
-        status: notificationOrder.status,
-        shipping_address: notificationOrder.shipping_address,
-        billing_address: notificationOrder.billing_address,
-        shipping_total: notificationOrder.shipping_total,
-        shipping_method: notificationOrder.shipping_method,
-        customer: notificationOrder.customer,
-        total: notificationOrder.total,
-        subtotal: notificationOrder.subtotal,
-        subtotal_ex_tax: notificationOrder.subtotal_ex_tax,
-        tax_total: notificationOrder.tax_total,
-        tax_rate: notificationOrder.tax_rate,
-        Sender_Name: "Cartago4x4",
-        Sender_Address: "Alameda de San Anton 23, Apartado de Correos 5085",
-        Sender_Zip: "30205",
-        Sender_City: "Cartagena",
-        Sender_State: "Murcia, España",
-        dateFormat: "DD/MM/YYYY",
+      to_email: order.email,
+      from_email: this.config.sender_email,
+      to_name: `${order.shipping_address?.first_name} ${order.shipping_address?.last_name}`,
+      template_id: templateId,
+      data: {
+        company_name: this.config.company_name,
+        display_id: order?.display_id,
+        order_date: formatDate(order.created_at),
+        customer: {
+          first_name: order.shipping_address?.first_name,
+          last_name: order.shipping_address?.last_name,
+          full_name: `${order.shipping_address?.first_name} ${order.shipping_address?.last_name}`,
+          email: order.email,
+          phone: order.shipping_address?.phone,
+          nif_cif: getCustomerNifCif(order),
+        },
+        shipping_address: formatAddress(order.shipping_address),
+        billing_address: formatAddress(order.billing_address),
+        shipping_method: getShippingMethodName(order),
+        shipping_total: formatMoney(order.shipping_total, currencyCode),
+
+        currency: currencyCode,
+        subtotal_ex_tax: formatMoney(order.subtotal, currencyCode),
+        subtotal: formatMoney(
+          order.subtotal + order.tax_total || 0,
+          currencyCode
+        ),
+        tax_total: formatMoney(order.tax_total || 0, currencyCode),
+        tax_rate: order.region?.tax_rate,
+        discount_total: formatMoney(order.discount_total || 0, currencyCode),
+        total: formatMoney(order.total, currencyCode),
+        items: formattedItems,
+
+        // URL para ver el pedido (si existe)
+        order_url: this.config.order_placed_url
+          ? `${this.config.order_placed_url}?id=${order.id}`
+          : undefined,
       },
     };
   }
 
-  async buildCSVAttachment(notificationContent: NotificationContent) {
+  async buildCSVAttachment(order: Order) {
     const itemFields = [
       { label: "title", value: "title" },
-      { label: "sku", value: "sku" },
+      { label: "sku", value: "variant.sku" },
       { label: "quantity", value: "quantity" },
-      { label: "unit_price_subtotal", value: "totals.unit_price_ex_tax" },
-      { label: "unit_price", value: "totals.unit_price" },
+      { label: "unit_price_ex_tax", value: "unit_price_ex_tax" },
+      { label: "unit_price", value: "unit_price" },
       { label: "subtotal", value: "totals.subtotal" },
+      { label: "discount_total", value: "totals.discount_total" },
       { label: "total", value: "totals.total" },
-      { label: "ref", value: "ref" },
+      { label: "ref", value: "variant.barcode" },
     ];
 
     const customerInfo: Address =
-      notificationContent.billing_address ||
-      notificationContent.shipping_address;
+      order.billing_address || order.shipping_address;
 
     const customer = [
       {
@@ -135,15 +225,14 @@ class OrderSenderService extends AbstractNotificationService {
       },
       {
         customer: `${
-          customerInfo?.metadata?.nif_cif ||
-          notificationContent?.customer.metadata?.nif_cif
+          customerInfo?.metadata?.nif_cif || order?.customer?.metadata?.nif_cif
         }`,
       },
       {
-        customer: `${notificationContent.date.toLocaleDateString()}`,
+        customer: formatDate(order.created_at),
       },
     ];
-
+    const currencyCode = order.currency_code?.toUpperCase();
     const customerFields = [{ label: "customer", value: "customer" }];
 
     const itemOpts = { fields: itemFields, delimiter: ";" };
@@ -152,152 +241,204 @@ class OrderSenderService extends AbstractNotificationService {
     const itemParser = new AsyncParser(itemOpts);
     const customerParser = new AsyncParser(customerOpts);
 
-    const itemsCsv = await itemParser
-      .parse(notificationContent.items)
-      .promise();
+    const orderItems = order.items.map((item: LineItem) => ({
+      ...item,
+      unit_price_ex_tax: formatMoney(item.subtotal / item.quantity, currencyCode),
+      unit_price: formatMoney(item.total / item.quantity, currencyCode),
+      totals: {
+        subtotal: formatMoney(item.subtotal, currencyCode),
+        discount_total: formatMoney(item.discount_total, currencyCode),
+        total: formatMoney(item.total, currencyCode),
+      },
+    }));
+    const itemsCsv = await itemParser.parse(orderItems).promise();
     const customerCsv = await customerParser.parse(customer).promise();
-    const shippingMethodCsv = `${notificationContent.shipping_method ?? " "};1`;
+    const shippingMethodCsv = buildShippingMethodCsv(order);
     const csvContent = `${customerCsv}\n\n${itemsCsv}\n${shippingMethodCsv}`;
-    const csvContentSanitized = csvContent.replace(/ EUR/g, "");
+    const csvContentSanitized = csvContent.replace(/ €/g, "");
 
-    console.log("CSV created..", csvContentSanitized);
+    //console.log("CSV created..", csvContentSanitized);
     return Buffer.from(csvContentSanitized).toString("base64");
   }
 
   async sendNotification(
     event: string,
-    data: unknown,
-    attachmentGenerator: unknown
+    data: Order,
+    attachmentGenerator?: unknown
   ): Promise<{
     to: string;
     status: string;
     data: Record<string, unknown>;
   }> {
-    console.log("Send Notification... ", (data as Order).id as string);
-    const order: Order = await this.orderService.retrieve(
-      (data as Order).id as string
-    );
-    const region: Region = await this.regionService.retrieve(order.region_id);
-    const currencyCode = order.currency_code.toUpperCase();
-    const notificationData = await this.sendGridService.fetchData(
-      "order.placed",
-      order
-    );
-    const orderItems = notificationData.items.map((item) => ({
-      ...item,
-      ref: item.variant ? item.variant.barcode : undefined,
-      sku: item.variant ? item.variant.sku : undefined,
-      totals: {
-        unit_price_ex_tax: this.humanPriceWithCurrency_(
-          (item.subtotal / item.quantity).toString(),
-          currencyCode
-        ),
-        unit_price: this.humanPriceWithCurrency_(item.unit_price, currencyCode),
-        subtotal: this.humanPriceWithCurrency_(
-          item.totals.subtotal,
-          currencyCode
-        ),
-        total: this.humanPriceWithCurrency_(item.totals.total, currencyCode),
-      },
-    }));
+    try {
+      const orderData: Order = await this.orderService.retrieve(
+        (data as Order).id as string,
+        {
+          relations: [
+            "shipping_address",
+            "billing_address",
+            "items",
+            "items.variant",
+            "items.variant.product",
+            "shipping_methods",
+            "shipping_methods.shipping_option",
+            "shipping_methods.tax_lines",
+            "discounts",
+            "region",
+            "currency",
+          ],
+          select: [
+            "subtotal",
+            "tax_total",
+            "shipping_total",
+            "discount_total",
+            "total",
+            "paid_total",
+          ],
+        }
+      );
+      // console.log(
+      //   `[NOTIFICATION] Processing ${event} for order ${orderData.display_id}`
+      // );
+      console.log("ORDER DATA:\n", JSON.stringify(orderData));
+      const {
+        to_email,
+        to_name,
+        template_id,
+        data: templateData,
+      } = this.getTemplateData(event, orderData);
 
-    const customer = notificationData.customer;
-    customer.first_name =
-      customer.first_name || notificationData.shipping_address.first_name;
-    customer.last_name =
-      customer.last_name || notificationData.shipping_address.last_name;
-    const invoiceStartRef = parseInt(process.env.INVOICE_START_REF);
-    const year = new Date().getFullYear();
-    const invoiceNumber =
-      invoiceStartRef + parseInt(notificationData.display_id);
-    const invoiceRef = invoiceNumber.toString().padStart(5, "0");
-    const externalId = `${year}-${invoiceRef}`;
-    const shippingMethod =
-      notificationData.shipping_methods.length > 0
-        ? notificationData.shipping_methods[0].shipping_option?.name
-        : "";
-    const notificationOrder = {
-      ...notificationData,
-      customer,
-      items: orderItems,
-      tax_rate: region.tax_rate,
-      external_id: externalId,
-      shipping_method: shippingMethod,
-    };
+      // Comprobar si tenemos los datos necesarios
+      if (!to_email) {
+        throw new Error("Recipient email is required");
+      }
 
-    const sendOptions = this.createSendingOptions(notificationOrder);
+      if (!template_id) {
+        throw new Error(`No template found for event ${event}`);
+      }
 
-    console.log("[Send email] => ", {
-      ...sendOptions,
-      dynamic_template_data: {
-        ...sendOptions.dynamic_template_data,
-        items: sendOptions.dynamic_template_data.items.map((item) =>
-          JSON.stringify(item)
-        ),
-      },
-    });
+      const recipients = [new Recipient(to_email, to_name)];
 
-    const status = await this.sendGridService
-      .sendEmail(sendOptions)
-      .then(() => "sent")
-      .catch(() => "failed");
+      // Crear parámetros de email
+      const emailParams = new EmailParams()
+        .setFrom({
+          email: this.config.sender_email || "equipo@cartago4x4.es",
+          name: this.config.sender_name || "Cartago 4x4",
+        })
+        .setTo(recipients)
+        .setTemplateId(template_id)
+        .setPersonalization([
+          {
+            email: to_email,
+            data: templateData,
+          },
+        ]);
 
-    return await this.sendNotificationToAdmin(order, sendOptions, "sent");
+      await this.mailerSendService.email.send(emailParams);
+
+      await this.sendNotificationToAdmin(
+        orderData,
+        emailParams,
+        templateData,
+        "sent"
+      );
+
+      console.log(
+        `[NOTIFICATION] Successfully sent ${event} email to ${to_email} for order ${templateData.display_id}`
+      );
+
+      return {
+        to: to_email,
+        status: "sent",
+        data: orderData as unknown as Record<string, unknown>,
+      };
+    } catch (error) {
+      console.error(`[NOTIFICATION] Error sending ${event} email:`, error);
+
+      return {
+        to: data.email,
+        status: "failed",
+        data: data as unknown as Record<string, unknown>,
+      };
+    }
   }
 
-  async sendNotificationToAdmin(order, sendOptions, status) {
-    const csvContent = await this.buildCSVAttachment(
-      sendOptions.dynamic_template_data
-    );
-    sendOptions.attachments = [
-      {
-        content: csvContent,
-        filename: `order_${order.display_id}_${order.created_at
-          .toLocaleDateString()
-          .replace(/[\/,\-]/g, "")}.csv`,
-        type: "text/csv",
-        disposition: "attachment",
-      },
+  async sendNotificationToAdmin(
+    order: Order,
+    emailParams: EmailParams,
+    templateData: MailerSendOrderData,
+    status: any
+  ) {
+    const csvContent = await this.buildCSVAttachment(order);
+    const recipients = [
+      new Recipient(this.config.admin_email, this.config.sender_name),
     ];
+    const emailAdminParams = emailParams
+      .setTo(recipients)
+      .setPersonalization([
+        {
+          email: "a.santaella.m@gmail.com",
+          data: templateData,
+        },
+      ])
+      .setAttachments([
+        {
+          content: csvContent,
+          filename: `Cartago4x4_invoice_${order.display_id}.csv`,
+          disposition: "attachment",
+        },
+      ]);
 
-    await this.sendGridService
-      .sendEmail({
-        ...sendOptions,
-        to: process.env.SENDGRID_TO_ADMIN,
-        personalizations: this.createCustomSendingOptions(
-          process.env.SENDGRID_TO_ADMIN
-        ),
-      })
+    console.log("Email admin params\n", emailAdminParams);
+    await this.mailerSendService.email
+      .send(emailAdminParams)
       .then(() => "sent")
       .catch(() => "failed");
 
+    console.log(
+      `[NOTIFICATION] Successfully sent ${order.display_id} email to ${this.config.admin_email}`
+    );
+
     return {
-      to: order.email,
+      to: this.config.admin_email,
       status,
-      data: sendOptions,
+      data: emailAdminParams as unknown as Record<string, unknown>,
     };
   }
 
   async resendNotification(
-    notification: any,
-    config: any,
+    notification: unknown,
+    config: unknown,
     attachmentGenerator: unknown
   ): Promise<{
     to: string;
     status: string;
     data: Record<string, unknown>;
   }> {
-    console.log("[Resend notifications][Order placed]: ", notification);
-    // check if the receiver should be changed
-    const to: string = config.to ? config.to : notification.to;
+    const typedNotification = notification as any;
+    const typedConfig = config as any;
+    const to: string = typedConfig.to_email
+      ? typedConfig.to_email
+      : typedNotification.to;
 
-    // TODO resend the notification using the same data
-    // that is saved under notification.data
+    if (typedConfig.to_email && typedConfig.to_email !== typedNotification.to) {
+      // Si hay un nuevo destinatario, reenvía la notificación
+      const updatedData = {
+        ...typedNotification.data,
+        email: typedConfig.to_email,
+      };
+
+      return this.sendNotification(
+        typedNotification.event_name,
+        updatedData,
+        attachmentGenerator
+      );
+    }
 
     return {
       to,
       status: "done",
-      data: notification.data, // make changes to the data
+      data: typedNotification.data as Record<string, unknown>,
     };
   }
 }

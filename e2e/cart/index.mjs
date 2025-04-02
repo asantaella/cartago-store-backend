@@ -2,13 +2,18 @@ import { medusa } from "../auth/index.mjs";
 import { createCart } from "./create.mjs";
 import { completeCart } from "./complete.mjs";
 import { updateCart } from "./update.mjs";
-
+import { addShippingOption } from "./shipping-options.mjs";
+import { addDiscount } from "./discounts.mjs";
 import {
   selectPaymentSession,
   createPaymentSession,
 } from "./payment-session.mjs";
 
-const customer_id = "cus_01JC1NKNV78B8Z6ZZW7Q6TFAWP";
+// customer hotmail
+const customer_id = "cus_01J1Z8H31J0DBXA7P1KRPXHN26";
+
+//customer gmail
+//const customer_id = "cus_01JC1NKNV78B8Z6ZZW7Q6TFAWP";
 
 const provider_id = "manual";
 
@@ -49,7 +54,26 @@ cart = await createPaymentSession(medusa, { cartId: cart.id });
 
 cart = await selectPaymentSession(medusa, { cartId: cart.id, provider_id });
 
-cart = await updateCart(medusa, { cartId: cart.id, customer_id: customer.id });
+cart = await addShippingOption(medusa, cart.id);
+
+// First update the cart with customer information
+cart = await updateCart(medusa, {
+  cartId: cart.id,
+  customer_id: customer.id,
+});
+
+// Then explicitly add the discount code using the dedicated function
+cart = await addDiscount(medusa, {
+  cartId: cart.id,
+  discountCode: "CARTAGO_10",
+});
+
+// Verify the discount was applied
+if (!cart.discounts || cart.discounts.length === 0) {
+  console.log("Warning: Discount code CARTAGO_10 was not applied");
+} else {
+  console.log("Discount code applied successfully.");
+}
 
 cart = await completeCart(medusa, { cartId: cart.id });
 

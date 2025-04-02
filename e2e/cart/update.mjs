@@ -8,6 +8,9 @@ const shipping_address = {
   province: "Madrid",
   postal_code: "12345",
   country_code: "es",
+  metadata: {
+    nif_cif: "75150333H",
+  },
 };
 
 export const updateCart = (medusa, data) => {
