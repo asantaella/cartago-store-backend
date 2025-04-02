@@ -46,10 +46,11 @@ export const buildShippingMethodCsv = (order: Order): string => {
     shippingMethod?.price || 0,
     currencyCode
   );
+  const discountTotal = formatMoney(0, currencyCode);
   const shippingSubtotal = formatMoney(
     shippingMethod?.price / (1 + taxRate / 100) || 0,
     currencyCode
   );
 
-  return `${shippingMethodName};;1;${shippingSubtotal};${shippingTotal};${shippingSubtotal};0;${shippingTotal};;`;
+  return `${shippingMethodName};;1;${shippingSubtotal};${shippingTotal};${shippingSubtotal};${discountTotal};${shippingTotal};;`;
 };
