@@ -143,7 +143,7 @@ class OrderSenderService extends AbstractNotificationService {
           item.subtotal / item.quantity,
           currencyCode
         ),
-        unit_price: formatMoney(item.total / item.quantity, currencyCode),        
+        unit_price: formatMoney(item.total / item.quantity, currencyCode),
         totals: {
           tax_total: formatMoney(item.tax_total, currencyCode),
           discount_total: formatMoney(item.discount_total, currencyCode),
@@ -243,7 +243,10 @@ class OrderSenderService extends AbstractNotificationService {
 
     const orderItems = order.items.map((item: LineItem) => ({
       ...item,
-      unit_price_ex_tax: formatMoney(item.subtotal / item.quantity, currencyCode),
+      unit_price_ex_tax: formatMoney(
+        item.subtotal / item.quantity,
+        currencyCode
+      ),
       unit_price: formatMoney(item.total / item.quantity, currencyCode),
       totals: {
         subtotal: formatMoney(item.subtotal, currencyCode),
@@ -377,7 +380,7 @@ class OrderSenderService extends AbstractNotificationService {
       .setTo(recipients)
       .setPersonalization([
         {
-          email: "a.santaella.m@gmail.com",
+          email: this.config.admin_email,
           data: templateData,
         },
       ])
