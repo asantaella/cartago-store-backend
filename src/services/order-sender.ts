@@ -137,7 +137,7 @@ class OrderSenderService extends AbstractNotificationService {
         quantity: item.quantity,
         variant: item.variant?.title || "",
         price: formatMoney(item.unit_price * item.quantity, currencyCode),
-        ref: item.variant.barcode,
+        ref: item.variant.barcode || "S/N",
         sku: item.variant ? item.variant.sku : undefined,
         unit_price_ex_tax: formatMoney(
           item.subtotal / item.quantity,
@@ -196,7 +196,7 @@ class OrderSenderService extends AbstractNotificationService {
 
   async buildCSVAttachment(order: Order) {
     const itemFields = [
-      { label: "title", value: "title" },
+      { label: "title", value: "variant.title" },
       { label: "sku", value: "variant.sku" },
       { label: "quantity", value: "quantity" },
       { label: "unit_price_ex_tax", value: "unit_price_ex_tax" },
