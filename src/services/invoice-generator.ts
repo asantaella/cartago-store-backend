@@ -135,7 +135,7 @@ class InvoiceGeneratorService extends BaseService {
       /\//g,
       ""
     )}_${order.display_id}.pdf`;
-    const invoiceId =
+    const invoiceId = order?.metadata.invoice_number ||
       order.billing_address?.metadata?.invoice_id ||
       order.shipping_address?.metadata?.invoice_id;
 

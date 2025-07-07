@@ -3,6 +3,7 @@ import {
   type SubscriberArgs,
   OrderService,
 } from "@medusajs/medusa";
+import OrderInvoiceService from "../services/order-invoice";
 
 export default async function handleOrderPlaced({
   data,
@@ -17,6 +18,9 @@ export default async function handleOrderPlaced({
 
     const orderService: OrderService = container.resolve("orderService");
     const orderSenderService = container.resolve("orderSenderService");
+    const orderInvoiceService: OrderInvoiceService = container.resolve(
+      "orderInvoiceService"
+    );
 
     // Obtener el pedido con las relaciones necesarias
     const order = await orderService.retrieve(data.id, {
@@ -35,6 +39,9 @@ export default async function handleOrderPlaced({
     console.log(
       `[NOTIFICATION] Sending order.placed notification for order ${order.display_id}`
     );
+
+    // Establecer el número de factura en el pedido
+    await orderInvoiceService.setOrderInvoiceNumber(order.id);
 
     // Enviar la notificación de pedido colocado
     //await orderSenderService.sendNotification("order.placed", order);
