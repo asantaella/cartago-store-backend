@@ -23,7 +23,7 @@ class InvoiceGeneratorService extends BaseService {
 
   private businessInfoContent = [
     { text: "Razón social: ", bold: true },
-    "Arturo Verdú Pérez\n",
+    "ACCESORIOS CARTAGO S.L.U.\n",
     { text: "Dirección: ", bold: true },
     "Alameda San Antón 23 (Apdo. Correos 5085)\n",
     { text: "Ciudad, País: ", bold: true },
@@ -84,8 +84,9 @@ class InvoiceGeneratorService extends BaseService {
 
     const customerName = `${order.shipping_address.first_name} ${order.shipping_address.last_name}`;
     const customerNifCif =
-      order.shipping_address.metadata?.nif_cif ||
-      order.customer.metadata?.nif_cif;
+      order.billing_address.metadata?.nif_cif ||
+      order.shipping_address.metadata?.nif_cif;
+
     const billingAddress = order.billing_address
       ? `${order.billing_address.address_1}${
           order.billing_address.address_2
@@ -118,6 +119,9 @@ class InvoiceGeneratorService extends BaseService {
 
     const subtotal = order.subtotal / 100;
     const taxes = order.tax_total / 100;
+    const taxRate = order.items[0]?.tax_lines[0]?.rate
+      ? order.items[0]?.tax_lines[0]?.rate
+      : 21;
     const shipping = (order.shipping_total + shippingTaxTotal) / 100;
     const discount = order.discounts.reduce((acc, discount) => {
       return acc + (discount.rule.value / 100) * subtotal;
@@ -126,32 +130,41 @@ class InvoiceGeneratorService extends BaseService {
     const invoiceCreatedAt = new Date(order.created_at).toLocaleDateString(
       "es-ES",
       {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       }
     );
     const invoiceFileName = `Cartago4x4_${invoiceCreatedAt.replace(
       /\//g,
       ""
     )}_${order.display_id}.pdf`;
-    const invoiceId = order?.metadata.invoice_number ||
+    const invoiceId =
+      order?.metadata.invoice_number ||
       order.billing_address?.metadata?.invoice_id ||
       order.shipping_address?.metadata?.invoice_id;
 
-    const invoiceDatesTextContent = [
+    let invoiceDatesTextContent = [
       { text: "NIF/CIF: ", bold: true },
       "23036207-M",
-      "\n\n",
-      { text: "Fecha de factura: ", bold: true },
-      invoiceCreatedAt,
       "\n",
       { text: "Fecha de cargo: ", bold: true },
       invoiceCreatedAt,
       "\n",
+    ];
+    const invoiceNumberTextContent = [
+      { text: "Fecha de factura: ", bold: true },
+      invoiceCreatedAt,
+      "\n\n",
       { text: "Nº de factura: ", bold: true },
       invoiceId,
     ];
+
+    if (customerNifCif) {
+      invoiceDatesTextContent = invoiceDatesTextContent.concat(
+        invoiceNumberTextContent as string | { text: string; bold: boolean }[]
+      );
+    }
 
     const receiptDatesTextContent = [
       { text: "Fecha: ", bold: true },
@@ -272,11 +285,11 @@ class InvoiceGeneratorService extends BaseService {
                 { text: "Razón social: ", bold: true },
                 customerName,
                 "\n",
-                { text: "NIF/CIF: ", bold: true },
-                customerNifCif,
-                "\n",
                 { text: "Teléfono: ", bold: true },
                 billingPhone,
+                "\n",
+                { text: "NIF/CIF: ", bold: true },
+                customerNifCif ? customerNifCif : "-",
               ],
               alignment: "left",
               style: "columnStyle",
@@ -417,7 +430,7 @@ class InvoiceGeneratorService extends BaseService {
               ],
               [
                 {
-                  text: "IVA (21%):",
+                  text: `IVA (${taxRate}%):`,
                   style: "summaryLabel",
                   margin: [0, 0, 15, 0],
                 },

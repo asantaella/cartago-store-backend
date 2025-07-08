@@ -17,7 +17,7 @@ export default async function handleOrderPlaced({
     );
 
     const orderService: OrderService = container.resolve("orderService");
-    const orderSenderService = container.resolve("orderSenderService");
+   // const orderSenderService = container.resolve("orderSenderService");
     const orderInvoiceService: OrderInvoiceService = container.resolve(
       "orderInvoiceService"
     );
