@@ -36,7 +36,7 @@ try {
 
 // CORS when consuming Medusa from admin
 const ADMIN_CORS =
-  process.env.ADMIN_CORS || "http://localhost:7000,http://localhost:7001";
+  process.env.ADMIN_CORS || "http://localhost:7001";
 
 // CORS to avoid issues when consuming Medusa from a client
 const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
@@ -54,18 +54,18 @@ const plugins = [
   //     upload_dir: "uploads",
   //   },
   // },
-  {
-    resolve: "@medusajs/admin",
-    /** @type {import('@medusajs/admin').PluginOptions} */
-    options: {
-      serve: false,
-      autoRebuild: true,
-      backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
-      develop: {
-        open: process.env.OPEN_BROWSER !== "false",
-      },
-    },
-  },
+  // {
+  //   resolve: "@medusajs/admin",
+  //   /** @type {import('@medusajs/admin').PluginOptions} */
+  //   options: {
+  //     serve: false,
+  //     autoRebuild: true,
+  //     backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
+  //     develop: {
+  //       open: process.env.OPEN_BROWSER !== "false",
+  //     },
+  //   },
+  // },
   {
     resolve: "medusa-file-r2",
     options: {

@@ -50,6 +50,7 @@ export default class AlgoliaService extends TransactionBaseService {
         id: product.id,
         title: product.title,
         handle: product.handle,
+        categories: product.categories?.map((c) => c.name) ?? [],
         thumbnail: product.thumbnail,
         tags: product.tags?.map((t) => t.value) ?? [],
         created_at: product.created_at,
