@@ -42,34 +42,39 @@ export default class AlgoliaService extends TransactionBaseService {
     return categories
       .map((c) => ({
         ...c,
-        metadata: { ...c.metadata, order: c.metadata.order || 1000 },
+        order: typeof c.metadata?.order === "number" ? c.metadata.order : 1000,
       }))
-      .sort(
-        (a, b) =>
-          (a?.metadata?.order as number) - (b?.metadata?.order as number)
-      )
+      .sort((a, b) => a.order - b.order)
       .map((c) => c.name);
   }
 
-  async syncProduct(product: Product): Promise<void> {
+  async syncProduct(product: Partial<Product>): Promise<void> {
     if (!this.isEnabled_) {
       console.log("[ALGOLIA] Servicio deshabilitado - saltando sincronización");
       return;
     }
+
+    const categories = this.sortCategories(product.categories);
+    const tags = product.tags?.map((t) => t.value) ?? [];
+    console.log(
+      `[ALGOLIA] Sincronizando producto ${product.id}...`,
+      product.tags
+    );
 
     try {
       const algoliaProduct = {
         objectID: product.id,
         id: product.id,
         title: product.title,
+        description: product.description,
         handle: product.handle,
-        categories: this.sortCategories(product.categories),
+        categories,
+        tags,
         thumbnail: product.thumbnail,
-        tags: product.tags?.map((t) => t.value) ?? [],
         created_at: product.created_at,
         updated_at: product.updated_at,
       };
-
+      console.log(`[ALGOLIA] Producto a sincronizar:`, algoliaProduct);
       // Agregar timeout para evitar que la operación se cuelgue
       const syncPromise = this.client_.saveObject({
         indexName: this.indexName_,

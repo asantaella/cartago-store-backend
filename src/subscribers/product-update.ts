@@ -30,6 +30,7 @@ export default async function handleProductUpdate({
             "options",
             "tags",
             "images",
+            "categories",
           ],
         });
 
