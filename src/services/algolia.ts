@@ -1,6 +1,6 @@
 import { algoliasearch } from "algoliasearch";
 import { TransactionBaseService } from "@medusajs/medusa";
-import { Product } from "@medusajs/medusa/dist/models";
+import { Product, ProductCategory } from "@medusajs/medusa/dist/models";
 
 type InjectedDependencies = {
   manager: any;
@@ -38,6 +38,19 @@ export default class AlgoliaService extends TransactionBaseService {
     }
   }
 
+  sortCategories(categories: ProductCategory[]): string[] {
+    return categories
+      .map((c) => ({
+        ...c,
+        metadata: { ...c.metadata, order: c.metadata.order || 1000 },
+      }))
+      .sort(
+        (a, b) =>
+          (a?.metadata?.order as number) - (b?.metadata?.order as number)
+      )
+      .map((c) => c.name);
+  }
+
   async syncProduct(product: Product): Promise<void> {
     if (!this.isEnabled_) {
       console.log("[ALGOLIA] Servicio deshabilitado - saltando sincronización");
@@ -50,7 +63,7 @@ export default class AlgoliaService extends TransactionBaseService {
         id: product.id,
         title: product.title,
         handle: product.handle,
-        categories: product.categories?.map((c) => c.name) ?? [],
+        categories: this.sortCategories(product.categories),
         thumbnail: product.thumbnail,
         tags: product.tags?.map((t) => t.value) ?? [],
         created_at: product.created_at,

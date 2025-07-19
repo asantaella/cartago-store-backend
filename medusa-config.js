@@ -36,7 +36,7 @@ try {
 
 // CORS when consuming Medusa from admin
 const ADMIN_CORS =
-  process.env.ADMIN_CORS || "http://localhost:7001";
+  process.env.ADMIN_CORS || "http://localhost:7000,http://localhost:7001";
 
 // CORS to avoid issues when consuming Medusa from a client
 const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
@@ -82,7 +82,7 @@ const plugins = [
     options: {
       clientId: process.env.PAYPAL_CLIENT_ID,
       clientSecret: process.env.PAYPAL_CLIENT_SECRET,
-      capture: true
+      capture: true,
     },
   },
   {
@@ -91,7 +91,7 @@ const plugins = [
       api_key: process.env.STRIPE_API_KEY,
       webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
       capture: true,
-      automatic_payment_methods: true
+      automatic_payment_methods: true,
     },
   },
 
@@ -130,10 +130,11 @@ const modules = {
 const projectConfig = {
   jwtSecret: process.env.JWT_SECRET,
   cookieSecret: process.env.COOKIE_SECRET,
-  store_cors: STORE_CORS,
-  admin_cors: ADMIN_CORS,
+  store_cors: process.env.STORE_CORS,
+  admin_cors: process.env.ADMIN_CORS,
+  auth_cors: process.env.AUTH_CORS,
   database_url: DATABASE_URL,
-  redis_url: REDIS_URL
+  redis_url: REDIS_URL,
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule} */
