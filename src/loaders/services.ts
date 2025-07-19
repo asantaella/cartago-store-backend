@@ -1,13 +1,18 @@
-import InvoiceGenerator from "../services/invoice-generator";
-import { AwilixContainer } from "awilix";
+import { asClass, asValue, createContainer } from "awilix";
+import { MedusaContainer } from "@medusajs/medusa";
+import AlgoliaService from "../services/algolia";
 
-interface Container {
-  register: (name: string, factory: (c: AwilixContainer) => any) => void;
+export default async function servicesLoader(
+  container: MedusaContainer,
+  options: any
+) {
+  try {
+    container.register({
+      algoliaService: asClass(AlgoliaService).singleton(),
+    });
+
+    console.log("[SERVICES] AlgoliaService registrado correctamente");
+  } catch (error) {
+    console.error("[SERVICES] Error registrando servicios:", error);
+  }
 }
-
-export default async ({ container }: { container: Container }) => {
-  container.register(
-    "invoiceGeneratorService",
-    (c: AwilixContainer) => new InvoiceGenerator(c)
-  );
-};

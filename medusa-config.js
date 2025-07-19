@@ -54,18 +54,18 @@ const plugins = [
   //     upload_dir: "uploads",
   //   },
   // },
-  {
-    resolve: "@medusajs/admin",
-    /** @type {import('@medusajs/admin').PluginOptions} */
-    options: {
-      serve: false,
-      autoRebuild: true,
-      backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
-      develop: {
-        open: process.env.OPEN_BROWSER !== "false",
-      },
-    },
-  },
+  // {
+  //   resolve: "@medusajs/admin",
+  //   /** @type {import('@medusajs/admin').PluginOptions} */
+  //   options: {
+  //     serve: false,
+  //     autoRebuild: true,
+  //     backend: process.env.MEDUSA_ADMIN_BACKEND_URL,
+  //     develop: {
+  //       open: process.env.OPEN_BROWSER !== "false",
+  //     },
+  //   },
+  // },
   {
     resolve: "medusa-file-r2",
     options: {
@@ -82,7 +82,7 @@ const plugins = [
     options: {
       clientId: process.env.PAYPAL_CLIENT_ID,
       clientSecret: process.env.PAYPAL_CLIENT_SECRET,
-      capture: true
+      capture: true,
     },
   },
   {
@@ -91,7 +91,7 @@ const plugins = [
       api_key: process.env.STRIPE_API_KEY,
       webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
       capture: true,
-      automatic_payment_methods: true
+      automatic_payment_methods: true,
     },
   },
 
@@ -130,10 +130,11 @@ const modules = {
 const projectConfig = {
   jwtSecret: process.env.JWT_SECRET,
   cookieSecret: process.env.COOKIE_SECRET,
-  store_cors: STORE_CORS,
-  admin_cors: ADMIN_CORS,
+  store_cors: process.env.STORE_CORS,
+  admin_cors: process.env.ADMIN_CORS,
+  auth_cors: process.env.AUTH_CORS,
   database_url: DATABASE_URL,
-  redis_url: REDIS_URL
+  redis_url: REDIS_URL,
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule} */
