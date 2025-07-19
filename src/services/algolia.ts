@@ -56,10 +56,7 @@ export default class AlgoliaService extends TransactionBaseService {
 
     const categories = this.sortCategories(product.categories);
     const tags = product.tags?.map((t) => t.value) ?? [];
-    console.log(
-      `[ALGOLIA] Sincronizando producto ${product.id}...`,
-      product.tags
-    );
+    console.log(`[ALGOLIA] Sincronizando producto ${product.id}...`);
 
     try {
       const algoliaProduct = {
