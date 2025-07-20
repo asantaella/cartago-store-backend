@@ -22,8 +22,6 @@ class InvoiceGeneratorService extends BaseService {
   };
 
   private businessInfoContent = [
-    { text: "Razón social: ", bold: true },
-    "ACCESORIOS CARTAGO S.L.U.\n",
     { text: "Dirección: ", bold: true },
     "Alameda San Antón 23 (Apdo. Correos 5085)\n",
     { text: "Ciudad, País: ", bold: true },
@@ -34,25 +32,60 @@ class InvoiceGeneratorService extends BaseService {
     "contacto@cartago4x4.es",
   ];
 
+  private formatVariantCategories(variant) {
+    const variantCategories = variant.product.categories;
+    if (!variantCategories || variantCategories.length === 0) {
+      return [];
+    }
+    return variantCategories.length > 1
+      ? variantCategories
+          .sort((c1, c2) => {
+            return (
+              ((c1?.metadata?.order + 1 as number) || 1000) -
+              ((c2?.metadata?.order + 1 as number) || 1000)
+            );
+          })
+          .slice(0, 2)
+          .map((c) => c.name).join(" ")
+      : [variantCategories[0]?.name];
+  }
+
   /**
    * Fills the HTML template with order data.
    * @param {string} template - The HTML template string.
    * @param {object} order - The order data.
    * @returns {string} - The filled HTML.
    */
-  fillTemplate(order) {
+  fillTemplate(order: Order): string {
     // Implement your template filling logic here
+
     return `
       <tr>
         <td>${order.items
-          .map(
-            (item) => `
-          <tr>
-            <td>${item.title}</td>
-            <td>${item.quantity}</td>
-            <td>${item.unit_price / 100}</td>
-          </tr>`
-          )
+          .map((item) => {
+            const variantCategories = item.variant.product.categories || [];
+            const categories =
+              variantCategories.length > 1
+                ? variantCategories
+                    .sort((c1, c2) => {
+                      return (
+                        ((c1?.metadata?.order as number) || 1000) -
+                        ((c2?.metadata?.order as number) || 1000)
+                      );
+                    })
+                    .slice(0, 2)
+                    .map((c) => c.name)
+                : [variantCategories[0]?.name];
+            return `
+            <tr>
+              <td>
+              <div>${item.title}</div>
+              <div>${categories.join(" ")}</div>
+              </td>
+              <td>${item.quantity}</td>
+              <td>${item.unit_price / 100}</td>
+            </tr>`;
+          })
           .join("")}
       </tr>`;
   }
@@ -84,8 +117,8 @@ class InvoiceGeneratorService extends BaseService {
 
     const customerName = `${order.shipping_address.first_name} ${order.shipping_address.last_name}`;
     const customerNifCif =
-      order.billing_address.metadata?.nif_cif ||
-      order.shipping_address.metadata?.nif_cif;
+      order.billing_address?.metadata?.nif_cif ||
+      order.shipping_address?.metadata?.nif_cif;
 
     const billingAddress = order.billing_address
       ? `${order.billing_address.address_1}${
@@ -145,8 +178,8 @@ class InvoiceGeneratorService extends BaseService {
       order.shipping_address?.metadata?.invoice_id;
 
     let invoiceDatesTextContent = [
-      { text: "NIF/CIF: ", bold: true },
-      "23036207-M",
+      { text: "CIF: ", bold: true },
+      "B75682930",
       "\n",
       { text: "Fecha de cargo: ", bold: true },
       invoiceCreatedAt,
@@ -155,7 +188,7 @@ class InvoiceGeneratorService extends BaseService {
     const invoiceNumberTextContent = [
       { text: "Fecha de factura: ", bold: true },
       invoiceCreatedAt,
-      "\n\n",
+      "\n",
       { text: "Nº de factura: ", bold: true },
       invoiceId,
     ];
@@ -199,34 +232,19 @@ class InvoiceGeneratorService extends BaseService {
         {
           columns: [
             {
-              text: "Cartago4x4",
+              text: "ACCESORIOS CARTAGO S.L.U",
               style: "header",
               margin: [0, 36, 0, 0], // Ajusta el margen superior para alinear con el logo
             },
             {
               stack: [
                 {
-                  canvas: [
-                    {
-                      type: "ellipse",
-                      x: 28,
-                      y: 28,
-                      color: "#090000",
-                      r1: 28,
-                      r2: 28,
-                    },
-                  ],
+                  image: "logo",
                   width: 56,
                   height: 56,
                   alignment: "right",
-                },
-                {
-                  image: "logo",
-                  width: 36,
-                  height: 36,
-                  alignment: "right",
-                  fit: [36, 36],
-                  margin: [10, -46, 0, 0], // Ajusta la posición del logo sobre el círculo
+                  fit: [56, 56],
+                  margin: [10, 0, 0, 0], // Ajusta la posición del logo sobre el círculo
                 },
               ],
             },
@@ -274,7 +292,7 @@ class InvoiceGeneratorService extends BaseService {
           margin: [0, 10, 0, 10],
         },
         {
-          text: invoiceId ? "Facturar a:" : "",
+          text: invoiceId ? "Datos del cliente" : "",
           style: "subheader",
         },
         {
@@ -285,11 +303,11 @@ class InvoiceGeneratorService extends BaseService {
                 { text: "Razón social: ", bold: true },
                 customerName,
                 "\n",
-                { text: "Teléfono: ", bold: true },
-                billingPhone,
-                "\n",
                 { text: "NIF/CIF: ", bold: true },
                 customerNifCif ? customerNifCif : "-",
+                "\n",
+                { text: "Teléfono: ", bold: true },
+                billingPhone,
               ],
               alignment: "left",
               style: "columnStyle",
@@ -341,10 +359,9 @@ class InvoiceGeneratorService extends BaseService {
                 const itemTotalWithoutTax =
                   (unitPriceWithoutTax * item.quantity) / 100;
 
-                const parentCategories = item.variant.product.categories
-                  .slice(0, 2)
-                  .map((cat) => cat.name)
-                  .join(" ");
+                const parentCategories = this.formatVariantCategories(
+                  item.variant
+                );
                 return [
                   {
                     text: [
@@ -492,7 +509,7 @@ class InvoiceGeneratorService extends BaseService {
       },
       styles: {
         header: {
-          fontSize: 22,
+          fontSize: 18,
           bold: true,
           margin: [0, 0, 0, 10],
         },
