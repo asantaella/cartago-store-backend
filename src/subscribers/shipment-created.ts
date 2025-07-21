@@ -3,7 +3,7 @@ import {
   type SubscriberArgs,
   OrderService,
 } from "@medusajs/medusa";
-import ShipmentSenderService from "../services/shipment-sender";
+import ShipmentNotificationService from "../services/shipment-notification";
 
 export default async function handleShipmentCreated({
   data,
@@ -17,9 +17,8 @@ export default async function handleShipmentCreated({
     );
 
     //const orderService: OrderService = container.resolve("orderService");
-    const shipmentSenderService: ShipmentSenderService = container.resolve(
-      "shipmentSenderService"
-    );
+    const shipmentSenderService: ShipmentNotificationService =
+      container.resolve("shipmentSenderService");
     const manager = container.resolve("manager");
 
     // Obtener el fulfillment usando el repository manager

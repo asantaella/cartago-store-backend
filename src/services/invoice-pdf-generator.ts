@@ -3,8 +3,8 @@ import { LineItem, Order, OrderService } from "@medusajs/medusa";
 import pdfmake from "pdfmake";
 import Roboto from "../fonts/Roboto";
 import LogoCartago from "../types/logo";
-class InvoiceGeneratorService extends BaseService {
-  static identifier = "invoice-generator";
+class InvoicePDFGeneratorService extends BaseService {
+  static identifier = "invoice-pdf-generator";
 
   protected orderService: OrderService;
 
@@ -41,12 +41,13 @@ class InvoiceGeneratorService extends BaseService {
       ? variantCategories
           .sort((c1, c2) => {
             return (
-              ((c1?.metadata?.order + 1 as number) || 1000) -
-              ((c2?.metadata?.order + 1 as number) || 1000)
+              (((c1?.metadata?.order + 1) as number) || 1000) -
+              (((c2?.metadata?.order + 1) as number) || 1000)
             );
           })
           .slice(0, 2)
-          .map((c) => c.name).join(" ")
+          .map((c) => c.name)
+          .join(" ")
       : [variantCategories[0]?.name];
   }
 
@@ -583,4 +584,4 @@ class InvoiceGeneratorService extends BaseService {
   }
 }
 
-export default InvoiceGeneratorService;
+export default InvoicePDFGeneratorService;

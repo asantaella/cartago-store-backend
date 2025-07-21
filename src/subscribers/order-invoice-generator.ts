@@ -37,6 +37,6 @@ export default async function handleOrderInvoiceGeneration({
 export const config: SubscriberConfig = {
   event: OrderService.Events.PLACED,
   context: {
-    subscriberId: "order-invoice-generator",
+    subscriberId: "order-invoice-pdf-generator",
   },
 };

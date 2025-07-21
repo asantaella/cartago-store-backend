@@ -1,4 +1,4 @@
-import InvoiceGenerator from "../services/invoice-generator";
+import InvoiceGenerator from "../services/invoice-pdf-generator";
 import OrderInvoiceService from "../services/order-invoice";
 import { AwilixContainer } from "awilix";
 
