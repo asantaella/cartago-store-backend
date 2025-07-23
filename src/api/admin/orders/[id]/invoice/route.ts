@@ -4,7 +4,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const { id } = req.params;
 
   try {
-    const invoiceService = req.scope.resolve("invoiceGeneratorService");
+    const invoiceService = req.scope.resolve("invoicePdfGeneratorService");
     const pdf = await invoiceService.generateInvoice(id);
 
     res.set({

@@ -3,9 +3,7 @@ import { LineItem, Order, OrderService } from "@medusajs/medusa";
 import pdfmake from "pdfmake";
 import Roboto from "../fonts/Roboto";
 import LogoCartago from "../types/logo";
-class InvoicePDFGeneratorService extends BaseService {
-  static identifier = "invoice-pdf-generator";
-
+class InvoicePdfGeneratorService extends BaseService {
   protected orderService: OrderService;
 
   constructor(container) {
@@ -584,4 +582,4 @@ class InvoicePDFGeneratorService extends BaseService {
   }
 }
 
-export default InvoicePDFGeneratorService;
+export default InvoicePdfGeneratorService;

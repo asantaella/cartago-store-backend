@@ -16,15 +16,14 @@ export default async function handleShipmentCreated({
       `[NOTIFICATION] Shipment created subscriber triggered for fulfillment ${data.id}`
     );
 
-    //const orderService: OrderService = container.resolve("orderService");
-    const shipmentSenderService: ShipmentNotificationService =
-      container.resolve("shipmentSenderService");
+    const shipmentNotificationService: ShipmentNotificationService =
+      container.resolve("shipmentNotificationService");
     const manager = container.resolve("manager");
 
     // Obtener el fulfillment usando el repository manager
     const fulfillmentRepository = manager.getRepository("Fulfillment");
     const fulfillment = await fulfillmentRepository.findOne({
-      where: { id: data.id },
+      where: { id: data.fulfillment_id },
       relations: [
         "order",
         "order.items",
@@ -38,7 +37,6 @@ export default async function handleShipmentCreated({
         "order.payments",
         "order.region",
         "order.currency",
-        "tracking_links",
       ],
     });
 
@@ -52,8 +50,8 @@ export default async function handleShipmentCreated({
     );
 
     // Enviar la notificación de envío creado con el PDF de la factura
-    await shipmentSenderService.sendNotification(
-      "shipment.created",
+    await shipmentNotificationService.sendNotification(
+      OrderService.Events.SHIPMENT_CREATED,
       fulfillment
     );
 

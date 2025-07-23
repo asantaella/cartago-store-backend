@@ -1,9 +1,7 @@
 import { BaseService } from "medusa-interfaces";
 import { Order, OrderService } from "@medusajs/medusa";
 
-class OrderInvoiceService extends BaseService {
-  static identifier = "orderInvoiceService";
-
+class InvoiceNumberGeneratorService extends BaseService {
   protected orderService_: OrderService;
 
   constructor(container) {
@@ -66,4 +64,4 @@ class OrderInvoiceService extends BaseService {
   }
 }
 
-export default OrderInvoiceService;
+export default InvoiceNumberGeneratorService;

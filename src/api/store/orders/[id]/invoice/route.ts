@@ -4,7 +4,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const { id } = req.params;
 
   try {
-    const invoiceService = req.scope.resolve("invoiceGeneratorService");
+    const invoiceService = req.scope.resolve("invoicePDFGeneratorService");
 
     const pdf = await invoiceService.generateInvoice(id);
     console.log("PDF filename =>>", pdf.fileName);
@@ -15,7 +15,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       "Content-Length": pdf.buffer.length,
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": " Content-Type, Authorization, X-Requested-With",
+      "Access-Control-Allow-Headers":
+        " Content-Type, Authorization, X-Requested-With",
     });
 
     // Enviar el PDF como respuesta
@@ -30,9 +31,10 @@ export const OPTIONS = async (req: MedusaRequest, res: MedusaResponse) => {
   res.set({
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+    "Access-Control-Allow-Headers":
+      "Content-Type, Authorization, X-Requested-With",
   });
-  
+
   // Enviar respuesta sin cuerpo (status 204 o 200)
   return res.status(204).send();
 };

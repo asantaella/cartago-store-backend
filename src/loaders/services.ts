@@ -1,5 +1,5 @@
-import InvoiceGenerator from "../services/invoice-pdf-generator";
-import OrderInvoiceService from "../services/order-invoice";
+//import InvoiceGenerator from "../services/invoice-pdf-generator";
+//import InvoiceNumberGeneratorService from "../services/invoice-number-generator";
 import { AwilixContainer } from "awilix";
 
 interface Container {
@@ -7,13 +7,12 @@ interface Container {
 }
 
 export default async ({ container }: { container: Container }) => {
-  container.register(
-    "invoiceGeneratorService",
-    (c: AwilixContainer) => new InvoiceGenerator(c)
-  );
-
-  container.register(
-    "orderInvoiceService",
-    (c: AwilixContainer) => new OrderInvoiceService(c)
-  );
+  // container.register(
+  //   "invoicePDFGeneratorService",
+  //   (c: AwilixContainer) => new InvoiceGenerator(c)
+  // );
+  // container.register(
+  //   "invoiceNumberGenerator",
+  //   (c: AwilixContainer) => new InvoiceNumberGeneratorService(c)
+  // );
 };

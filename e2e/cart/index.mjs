@@ -65,7 +65,7 @@ cart = await updateCart(medusa, {
 // Then explicitly add the discount code using the dedicated function
 cart = await addDiscount(medusa, {
   cartId: cart.id,
-  discountCode: "CARTAGO_10",
+  discountCode: "CARTAGO3",
 });
 
 // Verify the discount was applied

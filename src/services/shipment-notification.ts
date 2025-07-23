@@ -7,7 +7,7 @@ import {
 } from "@medusajs/medusa";
 import { EntityManager } from "typeorm";
 import { MailerSend, Recipient, EmailParams } from "mailersend";
-import InvoicePDFGeneratorService from "./invoice-pdf-generator";
+import InvoicePdfGeneratorService from "./invoice-pdf-generator";
 import OrderNotificationService from "./order-notification";
 
 class ShipmentNotificationService extends AbstractNotificationService {
@@ -17,13 +17,13 @@ class ShipmentNotificationService extends AbstractNotificationService {
   static is_installed = true;
   protected config: any;
   protected orderNotificationService: OrderNotificationService;
-  protected invoiceGeneratorService: InvoicePDFGeneratorService;
+  protected invoicePdfGeneratorService: InvoicePdfGeneratorService;
   private mailerSendService: MailerSend;
 
   constructor(container, options) {
     super(container);
     this.orderNotificationService = new OrderNotificationService(container);
-    this.invoiceGeneratorService = container.invoiceGeneratorService;
+    this.invoicePdfGeneratorService = container.invoicePdfGeneratorService;
 
     // Inicializar la configuración
     this.config = {
@@ -62,9 +62,10 @@ class ShipmentNotificationService extends AbstractNotificationService {
 
   async buildPDFAttachment(order: Order): Promise<string> {
     try {
-      const invoiceData = (await this.invoiceGeneratorService.generateInvoice(
-        order.id
-      )) as any;
+      const invoiceData =
+        (await this.invoicePdfGeneratorService.generateInvoice(
+          order.id
+        )) as any;
       return invoiceData.buffer.toString("base64");
     } catch (error) {
       console.error("[NOTIFICATION] Error generating PDF invoice:", error);

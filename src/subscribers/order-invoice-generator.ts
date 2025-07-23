@@ -3,7 +3,7 @@ import {
   type SubscriberArgs,
   OrderService,
 } from "@medusajs/medusa";
-import OrderInvoiceService from "../services/order-invoice";
+import InvoiceNumberGeneratorService from "../services/invoice-number-generator";
 
 export default async function handleOrderInvoiceGeneration({
   data,
@@ -16,12 +16,11 @@ export default async function handleOrderInvoiceGeneration({
       `[ORDER-INVOICE] Order invoice generation subscriber triggered for order ${data.id}`
     );
 
-    const orderInvoiceService: OrderInvoiceService = container.resolve(
-      "orderInvoiceService"
-    );
+    const invoiceNumberGenerator: InvoiceNumberGeneratorService =
+      container.resolve("invoiceNumberGeneratorService");
 
     // Establecer el número de factura en el pedido
-    await orderInvoiceService.setOrderInvoiceNumber(data.id);
+    await invoiceNumberGenerator.setOrderInvoiceNumber(data.id);
 
     console.log(
       `[ORDER-INVOICE] Invoice number successfully set for order ${data.id}`
