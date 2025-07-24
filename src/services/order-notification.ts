@@ -7,7 +7,7 @@ import {
   TrackingLink,
 } from "@medusajs/medusa";
 import { formatMoney, formatDate, formatAddress } from "../utils/format-utils";
-import { getCustomerNifCif, getShippingMethodName } from "../utils/order-utils";
+import { OrderInvoice } from "../types/order-invoice.model";
 
 interface MailerSendOrderPlacedNotification {
   to_email: string;
@@ -96,7 +96,7 @@ class OrderNotificationService {
         data: undefined,
       };
     }
-
+    const invoiceOrder = new OrderInvoice(order);
     const templateId = this.config?.template_overrides?.[event];
     const currencyCode = order.currency_code?.toUpperCase();
 
@@ -140,11 +140,11 @@ class OrderNotificationService {
           full_name: `${order.shipping_address?.first_name} ${order.shipping_address?.last_name}`,
           email: order.email,
           phone: order.shipping_address?.phone,
-          nif_cif: getCustomerNifCif(order),
+          nif_cif: invoiceOrder.getCustomerNifCif(),
         },
         shipping_address: formatAddress(order.shipping_address),
         billing_address: formatAddress(order.billing_address),
-        shipping_method: getShippingMethodName(order),
+        shipping_method: invoiceOrder.getShippingMethodName(),
         shipping_total: formatMoney(order.shipping_total, currencyCode),
 
         currency: currencyCode,
@@ -211,7 +211,7 @@ class OrderNotificationService {
         data: undefined,
       };
     }
-
+    const invoiceOrder = new OrderInvoice(order);
     const templateId = this.config?.template_overrides?.[event];
     const currencyCode = order.currency_code?.toUpperCase();
 
@@ -244,10 +244,12 @@ class OrderNotificationService {
         ff.tracking_links.map((tl) => ({
           ...tl,
           url:
+            ff?.metadata?.delivery as string ||
             `https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=${tl.tracking_number}` ||
             "https://www.correos.es/es/es/herramientas/localizador/envios",
         }))
       ) || [];
+
     console.log("[NOTIFICATION] Tracking links:", trackingLinks);
     return {
       to_email: order.email,
@@ -268,11 +270,11 @@ class OrderNotificationService {
           full_name: `${order.shipping_address?.first_name} ${order.shipping_address?.last_name}`,
           email: order.email,
           phone: order.shipping_address?.phone,
-          nif_cif: getCustomerNifCif(order),
+          nif_cif: invoiceOrder.getCustomerNifCif(),
         },
         shipping_address: formatAddress(order.shipping_address),
         billing_address: formatAddress(order.billing_address),
-        shipping_method: getShippingMethodName(order),
+        shipping_method: invoiceOrder.getShippingMethodName(),
         shipping_total: formatMoney(order.shipping_total, currencyCode),
         currency: currencyCode,
         subtotal_ex_tax: formatMoney(order.subtotal, currencyCode),

@@ -9,10 +9,11 @@ import { AsyncParser } from "@json2csv/node";
 import { MailerSend, Recipient, EmailParams } from "mailersend";
 // Importar las utilidades
 import { formatMoney, formatDate } from "../utils/format-utils";
-import { buildShippingMethodCsv } from "../utils/order-utils";
-import OrderNotificationService, {  
+
+import OrderNotificationService, {
   MailerSendOrderData,
 } from "./order-notification";
+import { OrderInvoice } from "../types/order-invoice.model";
 
 class ReceiptNotificationService extends AbstractNotificationService {
   protected manager_: EntityManager;
@@ -120,9 +121,10 @@ class ReceiptNotificationService extends AbstractNotificationService {
         total: formatMoney(item.total, currencyCode),
       },
     }));
+    const orderInvoice = new OrderInvoice(order);
     const itemsCsv = await itemParser.parse(orderItems).promise();
     const customerCsv = await customerParser.parse(customer).promise();
-    const shippingMethodCsv = buildShippingMethodCsv(order);
+    const shippingMethodCsv = orderInvoice.buildShippingMethodCsv();
     const csvContent = `${customerCsv}\n\n${itemsCsv}\n${shippingMethodCsv}`;
     const csvContentSanitized = csvContent.replace(/ €/g, "");
 

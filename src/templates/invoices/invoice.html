@@ -1,48 +1,25 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Invoice</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        padding: 0;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f4f4f4;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Invoice</h1>
-    <p><strong>Order ID:</strong> {{orderId}}</p>
-    <p><strong>Customer Name:</strong> {{customerName}}</p>
-    <p><strong>Order Date:</strong> {{orderDate}}</p>
-    <p><strong>Shipping Address:</strong> {{shippingAddress}}</p>
-    <h2>Order Items</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Quantity</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{items}}
-      </tbody>
-    </table>
-    <p><strong>Total:</strong> {{total}}</p>
-  </body>
-</html>
+<table class="customer-section" width="100%">
+  <tr>
+    <td class="header" colspan="2">Localizador de envío</td>
+  </tr>
+  <tr class="row">
+    <td class="info-label" width="40%">Nº Localizador</td>
+    <td class="info-value">{{ tracking_links.tracking_number }}</td>
+  </tr>
+  <tr class="row">
+    <td class="info-label">Enlace de seguimiento</td>
+    {% if tracking_links.alternativeUrl %}
+    <td class="info-value">
+      <a href="{{ tracking_links.alternativeUrl }}" target="_blank"
+        >{{ tracking_links.alternativeUrl }}</a
+      >
+    </td>
+    {% else %}
+    <td class="info-value">
+      <a href="{{ tracking_links.url }}" target="_blank"
+        >{{ tracking_links.url }}</a
+      >
+    </td>
+    {% endif %}
+  </tr>
+</table>
