@@ -20,6 +20,8 @@ class InvoicePdfGeneratorService extends BaseService {
     "Cartagena, Murcia, España\n",
     { text: "Código Postal: ", bold: true },
     "30205\n",
+    { text: "CIF: ", bold: true },
+    "B75682930\n",
     { text: "Email: ", bold: true },
     "contacto@cartago4x4.es",
   ];
@@ -56,60 +58,12 @@ class InvoicePdfGeneratorService extends BaseService {
     const invoiceFileName = `Cartago4x4_${orderCreatedAt.replace(/\//g, "")}_${
       order.display_id
     }.pdf`;
-    const invoiceId = orderInvoice.getInvoiceId()
-     
-
-    let invoiceDatesTextContent = [
-      { text: "CIF: ", bold: true },
-      "B75682930",
-      "\n",
-    ];
-    const invoiceNumberTextContent = [
-      { text: "Fecha de cargo: ", bold: true },
-      orderCreatedAt,
-      "\n",
-      { text: "Fecha de factura: ", bold: true },
-      invoiceCreatedAt,
-      "\n",
-      { text: "Nº de factura: ", bold: true },
-      invoiceId,
-    ];
-
-    // if (customerNifCif) {
-    //   invoiceDatesTextContent = invoiceDatesTextContent.concat(
-    //     invoiceNumberTextContent as string | { text: string; bold: boolean }[]
-    //   );
-    // }
-
-    const receiptDatesTextContent = [
-      { text: "Fecha: ", bold: true },
-      orderCreatedAt,
-    ];
-
-    let orderInfoTable = [
-      [
-        {
-          text: this.businessInfoContent,
-          alignment: "left",
-          style: "columnStyle",
-        },
-      ],
-    ];
-
-    if (invoiceId) {
-      orderInfoTable[0].push({
-        text: invoiceDatesTextContent as (
-          | string
-          | { text: string; bold: boolean }
-        )[],
-        alignment: "left",
-        style: "columnStyle",
-      });
-    }
+    const invoiceId = orderInvoice.getInvoiceId();
 
     const printer = new pdfmake(Roboto);
 
     const docDefinition = {
+      pageSize: "A4",
       content: [
         {
           columns: [
@@ -148,107 +102,200 @@ class InvoicePdfGeneratorService extends BaseService {
           ],
           margin: [0, 0, 0, 10],
         },
-        { text: invoiceId ? "" : receiptDatesTextContent, alignment: "right" },
-        {
-          table: {
-            widths: ["*"],
-            body: [
-              [
-                {
-                  columns: [
-                    {
-                      width: "*",
-                      stack: [
-                        {
-                          text: this.businessInfoContent,
-                          alignment: "left",
-                          style: "columnStyle",
-                        },
-                      ],
-                      style: "columnStyle",
-                    },
-                    invoiceId
-                      ? {
-                          width: "auto",
-                          stack: [
-                            {
-                              text: invoiceDatesTextContent,
-                              alignment: "left",
-                              style: "columnStyle",
-                            },
-                          ],
-                          style: "columnStyle",
-                        }
-                      : null,
-                  ].filter(Boolean),
-                },
-              ],
-            ],
-          },
-          layout: {
-            defaultBorder: false,
-            fillColor: function () {
-              return "#f0f0f0";
-            },
-            paddingLeft: function () {
-              return 10;
-            },
-            paddingRight: function () {
-              return 10;
-            },
-            paddingTop: function () {
-              return 5;
-            },
-            paddingBottom: function () {
-              return 5;
-            },
-          },
-          margin: [0, 10, 0, 10],
-        },
-        {
-          text: invoiceId ? "Datos del cliente" : "",
-          style: "subheader",
-        },
+
         {
           columns: [
             {
-              width: "*",
-              text: [
-                { text: "Razón social: ", bold: true },
-                orderInvoice.getCustomerName(),
-                "\n",
-                { text: "Dirección: ", bold: true },
-                orderInvoice.getBillingAddress(),
-                "\n",
-                { text: "Ciudad/País: ", bold: true },
-                orderInvoice.getBillingCityCountry(),
-                "\n",
-                { text: "Código Postal: ", bold: true },
-                orderInvoice.getBillingPostalCode(),
-                "\n",
-                { text: "Teléfono: ", bold: true },
-                orderInvoice.getBillingPhone()
-                  ? orderInvoice.getBillingPhone()
-                  : "-",
+              width: "40%",
+              stack: [
+                {
+                  table: {
+                    widths: [60, "*"],
+
+                    body: [
+                      [
+                        {
+                          text: "Dirección:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        {
+                          text: "Alameda San Antón 23\n(Apdo. Correos 5085)\nCartagena, Murcia, España",
+                          alignment: "left",
+                        },
+                      ],
+                      [
+                        {
+                          text: "C.P.:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        { text: "30205", alignment: "left" },
+                      ],
+                      [
+                        {
+                          text: "CIF:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        { text: "B75682930", alignment: "left" },
+                      ],
+                      [
+                        {
+                          text: "Email:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        { text: "contacto@cartago4x4.es", alignment: "left" },
+                      ],
+                      [
+                        {
+                          text: "Web:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        { text: "https://cartago4x4.es", alignment: "left" },
+                      ],
+                    ],
+                  },
+                  layout: {
+                    defaultBorder: false,
+                    paddingTop: function () {
+                      return 0;
+                    },
+                    paddingBottom: function () {
+                      return 0;
+                    },
+                    paddingRight: function () {
+                      return 0;
+                    },
+                    paddingLeft: function () {
+                      return 0;
+                    },
+                  },
+                  style: "columnStyle",
+                },
               ],
-              alignment: "left",
-              style: "columnStyle",
             },
             {
-              width: "auto",
-              text: [
-                { text: "NIF/CIF: ", bold: true },
-                orderInvoice.getCustomerNifCif()
-                  ? orderInvoice.getCustomerNifCif()
-                  : "-",
-                "\n",
-                ...invoiceNumberTextContent,
+              width: "*",
+              stack: [
+                {
+                  table: {
+                    widths: [85, "*"],
+                    body: [
+                      [
+                        {
+                          text: "Razón social:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        {
+                          text: orderInvoice.getCustomerName(),
+                          alignment: "left",
+                        },
+                      ],
+                      [
+                        {
+                          text: "Dirección:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        {
+                          text: orderInvoice.getCustomerFullAddress(),
+                          alignment: "left",
+                        },
+                      ],
+                      [
+                        {
+                          text: "C.P:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        {
+                          text: orderInvoice.getBillingPostalCode(),
+                          alignment: "left",
+                        },
+                      ],
+                      [
+                        {
+                          text: "NIF/CIF:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        {
+                          text: orderInvoice.getCustomerNifCif()
+                            ? orderInvoice.getCustomerNifCif()
+                            : "-",
+                          alignment: "left",
+                        },
+                      ],
+                      [
+                        {
+                          text: "Fecha cargo:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        {
+                          text: orderInvoice.getOrderCreatedAt(),
+                          alignment: "left",
+                        },
+                      ],
+                      [
+                        {
+                          text: "Fecha factura:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        {
+                          text: orderInvoice.getInvoiceCreatedAt(),
+                          alignment: "left",
+                        },
+                      ],
+                      [
+                        {
+                          text: "Nº factura:",
+                          bold: true,
+                          alignment: "right",
+                          margin: [0, 0, 5, 0],
+                        },
+                        {
+                          text: orderInvoice.getInvoiceId(),
+                          alignment: "left",
+                        },
+                      ],
+                    ],
+                  },
+                  layout: {
+                    defaultBorder: false,
+                    paddingTop: function () {
+                      return 2;
+                    },
+                    paddingBottom: function () {
+                      return 2;
+                    },
+                    paddingLeft: function () {
+                      return 0;
+                    },
+                  },
+                  style: "columnStyle",
+                },
               ],
-              alignment: "left",
-              style: "columnStyle",
             },
           ],
-          margin: [0, 0, 0, 10],
+          columnGap: 20,
+          margin: [0, 0, 0, 40],
         },
         {
           style: "tableExample",
@@ -269,7 +316,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 },
                 { text: "Precio", style: ["tableHeader", "centerText"] },
               ],
-              ...order.items.map((item: LineItem) => {
+              ...order.items.map((item: LineItem, index) => {
                 const includeTaxes = item.includes_tax || false;
                 const taxRate =
                   item.tax_lines.length > 0 ? item.tax_lines[0].rate / 100 : 0;
@@ -313,6 +360,31 @@ class InvoicePdfGeneratorService extends BaseService {
               }),
             ],
           },
+          layout: {
+            defaultBorder: true,
+            hLineWidth: function (i, node) {
+              if (i === 1) return 2; // Borde inferior de cabecera de 2px
+              return 5; // Bordes entre filas de 5px
+            },
+            vLineWidth: function () {
+              return 0; // Sin bordes verticales
+            },
+            hLineColor: function (i) {
+              return i === 1 ? "#0d364c" : "#ffffff"; // Azul para cabecera, blanco para separaciones
+            },
+            fillColor: function (rowIndex) {
+              // Sin color para cabecera, azul claro para filas alternas del body
+              return rowIndex > 0 ? "#e6f0ff" : null;
+            },
+            paddingTop: function (i) {
+              if (i === 2) return 4; // 4px adicionales después de la cabecera
+              return 4;
+            },
+            paddingBottom: function (i) {
+              if (i === 0) return 8; // 4px adicionales antes de la primera fila del body
+              return 4;
+            },
+          },
         },
         {
           table: {
@@ -322,7 +394,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 {
                   text: "SUBTOTAL:",
                   style: "summaryLabel",
-                  margin: [0, 0, 15, 0],
+                  margin: [0, 0, 5, 0],
                 },
                 {
                   text: `€${subtotal.toFixed(2)}`,
@@ -334,7 +406,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 {
                   text: "DESCUENTO:",
                   style: "summaryLabel",
-                  margin: [0, 0, 15, 0],
+                  margin: [0, 0, 5, 0],
                 },
                 {
                   text: `€${discount.toFixed(2)}`,
@@ -346,7 +418,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 {
                   text: "SUBTOTAL MENOS DESCUENTO:",
                   style: "summaryLabel",
-                  margin: [0, 0, 15, 0],
+                  margin: [0, 0, 5, 0],
                 },
                 {
                   text: `€${subtotalAfterDiscount.toFixed(2)}`,
@@ -358,7 +430,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 {
                   text: "ENVÍO:",
                   style: "summaryLabel",
-                  margin: [0, 0, 15, 0],
+                  margin: [0, 0, 5, 0],
                 },
                 {
                   text: `€${shipping.toFixed(2)}`,
@@ -370,7 +442,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 {
                   text: `IVA (${orderInvoice.getTaxRate()}%):`,
                   style: "summaryLabel",
-                  margin: [0, 0, 15, 0],
+                  margin: [0, 0, 5, 0],
                 },
                 {
                   text: `€${taxes.toFixed(2)}`,
@@ -382,7 +454,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 {
                   text: "TOTAL:",
                   style: "summaryLabelBold",
-                  margin: [0, 0, 15, 0],
+                  margin: [0, 0, 5, 0],
                 },
                 {
                   text: `€${total.toFixed(2)}`,
@@ -393,8 +465,9 @@ class InvoicePdfGeneratorService extends BaseService {
             ],
           },
           layout: {
-            defaultBorder: false,
+            defaultBorder: true,
             hLineWidth: function (i, node) {
+              if (i === 1) return 2;
               return i === node.table.body.length ? 1 : 0;
             },
             vLineWidth: function () {
@@ -410,7 +483,7 @@ class InvoicePdfGeneratorService extends BaseService {
               return 0;
             },
             paddingTop: function () {
-              return 5;
+              return 10;
             },
             paddingBottom: function () {
               return 5;
@@ -434,25 +507,26 @@ class InvoicePdfGeneratorService extends BaseService {
           color: "#0d364c",
         },
         subheader: {
-           color: "#0d364c",
-          fontSize: 16,
+          color: "#0d364c",
+          fontSize: 14,
           bold: true,
           margin: [0, 10, 0, 5],
         },
         invoiceDataBox: {
-          background: "#f0f0f0",
+          // background: "#f0f0f0",
         },
         tableExample: {
-          margin: [0, 5, 0, 15],
+          margin: [0, 5, 0, 0],
         },
         tableHeader: {
           bold: true,
           fontSize: 13,
-          color: "#333",
-          fillColor: "#f0f0f0",
+          color: "#0d364c",
+          // Eliminamos el fillColor para la cabecera
         },
         summaryLabel: {
           fontSize: 12,
+          color: "#0d364c",
           bold: true,
           alignment: "right",
         },
@@ -461,12 +535,13 @@ class InvoicePdfGeneratorService extends BaseService {
           alignment: "right",
         },
         summaryLabelBold: {
-          fontSize: 14,
+          fontSize: 12,
+          color: "#0d364c",
           bold: true,
           alignment: "right",
         },
         summaryValueBold: {
-          fontSize: 14,
+          fontSize: 12,
           bold: true,
           alignment: "right",
         },
@@ -475,7 +550,7 @@ class InvoicePdfGeneratorService extends BaseService {
           alignment: "center",
         },
         columnStyle: {
-          fillColor: "#f0f0f0",
+          // fillColor: "#f0f0f0",
         },
         centerText: {
           alignment: "center",

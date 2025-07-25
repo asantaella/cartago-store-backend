@@ -27,7 +27,8 @@ export class OrderInvoice {
 
     return (
       (this.order?.shipping_address?.metadata?.nif_cif as string) ||
-      (this.order?.billing_address?.metadata?.nif_cif as string)
+      (this.order?.billing_address?.metadata?.nif_cif as string) ||
+      "-"
     );
   }
 
@@ -99,6 +100,10 @@ export class OrderInvoice {
             ? " " + this.order.shipping_address.address_2
             : ""
         }`;
+  }
+
+  public getCustomerFullAddress(): string {
+    return `${this.getBillingAddress()}\n${this.getBillingCityCountry()}`;
   }
 
   /**
