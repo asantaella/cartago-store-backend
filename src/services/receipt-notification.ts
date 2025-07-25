@@ -3,6 +3,7 @@ import {
   Address,
   LineItem,
   Order,
+  OrderService,
 } from "@medusajs/medusa";
 import { EntityManager } from "typeorm";
 import { AsyncParser } from "@json2csv/node";
@@ -14,6 +15,7 @@ import OrderNotificationService, {
   MailerSendOrderData,
 } from "./order-notification";
 import { OrderInvoice } from "../types/order-invoice.model";
+import { EmailNotification } from "../types/email-notification.model";
 
 class ReceiptNotificationService extends AbstractNotificationService {
   protected manager_: EntityManager;
@@ -23,24 +25,9 @@ class ReceiptNotificationService extends AbstractNotificationService {
   protected config: any;
   private mailerSendService: MailerSend;
   private orderNotificationService: OrderNotificationService;
-
   constructor(container, options) {
     super(container);
     this.orderNotificationService = new OrderNotificationService(container);
-    // Inicializar la configuración
-    this.config = {
-      order_placed_url: process.env.MAILERSEND_ORDER_PLACED_URL,
-      support_url: process.env.MAILERSEND_SUPPORT_URL,
-      account_name: process.env.MAILERSEND_SENDER_NAME,
-      company_name: process.env.MAILERSEND_COMPANY_NAME,
-      sender_name: process.env.MAILERSEND_SENDER_NAME,
-      sender_email: process.env.MAILERSEND_SENDER_EMAIL,
-      sender_address: process.env.MAILERSEND_SENDER_ADDRESS,
-      admin_email: process.env.MAILERSEND_ADMIN_EMAIL,
-      template_overrides: {
-        "order.placed": process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
-      },
-    };
 
     console.log("[NOTIFICATION] Order sender service initialized");
 
@@ -128,7 +115,6 @@ class ReceiptNotificationService extends AbstractNotificationService {
     const csvContent = `${customerCsv}\n\n${itemsCsv}\n${shippingMethodCsv}`;
     const csvContentSanitized = csvContent.replace(/ €/g, "");
 
-    //console.log("CSV created..", csvContentSanitized);
     return Buffer.from(csvContentSanitized).toString("base64");
   }
 
@@ -146,51 +132,40 @@ class ReceiptNotificationService extends AbstractNotificationService {
         await this.orderNotificationService.retrieveOrderWithRelations(
           (data as Order).id as string
         );
-      // console.log(
-      //   `[NOTIFICATION] Processing ${event} for order ${orderData.display_id}`
-      // );
-      console.log("ORDER DATA:\n", JSON.stringify(orderData));
+
       const {
         to_email,
         to_name,
-        template_id,
         data: templateData,
-      } = this.orderNotificationService.getTemplateData(event, orderData);
+      } = this.orderNotificationService.getTemplateData(orderData);
 
       // Comprobar si tenemos los datos necesarios
       if (!to_email) {
         throw new Error("Recipient email is required");
       }
 
-      if (!template_id) {
+      if (!process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID) {
         throw new Error(`No template found for event ${event}`);
       }
 
-      const recipients = [new Recipient(to_email, to_name)];
+      const emailNotification = new EmailNotification({
+        toEmail: to_email,
+        toName: to_name,
+        templateId: process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
+        templateData,
+      });
 
-      // Crear parámetros de email
-      const emailParams = new EmailParams()
-        .setFrom({
-          email: this.config.sender_email || "equipo@cartago4x4.es",
-          name: this.config.sender_name || "Cartago 4x4",
-        })
-        .setTo(recipients)
-        .setTemplateId(template_id)
-        .setPersonalization([
-          {
-            email: to_email,
-            data: templateData,
-          },
-        ]);
+      const emailParams = emailNotification.getEmailParams();
 
       await this.mailerSendService.email.send(emailParams);
 
-      await this.sendNotificationToAdmin(
-        orderData,
-        emailParams,
-        templateData,
-        "sent"
+      emailNotification.setToEmail(
+        process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.es"
       );
+
+      const emailAdminParams = emailNotification.getEmailParams();
+
+      await this.mailerSendService.email.send(emailAdminParams);
 
       console.log(
         `[NOTIFICATION] Successfully sent ${event} email to ${to_email} for order ${templateData.display_id}`
@@ -212,44 +187,40 @@ class ReceiptNotificationService extends AbstractNotificationService {
     }
   }
 
-  async sendNotificationToAdmin(
-    order: Order,
-    emailParams: EmailParams,
-    templateData: MailerSendOrderData,
-    status: any
-  ) {
-    const csvContent = await this.buildCSVAttachment(order);
-    const recipients = [
-      new Recipient(this.config.admin_email, this.config.sender_name),
-    ];
-    const emailAdminParams = emailParams
-      .setTo(recipients)
-      .setPersonalization([
-        {
-          email: this.config.admin_email,
-          data: templateData,
-        },
-      ])
-      .setAttachments([
-        {
-          content: csvContent,
-          filename: `Cartago4x4_invoice_${order.display_id}.csv`,
-          disposition: "attachment",
-        },
-      ]);
+  async sendNotificationToAdmin(event: string, order: Order, status: any) {
+    const { data: templateData } =
+      this.orderNotificationService.getTemplateData(order);
 
-    console.log("Email admin params\n", emailAdminParams);
+    const csvContent = await this.buildCSVAttachment(order);
+
+    const emailNotification = new EmailNotification({
+      toEmail: process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.com",
+      toName: process.env.MAILERSEND_SENDER_NAME || "Cartago4x4",
+      templateId: process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
+      templateData,
+    });
+
+    const emailAdminParams = emailNotification.getEmailParams();
+
+    emailAdminParams.setAttachments([
+      {
+        content: csvContent,
+        filename: `Cartago4x4_invoice_${order.display_id}.csv`,
+        disposition: "attachment",
+      },
+    ]);
+
     await this.mailerSendService.email
       .send(emailAdminParams)
       .then(() => "sent")
       .catch(() => "failed");
 
     console.log(
-      `[NOTIFICATION] Successfully sent ${order.display_id} email to ${this.config.admin_email}`
+      `[NOTIFICATION] Successfully sent ${order.display_id} email to ${emailAdminParams.to[0].email}`
     );
 
     return {
-      to: this.config.admin_email,
+      to: emailAdminParams.to[0].email,
       status,
       data: emailAdminParams as unknown as Record<string, unknown>,
     };

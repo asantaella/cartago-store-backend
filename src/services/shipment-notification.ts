@@ -6,9 +6,10 @@ import {
   FulfillmentService,
 } from "@medusajs/medusa";
 import { EntityManager } from "typeorm";
-import { MailerSend, Recipient, EmailParams } from "mailersend";
+import { MailerSend, Recipient, EmailParams, Attachment } from "mailersend";
 import InvoicePdfGeneratorService from "./invoice-pdf-generator";
 import OrderNotificationService from "./order-notification";
+import { EmailNotification } from "../types/email-notification.model";
 
 class ShipmentNotificationService extends AbstractNotificationService {
   protected manager_: EntityManager;
@@ -24,24 +25,6 @@ class ShipmentNotificationService extends AbstractNotificationService {
     super(container);
     this.orderNotificationService = new OrderNotificationService(container);
     this.invoicePdfGeneratorService = container.invoicePdfGeneratorService;
-
-    // Inicializar la configuración
-    this.config = {
-      //shipment_created_url: process.env.MAILERSEND_SHIPMENT_CREATED_URL,
-      support_url: process.env.MAILERSEND_SUPPORT_URL,
-      account_name: process.env.MAILERSEND_SENDER_NAME,
-      company_name: process.env.MAILERSEND_COMPANY_NAME,
-      sender_name: process.env.MAILERSEND_SENDER_NAME,
-      sender_email: process.env.MAILERSEND_SENDER_EMAIL,
-      sender_address: process.env.MAILERSEND_SENDER_ADDRESS,
-      admin_email: process.env.MAILERSEND_ADMIN_EMAIL,
-      template_overrides: {
-        [OrderService.Events.SHIPMENT_CREATED]:
-          process.env.MAILERSEND_SHIPMENT_CREATED_TEMPLATE_ID,
-      },
-    };
-
-    console.log("[NOTIFICATION] Shipment sender service initialized");
 
     try {
       this.mailerSendService = new MailerSend({
@@ -60,13 +43,17 @@ class ShipmentNotificationService extends AbstractNotificationService {
 
   // El método getTemplateData para envíos ahora está en OrderNotificationService como getShipmentTemplateData
 
-  async buildPDFAttachment(order: Order): Promise<string> {
+  async buildPDFAttachment(
+    order: Order
+  ): Promise<{ content: string; filename: string }> {
     try {
-      const invoiceData =
-        (await this.invoicePdfGeneratorService.generateInvoice(
-          order.id
-        )) as any;
-      return invoiceData.buffer.toString("base64");
+      const invoiceData = await this.invoicePdfGeneratorService.generateInvoice(
+        order.id
+      );
+      return {
+        content: invoiceData.buffer.toString("base64"),
+        filename: invoiceData.fileName,
+      };
     } catch (error) {
       console.error("[NOTIFICATION] Error generating PDF invoice:", error);
       throw error;
@@ -105,19 +92,12 @@ class ShipmentNotificationService extends AbstractNotificationService {
         );
 
       console.log(
-        `[NOTIFICATION] Processing ${event} for order FULLFILLMENTS ${JSON.stringify(
-          orderData.fulfillments
-        )}`
-      );
-
-      console.log(
         `[NOTIFICATION] Processing ${event} for order ${orderData.display_id}`
       );
 
       const {
         to_email,
         to_name,
-        template_id,
         data: templateData,
       } = this.orderNotificationService.getShipmentTemplateData(
         event,
@@ -130,38 +110,40 @@ class ShipmentNotificationService extends AbstractNotificationService {
         throw new Error("Recipient email is required");
       }
 
-      if (!template_id) {
+      if (!process.env.MAILERSEND_SHIPMENT_CREATED_TEMPLATE_ID) {
         throw new Error(`No template found for event ${event}`);
       }
 
-      const recipients = [new Recipient(to_email, to_name)];
+      const invoicePdf = await this.buildPDFAttachment(orderData);
 
-      // Generar PDF de la factura
-      const pdfContent = await this.buildPDFAttachment(orderData);
+      const emailNotification = new EmailNotification({
+        toEmail: to_email,
+        toName: to_name,
+        templateId: process.env.MAILERSEND_SHIPMENT_CREATED_TEMPLATE_ID,
+        templateData,
+      });
 
-      // Crear parámetros de email
-      const emailParams = new EmailParams()
-        .setFrom({
-          email: this.config.sender_email || "equipo@cartago4x4.es",
-          name: this.config.sender_name || "Cartago 4x4",
-        })
-        .setTo(recipients)
-        .setTemplateId(template_id)
-        .setPersonalization([
-          {
-            email: to_email,
-            data: templateData,
-          },
-        ])
-        .setAttachments([
-          {
-            content: pdfContent,
-            filename: `Cartago4x4_factura_${orderData.display_id}.pdf`,
-            disposition: "attachment",
-          },
-        ]);
+      const attachments: Attachment[] = [
+        {
+          content: invoicePdf.content,
+          filename: invoicePdf.filename,
+          disposition: "attachment",
+        },
+      ];
+
+      const emailParams = emailNotification.getEmailParams();
+
+      emailParams.setAttachments(attachments);
 
       await this.mailerSendService.email.send(emailParams);
+
+      emailNotification.setToEmail(
+        process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.es"
+      );
+
+      const emailAdminParams = emailNotification.getEmailParams();
+      emailAdminParams.setAttachments(attachments);
+      await this.mailerSendService.email.send(emailAdminParams);
 
       console.log(
         `[NOTIFICATION] Successfully sent ${event} email with invoice to ${to_email} for order ${templateData.display_id}`

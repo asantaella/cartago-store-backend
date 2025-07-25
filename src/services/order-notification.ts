@@ -13,7 +13,7 @@ interface MailerSendOrderPlacedNotification {
   to_email: string;
   from_email: string;
   to_name: string;
-  template_id: string;
+  // template_id: string;
   data?: MailerSendOrderData;
 }
 
@@ -75,34 +75,30 @@ class OrderNotificationService {
       sender_email: process.env.MAILERSEND_SENDER_EMAIL,
       sender_address: process.env.MAILERSEND_SENDER_ADDRESS,
       admin_email: process.env.MAILERSEND_ADMIN_EMAIL,
-      template_overrides: {
-        "order.placed": process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
-        [OrderService.Events.SHIPMENT_CREATED]:
-          process.env.MAILERSEND_SHIPMENT_CREATED_TEMPLATE_ID,
-      },
+ 
     };
   }
 
-  getTemplateData(
-    event: string,
-    order: Order
-  ): MailerSendOrderPlacedNotification {
+  get senderEmail(): string {
+    return this.config.sender_email || "equipo@cartago4x4.com";
+  }
+
+  get senderName(): string {
+    return this.config.sender_name || "Cartago4x4";
+  }
+
+  getTemplateData(order: Order): MailerSendOrderPlacedNotification {
     if (!order || typeof order !== "object") {
       return {
         to_email: "",
         from_email: "",
         to_name: "",
-        template_id: "",
         data: undefined,
       };
     }
     const invoiceOrder = new OrderInvoice(order);
-    const templateId = this.config?.template_overrides?.[event];
-    const currencyCode = order.currency_code?.toUpperCase();
 
-    if (!templateId) {
-      console.warn(`[NOTIFICATION] No template ID found for event: ${event}`);
-    }
+    const currencyCode = order.currency_code?.toUpperCase();
 
     const formattedItems =
       order.items?.map((item: LineItem) => ({
@@ -129,7 +125,6 @@ class OrderNotificationService {
       to_email: order.email,
       from_email: this.config.sender_email,
       to_name: `${order.shipping_address?.first_name} ${order.shipping_address?.last_name}`,
-      template_id: templateId,
       data: {
         company_name: this.config.company_name,
         display_id: order?.display_id,
@@ -244,7 +239,7 @@ class OrderNotificationService {
         ff.tracking_links.map((tl) => ({
           ...tl,
           url:
-            ff?.metadata?.delivery as string ||
+            (ff?.metadata?.delivery as string) ||
             `https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=${tl.tracking_number}` ||
             "https://www.correos.es/es/es/herramientas/localizador/envios",
         }))

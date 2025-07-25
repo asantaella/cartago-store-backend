@@ -26,7 +26,7 @@ class InvoicePdfGeneratorService extends BaseService {
     "contacto@cartago4x4.es",
   ];
 
-  async generateInvoice(orderId) {
+  async generateInvoice(orderId): Promise<{ buffer: Buffer; fileName: string }> {
     // Fetch the order details using the order service
     const order: Order = await this.orderService.retrieve(orderId, {
       relations: [
@@ -47,18 +47,14 @@ class InvoicePdfGeneratorService extends BaseService {
     }
 
     const orderInvoice = new OrderInvoice(order);
-    const orderCreatedAt = orderInvoice.getOrderCreatedAt();
-    const invoiceCreatedAt = orderInvoice.getInvoiceCreatedAt();
     const subtotal = orderInvoice.getSubtotal();
     const discount = orderInvoice.getDiscount();
     const subtotalAfterDiscount = orderInvoice.getSubtotalAfterDiscount();
     const taxes = orderInvoice.getTaxes();
     const shipping = orderInvoice.getShipping();
     const total = subtotalAfterDiscount + taxes + shipping;
-    const invoiceFileName = `Cartago4x4_${orderCreatedAt.replace(/\//g, "")}_${
-      order.display_id
-    }.pdf`;
     const invoiceId = orderInvoice.getInvoiceId();
+    const invoiceFileName = `Cartago4x4_factura_${order.display_id}_${invoiceId}.pdf`;
 
     const printer = new pdfmake(Roboto);
 
@@ -166,10 +162,10 @@ class InvoicePdfGeneratorService extends BaseService {
                   layout: {
                     defaultBorder: false,
                     paddingTop: function () {
-                      return 0;
+                      return 2;
                     },
                     paddingBottom: function () {
-                      return 0;
+                      return 2;
                     },
                     paddingRight: function () {
                       return 0;
@@ -241,18 +237,6 @@ class InvoicePdfGeneratorService extends BaseService {
                       ],
                       [
                         {
-                          text: "Fecha cargo:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        {
-                          text: orderInvoice.getOrderCreatedAt(),
-                          alignment: "left",
-                        },
-                      ],
-                      [
-                        {
                           text: "Fecha factura:",
                           bold: true,
                           alignment: "right",
@@ -302,6 +286,10 @@ class InvoicePdfGeneratorService extends BaseService {
           table: {
             headerRows: 1,
             widths: ["*", "auto", "auto", "auto"],
+            heights: function (rowIndex: number) {
+              // 20px de espacio para la fila entre cabecera y primer cuerpo
+              return rowIndex === 1 ? 20 : null;
+            },
             body: [
               [
                 { text: "Descripción", style: "tableHeader" },
@@ -345,13 +333,13 @@ class InvoicePdfGeneratorService extends BaseService {
                     margin: [0, 10],
                   },
                   {
-                    text: (unitPriceWithoutTax / 100).toFixed(2),
+                    text: `€${(unitPriceWithoutTax / 100).toFixed(2)}`,
                     style: "centerText",
                     alignment: "center",
                     margin: [0, 10],
                   },
                   {
-                    text: itemTotalWithoutTax.toFixed(2),
+                    text: `€${itemTotalWithoutTax.toFixed(2)}`,
                     style: "centerText",
                     alignment: "center",
                     margin: [0, 10],
@@ -377,11 +365,9 @@ class InvoicePdfGeneratorService extends BaseService {
               return rowIndex > 0 ? "#e6f0ff" : null;
             },
             paddingTop: function (i) {
-              if (i === 2) return 4; // 4px adicionales después de la cabecera
               return 4;
             },
             paddingBottom: function (i) {
-              if (i === 0) return 8; // 4px adicionales antes de la primera fila del body
               return 4;
             },
           },
@@ -459,7 +445,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 {
                   text: `€${total.toFixed(2)}`,
                   style: "summaryValueBold",
-                  margin: [0, 0, 5, 0],
+                  margin: [0, 0, 5, 20],
                 },
               ],
             ],
@@ -522,6 +508,7 @@ class InvoicePdfGeneratorService extends BaseService {
           bold: true,
           fontSize: 13,
           color: "#0d364c",
+          margin: [0, 0, 0, 0], // Añadimos margen inferior de 20px
           // Eliminamos el fillColor para la cabecera
         },
         summaryLabel: {

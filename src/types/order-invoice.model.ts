@@ -16,7 +16,7 @@ export class OrderInvoice {
   };
 
   constructor(order: Order) {
-    this.order = order;
+    this.order = Object.assign({}, { ...order }) as Order;
   }
 
   /**

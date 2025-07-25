@@ -55,6 +55,13 @@ export default async function handleShipmentCreated({
       fulfillment
     );
 
+    await shipmentNotificationService.sendNotification(
+      OrderService.Events.SHIPMENT_CREATED,
+      fulfillment
+    );
+
+    
+
     console.log(
       `[NOTIFICATION] Successfully processed shipment.created for order ${fulfillment.order.display_id}`
     );

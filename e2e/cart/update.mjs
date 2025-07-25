@@ -9,7 +9,7 @@ const shipping_address = {
   postal_code: "12345",
   country_code: "es",
   metadata: {
-    nif_cif: "75150333H",
+   // nif_cif: "75150333H",
   },
 };
 
