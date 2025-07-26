@@ -279,7 +279,7 @@ class InvoicePdfGeneratorService extends BaseService {
             },
           ],
           columnGap: 20,
-          margin: [0, 0, 0, 40],
+          margin: [0, 0, 0, 40],       
         },
         {
           style: "tableExample",

@@ -4,14 +4,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const { id } = req.params;
 
   try {
-    const invoiceService = req.scope.resolve("invoicePDFGeneratorService");
+    const invoiceService = req.scope.resolve("invoicePdfGeneratorService");
 
     const pdf = await invoiceService.generateInvoice(id);
     console.log("PDF filename =>>", pdf.fileName);
 
     res.set({
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="Cartago4x4"`,
+      "Content-Disposition": `attachment; filename="${pdf.fileName}"`,
       "Content-Length": pdf.buffer.length,
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
