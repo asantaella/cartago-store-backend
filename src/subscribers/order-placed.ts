@@ -3,6 +3,8 @@ import {
   type SubscriberArgs,
   OrderService,
 } from "@medusajs/medusa";
+import InvoiceNumberGeneratorService from "../services/invoice-number-generator";
+import ReceiptNotificationService from "../services/receipt-notification";
 
 export default async function handleOrderPlaced({
   data,
@@ -16,7 +18,10 @@ export default async function handleOrderPlaced({
     );
 
     const orderService: OrderService = container.resolve("orderService");
-    const orderSenderService = container.resolve("orderSenderService");
+    const receiptNotificationService: ReceiptNotificationService =
+      container.resolve("receiptNotificationService");
+    const invoiceNumberGenerator: InvoiceNumberGeneratorService =
+      container.resolve("invoiceNumberGeneratorService");
 
     // Obtener el pedido con las relaciones necesarias
     const order = await orderService.retrieve(data.id, {
@@ -36,11 +41,21 @@ export default async function handleOrderPlaced({
       `[NOTIFICATION] Sending order.placed notification for order ${order.display_id}`
     );
 
+    // Establecer el número de factura en el pedido
+    await invoiceNumberGenerator.setOrderInvoiceNumber(order.id);
+
     // Enviar la notificación de pedido colocado
-    //await orderSenderService.sendNotification("order.placed", order);
+    await receiptNotificationService.sendNotification(
+      OrderService.Events.PLACED,
+      order
+    );
 
     console.log(
       `[NOTIFICATION] Successfully processed order.placed for order ${order.display_id}`
+    );
+
+    console.log(
+      `[NOTIFICATION][ADMIN] Successfully processed order.placed for order ${order.display_id}`
     );
   } catch (error) {
     console.error(

@@ -1,6 +1,6 @@
-import { asClass, asValue, createContainer } from "awilix";
-import { MedusaContainer } from "@medusajs/medusa";
-import AlgoliaService from "../services/algolia";
+//import InvoiceGenerator from "../services/invoice-pdf-generator";
+//import InvoiceNumberGeneratorService from "../services/invoice-number-generator";
+import { AwilixContainer } from "awilix";
 
 export default async function servicesLoader(
   container: MedusaContainer,
@@ -16,3 +16,14 @@ export default async function servicesLoader(
     console.error("[SERVICES] Error registrando servicios:", error);
   }
 }
+
+export default async ({ container }: { container: Container }) => {
+  // container.register(
+  //   "invoicePDFGeneratorService",
+  //   (c: AwilixContainer) => new InvoiceGenerator(c)
+  // );
+  // container.register(
+  //   "invoiceNumberGenerator",
+  //   (c: AwilixContainer) => new InvoiceNumberGeneratorService(c)
+  // );
+};

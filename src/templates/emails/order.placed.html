@@ -1,425 +1,334 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html data-editor-version="2" class="sg-campaigns" xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-      <!--[if !mso]><!-->
-      <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-      <!--<![endif]-->
-      <!--[if (gte mso 9)|(IE)]>
-      <xml>
-        <o:OfficeDocumentSettings>
-          <o:AllowPNG/>
-          <o:PixelsPerInch>96</o:PixelsPerInch>
-        </o:OfficeDocumentSettings>
-      </xml>
-      <![endif]-->
-      <!--[if (gte mso 9)|(IE)]>
-  <style type="text/css">
-    body {width: 600px;margin: 0 auto;}
-    table {border-collapse: collapse;}
-    table, td {mso-table-lspace: 0pt;mso-table-rspace: 0pt;}
-    img {-ms-interpolation-mode: bicubic;}
-  </style>
-<![endif]-->
-      <style type="text/css">
-    body, p, div {
-      font-family: lucida sans unicode,lucida grande,sans-serif;
-      font-size: 11px;
-    }
-    body {
-      color: #000000;
-    }
-    body a {
-      color: #1188E6;
-      text-decoration: none;
-    }
-    p { margin: 0; padding: 0; }
-    table.wrapper {
-      width:100% !important;
-      table-layout: fixed;
-      -webkit-font-smoothing: antialiased;
-      -webkit-text-size-adjust: 100%;
-      -moz-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-    }
-    img.max-width {
-      max-width: 100% !important;
-    }
-    .column.of-2 {
-      width: 50%;
-    }
-    .column.of-3 {
-      width: 33.333%;
-    }
-    .column.of-4 {
-      width: 25%;
-    }
-    ul ul ul ul  {
-      list-style-type: disc !important;
-    }
-    ol ol {
-      list-style-type: lower-roman !important;
-    }
-    ol ol ol {
-      list-style-type: lower-latin !important;
-    }
-    ol ol ol ol {
-      list-style-type: decimal !important;
-    }
-    @media screen and (max-width:480px) {
-      .preheader .rightColumnContent,
-      .footer .rightColumnContent {
-        text-align: left !important;
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Factura</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      @import url("https://fonts.mailersend.com/css?family=Inter:400,600");
+
+      body {
+        font-family: "Inter", Helvetica, Arial, sans-serif;
+        background-color: #f4f7fa;
+        color: #4a5566;
+        margin: 0;
+        padding: 0;
       }
-      .preheader .rightColumnContent div,
-      .preheader .rightColumnContent span,
-      .footer .rightColumnContent div,
-      .footer .rightColumnContent span {
-        text-align: left !important;
+
+      .container {
+        max-width: 640px;
+        background-color: #fff;
+        margin: 40px auto;
+        padding: 40px 50px;
+        border-radius: 6px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+        border: 2px solid #555;
       }
-      .preheader .rightColumnContent,
-      .preheader .leftColumnContent {
-        font-size: 80% !important;
-        padding: 5px 0;
-      }
-      table.wrapper-mobile {
-        width: 100% !important;
-        table-layout: fixed;
-      }
-      img.max-width {
-        height: auto !important;
-        max-width: 100% !important;
-      }
-      a.bulletproof-button {
-        display: block !important;
-        width: auto !important;
-        font-size: 80%;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-      }
-      .columns {
-        width: 100% !important;
-      }
-      .column {
-        display: block !important;
-        width: 100% !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-      }
-      .social-icon-column {
-        display: inline-block !important;
-      }
-    }
-  </style>
-      <!--user entered Head Start--><title>Confirmación de Pedido</title><link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css"><style>
- 
-  .text-xs {
-      font-size:8px
-  }
-  .text-sm {
-      font-size:10px
-  }
-  .text-m {
-      font-size:11px
-  }
-  .text-l {
-      font-size:14px
-  }
-  .text-xl {
-      font-size:16px
-  }
-    
-    body {        
-        color: #333;
-        background-color: #f4f4f4;        
-    }
-    
-    footer {       
+
+      .logo {
+        font-weight: 600;
+        font-size: 21px;
+        color: #111;
         text-align: center;
-    }
-    
-    body, p, div, span {
-        font-family: 'Open Sans', Montserrat, sans-serif;
-        font-size: 11px;
-    }
-    .container {        
-        margin: auto;
-        background-color: #fbfbfc;
-        padding: 20px;        
-    }
-    h1 {
-        color: #0056b3;
-        font-family: Cinzel, sans-serif;
-        text-align:center
-    }
-    .header {
-        font-family: Cinzel, sans-serif;
-        background-color: #294661;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        text-align: center;
-        height: 48px;
-        margin: 10px 0 40px;
-    }
-    
-    .header .title {
+        margin-bottom: 40px;
+      }
+
+      .logo span {
+        color: #0052e2;
         font-size: 30px;
-        font-family: Cinzel, sans-serif;  
-    }
-    
-    .header img {
-        width: 45px;
-        height: 45px;
-        margin-left: -4px;
-        margin-right: -4px;
-        padding-bottom: 2px;
-    }
-    
-    
-    .thanks-section {
-        font-size: 12px;
-        text-align: center;
-        margin-bottom: 1rem
-    }
-    
-    .customer-info {
-        margin-bottom: 1rem;                
-    }
-    
-    .customer-info p {
-        margin-bottom: 0.5rem;
-    }
-    
-    .customer-info .customer-label {
-        color: #4f4f4f;
-        font-weight: 600;        
-    }
-    
-    .receipt-order thead tr th {
-        font-size: 10px;
-    }
-    .receipt-order thead tr th.product-title {
-        width: 50%;        
-    }
-    
-    .product-title tbody tr td.product-ref {
-        font-size: 10px;
-    }
-        
-    .receipt-order {
+        vertical-align: bottom;
+      }
+
+      h1 {
+        color: #111;
+        font-size: 24px;
+        line-height: 36px;
+        font-weight: 600;
+        margin-bottom: 24px;
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 28px;
+      }
+
+      .customer-section {
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        overflow: hidden;
+      }
+
+      .customer-section .header {
+        background-color: #f8f8f8;
+        padding: 10px 15px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .customer-section td {
+        padding: 2px 15px;
+        font-size: 14px;
+      }
+
+      .info-label {
+        color: #4a5566;
+        font-weight: 600;
+        vertical-align: top;
+      }
+
+      .info-value {
+        color: #555;
+      }
+
+      .table-section {
         width: 100%;
         border-collapse: collapse;
-        background-color: #fff;
-    }
-    
-    .receipt-order th, .receipt-order td {
-        border: 1px solid #ddd;
+        margin-top: 10px;
+        margin-bottom: 30px;
+      }
+
+      .table-section th {
+        background-color: #f8f8f8;
+        padding: 10px;
+        font-size: 14px;
+        text-align: left;
+        border-bottom: 2px solid #e2e8f0;
+        color: #333;
+      }
+
+      .table-section td {
+        padding: 10px;
+        font-size: 14px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #555;
+        vertical-align: top;
+      }
+
+      .table-section tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .footer {
         text-align: center;
-        padding: 8px;
-    }
-    
-     .receipt-order th.product-title,
-     .receipt-order td.product-title{
-        width: 60%;        
-      }
-      
-      
-     .receipt-order td.product-title,
-     .receipt-order td.total-label{      
-        text-align: left;
-      }
-    
-    .receipt-order th {
-        background-color: #294661;
-        color: white;
-    }
-    
-    .total-value {
-        font-weight: 600;
-    }
-    .total-label {
-        text-align: left;
-        font-weight: 400;
-        font-size: 11px;
-    }
-    footer {
+        font-size: 14px;
+        color: #96a2b3;
         margin-top: 20px;
-        text-align: center;        
-    }
-    footer.sender-info-container{
-        padding: 15px;
-        background-color: #f1f1f1;
-        margin-bottom:50px;
-    }
-</style><!--End Head user entered-->
-    </head>
-    <body>
-      <center class="wrapper" data-link-color="#1188E6" data-body-style="font-size:11px; font-family:lucida sans unicode,lucida grande,sans-serif; color:#000000; background-color:#FFFFFF;">
-        <div class="webkit">
-          <table cellpadding="0" cellspacing="0" border="0" width="100%" class="wrapper" bgcolor="#FFFFFF">
-            <tr>
-              <td valign="top" bgcolor="#FFFFFF" width="100%">
-                <table width="100%" role="content-container" class="outer" align="center" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td width="100%">
-                      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                        <tr>
-                          <td>
-                            <!--[if mso]>
-    <center>
-    <table><tr><td width="600">
-  <![endif]-->
-                                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:600px;" align="center">
-                                      <tr>
-                                        <td role="modules-container" style="padding:0px 0px 0px 0px; color:#000000; text-align:left;" bgcolor="#ffffff" width="100%" align="left"><table class="module preheader preheader-hide" role="module" data-type="preheader" border="0" cellpadding="0" cellspacing="0" width="100%" style="display: none !important; mso-hide: all; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">
-    <tr>
-      <td role="module-content">
-        <p>Hola {{customer.first_name}}. Su pedido ha sido confirmado y está siendo preparado para el envío. ¡Prepárate para mejorar tu 4x4!</p>
-      </td>
-    </tr>
-  </table><table class="wrapper" role="module" data-type="image" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="86faa39e-681e-428a-b5e6-d323dbab75dd">
-    <tbody>
-      <tr>
-        <td style="font-size:6px; line-height:10px; padding:0px 0px 40px 0px;" valign="top" align="center">
-          <img class="max-width" border="0" style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:100% !important; width:100%; height:auto !important;" width="600" alt="" data-proportionally-constrained="true" data-responsive="true" src="http://cdn.mcauto-images-production.sendgrid.net/54b412839bf00c0a/2770dc28-348f-4b7f-b46b-d3df6786e14a/1311x103.jpg">
-        </td>
-      </tr>
-    </tbody>
-  </table><table class="module" role="module" data-type="code" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="74dfb564-90f8-421d-8237-f3275a4f44cf">
-    <tbody>
-      <tr>
-        <td height="100%" valign="top" role="module-content"><div class="header" valign="top" align="center" style="display:none">
-<span class="title">Cartag</span>
-        <img border="0" alt="Cartago4x4" data-proportionally-constrained="true" data-responsive="true" src="http://cdn.mcauto-images-production.sendgrid.net/54b412839bf00c0a/7495467b-6bc2-4d8d-a9a6-70d4a81d62a6/128x128.png">
-<span class="title">4x4</span>
-</div></td>
-      </tr>
-    </tbody>
-  </table><table class="module" role="module" data-type="code" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="50cd70dd-f5ee-4820-abbc-fdb073623faf">
-    <tbody>
-      <tr>
-        <td height="100%" valign="top" role="module-content"><p class="thanks-section">Gracias por su compra. Aquí están los detalles de su pedido:</p>
+      }
+    </style>
+  </head>
 
-<div class="container">                         
-        <!-- Información del Cliente -->
-        <div class="customer-info">
-            <p>
-                <span class="customer-label">Nombre completo:</span> 
-                <span class="customer-value">{{customer.last_name}}, {{customer.first_name}}</span>
-            </p>
-            <p>
-                <span class="customer-label">Email:</span> <span class="customer-value">{{customer.email}}</span>
-            </p>
-            <p>
-                <span class="customer-label">Dirección de envío:</span> 
-                <span class="customer-value">{{shipping_address.address_1}}, {{shipping_address.address_2}}, {{shipping_address.city}} {{shipping_address.postal_code}}, {{shipping_address.province}}</span>
-            </p>            
-            <p>
-                <span class="customer-label">Nº Pedido:</span> <span class="customer-value">{{display_id}}</span>
-            </p>
-            <p>
-                <span class="customer-label">Fecha:</span> <span class="customer-value">{{formatDate date dateFormat}}</span>
-            </p>
-        </div>
-        <!-- Tabla de Artículos -->        
+  <body>
+    <div class="container">
+      <p class="logo">
+        <img
+          class="max-width"
+          border="0"
+          style="
+            display: block;
+            color: #000000;
+            text-decoration: none;
+            font-family: Helvetica, arial, sans-serif;
+            font-size: 16px;
+            max-width: 100% !important;
+            width: 100%;
+            height: auto !important;
+          "
+          width="600"
+          alt=""
+          data-proportionally-constrained="true"
+          data-responsive="true"
+          src="http://cdn.mcauto-images-production.sendgrid.net/54b412839bf00c0a/2770dc28-348f-4b7f-b46b-d3df6786e14a/1311x103.jpg"
+        />
+      </p>
 
-        <table class="receipt-order">
+      <h1>Hola {{ customer.first_name }},</h1>
+
+      <p>Gracias por su compra. Aquí están los detalles de su pedido:</p>
+
+      <!-- Información del Cliente -->
+      <table class="customer-section" width="100%">
+        <tr>
+          <td class="header" colspan="2">Información del Cliente</td>
+        </tr>
+        <tr class="row">
+          <td class="info-label" width="40%">Nombre completo:</td>
+          <td class="info-value">{{ customer.full_name }}</td>
+        </tr>
+        <tr class="row">
+          <td class="info-label">Email:</td>
+          <td class="info-value">{{ customer.email }}</td>
+        </tr>
+
+        {% if customer.nif_cif %}
+        <tr class="row">
+          <td class="info-label">NIF/CIF:</td>
+          <td class="info-value">{{ customer.nif_cif }}</td>
+        </tr>
+        {% endif %}
+        <tr class="row">
+          <td class="info-label">Dirección de envío:</td>
+          <td class="info-value">{{ shipping_address }}</td>
+        </tr>
+        <tr class="row">
+          <td class="info-label">Nº Pedido:</td>
+          <td class="info-value">{{ display_id }}</td>
+        </tr>
+        <tr class="row">
+          <td class="info-label">Fecha:</td>
+          <td class="info-value">{{ order_date }}</td>
+        </tr>
+      </table>
+
+      <!-- Tabla de Productos -->
+      <table class="table-section">
         <thead>
-            <tr>
-                <th class="product-title">Artículo</th>
-                <th>Cantidad</th>
-                <th>Unidad</th>
-                <th>Total</th>
-                </tr>
+          <tr>
+            <th>Artículo</th>
+            <th style="text-align: center">Cantidad</th>
+            <th style="text-align: right">Unidad</th>
+            <th style="text-align: right">Subtotal</th>
+          </tr>
         </thead>
-            <tbody>            
-                {{#each items}}
-                <tr>
-                    <td class="product-title">
-                        <div class="product-name text-sm">{{this.title}}</div>
-                        <div class="product-ref text-xs">Ref: {{this.ref}}</div>
-                    </td>
-                    <td>{{this.quantity}}</td>
-                    <td>{{this.price}}</td>
-                    <td>{{this.totals.total}}</td>
-                </tr>               
-                {{/each}}
-                <tr>
-                    <td colspan="3" class="total-label">Subtotal ({{region.tax_rate}}% IVA Incl.)</td>
-                    <td>{{subtotal}}</td>
-                </tr>              
-                <tr>
-                    <td colspan="3" class="total-label">Gastos envío</td>
-                    <td>{{shipping_total}}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="total-label">Total</td>
-                    <td class="total-value">{{total}}</td>
-                </tr>
-            </tbody>
-        </table>
-        
-    
-        <footer>
-            <p>Si tiene alguna pregunta acerca de su pedido, no dude en contactarnos en</p>
-            <a href="mailto: contacto@cartago4x4.es">contacto@cartago4x4.es</a>
-            <p style="margin-top: 15px; text-align:center">Gracias por elegirnos</p>          
-        </footer>
-    </div></td>
-      </tr>
-    </tbody>
-  </table><table class="module" role="module" data-type="divider" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="9684ca2d-fa3e-4cd8-a1ec-a1912888b84b">
-    <tbody>
-      <tr>
-        <td style="padding:0px 0px 0px 0px;" role="module-content" height="100%" valign="top" bgcolor="">
-          <table border="0" cellpadding="0" cellspacing="0" align="center" width="100%" height="2px" style="line-height:2px; font-size:2px;">
-            <tbody>
-              <tr>
-                <td style="padding:0px 0px 2px 0px;" bgcolor="#0d0c40"></td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-    </tbody>
-  </table><table class="module" role="module" data-type="code" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="cb93e271-f147-42c9-b169-9461f297ec8c">
-    <tbody>
-      <tr>
-        <td height="100%" valign="top" role="module-content"><footer class="sender-info-container">
-    <p class="Unsubscribe--senderName text-xs">{{Sender_Name}}©Copyright 2024</p>
-    <p class="">
-        <span class="Unsubscribe--senderAddress text-xs">{{Sender_Address}}</span>, 
-        <span class="Unsubscribe--senderCity text-xs">{{Sender_City}}</span>, 
-        <span class="Unsubscribe--senderState text-xs">{{Sender_State}}</span> 
-        <span class="Unsubscribe--senderZip text-xs">{{Sender_Zip}}</span> 
-    </p>   
-</footer></td>
-      </tr>
-    </tbody>
-  </table></td>
-                                      </tr>
-                                    </table>
-                                    <!--[if mso]>
-                                  </td>
-                                </tr>
-                              </table>
-                            </center>
-                            <![endif]-->
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </center>
-    </body>
-  </html>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>
+              <div>{{ item.variant }}</div>
+              <div style="font-size: 12px; color: #85878e">
+                Ref: {{ item.ref }}
+              </div>
+            </td>
+            <td style="text-align: center">{{ item.quantity }}</td>
+            <td style="text-align: right">{{ item.unit_price_ex_tax }}</td>
+            <td style="text-align: right">{{ item.totals.subtotal }}</td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="3" style="text-align: right; font-weight: 600">
+              Subtotal
+            </td>
+            <td style="text-align: right">{{ subtotal_ex_tax }}</td>
+          </tr>
+          {% if discount_total != '0,00 €' %}
+          <tr>
+            <td colspan="3" style="text-align: right; font-weight: 600">
+              Descuento
+            </td>
+            <td style="text-align: right">- {{ discount_total }}</td>
+          </tr>
+          {% endif %}
+          <tr>
+            <td colspan="3" style="text-align: right; font-weight: 600">
+              <div>Gastos de envío</div>
+              <div style="font-size: 12px; color: #85878e">
+                Tipo: {{ shipping_method }}
+              </div>
+            </td>
+            <td style="text-align: right">{{ shipping_total }}</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align: right; font-weight: 600">
+              Impuestos ({{ tax_rate }}% IVA)
+            </td>
+            <td style="text-align: right">{{ tax_total }}</td>
+          </tr>
+
+          <tr>
+            <td colspan="3" style="text-align: right; font-weight: 600">
+              Total
+            </td>
+            <td style="text-align: right">{{ total }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Contacto -->
+      <p style="text-align: center; margin-top: 80px; margin-bottom: 20px">
+        Gracias por elegirnos
+      </p>
+      <p style="font-size: 12px; text-align: center">
+        Si tiene alguna pregunta acerca de su pedido, no dude en contactarnos en
+        <a href="mailto:contacto@cartago4x4.es" style="color: #0052e2"
+          >contacto@cartago4x4.es</a
+        >.
+      </p>
+      <p style="font-size: 12px; text-align: center">
+        <a
+          href="https://cartago4x4.es/terminos-condiciones"
+          style="margin-right: 1rem"
+          >Términos y Condiciones</a
+        ><a href="https://cartago4x4.es/politica-privacidad"
+          >Política de privacidad</a
+        >
+      </p>
+    </div>
+    <!-- Footer -->
+    <div class="footer">
+      <table
+        class="ms-footer"
+        width="640"
+        cellpadding="0"
+        cellspacing="0"
+        role="presentation"
+        style="
+          border-collapse: collapse;
+          width: 640px;
+          margin-top: 0;
+          margin-bottom: 0;
+          margin-right: auto;
+          margin-left: auto;
+        "
+      >
+        <tr>
+          <td
+            class="ms-content-body"
+            align="center"
+            style="
+              word-break: break-word;
+              font-family: 'Inter', Helvetica, Arial, sans-serif;
+              font-size: 16px;
+              line-height: 24px;
+              padding-bottom: 40px;
+              padding-right: 50px;
+              padding-left: 50px;
+            "
+          >
+            <p
+              class="small"
+              style="
+                margin-top: 20px;
+                margin-bottom: 20px;
+                margin-right: 0;
+                margin-left: 0;
+                color: #96a2b3;
+                font-size: 12px;
+                line-height: 21px;
+              "
+            >
+              &copy; 2025 {{company_name}}. Todos los derechos reservados.
+            </p>
+            <p
+              class="small"
+              style="
+                margin-top: 20px;
+                margin-bottom: 20px;
+                margin-right: 0;
+                margin-left: 0;
+                color: #96a2b3;
+                font-size: 12px;
+                line-height: 21px;
+              "
+            >
+              Alameda de San Antón n23
+              <br />Apartado de Correos 5085 <br />30205 Cartagena, Murcia
+            </p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,25 +1,17 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
-import InvoicePdfGeneratorService from "../../../../../services/invoice-pdf-generator";
-import { InvoiceMode } from "../../../../../types/order-invoice.model";
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const { id } = req.params;
-  const { invoiceMode } = req.query as { invoiceMode?: InvoiceMode };
 
   try {
-    console.log("INVOICE MODE =>>", invoiceMode);
-    const invoiceService: InvoicePdfGeneratorService = req.scope.resolve(
-      "invoicePdfGeneratorService"
-    );
-
-    const pdf = await invoiceService.generateInvoice(id, invoiceMode);
-    console.log("PDF filename =>>", pdf.fileName);
+    const invoiceService = req.scope.resolve("invoicePdfGeneratorService");
+    const pdf = await invoiceService.generateInvoice(id);
 
     res.set({
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${pdf.fileName}"`,
+      "Content-Disposition": `attachment; filename="Cartago4x4"`,
       "Content-Length": pdf.buffer.length,
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": `${process.env.ADMIN_CORS}`,
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers":
         " Content-Type, Authorization, X-Requested-With",

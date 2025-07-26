@@ -4,11 +4,22 @@ import cors from "cors";
 
 export const config: MiddlewaresConfig = {
   routes: [
-    {     
+    {
       matcher: "/store/orders/*/invoice",
       bodyParser: false,
-      middlewares: [        
+      middlewares: [
         cors({
+          origin: "*",
+          credentials: true,
+        }),
+        raw({ type: "application/pdf" }),
+      ],
+    },
+    {
+      matcher: "/admin/orders/*/invoice",
+      bodyParser: false,
+      middlewares: [
+        cors({         
           origin: "*",
           credentials: true,
         }),

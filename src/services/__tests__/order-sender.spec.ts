@@ -1,4 +1,4 @@
-import OrderSenderService from "../order-sender";
+import OrderSenderService from "../receipt-notification";
 import {
   Order,
   LineItem,
@@ -364,7 +364,7 @@ describe("OrderSenderService", () => {
       // Decodificar el contenido del CSV para validar
       const decodedCsv = Buffer.from(csvData, "base64").toString("utf-8");
 
-      // Verificar que contiene información del cliente      
+      // Verificar que contiene información del cliente
       expect(decodedCsv).toContain("EMPRESA CARTAGO 4X4");
       expect(decodedCsv).toContain("28002 MADRID, MADRID");
       expect(decodedCsv).toContain("12345678B");
