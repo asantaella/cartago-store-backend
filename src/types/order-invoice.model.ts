@@ -1,9 +1,7 @@
 import { Order } from "@medusajs/medusa";
 import { formatMoney } from "../utils/format-utils";
 
-/**
- * Clase que encapsula toda la lógica relacionada con las facturas de pedidos
- */
+export type InvoiceMode = "invoice" | "receipt";
 export class OrderInvoice {
   private readonly order: Order;
 

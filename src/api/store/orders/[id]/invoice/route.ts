@@ -1,12 +1,18 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
+import InvoicePdfGeneratorService from "../../../../../services/invoice-pdf-generator";
+import { InvoiceMode } from "../../../../../types/order-invoice.model";
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const { id } = req.params;
+  const { invoiceMode } = req.query as { invoiceMode?: InvoiceMode };
 
   try {
-    const invoiceService = req.scope.resolve("invoicePdfGeneratorService");
+    console.log("INVOICE MODE =>>", invoiceMode);
+    const invoiceService: InvoicePdfGeneratorService = req.scope.resolve(
+      "invoicePdfGeneratorService"
+    );
 
-    const pdf = await invoiceService.generateInvoice(id);
+    const pdf = await invoiceService.generateInvoice(id, invoiceMode);
     console.log("PDF filename =>>", pdf.fileName);
 
     res.set({

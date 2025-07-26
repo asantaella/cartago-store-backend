@@ -135,7 +135,7 @@ class ShipmentNotificationService extends AbstractNotificationService {
 
       emailParams.setAttachments(attachments);
 
-      await this.mailerSendService.email.send(emailParams);
+      //  await this.mailerSendService.email.send(emailParams);
 
       emailNotification.setToEmail(
         process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.es"

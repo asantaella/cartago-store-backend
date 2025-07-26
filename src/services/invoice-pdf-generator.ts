@@ -4,7 +4,9 @@ import pdfmake from "pdfmake";
 import Roboto from "../fonts/Roboto";
 import LogoCartago from "../types/logo";
 import * as variantUtils from "../utils/variant-utils";
-import { OrderInvoice } from "../types/order-invoice.model";
+import { InvoiceMode, OrderInvoice } from "../types/order-invoice.model";
+import { CustomRepositoryCannotInheritRepositoryError } from "typeorm";
+
 class InvoicePdfGeneratorService extends BaseService {
   protected orderService: OrderService;
 
@@ -13,20 +15,10 @@ class InvoicePdfGeneratorService extends BaseService {
     this.orderService = container.orderService;
   }
 
-  private businessInfoContent = [
-    { text: "Dirección: ", bold: true },
-    "Alameda San Antón 23 (Apdo. Correos 5085)\n",
-    { text: "Ciudad, País: ", bold: true },
-    "Cartagena, Murcia, España\n",
-    { text: "Código Postal: ", bold: true },
-    "30205\n",
-    { text: "CIF: ", bold: true },
-    "B75682930\n",
-    { text: "Email: ", bold: true },
-    "contacto@cartago4x4.es",
-  ];
-
-  async generateInvoice(orderId): Promise<{ buffer: Buffer; fileName: string }> {
+  async generateInvoice(
+    orderId: string,
+    invoiceMode: InvoiceMode = "invoice"
+  ): Promise<{ buffer: Buffer; fileName: string }> {
     // Fetch the order details using the order service
     const order: Order = await this.orderService.retrieve(orderId, {
       relations: [
@@ -54,9 +46,92 @@ class InvoicePdfGeneratorService extends BaseService {
     const shipping = orderInvoice.getShipping();
     const total = subtotalAfterDiscount + taxes + shipping;
     const invoiceId = orderInvoice.getInvoiceId();
-    const invoiceFileName = `Cartago4x4_factura_${order.display_id}_${invoiceId}.pdf`;
+    const invoiceFileMode = invoiceMode === "invoice" ? "factura" : "recibo";
+    const invoiceFileName = `Cartago4x4_${invoiceFileMode}_${order.display_id}_${invoiceId}.pdf`;
 
     const printer = new pdfmake(Roboto);
+
+    const customerFields = [
+      [
+        {
+          text: "Razón social:",
+          bold: true,
+          alignment: "right",
+          margin: [0, 0, 5, 0],
+        },
+        {
+          text: orderInvoice.getCustomerName(),
+          alignment: "left",
+        },
+      ],
+      [
+        {
+          text: "Dirección:",
+          bold: true,
+          alignment: "right",
+          margin: [0, 0, 5, 0],
+        },
+        {
+          text: orderInvoice.getCustomerFullAddress(),
+          alignment: "left",
+        },
+      ],
+      [
+        {
+          text: "C.P:",
+          bold: true,
+          alignment: "right",
+          margin: [0, 0, 5, 0],
+        },
+        {
+          text: orderInvoice.getBillingPostalCode(),
+          alignment: "left",
+        },
+      ],
+      [
+        {
+          text: "NIF/CIF:",
+          bold: true,
+          alignment: "right",
+          margin: [0, 0, 5, 0],
+        },
+        {
+          text: orderInvoice.getCustomerNifCif()
+            ? orderInvoice.getCustomerNifCif()
+            : "-",
+          alignment: "left",
+        },
+      ],
+    ];
+
+    if (invoiceMode === "invoice") {
+      customerFields.push(
+        [
+          {
+            text: "Fecha factura:",
+            bold: true,
+            alignment: "right",
+            margin: [0, 0, 5, 0],
+          },
+          {
+            text: orderInvoice.getInvoiceCreatedAt(),
+            alignment: "left",
+          },
+        ],
+        [
+          {
+            text: "Nº factura:",
+            bold: true,
+            alignment: "right",
+            margin: [0, 0, 5, 0],
+          },
+          {
+            text: orderInvoice.getInvoiceId(),
+            alignment: "left",
+          },
+        ]
+      );
+    }
 
     const docDefinition = {
       pageSize: "A4",
@@ -184,82 +259,7 @@ class InvoicePdfGeneratorService extends BaseService {
                 {
                   table: {
                     widths: [85, "*"],
-                    body: [
-                      [
-                        {
-                          text: "Razón social:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        {
-                          text: orderInvoice.getCustomerName(),
-                          alignment: "left",
-                        },
-                      ],
-                      [
-                        {
-                          text: "Dirección:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        {
-                          text: orderInvoice.getCustomerFullAddress(),
-                          alignment: "left",
-                        },
-                      ],
-                      [
-                        {
-                          text: "C.P:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        {
-                          text: orderInvoice.getBillingPostalCode(),
-                          alignment: "left",
-                        },
-                      ],
-                      [
-                        {
-                          text: "NIF/CIF:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        {
-                          text: orderInvoice.getCustomerNifCif()
-                            ? orderInvoice.getCustomerNifCif()
-                            : "-",
-                          alignment: "left",
-                        },
-                      ],
-                      [
-                        {
-                          text: "Fecha factura:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        {
-                          text: orderInvoice.getInvoiceCreatedAt(),
-                          alignment: "left",
-                        },
-                      ],
-                      [
-                        {
-                          text: "Nº factura:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        {
-                          text: orderInvoice.getInvoiceId(),
-                          alignment: "left",
-                        },
-                      ],
-                    ],
+                    body: [...customerFields],
                   },
                   layout: {
                     defaultBorder: false,
@@ -279,7 +279,7 @@ class InvoicePdfGeneratorService extends BaseService {
             },
           ],
           columnGap: 20,
-          margin: [0, 0, 0, 40],       
+          margin: [0, 0, 0, 40],
         },
         {
           style: "tableExample",
