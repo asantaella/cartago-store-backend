@@ -74,8 +74,7 @@ class OrderNotificationService {
       sender_name: process.env.MAILERSEND_SENDER_NAME,
       sender_email: process.env.MAILERSEND_SENDER_EMAIL,
       sender_address: process.env.MAILERSEND_SENDER_ADDRESS,
-      admin_email: process.env.MAILERSEND_ADMIN_EMAIL,
- 
+      admin_email: process.env.MAILERSEND_ADMIN_EMAIL, 
     };
   }
 

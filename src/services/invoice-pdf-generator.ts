@@ -139,7 +139,7 @@ class InvoicePdfGeneratorService extends BaseService {
         {
           columns: [
             {
-              text: "ACCESORIOS CARTAGO S.L.U",
+              text: "ACCESORIOS CARTAGO S.L.U.",
               style: "header",
               margin: [0, 36, 0, 0], // Ajusta el margen superior para alinear con el logo
             },

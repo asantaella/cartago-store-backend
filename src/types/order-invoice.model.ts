@@ -220,7 +220,7 @@ export class OrderInvoice {
 
   public getInvoiceId(): string {
     return (
-      (this.order?.metadata.invoice_number as string) ||
+      (this.order?.metadata?.invoice_number as string) ||
       (this.order.billing_address?.metadata?.invoice_id as string) ||
       (this.order.shipping_address?.metadata?.invoice_id as string)
     );
