@@ -164,7 +164,14 @@ class ReceiptNotificationService extends AbstractNotificationService {
       );
 
       const emailAdminParams = emailNotification.getEmailParams();
-
+      const csvContent = await this.buildCSVAttachment(orderData);
+      emailAdminParams.setAttachments([
+        {
+          content: csvContent,
+          filename: `Cartago4x4_invoice_${orderData.display_id}.csv`,
+          disposition: "attachment",
+        },
+      ]);
       await this.mailerSendService.email.send(emailAdminParams);
 
       console.log(
