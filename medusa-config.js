@@ -34,11 +34,6 @@ try {
   console.log("BUCKET URL = ", process.env.R2_PUBLIC_URL);
 } catch (e) {}
 
-// CORS when consuming Medusa from admin
-const ADMIN_CORS = process.env.ADMIN_CORS || "http://localhost:7001";
-
-// CORS to avoid issues when consuming Medusa from a client
-const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
 
 const DATABASE_URL =
   process.env.DATABASE_URL || "postgres://localhost/medusa-store";
@@ -77,20 +72,6 @@ const plugins = [
     },
   },
 
-  // {
-  //   resolve: `medusa-plugin-sendgrid`,
-  //   options: {
-  //     api_key: process.env.SENDGRID_API_KEY,
-  //     from: process.env.SENDGRID_FROM,
-  //     order_placed_template: process.env.SENDGRID_ORDER_PLACED_ID,
-  //     localization: {
-  //       "es-ES": {
-  //         //order_placed_template: process.env.SENDGRID_ORDER_PLACED_ID_LOCALIZED,
-  //         order_placed_template: process.env.SENDGRID_ORDER_PLACED_ID,
-  //       },
-  //     },
-  //   },
-  // },
 ];
 
 const modules = {

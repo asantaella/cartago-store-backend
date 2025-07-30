@@ -135,351 +135,315 @@ class InvoicePdfGeneratorService extends BaseService {
 
     const docDefinition = {
       pageSize: "A4",
-      content: [
-        {
-          columns: [
+      pageMargins: [40, 80, 40, 60], // Márgenes fijos y simples
+      header: function (currentPage, pageCount) {
+        // Margen inferior fijo de 20px para todas las páginas
+        return {
+          margin: [40, 20, 40, 0],
+          stack: [
             {
-              text: "ACCESORIOS CARTAGO S.L.U.",
-              style: "header",
-              margin: [0, 36, 0, 0], // Ajusta el margen superior para alinear con el logo
-            },
-            {
-              stack: [
+              columns: [
+                {
+                  text: "ACCESORIOS CARTAGO S.L.U.",
+                  style: "header",
+                  margin: [0, 30, 0, 0],
+                },
                 {
                   image: "logo",
                   width: 56,
                   height: 56,
                   alignment: "right",
-                  fit: [56, 56],
-                  margin: [10, 0, 0, 0], // Ajusta la posición del logo sobre el círculo
                 },
               ],
             },
-          ],
-          columnGap: 10,
-          margin: [0, -26, 0, 10],
-        },
-        {
-          canvas: [
             {
-              type: "line",
-              x1: 0,
-              y1: 0,
-              x2: 515,
-              y2: 0,
-              lineWidth: 1,
-              lineColor: "#333",
-            },
-          ],
-          margin: [0, 0, 0, 10],
-        },
-
-        {
-          columns: [
-            {
-              width: "40%",
-              stack: [
+              canvas: [
                 {
-                  table: {
-                    widths: [60, "*"],
-
-                    body: [
-                      [
-                        {
-                          text: "Dirección:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        {
-                          text: "Alameda San Antón 23\n(Apdo. Correos 5085)\nCartagena, Murcia, España",
-                          alignment: "left",
-                        },
-                      ],
-                      [
-                        {
-                          text: "C.P.:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        { text: "30205", alignment: "left" },
-                      ],
-                      [
-                        {
-                          text: "CIF:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        { text: "B75682930", alignment: "left" },
-                      ],
-                      [
-                        {
-                          text: "Email:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        { text: "contacto@cartago4x4.es", alignment: "left" },
-                      ],
-                      [
-                        {
-                          text: "Web:",
-                          bold: true,
-                          alignment: "right",
-                          margin: [0, 0, 5, 0],
-                        },
-                        { text: "https://cartago4x4.es", alignment: "left" },
-                      ],
-                    ],
-                  },
-                  layout: {
-                    defaultBorder: false,
-                    paddingTop: function () {
-                      return 2;
-                    },
-                    paddingBottom: function () {
-                      return 2;
-                    },
-                    paddingRight: function () {
-                      return 0;
-                    },
-                    paddingLeft: function () {
-                      return 0;
-                    },
-                  },
-                  style: "columnStyle",
+                  type: "line",
+                  x1: 0,
+                  y1: 0,
+                  x2: 515,
+                  y2: 0,
+                  lineWidth: 1,
+                  lineColor: "#333",
                 },
               ],
-            },
-            {
-              width: "*",
-              stack: [
-                {
-                  table: {
-                    widths: [85, "*"],
-                    body: [...customerFields],
-                  },
-                  layout: {
-                    defaultBorder: false,
-                    paddingTop: function () {
-                      return 2;
-                    },
-                    paddingBottom: function () {
-                      return 2;
-                    },
-                    paddingLeft: function () {
-                      return 0;
-                    },
-                  },
-                  style: "columnStyle",
-                },
-              ],
+              margin: [0, 0, 0, 0],
             },
           ],
-          columnGap: 20,
-          margin: [0, 0, 0, 40],
-        },
+        };
+      },
+      footer: function (currentPage, pageCount) {
+        return [
+          {
+            columns: [
+              {
+                text: `Página ${currentPage} de ${pageCount}`,
+                alignment: "left",
+                margin: [40, 10, 0, 0],
+                fontSize: 10,
+                color: "#666666",
+              },
+              currentPage === pageCount
+                ? {
+                    text: "Cartago4x4©Todos los derechos reservados",
+                    alignment: "right",
+                    margin: [0, 10, 40, 0],
+                    fontSize: 10,
+                    color: "#666666",
+                  }
+                : "",
+            ],
+          },
+        ];
+      },
+      content: [
         {
-          style: "tableExample",
           table: {
             headerRows: 1,
-            widths: ["*", "auto", "auto", "auto"],
-            heights: function (rowIndex: number) {
-              // 20px de espacio para la fila entre cabecera y primer cuerpo
-              return rowIndex === 1 ? 20 : null;
-            },
+            widths: ["*"],
             body: [
+              // Primera fila: bloque que se repite en cada página
               [
-                { text: "Descripción", style: "tableHeader" },
                 {
-                  text: "Unidades",
-                  style: ["tableHeader", "centerText"],
-                  alignment: "center",
+                  columns: [
+                    {
+                      width: "40%",
+                      text: [
+                        { text: "Dirección: ", bold: true },
+                        {
+                          text: "Alameda San Antón 23\n(Apdo. Correos 5085)\nCartagena, Murcia, España\n",
+                        },
+                        { text: "C.P.: ", bold: true },
+                        { text: "30205\n" },
+                        { text: "CIF: ", bold: true },
+                        { text: "B75682930\n" },
+                        { text: "Email: ", bold: true },
+                        { text: "contacto@cartago4x4.es\n" },
+                        { text: "Web: ", bold: true },
+                        { text: "https://cartago4x4.es" },
+                      ],
+                      alignment: "left",
+                      margin: [0, 10, 0, 0],
+                    },
+                    {
+                      width: "*",
+                      text: customerFields
+                        .map((field) => [
+                          { text: field[0].text + " ", bold: true },
+                          { text: field[1].text + "\n" },
+                        ])
+                        .flat(),
+                      alignment: "left",
+                      margin: [0, 10, 0, 0],
+                    },
+                  ],
+                  columnGap: 20,
+                  margin: [0, 0, 0, 20],
                 },
-                {
-                  text: "Precio Unitario",
-                  style: ["tableHeader", "centerText"],
-                },
-                { text: "Precio", style: ["tableHeader", "centerText"] },
               ],
-              ...order.items.map((item: LineItem, index) => {
-                const includeTaxes = item.includes_tax || false;
-                const taxRate =
-                  item.tax_lines.length > 0 ? item.tax_lines[0].rate / 100 : 0;
-                const unitPriceWithoutTax = includeTaxes
-                  ? item.unit_price / (1 + taxRate)
-                  : item.unit_price;
-                const itemTotalWithoutTax =
-                  (unitPriceWithoutTax * item.quantity) / 100;
+              // Segunda fila: contenido principal
+              [
+                {
+                  stack: [
+                    {
+                      style: "tableExample",
+                      table: {
+                        headerRows: 1,
+                        widths: ["*", "auto", "auto", "auto"],
+                        heights: function (rowIndex: number) {
+                          // 20px de espacio para la fila entre cabecera y primer cuerpo
+                          return rowIndex === 1 ? 20 : null;
+                        },
+                        body: [
+                          [
+                            { text: "Descripción", style: "tableHeader" },
+                            {
+                              text: "Unidades",
+                              style: ["tableHeader", "centerText"],
+                              alignment: "center",
+                            },
+                            {
+                              text: "Precio Unitario",
+                              style: ["tableHeader", "centerText"],
+                            },
+                            {
+                              text: "Precio",
+                              style: ["tableHeader", "centerText"],
+                            },
+                          ],
+                          ...order.items.map((item: LineItem, index) => {
+                            const includeTaxes = item.includes_tax || false;
+                            const taxRate =
+                              item.tax_lines.length > 0
+                                ? item.tax_lines[0].rate / 100
+                                : 0;
+                            const unitPriceWithoutTax = includeTaxes
+                              ? item.unit_price / (1 + taxRate)
+                              : item.unit_price;
+                            const itemTotalWithoutTax =
+                              (unitPriceWithoutTax * item.quantity) / 100;
 
-                const parentCategories = variantUtils.formatVariantCategories(
-                  item.variant
-                );
+                            const parentCategories =
+                              variantUtils.formatVariantCategories(
+                                item.variant
+                              );
 
-                return [
-                  {
-                    text: [
-                      { text: `${item.title}\n`, bold: true },
-                      { text: parentCategories, fontSize: 10 },
-                    ],
-                    margin: [0, 5],
-                  },
-                  {
-                    text: item.quantity,
-                    style: "centerText",
-                    alignment: "center",
-                    margin: [0, 10],
-                  },
-                  {
-                    text: `€${(unitPriceWithoutTax / 100).toFixed(2)}`,
-                    style: "centerText",
-                    alignment: "center",
-                    margin: [0, 10],
-                  },
-                  {
-                    text: `€${itemTotalWithoutTax.toFixed(2)}`,
-                    style: "centerText",
-                    alignment: "center",
-                    margin: [0, 10],
-                  },
-                ];
-              }),
+                            return [
+                              {
+                                text: [
+                                  { text: `${item.title}\n`, bold: true },
+                                  { text: parentCategories, fontSize: 10 },
+                                ],
+                                margin: [0, 2],
+                              },
+                              {
+                                text: item.quantity,
+                                style: "centerText",
+                                alignment: "center",
+                                margin: [0, 7],
+                              },
+                              {
+                                text: `€${(unitPriceWithoutTax / 100).toFixed(
+                                  2
+                                )}`,
+                                style: "centerText",
+                                alignment: "center",
+                                margin: [0, 7],
+                              },
+                              {
+                                text: `€${itemTotalWithoutTax.toFixed(2)}`,
+                                style: "centerText",
+                                alignment: "center",
+                                margin: [0, 7],
+                              },
+                            ];
+                          }),
+                        ],
+                      },
+                      layout: {
+                        defaultBorder: true,
+                        hLineWidth: function (i, node) {
+                          if (i === 1) return 2; // Borde inferior de cabecera de 2px
+                          return 5; // Bordes entre filas de 5px
+                        },
+                        vLineWidth: function () {
+                          return 0; // Sin bordes verticales
+                        },
+                        hLineColor: function (i) {
+                          return i === 1 ? "#0d364c" : "#ffffff"; // Azul para cabecera, blanco para separaciones
+                        },
+                        fillColor: function (rowIndex) {
+                          // Sin color para cabecera, azul claro para filas alternas del body
+                          return rowIndex > 0 ? "#e6f0ff" : null;
+                        },
+                        paddingTop: function (i) {
+                          return 4;
+                        },
+                        paddingBottom: function (i) {
+                          return 4;
+                        },
+                      },
+                    },
+                    {
+                      // Evitar que la tabla de resumen se divida entre páginas
+                      unbreakable: true,
+                      table: {
+                        widths: ["*", "auto"],
+                        body: [
+                          [
+                            {
+                              text: "SUBTOTAL:",
+                              style: "summaryLabel",
+                              margin: [0, 0, 4, 0],
+                            },
+                            {
+                              text: `€${subtotal.toFixed(2)}`,
+                              style: "summaryValue",
+                              margin: [0, 0, 4, 0],
+                            },
+                          ],
+                          [
+                            {
+                              text: "ENVÍO:",
+                              style: "summaryLabel",
+                              margin: [0, 0, 4, 0],
+                            },
+                            {
+                              text: `€${shipping.toFixed(2)}`,
+                              style: "summaryValue",
+                              margin: [0, 0, 4, 0],
+                            },
+                          ],
+                          [
+                            {
+                              text: `IVA (${orderInvoice.getTaxRate()}%):`,
+                              style: "summaryLabel",
+                              margin: [0, 0, 4, 0],
+                            },
+                            {
+                              text: `€${taxes.toFixed(2)}`,
+                              style: "summaryValue",
+                              margin: [0, 0, 4, 0],
+                            },
+                          ],
+                          [
+                            {
+                              text: "TOTAL:",
+                              style: "summaryLabelBold",
+                              margin: [0, 0, 4, 0],
+                            },
+                            {
+                              text: `€${total.toFixed(2)}`,
+                              style: "summaryValueBold",
+                              margin: [0, 0, 4, 20],
+                            },
+                          ],
+                        ],
+                      },
+                      layout: {
+                        defaultBorder: false,
+                        hLineWidth: function (i, node) {
+                          if (i === 1) return 2;
+                          return i === node.table.body.length ? 1 : 0;
+                        },
+                        vLineWidth: function () {
+                          return 0;
+                        },
+                        hLineColor: function (i, node) {
+                          return i === node.table.body.length
+                            ? "#333"
+                            : "white";
+                        },
+                        paddingLeft: function () {
+                          return 0;
+                        },
+                        paddingRight: function () {
+                          return 0;
+                        },
+                        paddingTop: function () {
+                          return 10;
+                        },
+                        paddingBottom: function () {
+                          return 4;
+                        },
+                      },
+                      alignment: "right",
+                    },
+                  ],
+                },
+              ],
             ],
           },
           layout: {
-            defaultBorder: true,
-            hLineWidth: function (i, node) {
-              if (i === 1) return 2; // Borde inferior de cabecera de 2px
-              return 5; // Bordes entre filas de 5px
-            },
-            vLineWidth: function () {
-              return 0; // Sin bordes verticales
-            },
-            hLineColor: function (i) {
-              return i === 1 ? "#0d364c" : "#ffffff"; // Azul para cabecera, blanco para separaciones
-            },
-            fillColor: function (rowIndex) {
-              // Sin color para cabecera, azul claro para filas alternas del body
-              return rowIndex > 0 ? "#e6f0ff" : null;
-            },
-            paddingTop: function (i) {
-              return 4;
-            },
-            paddingBottom: function (i) {
-              return 4;
-            },
-          },
-        },
-        {
-          table: {
-            widths: ["*", "auto"],
-            body: [
-              [
-                {
-                  text: "SUBTOTAL:",
-                  style: "summaryLabel",
-                  margin: [0, 0, 5, 0],
-                },
-                {
-                  text: `€${subtotal.toFixed(2)}`,
-                  style: "summaryValue",
-                  margin: [0, 0, 5, 0],
-                },
-              ],
-              [
-                {
-                  text: "DESCUENTO:",
-                  style: "summaryLabel",
-                  margin: [0, 0, 5, 0],
-                },
-                {
-                  text: `€${discount.toFixed(2)}`,
-                  style: "summaryValue",
-                  margin: [0, 0, 5, 0],
-                },
-              ],
-              [
-                {
-                  text: "SUBTOTAL MENOS DESCUENTO:",
-                  style: "summaryLabel",
-                  margin: [0, 0, 5, 0],
-                },
-                {
-                  text: `€${subtotalAfterDiscount.toFixed(2)}`,
-                  style: "summaryValue",
-                  margin: [0, 0, 5, 0],
-                },
-              ],
-              [
-                {
-                  text: "ENVÍO:",
-                  style: "summaryLabel",
-                  margin: [0, 0, 5, 0],
-                },
-                {
-                  text: `€${shipping.toFixed(2)}`,
-                  style: "summaryValue",
-                  margin: [0, 0, 5, 0],
-                },
-              ],
-              [
-                {
-                  text: `IVA (${orderInvoice.getTaxRate()}%):`,
-                  style: "summaryLabel",
-                  margin: [0, 0, 5, 0],
-                },
-                {
-                  text: `€${taxes.toFixed(2)}`,
-                  style: "summaryValue",
-                  margin: [0, 0, 5, 0],
-                },
-              ],
-              [
-                {
-                  text: "TOTAL:",
-                  style: "summaryLabelBold",
-                  margin: [0, 0, 5, 0],
-                },
-                {
-                  text: `€${total.toFixed(2)}`,
-                  style: "summaryValueBold",
-                  margin: [0, 0, 5, 20],
-                },
-              ],
-            ],
-          },
-          layout: {
-            defaultBorder: true,
-            hLineWidth: function (i, node) {
-              if (i === 1) return 2;
-              return i === node.table.body.length ? 1 : 0;
+            defaultBorder: false,
+            hLineWidth: function () {
+              return 0;
             },
             vLineWidth: function () {
               return 0;
             },
-            hLineColor: function (i, node) {
-              return i === node.table.body.length ? "#333" : "white";
-            },
-            paddingLeft: function () {
-              return 0;
-            },
-            paddingRight: function () {
-              return 0;
-            },
-            paddingTop: function () {
-              return 10;
-            },
-            paddingBottom: function () {
-              return 5;
-            },
           },
-          alignment: "right",
-        },
-        {
-          text: "¡Gracias por su compra!",
-          style: "footer",
         },
       ],
       images: {

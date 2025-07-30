@@ -35,18 +35,17 @@ const { customer } = await medusa.admin.customers.retrieve(customer_id);
 // customer = customers.customers[0];
 //}
 
-const products = await medusa.admin.products.list({ limit: 5 });
+const { products } = await medusa.admin.products.list({ limit: 50 });
 
-const items = [
-  {
-    variant_id: products.products[0].variants[0].id,
-    quantity: 2,
-  },
-  {
-    variant_id: products.products[1].variants[0].id,
+const items = products
+  .map((product) => ({
+    variant_id: product.variants[0].id,
     quantity: 1,
-  },
-];
+    inventory_quantity: product.variants[0].inventory_quantity,
+  }))
+  .sort((p1, p2) => p2.inventory_quantity - p1.inventory_quantity)
+  .map(({ variant_id, quantity }) => ({ variant_id, quantity }))
+  .slice(0, 10);
 
 cart = await createCart(medusa, { items });
 
@@ -77,4 +76,4 @@ if (!cart.discounts || cart.discounts.length === 0) {
 
 cart = await completeCart(medusa, { cartId: cart.id });
 
-console.log("ORDER [PLACED]");
+console.log("ORDER [PLACED]: ");
