@@ -31,7 +31,6 @@ export default async function handleProductUpdate({
             "tags",
             "images",
             "categories",
-            "thumbnail",
           ],
         });
 

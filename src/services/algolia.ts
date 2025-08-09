@@ -65,6 +65,7 @@ export default class AlgoliaService extends TransactionBaseService {
         title: product.title,
         description: product.description,
         handle: product.handle,
+        price: product.variants?.[0]?.prices?.[0]?.amount,
         categories,
         tags,
         thumbnail: product.thumbnail,
