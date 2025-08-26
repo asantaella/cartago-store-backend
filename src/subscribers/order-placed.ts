@@ -13,9 +13,9 @@ export default async function handleOrderPlaced({
   pluginOptions,
 }: SubscriberArgs<Record<string, string>>) {
   try {
-    console.log(
-      `[NOTIFICATION] Order placed subscriber triggered for order ${data.id}`
-    );
+    // console.log(
+    //   `[NOTIFICATION] Order placed subscriber triggered for order ${data.id}`
+    // );
 
     const orderService: OrderService = container.resolve("orderService");
     const receiptNotificationService: ReceiptNotificationService =
@@ -37,9 +37,9 @@ export default async function handleOrderPlaced({
       ],
     });
 
-    console.log(
-      `[NOTIFICATION] Sending order.placed notification for order ${order.display_id}`
-    );
+    // console.log(
+    //   `[NOTIFICATION] Sending order.placed notification for order ${order.display_id}`
+    // );
 
     // Establecer el número de factura en el pedido
     await invoiceNumberGenerator.setOrderInvoiceNumber(order.id);

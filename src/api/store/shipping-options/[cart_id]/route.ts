@@ -11,6 +11,7 @@ import {
   PricingService,
   ShippingProfileService,
 } from "@medusajs/medusa/dist/services";
+import SpanishTaxService from "../../../../services/spanish-tax";
 import { MedusaError } from "@medusajs/utils";
 
 /**
@@ -70,6 +71,59 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     data = await pricingService.setShippingOptionPrices(options, {
       cart_id,
     });
+
+    // If the cart postal code belongs to Canarias, convert shipping prices
+    // from gross (incl. IVA) to net before returning so that the client and
+    // any subsequent order creation see the net price.
+    try {
+      const spanishTaxService: SpanishTaxService =
+        req.scope.resolve("spanishTaxService");
+      if (
+        spanishTaxService &&
+        spanishTaxService.isTaxExemptAddress(postalCode) &&
+        Array.isArray(data)
+      ) {
+        data = data.map((opt: any) => {
+          try {
+            if (typeof opt.amount === "number") {
+              opt.amount = spanishTaxService.calculatePriceWithoutTax(opt.amount);
+            }
+            if (typeof opt.price === "number") {
+              opt.price = spanishTaxService.calculatePriceWithoutTax(opt.price);
+            }
+            if (typeof opt.price_incl_tax === "number") {
+              opt.price_incl_tax = spanishTaxService.calculatePriceWithoutTax(
+                opt.price_incl_tax
+              );
+            }
+            // Some shapes include a nested shipping_option object with price
+            if (
+              opt.shipping_option &&
+              typeof opt.shipping_option.price === "number"
+            ) {
+              opt.shipping_option.price = spanishTaxService.calculatePriceWithoutTax(
+                opt.shipping_option.price
+              );
+            }
+          } catch (e) {
+            // Non-fatal: leave the option as-is if conversion fails
+            // eslint-disable-next-line no-console
+            console.warn(
+              "[shipping-options route] could not adjust shipping option price:",
+              e
+            );
+          }
+          return opt;
+        });
+      }
+    } catch (e) {
+      // If the canarias service isn't available, skip the adjustment.
+      // eslint-disable-next-line no-console
+      console.warn(
+        "[shipping-options route] spanishTaxService not available:",
+        e
+      );
+    }
   }
 
   res.status(200).json({ shipping_options: data });

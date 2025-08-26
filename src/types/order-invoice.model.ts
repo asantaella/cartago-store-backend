@@ -53,7 +53,7 @@ export class OrderInvoice {
       return ";;;;;;;;";
     }
     const currencyCode = this.order.currency_code || "EUR";
-    const taxRate = this.order.region?.tax_rate || 0;
+    const taxRate = this.getTaxRate();
 
     const shippingMethod = this.order.shipping_methods[0];
     const shippingMethodName = shippingMethod?.shipping_option?.name || "";
@@ -166,9 +166,8 @@ export class OrderInvoice {
    * Obtiene la tasa de impuestos del pedido
    */
   public getTaxRate(): number {
-    return this.order.items[0]?.tax_lines[0]?.rate
-      ? this.order.items[0]?.tax_lines[0]?.rate
-      : 21;
+    const taxRate = this.order.items[0]?.tax_lines[0]?.rate;
+    return taxRate !== undefined && taxRate !== null ? taxRate : 21;
   }
 
   /**

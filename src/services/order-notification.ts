@@ -8,6 +8,7 @@ import {
 } from "@medusajs/medusa";
 import { formatMoney, formatDate, formatAddress } from "../utils/format-utils";
 import { OrderInvoice } from "../types/order-invoice.model";
+import { isNumber } from "util";
 
 interface MailerSendOrderPlacedNotification {
   to_email: string;
@@ -65,6 +66,7 @@ class OrderNotificationService {
 
   constructor(container) {
     this.orderService = container.orderService;
+
     // Inicializar la configuración
     this.config = {
       order_placed_url: process.env.MAILERSEND_ORDER_PLACED_URL,
@@ -74,7 +76,7 @@ class OrderNotificationService {
       sender_name: process.env.MAILERSEND_SENDER_NAME,
       sender_email: process.env.MAILERSEND_SENDER_EMAIL,
       sender_address: process.env.MAILERSEND_SENDER_ADDRESS,
-      admin_email: process.env.MAILERSEND_ADMIN_EMAIL, 
+      admin_email: process.env.MAILERSEND_ADMIN_EMAIL,
     };
   }
 
@@ -120,6 +122,10 @@ class OrderNotificationService {
         },
       })) || [];
 
+    let taxRate = order.items[0]?.tax_lines[0]?.rate;
+
+    taxRate = typeof taxRate === "number" ? taxRate : order.region?.tax_rate;
+
     return {
       to_email: order.email,
       from_email: this.config.sender_email,
@@ -148,7 +154,7 @@ class OrderNotificationService {
           currencyCode
         ),
         tax_total: formatMoney(order.tax_total || 0, currencyCode),
-        tax_rate: order.region?.tax_rate,
+        tax_rate: taxRate,
         discount_total: formatMoney(order.discount_total || 0, currencyCode),
         total: formatMoney(order.total, currencyCode),
         items: formattedItems,
@@ -244,7 +250,14 @@ class OrderNotificationService {
         }))
       ) || [];
 
-    console.log("[NOTIFICATION] Tracking links:", trackingLinks);
+    let taxRate = order.items[0]?.tax_lines[0]?.rate;
+
+    taxRate = typeof taxRate === "number" ? taxRate : order.region?.tax_rate;
+
+    console.log(
+      `\n\n[OrderNotificationService] [getShipmentTemplateData] Event: ${taxRate}\n\n`
+    );
+
     return {
       to_email: order.email,
       from_email: this.config.sender_email,
@@ -277,7 +290,7 @@ class OrderNotificationService {
           currencyCode
         ),
         tax_total: formatMoney(order.tax_total || 0, currencyCode),
-        tax_rate: order.region?.tax_rate,
+        tax_rate: taxRate,
         discount_total: formatMoney(order.discount_total || 0, currencyCode),
         total: formatMoney(order.total, currencyCode),
         items: formattedItems,

@@ -5,7 +5,7 @@ import Roboto from "../fonts/Roboto";
 import LogoCartago from "../types/logo";
 import * as variantUtils from "../utils/variant-utils";
 import { InvoiceMode, OrderInvoice } from "../types/order-invoice.model";
-import { CustomRepositoryCannotInheritRepositoryError } from "typeorm";
+
 
 class InvoicePdfGeneratorService extends BaseService {
   protected orderService: OrderService;

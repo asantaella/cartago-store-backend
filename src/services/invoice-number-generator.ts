@@ -23,9 +23,7 @@ class InvoiceNumberGeneratorService extends BaseService {
     const year = new Date().getFullYear();
     const invoiceNumber = invoiceStartRef + order.display_id;
     const invoiceRef = invoiceNumber.toString().padStart(5, "0");
-    console.log(
-      `[ORDER-INVOICE] Generating invoice number for order ${order.display_id}: ${year}-${invoiceRef}`
-    );
+ 
     return `${year}-${invoiceRef}`;
   }
 
@@ -47,20 +45,12 @@ class InvoiceNumberGeneratorService extends BaseService {
       );
     }
 
-    console.log(
-      `[ORDER-INVOICE] Estableciendo número de factura ${invoiceNumber} para el pedido ${order.display_id}`
-    );
-
     const updatedOrder = await this.orderService_.update(orderId, {
       metadata: {
         ...order.metadata,
         invoice_number: invoiceNumber,
       },
     });
-
-    console.log(
-      `[ORDER-INVOICE] Número de factura establecido exitosamente para el pedido ${order.display_id}`
-    );
 
     return updatedOrder;
   }

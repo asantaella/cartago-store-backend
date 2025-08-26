@@ -6,7 +6,7 @@ const shipping_address = {
   address_2: "Portal 4, 5ºB",
   city: "Buitrago de Lozoya",
   province: "Madrid",
-  postal_code: "12345",
+  postal_code: "38100",
   country_code: "es",
   metadata: {
    // nif_cif: "75150333H",
