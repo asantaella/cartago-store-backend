@@ -182,15 +182,27 @@ export class OrderInvoice {
    * Calcula el descuento del pedido
    */
   public getDiscount(): number {
-    return this.order.discounts.reduce((acc, discount) => {
-      return acc + (discount.rule.value / 100) * this.getSubtotal();
-    }, 0);
+    // Si hay discount_total disponible, usarlo
+    if (
+      this.order.discount_total !== undefined &&
+      this.order.discount_total !== null
+    ) {
+      return this.order.discount_total / 100;
+    }
   }
 
   /**
    * Calcula el subtotal después de aplicar descuentos
    */
   public getSubtotalAfterDiscount(): number {
+    // Usar el subtotal - discount_total si está disponible
+    if (
+      this.order.discount_total !== undefined &&
+      this.order.discount_total !== null
+    ) {
+      return this.getSubtotal() - this.order.discount_total / 100;
+    }
+    // Si no, calcularlo manualmente (backwards compatibility)
     return this.getSubtotal() - this.getDiscount();
   }
 

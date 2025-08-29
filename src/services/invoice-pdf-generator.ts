@@ -6,7 +6,6 @@ import LogoCartago from "../types/logo";
 import * as variantUtils from "../utils/variant-utils";
 import { InvoiceMode, OrderInvoice } from "../types/order-invoice.model";
 
-
 class InvoicePdfGeneratorService extends BaseService {
   protected orderService: OrderService;
 
@@ -31,7 +30,13 @@ class InvoicePdfGeneratorService extends BaseService {
         "billing_address",
         "shipping_methods",
       ],
-      select: ["subtotal", "tax_total", "shipping_total", "total"],
+      select: [
+        "subtotal",
+        "tax_total",
+        "shipping_total",
+        "discount_total",
+        "total",
+      ],
     });
 
     if (!order) {
@@ -41,13 +46,15 @@ class InvoicePdfGeneratorService extends BaseService {
     const orderInvoice = new OrderInvoice(order);
     const subtotal = orderInvoice.getSubtotal();
     const discount = orderInvoice.getDiscount();
-    const subtotalAfterDiscount = orderInvoice.getSubtotalAfterDiscount();
     const taxes = orderInvoice.getTaxes();
     const shipping = orderInvoice.getShipping();
-    const total = subtotalAfterDiscount + taxes + shipping;
+    // El total ya está calculado correctamente en la orden
+    const total = order.total / 100;
     const invoiceId = orderInvoice.getInvoiceId();
     const invoiceFileMode = invoiceMode === "invoice" ? "factura" : "recibo";
     const invoiceFileName = `Cartago4x4_${invoiceFileMode}_${order.display_id}_${invoiceId}.pdf`;
+
+    console.log(`ℹ️ℹ️ℹ️ Invoice with discount: ${discount}`);
 
     const printer = new pdfmake(Roboto);
 
@@ -363,6 +370,22 @@ class InvoicePdfGeneratorService extends BaseService {
                               margin: [0, 0, 4, 0],
                             },
                           ],
+                          ...(discount > 0
+                            ? [
+                                [
+                                  {
+                                    text: "DESCUENTO:",
+                                    style: "summaryLabel",
+                                    margin: [0, 0, 4, 0],
+                                  },
+                                  {
+                                    text: `-€${discount.toFixed(2)}`,
+                                    style: "summaryValue",
+                                    margin: [0, 0, 4, 0],
+                                  },
+                                ],
+                              ]
+                            : []),
                           [
                             {
                               text: "ENVÍO:",

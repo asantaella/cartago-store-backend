@@ -49,13 +49,18 @@ const { products } = await medusa.admin.products.list({ limit: 1000 });
 //   },
 // ];
 
-const product = products.find(
+const product1 = products.find(
   (p) => p.id === "prod_01HZZEK1KRVMSSZGRZQQ2W08J0"
 );
 
-console.log("Creating cart with product:", product);
+const product2 = products.find(
+  (p) => p.id === "prod_01JS4M40DS0M16BACCYPCY1RCS"
+);
 
-const items = [{ variant_id: product.variants[0].id, quantity: 1 }];
+const items = [
+  { variant_id: product1.variants[0].id, quantity: 1 },
+  { variant_id: product2.variants[0].id, quantity: 1 },
+];
 
 cart = await createCart(medusa, { items });
 
@@ -76,10 +81,10 @@ cart = await createPaymentSession(medusa, { cartId: cart.id });
 cart = await selectPaymentSession(medusa, { cartId: cart.id, provider_id });
 
 // Then explicitly add the discount code using the dedicated function
-// cart = await addDiscount(medusa, {
-//   cartId: cart.id,
-//   discountCode: "CARTAGO_10",
-// });
+cart = await addDiscount(medusa, {
+  cartId: cart.id,
+  discountCode: "CARTAGO3",
+});
 
 // Verify the discount was applied
 // if (!cart.discounts || cart.discounts.length === 0) {
