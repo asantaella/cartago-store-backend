@@ -68,15 +68,6 @@ export class OrderInvoice {
   }
 
   /**
-   * Calcula el total de impuestos de envío
-   */
-  public getShippingTaxTotal(): number {
-    return this.order.shipping_methods.reduce((acc, method) => {
-      return acc + (method.tax_total || 0);
-    }, 0);
-  }
-
-  /**
    * Obtiene el nombre completo del cliente
    */
   public getCustomerName(): string {
@@ -159,7 +150,19 @@ export class OrderInvoice {
    * Calcula los impuestos del pedido
    */
   public getTaxes(): number {
+    const shippingTotal = this.order.shipping_total;
+    if (shippingTotal === 0) {
+      return this.getItemsTaxes();
+    }
     return this.order.tax_total / 100;
+  }
+
+  public getItemsTaxes(): number {
+    const itemsTaxes = this.order.items.reduce(
+      (acc, item) => acc + (item.tax_total || 0),
+      0
+    );
+    return itemsTaxes / 100;
   }
 
   /**
@@ -174,8 +177,52 @@ export class OrderInvoice {
    * Calcula el costo de envío incluyendo impuestos
    */
   public getShipping(): number {
-    const shippingTaxTotal = this.getShippingTaxTotal();
-    return (this.order.shipping_total + shippingTaxTotal) / 100;
+    return (this.order.shipping_total || 0) / 100;
+  }
+
+  /**
+   * Calcula el costo de envío sin impuestos
+   */
+  public getShippingWithoutTax(): number {
+    return (this.order.shipping_total || 0) / 100;
+  }
+
+  /**
+   * Obtiene el impuesto de envío
+   */
+  public getShippingTax(): number {
+    return this.calculateShippingTaxTotal() / 100;
+  }
+
+  /**
+   * Calcula el impuesto de envío si no está disponible shipping_tax_total
+   */
+  private calculateShippingTaxTotal(): number {
+    // Si shipping_tax_total está disponible, usarlo directamente
+    if (
+      this.order.shipping_tax_total !== undefined &&
+      this.order.shipping_tax_total !== null
+    ) {
+      return this.order.shipping_tax_total;
+    }
+
+    // Si no está disponible, calcularlo a partir de los métodos de envío
+    if (this.order.shipping_methods && this.order.shipping_methods.length > 0) {
+      const taxRate = this.getTaxRate() / 100;
+      const shippingMethod = this.order.shipping_methods[0];
+
+      // Si el método de envío tiene tax_lines, calcular a partir de ellas
+      if (shippingMethod.tax_lines && shippingMethod.tax_lines.length > 0) {
+        return shippingMethod.tax_lines.reduce((acc, taxLine) => {
+          return acc + (taxLine.rate / 100) * shippingMethod.price;
+        }, 0);
+      }
+
+      // Si no hay tax_lines, usar la tasa de impuesto general
+      return shippingMethod.price * taxRate;
+    }
+
+    return 0;
   }
 
   /**
@@ -204,6 +251,27 @@ export class OrderInvoice {
     }
     // Si no, calcularlo manualmente (backwards compatibility)
     return this.getSubtotal() - this.getDiscount();
+  }
+
+  /**
+   * Calcula el total del pedido, corrigiendo el problema con los descuentos en gastos de envío
+   */
+  public getTotal(): number {
+    // Calculamos el total corregido manualmente
+
+    const shipping = this.getShippingWithoutTax();
+
+    if (shipping > 0) {
+      return this.order.total / 100;
+    }
+    const subtotal = this.getSubtotal();
+    const taxes = this.getTaxes();
+    const discount = this.getDiscount() || 0;
+    //const shippingTax = this.getShippingTax();
+
+    const total = subtotal + taxes - discount;
+
+    return total;
   }
 
   /**

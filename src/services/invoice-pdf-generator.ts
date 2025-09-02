@@ -29,6 +29,8 @@ class InvoicePdfGeneratorService extends BaseService {
         "shipping_address",
         "billing_address",
         "shipping_methods",
+        "shipping_methods.tax_lines",
+        "items.tax_lines",
       ],
       select: [
         "subtotal",
@@ -36,6 +38,7 @@ class InvoicePdfGeneratorService extends BaseService {
         "shipping_total",
         "discount_total",
         "total",
+        "paid_total",
       ],
     });
 
@@ -49,12 +52,12 @@ class InvoicePdfGeneratorService extends BaseService {
     const taxes = orderInvoice.getTaxes();
     const shipping = orderInvoice.getShipping();
     // El total ya está calculado correctamente en la orden
-    const total = order.total / 100;
+    const total = orderInvoice.getTotal();
     const invoiceId = orderInvoice.getInvoiceId();
     const invoiceFileMode = invoiceMode === "invoice" ? "factura" : "recibo";
     const invoiceFileName = `Cartago4x4_${invoiceFileMode}_${order.display_id}_${invoiceId}.pdf`;
 
-    console.log(`ℹ️ℹ️ℹ️ Invoice with discount: ${discount}`);
+   // console.log(`ℹ️ℹ️ℹ️ ORDER With discount: ${JSON.stringify(order)}`);
 
     const printer = new pdfmake(Roboto);
 
@@ -285,11 +288,8 @@ class InvoicePdfGeneratorService extends BaseService {
                               item.tax_lines.length > 0
                                 ? item.tax_lines[0].rate / 100
                                 : 0;
-                            const unitPriceWithoutTax = includeTaxes
-                              ? item.unit_price / (1 + taxRate)
-                              : item.unit_price;
                             const itemTotalWithoutTax =
-                              (unitPriceWithoutTax * item.quantity) / 100;
+                              (item.subtotal * item.quantity) / 100;
 
                             const parentCategories =
                               variantUtils.formatVariantCategories(
@@ -311,9 +311,9 @@ class InvoicePdfGeneratorService extends BaseService {
                                 margin: [0, 7],
                               },
                               {
-                                text: `€${(unitPriceWithoutTax / 100).toFixed(
-                                  2
-                                )}`,
+                                text: `€${
+                                  item.subtotal ? item.subtotal / 100 : 0
+                                }`,
                                 style: "centerText",
                                 alignment: "center",
                                 margin: [0, 7],
@@ -405,7 +405,7 @@ class InvoicePdfGeneratorService extends BaseService {
                               margin: [0, 0, 4, 0],
                             },
                             {
-                              text: `€${taxes.toFixed(2)}`,
+                              text: `€${taxes}`,
                               style: "summaryValue",
                               margin: [0, 0, 4, 0],
                             },
