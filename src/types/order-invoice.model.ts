@@ -74,6 +74,13 @@ export class OrderInvoice {
     return `${this.order.shipping_address.first_name} ${this.order.shipping_address.last_name}`;
   }
 
+  public getBillingCompanyName(): string | undefined {
+    return this.order?.billing_address?.company ?? "";
+  }
+  public getAddressCompanyName(): string | undefined {
+    return this.order?.shipping_address?.company ?? "";
+  }
+
   /**
    * Obtiene la dirección de facturación
    */

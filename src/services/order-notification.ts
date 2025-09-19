@@ -32,6 +32,7 @@ interface MailerSendOrderData {
   };
   shipping_address: string;
   billing_address?: string;
+  customer_company_name?: string;
   shipping_method: string;
   shipping_total: string;
   currency: string;
@@ -144,6 +145,7 @@ class OrderNotificationService {
         },
         shipping_address: formatAddress(order.shipping_address),
         billing_address: formatAddress(order.billing_address),
+        customer_company_name: invoiceOrder.getBillingCompanyName(),
         shipping_method: invoiceOrder.getShippingMethodName(),
         shipping_total: formatMoney(order.shipping_total, currencyCode),
 
@@ -281,6 +283,7 @@ class OrderNotificationService {
         },
         shipping_address: formatAddress(order.shipping_address),
         billing_address: formatAddress(order.billing_address),
+        customer_company_name: invoiceOrder.getBillingCompanyName(),
         shipping_method: invoiceOrder.getShippingMethodName(),
         shipping_total: formatMoney(order.shipping_total, currencyCode),
         currency: currencyCode,
@@ -323,6 +326,7 @@ interface MailerSendShipmentData {
   };
   shipping_address: string;
   billing_address?: string;
+  customer_company_name?: string;
   shipping_method: string;
   shipping_total: string;
   currency: string;

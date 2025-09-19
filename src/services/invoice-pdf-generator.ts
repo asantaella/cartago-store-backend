@@ -57,7 +57,7 @@ class InvoicePdfGeneratorService extends BaseService {
     const invoiceFileMode = invoiceMode === "invoice" ? "factura" : "recibo";
     const invoiceFileName = `Cartago4x4_${invoiceFileMode}_${order.display_id}_${invoiceId}.pdf`;
 
-   // console.log(`ℹ️ℹ️ℹ️ ORDER With discount: ${JSON.stringify(order)}`);
+    // console.log(`ℹ️ℹ️ℹ️ ORDER With discount: ${JSON.stringify(order)}`);
 
     const printer = new pdfmake(Roboto);
 
@@ -70,7 +70,10 @@ class InvoicePdfGeneratorService extends BaseService {
           margin: [0, 0, 5, 0],
         },
         {
-          text: orderInvoice.getCustomerName(),
+          text:
+            orderInvoice.getBillingCompanyName() ||
+            orderInvoice.getAddressCompanyName() ||
+            orderInvoice.getCustomerName(),
           alignment: "left",
         },
       ],
