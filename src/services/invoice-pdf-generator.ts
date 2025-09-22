@@ -291,8 +291,7 @@ class InvoicePdfGeneratorService extends BaseService {
                               item.tax_lines.length > 0
                                 ? item.tax_lines[0].rate / 100
                                 : 0;
-                            const itemTotalWithoutTax =
-                              (item.subtotal * item.quantity) / 100;
+                            const itemTotalWithoutTax = item.subtotal / 100;
 
                             const parentCategories =
                               variantUtils.formatVariantCategories(
@@ -315,7 +314,13 @@ class InvoicePdfGeneratorService extends BaseService {
                               },
                               {
                                 text: `€${
-                                  item.subtotal ? item.subtotal / 100 : 0
+                                  item.subtotal
+                                    ? (
+                                        item.subtotal /
+                                        item.quantity /
+                                        100
+                                      ).toFixed(2)
+                                    : 0
                                 }`,
                                 style: "centerText",
                                 alignment: "center",
