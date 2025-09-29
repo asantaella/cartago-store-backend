@@ -64,10 +64,13 @@ class ReceiptNotificationService extends AbstractNotificationService {
     const customerInfo: Address =
       order.billing_address || order.shipping_address;
 
+      const customerName = customerInfo?.company || `${customerInfo.first_name} ${customerInfo.last_name}`;
+
+
+
     const customer = [
       {
-        customer:
-          `${customerInfo.first_name} ${customerInfo.last_name}`.toLocaleUpperCase(),
+        customer: customerName.toLocaleUpperCase(),
       },
       {
         customer:
