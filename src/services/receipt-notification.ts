@@ -49,6 +49,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
   // El método getTemplateData ha sido trasladado a OrderNotificationService
 
   async buildCSVAttachment(order: Order) {
+    const orderInvoice = new OrderInvoice(order);
     const itemFields = [
       { label: "title", value: "variant.title" },
       { label: "sku", value: "variant.sku" },
@@ -61,29 +62,21 @@ class ReceiptNotificationService extends AbstractNotificationService {
       { label: "ref", value: "variant.barcode" },
     ];
 
-    const customerInfo: Address =
-      order.billing_address || order.shipping_address;
-
-      const customerName = customerInfo?.company || `${customerInfo.first_name} ${customerInfo.last_name}`;
-
-
-
     const customer = [
       {
-        customer: customerName.toLocaleUpperCase(),
+        customer:
+          orderInvoice.getBillingCompanyName() ||
+          orderInvoice.getCustomerName().toLocaleUpperCase(),
+      },
+      {
+        customer: orderInvoice.getBillingAddress().toLocaleUpperCase(),
       },
       {
         customer:
-          `${customerInfo.address_1} ${customerInfo.address_2}`.toLocaleUpperCase(),
+          `${orderInvoice.getBillingPostalCode()} ${orderInvoice.getBillingCityCountry()}`.toLocaleUpperCase(),
       },
       {
-        customer:
-          `${customerInfo.postal_code} ${customerInfo.city}, ${customerInfo.province}`.toLocaleUpperCase(),
-      },
-      {
-        customer: `${
-          customerInfo?.metadata?.nif_cif || order?.customer?.metadata?.nif_cif
-        }`,
+        customer: `${orderInvoice.getCustomerNifCif()}`,
       },
       {
         customer: formatDate(order.created_at),
@@ -111,7 +104,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
         total: formatMoney(item.total, currencyCode),
       },
     }));
-    const orderInvoice = new OrderInvoice(order);
+
     const itemsCsv = await itemParser.parse(orderItems).promise();
     const customerCsv = await customerParser.parse(customer).promise();
     const shippingMethodCsv = orderInvoice.buildShippingMethodCsv();

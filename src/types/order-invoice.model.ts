@@ -74,11 +74,21 @@ export class OrderInvoice {
     return `${this.order.shipping_address.first_name} ${this.order.shipping_address.last_name}`;
   }
 
+  public getBillingName(): string {
+    return this.order.billing_address
+      ? `${this.order.billing_address.first_name} ${this.order.billing_address.last_name}`
+      : this.getCustomerName();
+  }
+
   public getBillingCompanyName(): string | undefined {
     return this.order?.billing_address?.company ?? "";
   }
   public getAddressCompanyName(): string | undefined {
     return this.order?.shipping_address?.company ?? "";
+  }
+
+  public getCompanyName(): string | undefined { 
+    return this.getBillingCompanyName() || this.getAddressCompanyName() || "";  
   }
 
   /**
