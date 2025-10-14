@@ -100,10 +100,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   }
 };
 
-/**
- * Función para recalcular el total de una orden
- * Considera: items + shipping - descuentos + impuestos
- */
+
 function calculateOrderTotal(order: any): {
   total: number;
   shippingTotal: number;
@@ -139,7 +136,7 @@ function calculateOrderTotal(order: any): {
   const total = itemsSubtotal + shippingTotal - giftCardTotal;
 
   return {
-    total: Math.max(0, Math.round(total)), // Asegurar que no sea negativo y redondear
+    total: Math.max(0, Math.round(total)), 
     shippingTotal: Math.round(shippingTotal),
   };
 }
