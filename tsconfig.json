@@ -19,13 +19,13 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "typeRoots": [
-      "src/types",
+      "src/types/**/*",
       "node_modules/@types"
     ]
   },
   "include": [
     "src/",
-    "src/types/"
+    "src/types/**/*"
   ],
   "exclude": [
     "dist",
