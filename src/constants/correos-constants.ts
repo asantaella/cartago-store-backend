@@ -86,13 +86,13 @@ export const CORREOS_SENDER_CONSTANTS = {
   ADDRESS_TYPE: "CL",
 
   /** Dirección */
-  ADDRESS: "Alameda de San Antón",
+  ADDRESS: "Calle Loma Atlas",
 
   /** Número */
-  NUMBER: "23",
+  NUMBER: "26",
 
   /** Complemento de dirección */
-  ADDRESS_COMPLEMENT: "Apartado de Correos 5085",
+  ADDRESS_COMPLEMENT: "Lomas de Canteras",
 
   /** Localidad */
   LOCALITY: "Cartagena",
@@ -116,7 +116,6 @@ export const CORREOS_SENDER_CONSTANTS = {
   LANGUAGE: "spa",
 } as const;
 
-
 export const CORREOS_PRINT_LABEL_CONSTANTS = {
   /** Tipo de impresión: PDF */
   APPLICATION: "ACCESORIOS_CARTAGO",
@@ -124,5 +123,5 @@ export const CORREOS_PRINT_LABEL_CONSTANTS = {
   LABEL_ORDER_TYPE: 1,
   LABEL_FORMAT: 2,
   LABEL_PRINT_MODE: 1,
-  LABEL_PRINT_INITIAL_POSITION: 1
+  LABEL_PRINT_INITIAL_POSITION: 1,
 } as const;
