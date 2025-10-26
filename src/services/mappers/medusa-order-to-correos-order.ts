@@ -116,18 +116,24 @@ export class MedusaOrderToCorreosOrderMapper {
    * Crea la información del paquete
    */
   private createPackage(order: Order): Package {
-    const totalWeight = this.calculateTotalWeight(order);
+    //  const totalWeight = this.calculateTotalWeight(order);
     const packageId =
       order.items.length > 0
         ? order.items[0].title
         : `Order ${order.display_id}`;
+    const totalWeight =
+      order.shipping_address.metadata?.weight?.toString() || "";
+    const totalLength =
+      order.shipping_address.metadata?.length?.toString() || "";
+    const totalWidth = order.shipping_address.metadata?.width?.toString() || "";
+    const totalHigh = order.shipping_address.metadata?.height?.toString() || "";
 
     return {
       packageId,
       packageWeightGrams: totalWeight,
-      packageHeight: CORREOS_PACKAGE_CONSTANTS.DEFAULT_HEIGHT,
-      packageWidth: CORREOS_PACKAGE_CONSTANTS.DEFAULT_WIDTH,
-      packageLength: CORREOS_PACKAGE_CONSTANTS.DEFAULT_LENGTH,
+      packageHeight: totalHigh || CORREOS_PACKAGE_CONSTANTS.DEFAULT_HEIGHT,
+      packageWidth: totalWidth || CORREOS_PACKAGE_CONSTANTS.DEFAULT_WIDTH,
+      packageLength: totalLength || CORREOS_PACKAGE_CONSTANTS.DEFAULT_LENGTH,
       cubicMeters: "",
       clientReference: "",
       clientReference2: "",
@@ -226,7 +232,13 @@ export class MedusaOrderToCorreosOrderMapper {
    * Crea la información del envío
    */
   private createShipment(order: Order): Shipment {
-    const totalWeight = this.calculateTotalWeight(order);
+    //const totalWeight = this.calculateTotalWeight(order);
+    const totalWeight =
+      order.shipping_address.metadata?.weight?.toString() || "";
+    const totalLength =
+      order.shipping_address.metadata?.length?.toString() || "";
+    const totalWidth = order.shipping_address.metadata?.width?.toString() || "";
+    const totalHigh = order.shipping_address.metadata?.height?.toString() || "";
 
     return {
       admissionProvince: this.admissionProvince,
@@ -235,9 +247,9 @@ export class MedusaOrderToCorreosOrderMapper {
       deliveryMethod: this.deliveryMethod,
       manifestCode: "",
       totalWeight,
-      totalLength: "",
-      totalWidth: "",
-      totalHigh: "",
+      totalLength,
+      totalWidth,
+      totalHigh,
       contractNumber: this.contractNumber,
       clientNumber: this.clientNumber,
       labellerCode: this.labellerCode,

@@ -1,6 +1,4 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
-import { MedusaOrderToCorreosOrderMapper } from "../../../../../services/mappers/medusa-order-to-correos-order";
-import e from "express";
 import LabelShipmentPrintService from "../../../../../services/label-shipment-print";
 
 /**
@@ -17,9 +15,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const { id } = req.params;
 
   try {
-    const labelShipmentPrintService = req.scope.resolve<LabelShipmentPrintService>(
-      "labelShipmentPrintService"
-    );
+    const labelShipmentPrintService =
+      req.scope.resolve<LabelShipmentPrintService>("labelShipmentPrintService");
 
     console.log("\n🚀 Printing label order with id: ", id);
 
@@ -35,23 +32,23 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       return res.status(409).json(errors);
     }
     const orderNumber = response.orderNumber || "";
-    const shipmentCode = response.shipmentCode || "";
+    //const shipmentCode = response.shipmentCode || "";
     const pdfBuffer = Buffer.from(response.pdf, "base64");
-    // Configurar headers CORS
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=Etiqueta-${orderNumber}-${shipmentCode}.pdf`
-    );
-    res.send(pdfBuffer);
-  } catch (error) {
-    console.error("Error transforming order to Correos preregister:", error);
-
-    // Enviar error detallado
-    return res.status(500).json({
-      message: "Failed to transform order to Correos preregister",
-      error: error instanceof Error ? error.message : "Unknown error",
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="Cartago4x4-Etiqueta-${orderNumber}.pdf"`,
+      "Content-Length": pdfBuffer.length,
+      "Access-Control-Allow-Origin": `${process.env.ADMIN_CORS}`,
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers":
+        " Content-Type, Authorization, X-Requested-With",
     });
+
+    // Enviar el PDF como respuesta
+    res.end(pdfBuffer);
+  } catch (error) {
+    console.error("Error generating invoice:", error);
+    res.status(500).send("Failed to generate invoice");
   }
 };
 
