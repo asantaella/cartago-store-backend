@@ -86,7 +86,7 @@ export const CORREOS_SENDER_CONSTANTS = {
   ADDRESS_TYPE: "CL",
 
   /** Dirección */
-  ADDRESS: "Calle Loma Atlas",
+  ADDRESS: "Loma Atlas",
 
   /** Número */
   NUMBER: "26",
