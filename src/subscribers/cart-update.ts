@@ -72,7 +72,7 @@ export const config: SubscriberConfig = {
   // Escuchar múltiples eventos relacionados con carts y direcciones
   event: [
     "cart.customer_updated",
-    "cart.updated",
+   // "cart.updated",
     "cart.shipping_methods_updated",
     "cart.shipping_address_updated", // Cambios específicos de dirección de envío
     "address.created", // Nueva dirección creada
