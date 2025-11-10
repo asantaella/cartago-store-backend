@@ -51,8 +51,19 @@ export default class CartService extends MedusaCartService {
 
   // MÉTODO PRINCIPAL: retrieve que aplica pricing ANTES de devolver el cart
   async retrieve(cartId: string, options: any = {}): Promise<any> {
+    // Asegurar que siempre se incluyan las relaciones necesarias para draft orders
+    const enrichedOptions = {
+      ...options,
+      relations: [
+        ...(options.relations || []),
+        // Relaciones adicionales necesarias para draft orders y payment
+        "payment_sessions",
+        "payment",
+      ].filter((v, i, a) => a.indexOf(v) === i), // Eliminar duplicados
+    };
+
     // PRIMERA: Obtener el cart sin ajustes
-    let cart = await super.retrieve(cartId, options);
+    let cart = await super.retrieve(cartId, enrichedOptions);
 
     const postal = cart?.shipping_address?.postal_code as string | undefined;
 
@@ -66,8 +77,8 @@ export default class CartService extends MedusaCartService {
         // Usar directamente la lógica de pricing sin dependencia circular
         await this.applyImmediatePricing(cartId, isTaxExempt, territoryType);
 
-        // TERCERA: Re-obtener el cart con precios actualizados
-        cart = await super.retrieve(cartId, options);
+        // TERCERA: Re-obtener el cart con precios actualizados Y todas las relaciones
+        cart = await super.retrieve(cartId, enrichedOptions);
       } catch (error) {
         console.warn(
           `[CartService] Error applying immediate postal pricing:`,
