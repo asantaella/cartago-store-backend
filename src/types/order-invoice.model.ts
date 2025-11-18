@@ -57,11 +57,17 @@ export class OrderInvoice {
 
     const shippingMethod = this.order.shipping_methods[0];
     const shippingMethodName = shippingMethod?.shipping_option?.name || "";
-    const shippingTotal = formatMoney(shippingMethod?.price || 0, currencyCode);
+    const shippingWithoutTax = this.getShippingWithoutTax();
+
+    const shippingTotal = formatMoney(
+      shippingWithoutTax > 0 ? shippingMethod?.price : 0,
+      currencyCode
+    );
     const discountTotal = formatMoney(0, currencyCode);
     const shippingSubtotal = formatMoney(
-      shippingMethod?.price / (1 + taxRate / 100) || 0,
-      currencyCode
+      this.getShippingWithoutTax() || 0,
+      currencyCode,
+      false
     );
 
     return `${shippingMethodName};;1;${shippingSubtotal};${shippingTotal};${shippingSubtotal};${discountTotal};${shippingTotal};;`;
@@ -87,8 +93,8 @@ export class OrderInvoice {
     return this.order?.shipping_address?.company ?? "";
   }
 
-  public getCompanyName(): string | undefined { 
-    return this.getBillingCompanyName() || this.getAddressCompanyName() || "";  
+  public getCompanyName(): string | undefined {
+    return this.getBillingCompanyName() || this.getAddressCompanyName() || "";
   }
 
   /**

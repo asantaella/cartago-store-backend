@@ -155,10 +155,18 @@ class OrderNotificationService {
           order.subtotal + order.tax_total || 0,
           currencyCode
         ),
-        tax_total: formatMoney(order.tax_total || 0, currencyCode),
+        tax_total: formatMoney(
+          invoiceOrder.getTaxes() || 0,
+          currencyCode,
+          false
+        ),
         tax_rate: taxRate,
-        discount_total: formatMoney(order.discount_total || 0, currencyCode),
-        total: formatMoney(order.total, currencyCode),
+        discount_total: formatMoney(
+          invoiceOrder.getDiscount() || 0,
+          currencyCode,
+          false
+        ),
+        total: formatMoney(invoiceOrder.getTotal() || 0, currencyCode, false),
         items: formattedItems,
 
         // URL para ver el pedido (si existe)
@@ -285,17 +293,23 @@ class OrderNotificationService {
         billing_address: formatAddress(order.billing_address),
         customer_company_name: invoiceOrder.getBillingCompanyName(),
         shipping_method: invoiceOrder.getShippingMethodName(),
-        shipping_total: formatMoney(order.shipping_total, currencyCode),
+        shipping_total: formatMoney(
+          invoiceOrder.getShipping() || 0,
+          currencyCode
+        ),
         currency: currencyCode,
         subtotal_ex_tax: formatMoney(order.subtotal, currencyCode),
         subtotal: formatMoney(
           order.subtotal + order.tax_total || 0,
           currencyCode
         ),
-        tax_total: formatMoney(order.tax_total || 0, currencyCode),
+        tax_total: formatMoney(invoiceOrder.getTaxes() || 0, currencyCode),
         tax_rate: taxRate,
-        discount_total: formatMoney(order.discount_total || 0, currencyCode),
-        total: formatMoney(order.total, currencyCode),
+        discount_total: formatMoney(
+          invoiceOrder.getDiscount() || 0,
+          currencyCode
+        ),
+        total: formatMoney(invoiceOrder.getTotal(), currencyCode),
         items: formattedItems,
       },
     };

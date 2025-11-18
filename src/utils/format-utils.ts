@@ -6,7 +6,7 @@ import { Address } from "@medusajs/medusa";
  * @param currency - Código de moneda (EUR, USD, etc.)
  * @returns Cadena formateada (ej: "10,99 €")
  */
-export const formatMoney = (amount: number, currency: string): string => {
+export const formatMoney = (amount: number, currency: string, medusaFormat: boolean = true): string => {
   if (!(typeof amount === "number") || !currency) {
     return "";
   }
@@ -15,7 +15,7 @@ export const formatMoney = (amount: number, currency: string): string => {
   const formatted = new Intl.NumberFormat("es-ES", {
     style: "currency",
     currency: currency?.toUpperCase(),
-  }).format(amount / 100);
+  }).format(amount / (medusaFormat ? 100 : 1));
 
   // Reemplazar cualquier espacio no separable (160) con un espacio normal (32)
   return formatted.replace(/\u00A0/g, " ");
