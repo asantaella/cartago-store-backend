@@ -24,6 +24,7 @@ export default class CartService extends MedusaCartService {
   }
 
   withTransaction(transactionManager: EntityManager): this {
+    console.log("[CART SERVICE] WITH TRANSACTIONS ###################");
     if (!transactionManager) {
       return this;
     }
@@ -51,6 +52,7 @@ export default class CartService extends MedusaCartService {
 
   // MÉTODO PRINCIPAL: retrieve que aplica pricing ANTES de devolver el cart
   async retrieve(cartId: string, options: any = {}): Promise<any> {
+    
     // Asegurar que siempre se incluyan las relaciones necesarias para draft orders
     const enrichedOptions = {
       ...options,
@@ -115,6 +117,7 @@ export default class CartService extends MedusaCartService {
   ): Promise<Cart> {
     // Solo aplicar conversión si es una actualización manual de precio
     // y no viene de nuestro sistema de persistencia
+
     try {
       let shouldConvert = false;
 
@@ -122,6 +125,16 @@ export default class CartService extends MedusaCartService {
         const cart = await this.retrieve(cartId, {
           relations: ["shipping_address"],
         });
+
+        // Evitar la ejecución si estamos editando un draft-order
+        // Los draft orders tienen type="draft_order"
+        if (cart.type === "draft_order") {
+          console.log(
+            "[CartService] Skipping price conversion for draft order"
+          );
+          return super.updateLineItem(cartId, lineItemId, update);
+        }
+     
         const postal = cart.shipping_address?.postal_code;
 
         if (
@@ -170,10 +183,10 @@ export default class CartService extends MedusaCartService {
         ],
       });
 
-      if (!cart) {
+      if (!cart || cart.type === "draft_order") {
         return;
       }
-
+     
       // Detectar cambio de zona y resetear shipping methods si es necesario
       const previousZone = cart.metadata?.previous_tax_zone as string;
       console.log(
