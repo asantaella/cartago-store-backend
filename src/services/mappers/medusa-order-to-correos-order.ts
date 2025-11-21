@@ -15,6 +15,7 @@ import {
   CORREOS_CUSTOMS_DATA_CONSTANTS,
   CORREOS_ADDRESSEE_CONSTANTS,
   CORREOS_SENDER_CONSTANTS,
+  TARIFF_NUMBER,
 } from "../../constants/correos-constants";
 
 import dotenv from "dotenv";
@@ -86,7 +87,7 @@ export class MedusaOrderToCorreosOrderMapper {
       description: item.title,
       netWeight: (item.variant?.weight || 10).toString(),
       netValue: (item.unit_price / 100).toFixed(2), // Convertir de centavos a euros
-      tariffNumber: "",
+      tariffNumber: TARIFF_NUMBER,
       countryOrigin: CORREOS_CUSTOMS_DATA_CONSTANTS.COUNTRY_ORIGIN,
     }));
   }

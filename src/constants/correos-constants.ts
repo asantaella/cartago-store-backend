@@ -27,6 +27,8 @@ export const CORREOS_PACKAGE_CONSTANTS = {
   DEFAULT_LENGTH: "100",
 } as const;
 
+export const TARIFF_NUMBER = "870821"
+
 /**
  * Constantes de contenido del paquete y aduanas
  */
