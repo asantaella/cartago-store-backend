@@ -2,6 +2,7 @@ import {
   type SubscriberConfig,
   type SubscriberArgs,
   ProductService,
+  ProductVariantService,
 } from "@medusajs/medusa";
 import AlgoliaService from "../services/algolia";
 
@@ -12,9 +13,19 @@ export default async function handleProductUpdate({
 }: SubscriberArgs<Record<string, any>>) {
   try {
     console.log(
-      `[PRODUCT-UPDATE] Evento ${eventName} recibido para producto ${data.id}`
+      `[PRODUCT-UPDATE] Evento ${eventName} recibido para producto ${JSON.stringify(
+        data
+      )}`
     );
-
+    const productId = data.product_id || data.id;
+    if (!productId) {
+      console.warn(
+        `[PRODUCT-UPDATE] No se encontró product_id en los datos del evento: ${JSON.stringify(
+          data
+        )}`
+      );
+      return;
+    }
     const productService: ProductService = container.resolve("productService");
     const algoliaService: AlgoliaService = container.resolve("algoliaService");
 
@@ -22,7 +33,7 @@ export default async function handleProductUpdate({
     setTimeout(async () => {
       try {
         // Recuperar el producto con todas las relaciones necesarias
-        const product = await productService.retrieve(data.id, {
+        const product = await productService.retrieve(productId, {
           relations: [
             "variants",
             "variants.prices",
@@ -38,11 +49,11 @@ export default async function handleProductUpdate({
         await algoliaService.syncProduct(product);
 
         console.log(
-          `[PRODUCT-UPDATE] Producto ${data.id} procesado correctamente`
+          `[PRODUCT-UPDATE] Producto ${productId} procesado correctamente`
         );
       } catch (error) {
         console.error(
-          `[PRODUCT-UPDATE] Error procesando producto ${data.id}:`,
+          `[PRODUCT-UPDATE] Error procesando producto ${productId}:`,
           error
         );
       }
@@ -53,6 +64,11 @@ export default async function handleProductUpdate({
 }
 
 export const config: SubscriberConfig = {
-  event: [ProductService.Events.CREATED, ProductService.Events.UPDATED],
+  event: [
+    ProductService.Events.CREATED,
+    ProductService.Events.UPDATED,
+    ProductVariantService.Events.UPDATED,
+    ProductVariantService.Events.CREATED,
+  ],
   context: { subscriberId: "product-update" },
 };
