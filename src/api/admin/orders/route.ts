@@ -100,43 +100,19 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   }
 };
 
-
 function calculateOrderTotal(order: any): {
   total: number;
   shippingTotal: number;
 } {
-  // 1. Calcular subtotal de items
-  const itemsSubtotal =
-    order.items?.reduce((acc: number, item: any) => {
-      return acc + item.total;
-    }, 0) || 0;
+  const shippingTotal = order.shipping_total || 0;
 
-  // 2. Calcular total de descuentos
-  const discountTotal = order.discount_total || 0;
-
-  // 3. Calcular total de envío desde shipping_methods
-  // En Medusa, el campo 'price' del shipping_method ya incluye descuentos aplicados
-  // (ej: si hay un descuento FREE_SHIPPING, price será 0)
-  const shippingTotal =
-    order.shipping_methods?.reduce((acc: number, method: any) => {
-      const methodTotal =
-        method.total !== undefined ? method.total : method.price || 0;
-      return acc + methodTotal;
-    }, 0) ||
-    order.shipping_total ||
-    0;
-
-  // 4. Calcular impuestos
-  const taxTotal = order.tax_total || 0;
-
-  // 5. Calcular total de gift cards
-  const giftCardTotal = order.gift_card_total || 0;
-
-  // Total = Subtotal + Envío - Descuentos + Impuestos - Gift Cards
-  const total = itemsSubtotal + shippingTotal - giftCardTotal;
+  let _total = order.total;
+  if (shippingTotal === 0) {
+    _total -= order.shipping_tax_total;
+  }
 
   return {
-    total: Math.max(0, Math.round(total)), 
+    total: _total,
     shippingTotal: Math.round(shippingTotal),
   };
 }

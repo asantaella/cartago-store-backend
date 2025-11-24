@@ -90,6 +90,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
 
     const itemParser = new AsyncParser(itemOpts);
     const customerParser = new AsyncParser(customerOpts);
+    
 
     const orderItems = order.items.map((item: LineItem) => ({
       ...item,

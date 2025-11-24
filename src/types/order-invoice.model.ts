@@ -252,29 +252,11 @@ export class OrderInvoice {
    * Calcula el descuento del pedido
    */
   public getDiscount(): number {
-    // Si hay discount_total disponible, usarlo
-    if (
-      this.order.discount_total !== undefined &&
-      this.order.discount_total !== null
-    ) {
-      return this.order.discount_total / 100;
-    }
+    const discount = this.order.discount_total || 0;
+    const giftCardTotal = this.order.gift_card_total || 0;
+    return (discount + giftCardTotal) / 100;
   }
 
-  /**
-   * Calcula el subtotal después de aplicar descuentos
-   */
-  public getSubtotalAfterDiscount(): number {
-    // Usar el subtotal - discount_total si está disponible
-    if (
-      this.order.discount_total !== undefined &&
-      this.order.discount_total !== null
-    ) {
-      return this.getSubtotal() - this.order.discount_total / 100;
-    }
-    // Si no, calcularlo manualmente (backwards compatibility)
-    return this.getSubtotal() - this.getDiscount();
-  }
 
   /**
    * Calcula el total del pedido, corrigiendo el problema con los descuentos en gastos de envío
