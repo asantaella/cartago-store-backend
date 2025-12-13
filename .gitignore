@@ -27,3 +27,7 @@ build
 !.yarn/sdks
 !.yarn/versions
 .vercel
+
+plugins/**/dist/*
+plugins/**/node_modules/*
+plugins/**/.yarn
