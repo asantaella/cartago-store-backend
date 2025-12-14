@@ -90,7 +90,6 @@ class ReceiptNotificationService extends AbstractNotificationService {
 
     const itemParser = new AsyncParser(itemOpts);
     const customerParser = new AsyncParser(customerOpts);
-    
 
     const orderItems = order.items.map((item: LineItem) => ({
       ...item,
@@ -197,8 +196,11 @@ class ReceiptNotificationService extends AbstractNotificationService {
 
     const csvContent = await this.buildCSVAttachment(order);
 
+    const adminEmail =
+      process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.com";
+
     const emailNotification = new EmailNotification({
-      toEmail: process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.com",
+      toEmail: adminEmail,
       toName: process.env.MAILERSEND_SENDER_NAME || "Cartago4x4",
       templateId: process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
       templateData,
@@ -220,11 +222,11 @@ class ReceiptNotificationService extends AbstractNotificationService {
       .catch(() => "failed");
 
     console.log(
-      `[NOTIFICATION] Successfully sent ${order.display_id} email to ${emailAdminParams.to[0].email}`
+      `[NOTIFICATION] Successfully sent ${order.display_id} email to ${adminEmail}`
     );
 
     return {
-      to: emailAdminParams.to[0].email,
+      to: adminEmail,
       status,
       data: emailAdminParams as unknown as Record<string, unknown>,
     };
