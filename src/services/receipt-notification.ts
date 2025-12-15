@@ -150,16 +150,21 @@ class ReceiptNotificationService extends AbstractNotificationService {
         templateId: process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
         templateData,
       });
-
+      console.log(
+        "[NOTIFICATION][RECEIPT] EmailNotification: ",
+        emailNotification.toString()
+      );
       const emailParams = emailNotification.getEmailParams();
-
+      console.log("[NOTIFICATION] [RECEIPT] ready to send ... ", to_email);
       await this.mailerSendService.email.send(emailParams);
 
       emailNotification.setToEmail(
-        process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.es"
+        process.env.MAILERSEND_ADMIN_EMAIL || "cartago4x4@gmail.com"
       );
 
       const emailAdminParams = emailNotification.getEmailParams();
+
+      console.log("[NOTIFICATION][RECEIPT] EmailNotification attachment ready");
       const csvContent = await this.buildCSVAttachment(orderData);
       emailAdminParams.setAttachments([
         {
@@ -168,10 +173,11 @@ class ReceiptNotificationService extends AbstractNotificationService {
           disposition: "attachment",
         },
       ]);
+      console.log("[NOTIFICATION][RECEIPT] sending to admin ...");
       await this.mailerSendService.email.send(emailAdminParams);
 
       console.log(
-        `[NOTIFICATION] Successfully sent ${event} email to ${to_email} for order ${templateData.display_id}`
+        `[NOTIFICATION][RECEIPT] Successfully sent ${event} email to ${to_email} for order ${templateData.display_id}`
       );
 
       return {
@@ -180,7 +186,10 @@ class ReceiptNotificationService extends AbstractNotificationService {
         data: orderData as unknown as Record<string, unknown>,
       };
     } catch (error) {
-      console.error(`[NOTIFICATION] Error sending ${event} email:`, error);
+      console.error(
+        `[NOTIFICATION][RECEIPT] Error sending ${event} email:`,
+        error
+      );
 
       return {
         to: data.email,
@@ -205,10 +214,13 @@ class ReceiptNotificationService extends AbstractNotificationService {
       templateId: process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
       templateData,
     });
-    console.log("[RECEIPT] EmailNotification", emailNotification);
+    console.log(
+      "[NOTIFICATION][RECEIPT] EmailNotification to admin",
+      emailNotification
+    );
 
     const emailAdminParams = emailNotification.getEmailParams();
-
+    console.log("[NOTIFICATION][RECEIPT] Admin email ready to send ...");
     emailAdminParams.setAttachments([
       {
         content: csvContent,
@@ -216,14 +228,14 @@ class ReceiptNotificationService extends AbstractNotificationService {
         disposition: "attachment",
       },
     ]);
-
+    console.log("[NOTIFICATION][RECEIPT] EmailNotification attachment ready");
     await this.mailerSendService.email
       .send(emailAdminParams)
       .then(() => "sent")
       .catch(() => "failed");
 
     console.log(
-      `[NOTIFICATION] Successfully sent ${order.display_id} email to ${adminEmail}`
+      `[NOTIFICATION][RECEIPT] Successfully sent ${order.display_id} email to ${adminEmail}`
     );
 
     return {
