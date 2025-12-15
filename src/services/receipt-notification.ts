@@ -205,6 +205,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
       templateId: process.env.MAILERSEND_ORDER_PLACED_TEMPLATE_ID,
       templateData,
     });
+    console.log("[RECEIPT] EmailNotification", emailNotification);
 
     const emailAdminParams = emailNotification.getEmailParams();
 

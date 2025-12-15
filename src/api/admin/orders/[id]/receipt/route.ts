@@ -6,6 +6,7 @@ import {
   OrderService,
 } from "@medusajs/medusa";
 import ReceiptNotificationService from "../../../../../services/receipt-notification";
+import OrderNotificationService from "../../../../../services/order-notification";
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
@@ -28,12 +29,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Obtener servicios del contenedor
     const orderService: OrderService = req.scope.resolve("orderService");
+    const orderNotificationService: OrderNotificationService =
+      req.scope.resolve("orderNotificationService");
     const receiptNotificationService: ReceiptNotificationService =
       req.scope.resolve("receiptNotificationService");
 
     // Verificar que la orden existe
-    const order = await orderService.retrieve(id);
-
+    const order: Order =
+      await orderNotificationService.retrieveOrderWithRelations(id);
     if (!order) {
       return res.status(404).json({
         message: "Order not found",
