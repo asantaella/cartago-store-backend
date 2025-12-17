@@ -29,6 +29,7 @@
     "start:server:production": "cross-env NODE_ENV='production' npm run start:server",
     "start:server:custom": "cross-env npm run build && node --preserve-symlinks --trace-warnings index.js",
     "dev": "cross-env npm run build:server && medusa develop",
+    "dev:staging": "cross-env DEBUG=medusa:* NODE_ENV='staging' npm run dev",
     "dev:admin": "medusa-admin develop",
     "dev:admin:staging": "cross-env NODE_ENV='staging' npm run dev:admin"
   },
