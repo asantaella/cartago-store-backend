@@ -29,9 +29,9 @@ export default async function handleCartUpdatesAgressive({
 
     const cartService = container.resolve("cartService");
 
-    // Verificar si el cart tiene dirección de envío
+    // Verificar si el cart tiene dirección de envío y cargar payment_sessions
     const cart = await cartService.retrieve(cartId, {
-      relations: ["shipping_address"],
+      relations: ["shipping_address", "payment_sessions", "payment"],
     });
 
     const postal = cart?.shipping_address?.postal_code;
@@ -72,7 +72,7 @@ export const config: SubscriberConfig = {
   // Escuchar múltiples eventos relacionados con carts y direcciones
   event: [
     "cart.customer_updated",
-   // "cart.updated",
+    "cart.updated",
     "cart.shipping_methods_updated",
     "cart.shipping_address_updated", // Cambios específicos de dirección de envío
     "address.created", // Nueva dirección creada

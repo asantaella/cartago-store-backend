@@ -71,7 +71,7 @@ class PostalPricingService extends TransactionBaseService {
   async applyPostalPricing(cartId: string): Promise<PricingTransaction | null> {
     return this.atomicPhase_(async (manager) => {
       try {
-        // Obtener el carrito con todas las relaciones necesarias
+        // Obtener el carrito con todas las relaciones necesarias, incluyendo payment_sessions
         const cartRepo = manager.getRepository("Cart");
         const cart = await cartRepo.findOne({
           where: { id: cartId },
@@ -82,6 +82,8 @@ class PostalPricingService extends TransactionBaseService {
             "shipping_address",
             "shipping_methods",
             "shipping_methods.shipping_option",
+            "payment_sessions",
+            "payment",
           ],
         });
 
@@ -103,7 +105,7 @@ class PostalPricingService extends TransactionBaseService {
 
         // Detectar cambio de zona y resetear shipping methods si es necesario
         const previousZone = cart.metadata?.previous_tax_zone as string;
-        const currentZone = territoryType
+        const currentZone = territoryType;
         const zoneChanged = previousZone && previousZone !== currentZone;
 
         const transaction: PricingTransaction = {

@@ -52,7 +52,6 @@ export default class CartService extends MedusaCartService {
 
   // MÉTODO PRINCIPAL: retrieve que aplica pricing ANTES de devolver el cart
   async retrieve(cartId: string, options: any = {}): Promise<any> {
-    
     // Asegurar que siempre se incluyan las relaciones necesarias para draft orders
     const enrichedOptions = {
       ...options,
@@ -134,7 +133,7 @@ export default class CartService extends MedusaCartService {
           );
           return super.updateLineItem(cartId, lineItemId, update);
         }
-     
+
         const postal = cart.shipping_address?.postal_code;
 
         if (
@@ -170,7 +169,7 @@ export default class CartService extends MedusaCartService {
     territoryType: string
   ): Promise<void> {
     return this.atomicPhase_(async (manager) => {
-      // Obtener el cart con relaciones necesarias
+      // Obtener el cart con relaciones necesarias, incluyendo payment_sessions
       const cartRepo = manager.getRepository("Cart");
       const cart = await cartRepo.findOne({
         where: { id: cartId },
@@ -180,13 +179,15 @@ export default class CartService extends MedusaCartService {
           "items.variant.prices",
           "shipping_methods",
           "shipping_methods.shipping_option",
+          "payment_sessions",
+          "payment",
         ],
       });
 
       if (!cart || cart.type === "draft_order") {
         return;
       }
-     
+
       // Detectar cambio de zona y resetear shipping methods si es necesario
       const previousZone = cart.metadata?.previous_tax_zone as string;
       console.log(
