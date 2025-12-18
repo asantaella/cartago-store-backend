@@ -2,14 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { MedusaRequest } from "@medusajs/medusa";
 import SpanishTaxService from "../../services/spanish-tax";
 
-// Helper para calcular precio sin IVA
-function calculatePriceWithoutTax(basePrice: number): number {
-  return Math.round((basePrice / 1.21) * 100) / 100;
+// Helper para calcular precio sin IVA (trabaja con centavos - integers)
+// Recibe precio en centavos (ej: 1000 = 10.00€) y devuelve precio sin IVA en centavos
+function calculatePriceWithoutTax(priceInCents: number): number {
+  return priceInCents / 1.21;
 }
 
-// Helper para calcular impuestos del IVA 21%
-function calculateTaxAmount(netPrice: number): number {
-  return Math.round(netPrice * 0.21 * 100) / 100;
+// Helper para calcular impuestos del IVA 21% (trabaja con centavos)
+function calculateTaxAmount(priceInCents: number): number {
+  return priceInCents * 0.21;
 }
 
 /**
@@ -48,80 +49,73 @@ export async function adjustCartPricingOnGet(
         `[cart-pricing-middleware] GET cart ${cart.id} - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
       );
 
-      // Si ya hemos ajustado precios para este cart y la condición de tax-exempt
-      // no ha cambiado, evitamos volver a aplicar la conversión (idempotencia)
-      if (cart.metadata?.prices_adjusted === true && isTaxExempt) {
-        console.log(
-          `[cart-pricing-middleware] GET cart ${cart.id} - prices already adjusted for tax-exempt, skipping recalculation`
-        );
-        return originalJson(body);
-      }
+      // Verificar si los precios ya fueron ajustados (persisted sin IVA en BD)
+      const pricesAlreadyAdjusted = cart.metadata?.prices_adjusted === true;
 
-      // Recalcular precios de line items (mantener unit_price original, calcular neto para subtotal)
+      // Recalcular precios de line items: mostrar subtotal neto en respuesta
       if (Array.isArray(cart.items) && cart.items.length > 0) {
         for (const item of cart.items) {
-          // Si el item ya contiene original_unit_price significa que ya fue ajustado antes
-          if (item.original_unit_price !== undefined) {
+          const unitPrice = item.unit_price;
+
+          if (typeof unitPrice !== "number" || !isFinite(unitPrice)) {
             continue;
           }
 
-          // Obtener precio base con IVA
-          let basePriceWithTax = item.unit_price;
+          let basePrice: number;
+          let priceWithTax: number;
 
-          if (
-            typeof basePriceWithTax !== "number" ||
-            !isFinite(basePriceWithTax)
-          ) {
-            continue;
+          if (pricesAlreadyAdjusted) {
+            // Los precios en BD ya están sin IVA (basePrice)
+            basePrice = unitPrice;
+            // Reconstruir priceWithTax para referencia
+            priceWithTax = Math.round(basePrice * 1.21 * 100) / 100;
+          } else {
+            // Los precios en BD tienen IVA, calcular basePrice
+            priceWithTax = unitPrice;
+            basePrice = calculatePriceWithoutTax(priceWithTax);
           }
 
-          // Calcular precio neto sin IVA
-          const netPrice = calculatePriceWithoutTax(basePriceWithTax);
+          // `netPrice` mantenemos como el precio CON IVA cuando se necesite referenciar
+          const netPrice = priceWithTax;
 
-          // Guardar el unit_price original (con IVA) para referencia
-          item.original_unit_price = basePriceWithTax;
-
-          // El subtotal se calcula sobre el precio neto
-          item.subtotal = netPrice * (item.quantity || 1);
+          // El subtotal se calcula sobre el precio SIN IVA (solo para mostrar)
+          item.subtotal = basePrice * (item.quantity || 1);
 
           console.log(
-            `[cart-pricing-middleware] GET item ${item.id} - unit_price (con IVA): ${basePriceWithTax}, subtotal (sin IVA): ${item.subtotal}`
+            `[cart-pricing-middleware] GET item ${item.id} - priceWithTax: ${priceWithTax}, basePrice: ${basePrice}, subtotal: ${item.subtotal}, alreadyAdjusted: ${pricesAlreadyAdjusted}`
           );
         }
       }
 
-      // Recalcular precios de shipping methods
+      // Mostrar precios de shipping netos en respuesta (no modificar en BD)
       if (
         Array.isArray(cart.shipping_methods) &&
         cart.shipping_methods.length > 0
       ) {
         for (const method of cart.shipping_methods) {
-          // Si el método de envío ya contiene original_price significa que ya fue ajustado
-          if ((method as any).original_shipping_price !== undefined) {
+          const shippingPrice = method.price;
+          if (typeof shippingPrice !== "number" || !isFinite(shippingPrice)) {
             continue;
           }
 
-          // Obtener precio de envío con IVA
-          const shippingPriceWithTax = method.price;
-          if (
-            typeof shippingPriceWithTax !== "number" ||
-            !isFinite(shippingPriceWithTax)
-          ) {
-            continue;
+          let baseShippingPrice: number;
+          let priceWithTax: number;
+
+          if (pricesAlreadyAdjusted) {
+            // Los precios en BD ya están sin IVA
+            baseShippingPrice = shippingPrice;
+            priceWithTax = Math.round(baseShippingPrice * 1.21 * 100) / 100;
+          } else {
+            // Los precios en BD tienen IVA
+            priceWithTax = shippingPrice;
+            baseShippingPrice = calculatePriceWithoutTax(priceWithTax);
           }
 
-          // Calcular precio neto sin IVA
-          const netShippingPrice =
-            calculatePriceWithoutTax(shippingPriceWithTax);
-
-          // Guardar el precio original (con IVA)
-          (method as any).original_shipping_price = shippingPriceWithTax;
-
-          // El precio de envío mostrado será el neto
-          method.price = netShippingPrice;
+          // Crear propiedad para mostrar el neto (no sobreescribir price)
+          (method as any).price_without_tax = baseShippingPrice;
 
           console.log(
-            `[cart-pricing-middleware] GET shipping - price (con IVA): ${shippingPriceWithTax}, price (sin IVA): ${netShippingPrice}`
+            `[cart-pricing-middleware] GET shipping - priceWithTax: ${priceWithTax}, baseShippingPrice: ${baseShippingPrice}, alreadyAdjusted: ${pricesAlreadyAdjusted}`
           );
         }
       }
@@ -134,12 +128,18 @@ export async function adjustCartPricingOnGet(
           0
         ) || 0;
 
-      // Envío neto (sin IVA)
+      // Envío neto (sin IVA) - calcular desde price con IVA
       const shippingTotal =
-        cart.shipping_methods?.reduce(
-          (sum: number, method: any) => sum + (method.price || 0),
-          0
-        ) || 0;
+        cart.shipping_methods?.reduce((sum: number, method: any) => {
+          const shippingWithTax = method.price;
+          if (
+            typeof shippingWithTax === "number" &&
+            isFinite(shippingWithTax)
+          ) {
+            return sum + calculatePriceWithoutTax(shippingWithTax);
+          }
+          return sum;
+        }, 0) || 0;
 
       cart.shipping_total = shippingTotal;
 
@@ -213,65 +213,73 @@ export async function adjustCartPricingOnPost(
         `[cart-pricing-middleware] POST cart ${cart.id} - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
       );
 
-      // Evitar recalcular si ya fue ajustado previamente para esta condición
-      if (cart.metadata?.prices_adjusted === true && isTaxExempt) {
-        console.log(
-          `[cart-pricing-middleware] POST cart ${cart.id} - prices already adjusted for tax-exempt, skipping recalculation`
-        );
-        return originalJson(body);
-      }
+      // Verificar si los precios ya fueron ajustados (persisted sin IVA en BD)
+      const pricesAlreadyAdjusted = cart.metadata?.prices_adjusted === true;
 
-      // Recalcular precios de line items (mantener unit_price original, calcular neto para subtotal)
+      // Recalcular precios de line items: mostrar subtotal neto en respuesta
       if (Array.isArray(cart.items) && cart.items.length > 0) {
         for (const item of cart.items) {
-          if (item.original_unit_price !== undefined) {
+          const unitPrice = item.unit_price;
+
+          if (typeof unitPrice !== "number" || !isFinite(unitPrice)) {
             continue;
           }
 
-          let basePriceWithTax = item.unit_price;
+          let basePrice: number;
+          let priceWithTax: number;
 
-          if (
-            typeof basePriceWithTax !== "number" ||
-            !isFinite(basePriceWithTax)
-          ) {
-            continue;
+          if (pricesAlreadyAdjusted) {
+            // Los precios en BD ya están sin IVA (basePrice)
+            basePrice = unitPrice;
+            // Reconstruir priceWithTax para referencia
+            priceWithTax = Math.round(basePrice * 1.21 * 100) / 100;
+          } else {
+            // Los precios en BD tienen IVA, calcular basePrice
+            priceWithTax = unitPrice;
+            basePrice = calculatePriceWithoutTax(priceWithTax);
           }
 
-          const netPrice = calculatePriceWithoutTax(basePriceWithTax);
-          item.original_unit_price = basePriceWithTax;
-          item.subtotal = netPrice * (item.quantity || 1);
+          // `netPrice` mantenemos como el precio CON IVA cuando se necesite referenciar
+          const netPrice = priceWithTax;
+
+          // El subtotal se calcula sobre el precio SIN IVA (solo para mostrar)
+          item.subtotal = basePrice * (item.quantity || 1);
 
           console.log(
-            `[cart-pricing-middleware] POST item ${item.id} - unit_price (con IVA): ${basePriceWithTax}, subtotal (sin IVA): ${item.subtotal}`
+            `[cart-pricing-middleware] POST item ${item.id} - priceWithTax: ${priceWithTax}, basePrice: ${basePrice}, subtotal: ${item.subtotal}, alreadyAdjusted: ${pricesAlreadyAdjusted}`
           );
         }
       }
 
-      // Recalcular precios de shipping methods
+      // Mostrar precios de shipping netos en respuesta (no modificar en BD)
       if (
         Array.isArray(cart.shipping_methods) &&
         cart.shipping_methods.length > 0
       ) {
         for (const method of cart.shipping_methods) {
-          if ((method as any).original_shipping_price !== undefined) {
+          const shippingPrice = method.price;
+          if (typeof shippingPrice !== "number" || !isFinite(shippingPrice)) {
             continue;
           }
 
-          const shippingPriceWithTax = method.price;
-          if (
-            typeof shippingPriceWithTax !== "number" ||
-            !isFinite(shippingPriceWithTax)
-          ) {
-            continue;
+          let baseShippingPrice: number;
+          let priceWithTax: number;
+
+          if (pricesAlreadyAdjusted) {
+            // Los precios en BD ya están sin IVA
+            baseShippingPrice = shippingPrice;
+            priceWithTax = Math.round(baseShippingPrice * 1.21 * 100) / 100;
+          } else {
+            // Los precios en BD tienen IVA
+            priceWithTax = shippingPrice;
+            baseShippingPrice = calculatePriceWithoutTax(priceWithTax);
           }
 
-          const netShippingPrice =
-            calculatePriceWithoutTax(shippingPriceWithTax);
-          (method as any).original_shipping_price = shippingPriceWithTax;
-          method.price = netShippingPrice;
+          // Crear propiedad para mostrar el neto (no sobreescribir price)
+          (method as any).price_without_tax = baseShippingPrice;
 
           console.log(
-            `[cart-pricing-middleware] POST shipping - price (con IVA): ${shippingPriceWithTax}, price (sin IVA): ${netShippingPrice}`
+            `[cart-pricing-middleware] POST shipping - priceWithTax: ${priceWithTax}, baseShippingPrice: ${baseShippingPrice}, alreadyAdjusted: ${pricesAlreadyAdjusted}`
           );
         }
       }
@@ -284,12 +292,18 @@ export async function adjustCartPricingOnPost(
           0
         ) || 0;
 
-      // Envío neto (sin IVA)
+      // Envío neto (sin IVA) - calcular desde price con IVA
       const shippingTotal =
-        cart.shipping_methods?.reduce(
-          (sum: number, method: any) => sum + (method.price || 0),
-          0
-        ) || 0;
+        cart.shipping_methods?.reduce((sum: number, method: any) => {
+          const shippingWithTax = method.price;
+          if (
+            typeof shippingWithTax === "number" &&
+            isFinite(shippingWithTax)
+          ) {
+            return sum + calculatePriceWithoutTax(shippingWithTax);
+          }
+          return sum;
+        }, 0) || 0;
 
       cart.shipping_total = shippingTotal;
 
@@ -352,6 +366,9 @@ export async function persistCartPricingOnComplete(
       "spanishTaxService"
     ) as SpanishTaxService;
 
+    // Interceptar la respuesta para ajustar totales de la orden creada
+    const originalJson = res.json.bind(res);
+
     // Ejecutar transacción ANTES de que el complete procese
     await manager.transaction(async (transactionalManager: any) => {
       const cartRepo = transactionalManager.getRepository("Cart");
@@ -398,48 +415,75 @@ export async function persistCartPricingOnComplete(
       let itemsUpdated = 0;
       let shippingUpdated = 0;
 
-      // Actualizar precios de line items
-      if (Array.isArray(cart.items) && cart.items.length > 0) {
-        for (const item of cart.items) {
-          const basePrice = item.variant?.prices?.find(
-            (p: any) => p.currency_code === "eur"
-          )?.amount;
+      // Para zonas tax-exempt: persistir unit_price neto (sin IVA) en BD
+      // Para zonas estándar: mantener unit_price bruto (con IVA) en BD
+      if (isTaxExempt) {
+        // Actualizar precios de line items: convertir de priceWithTax (con IVA) a basePrice (sin IVA)
+        if (Array.isArray(cart.items) && cart.items.length > 0) {
+          for (const item of cart.items) {
+            const priceWithTax = item.unit_price; // en centavos (ej: 1000 = 10.00€)
 
-          if (typeof basePrice === "number" && isFinite(basePrice)) {
-            const targetPrice = calculatePriceWithoutTax(basePrice);
+            if (typeof priceWithTax === "number" && isFinite(priceWithTax)) {
+              // Calcular basePrice (sin IVA) en centavos
+              const basePrice = calculatePriceWithoutTax(priceWithTax);
 
-            if (item.unit_price !== targetPrice) {
-              await lineItemRepo.update(item.id, {
-                unit_price: targetPrice,
-              });
-              itemsUpdated++;
+              // Solo actualizar si es diferente (tolerance de 1 centavo)
+              if (Math.abs(priceWithTax - basePrice) > 1) {
+                await lineItemRepo.update(item.id, {
+                  unit_price: basePrice, // entero en centavos
+                });
+                itemsUpdated++;
+                console.log(
+                  `[cart-pricing-middleware] Persisted item ${
+                    item.id
+                  }: priceWithTax ${priceWithTax} cents (${(
+                    priceWithTax / 100
+                  ).toFixed(2)}€) → basePrice ${basePrice} cents (${(
+                    basePrice / 100
+                  ).toFixed(2)}€)`
+                );
+              }
             }
           }
         }
-      }
 
-      // Actualizar precios de shipping methods
-      if (
-        Array.isArray(cart.shipping_methods) &&
-        cart.shipping_methods.length > 0
-      ) {
-        for (const method of cart.shipping_methods) {
-          const basePrice = (method as any)?.shipping_option?.amount;
+        // Actualizar precios de shipping methods: convertir de priceWithTax a basePrice
+        if (
+          Array.isArray(cart.shipping_methods) &&
+          cart.shipping_methods.length > 0
+        ) {
+          for (const method of cart.shipping_methods) {
+            const priceWithTax = method.price; // en centavos
 
-          if (typeof basePrice === "number" && isFinite(basePrice)) {
-            const targetPrice = calculatePriceWithoutTax(basePrice);
+            if (typeof priceWithTax === "number" && isFinite(priceWithTax)) {
+              // Calcular basePrice (sin IVA) en centavos
+              const baseShippingPrice = calculatePriceWithoutTax(priceWithTax);
 
-            if (method.price !== targetPrice) {
-              await shippingMethodRepo.update(method.id, {
-                price: targetPrice,
-              });
-              shippingUpdated++;
+              // Solo actualizar si es diferente (tolerance de 1 centavo)
+              if (Math.abs(priceWithTax - baseShippingPrice) > 1) {
+                await shippingMethodRepo.update(method.id, {
+                  price: baseShippingPrice, // entero en centavos
+                });
+                shippingUpdated++;
+                console.log(
+                  `[cart-pricing-middleware] Persisted shipping ${
+                    method.id
+                  }: priceWithTax ${priceWithTax} cents (${(
+                    priceWithTax / 100
+                  ).toFixed(2)}€) → basePrice ${baseShippingPrice} cents (${(
+                    baseShippingPrice / 100
+                  ).toFixed(2)}€)`
+                );
+              }
             }
           }
         }
       }
 
       // Actualizar metadata del carrito
+      // NOTA: Los totales (subtotal, shipping_total, tax_total, total) se calculan
+      // dinámicamente en Medusa desde los line items y shipping methods.
+      // No se pueden persistir directamente en el Cart.
       await cartRepo.update(cart.id, {
         metadata: {
           ...cart.metadata,
@@ -449,9 +493,70 @@ export async function persistCartPricingOnComplete(
       });
 
       console.log(
-        `[cart-pricing-middleware] Persisted cart ${cartId}: items=${itemsUpdated}, shipping=${shippingUpdated}`
+        `[cart-pricing-middleware] Persisted cart ${cartId}: territory=${territoryType}, tax_exempt=${isTaxExempt}, items=${itemsUpdated}, shipping=${shippingUpdated}`
       );
     });
+
+    // Interceptar respuesta para ajustar totales de la orden
+    res.json = function (body: any) {
+      try {
+        if (body && body.type === "order" && body.data) {
+          const order = body.data;
+
+          // Si la orden tiene metadata de precios ajustados, recalcular totales
+          if (
+            order.metadata?.prices_adjusted === true ||
+            order.cart?.metadata?.prices_adjusted === true
+          ) {
+            console.log(
+              `[cart-pricing-middleware] Adjusting order ${order.id} totals for tax-exempt zone`
+            );
+
+            // Recalcular subtotal desde items (valores en centavos)
+            if (Array.isArray(order.items) && order.items.length > 0) {
+              const subtotal = order.items.reduce(
+                (sum: number, item: any) =>
+                  sum + (item.unit_price * item.quantity || 0),
+                0
+              );
+              order.subtotal = subtotal; // ya es integer en centavos
+            }
+
+            // Recalcular shipping_total desde shipping_methods (valores en centavos)
+            if (
+              Array.isArray(order.shipping_methods) &&
+              order.shipping_methods.length > 0
+            ) {
+              const shippingTotal = order.shipping_methods.reduce(
+                (sum: number, method: any) => sum + (method.price || 0),
+                0
+              );
+              order.shipping_total = shippingTotal; // ya es integer en centavos
+            }
+
+            // tax_total debe ser 0 para tax-exempt
+            order.tax_total = 0;
+
+            // Recalcular total
+            order.total =
+              (order.subtotal || 0) +
+              (order.shipping_total || 0) +
+              (order.tax_total || 0) -
+              (order.discount_total || 0);
+
+            console.log(
+              `[cart-pricing-middleware] Order ${order.id} adjusted totals: subtotal=${order.subtotal}, shipping=${order.shipping_total}, tax=${order.tax_total}, total=${order.total}`
+            );
+          }
+        }
+      } catch (error) {
+        console.error(
+          "[cart-pricing-middleware] Error adjusting order response:",
+          (error as any).message
+        );
+      }
+      return originalJson(body);
+    };
 
     // Continuar con el proceso de complete
     next();
