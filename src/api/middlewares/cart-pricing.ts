@@ -376,7 +376,7 @@ export async function persistCartPricingOnComplete(
       const shippingMethodRepo =
         transactionalManager.getRepository("ShippingMethod");
 
-      // Obtener cart con relaciones
+      // Obtener cart con relaciones, incluyendo payment_sessions y payment
       const cart = await cartRepo.findOne({
         where: { id: cartId },
         relations: [
@@ -386,6 +386,8 @@ export async function persistCartPricingOnComplete(
           "shipping_methods",
           "shipping_methods.shipping_option",
           "shipping_address",
+          "payment_sessions",
+          "payment",
         ],
       });
 
