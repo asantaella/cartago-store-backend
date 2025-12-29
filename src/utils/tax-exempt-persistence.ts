@@ -55,6 +55,8 @@ export async function restoreOriginalPrices(
         "shipping_address",
         "shipping_methods",
         "shipping_methods.shipping_option",
+        "payment_sessions",
+        "payment",
       ],
     });
 
@@ -88,7 +90,7 @@ export async function restoreOriginalPrices(
               console.log(
                 `[TaxExemptPersistence] *** RESTORING item ${item.id} unit_price := ${originalPrice} (WITH TAX, current=${item.unit_price}) ***`
               );
-            
+
               const lineItemRepo = manager.getRepository(LineItem);
               await lineItemRepo.update(item.id, { unit_price: originalPrice });
               updated = true;
@@ -171,6 +173,8 @@ export async function persistTaxExemptPrices(
         "shipping_address",
         "shipping_methods",
         "shipping_methods.shipping_option",
+        "payment_sessions",
+        "payment",
       ],
     });
 
@@ -182,7 +186,7 @@ export async function persistTaxExemptPrices(
       console.log(
         `[TaxExemptPersistence] *** NOT TAX EXEMPT - postal: "${postal}", territory: "${territoryType}" - calling restoreOriginalPrices ***`
       );
- 
+
       const result = await restoreOriginalPrices(container, cartId);
       console.log(
         `[TaxExemptPersistence] *** restoreOriginalPrices returned: ${result} ***`
