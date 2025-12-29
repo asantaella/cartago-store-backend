@@ -71,44 +71,42 @@ export async function adjustCartPricingOnPost(
                 }
 
                 // Calcular basePrice (sin IVA) dinámicamente
-                const basePrice = calculatePriceWithoutTax(priceWithTax);
+                const basePrice = Math.round(calculatePriceWithoutTax(priceWithTax));
 
-                // Calcular descuento ajustado (si existe)
+                // El descuento NO se modifica - ya está calculado sobre precio sin IVA
+                // No es necesario ajustarlo porque es correcto para ambas regiones
                 const discountTotal = item.discount_total || 0;
-                const adjustedDiscount = discountTotal > 0 
-                  ? adjustDiscountForTaxExempt(discountTotal)
-                  : 0;
 
-                // Guardar en metadata los precios ajustados (sin modificar unit_price)
+                // Guardar en metadata solo el precio ajustado
                 const dbItem = await lineItemRepo.findOne({
                   where: { id: item.id },
                 });
                 if (dbItem) {
+                  // Actualizar metadata solo con el precio ajustado
                   dbItem.metadata = {
                     ...dbItem.metadata,
                     adjusted_unit_price: basePrice,
-                    adjusted_discount_total: adjustedDiscount,
                   };
+                  
+                  // NO modificar discount_total - mantener el valor original
+                  
                   await lineItemRepo.save(dbItem);
 
                   console.log(
                     `[cart-pricing-middleware] POST item ${
                       item.id
-                    } - Saved adjusted_unit_price: ${Math.round(
-                      basePrice
-                    )} cents (${(basePrice / 100).toFixed(
-                      2
-                    )}€) and adjusted_discount: ${Math.round(
-                      adjustedDiscount
-                    )} cents (${(adjustedDiscount / 100).toFixed(
+                    } - Saved adjusted_unit_price: ${basePrice} cents (${(
+                      basePrice / 100
+                    ).toFixed(
                       2
                     )}€) in metadata. Original: unit_price ${priceWithTax} cents, discount ${discountTotal} cents`
                   );
                 }
 
-                // Mostrar el subtotal ajustado en la respuesta (unit_price - descuento) * cantidad
-                const adjustedSubtotal = (basePrice - adjustedDiscount) * (item.quantity || 1);
-                item.subtotal = adjustedSubtotal;
+                // Mostrar el subtotal ajustado en la respuesta (sin descuentos, solo precio)
+                item.subtotal = basePrice * (item.quantity || 1);
+                
+                // NO modificar item.discount_total - mantener el valor original de BD
               }
             }
 
@@ -127,8 +125,9 @@ export async function adjustCartPricingOnPost(
                 }
 
                 // Calcular basePrice (sin IVA) dinámicamente
-                const baseShippingPrice =
-                  calculatePriceWithoutTax(priceWithTax);
+                const baseShippingPrice = Math.round(
+                  calculatePriceWithoutTax(priceWithTax)
+                );
 
                 // Guardar en data el precio ajustado (no modificar price)
                 const dbMethod = await shippingMethodRepo.findOne({
@@ -181,8 +180,18 @@ export async function adjustCartPricingOnPost(
 
             cart.shipping_total = shippingTotal;
             cart.tax_total = 0;
+            
+            // Calcular el descuento total del carrito
+            const totalDiscount =
+              cart.items?.reduce(
+                (sum: number, it: any) => sum + (it.discount_total || 0),
+                0
+              ) || 0;
+            cart.discount_total = totalDiscount;
+            
+            // Total = subtotal + shipping - descuentos
             cart.total =
-              cart.subtotal + shippingTotal;
+              cart.subtotal + shippingTotal - totalDiscount;
             cart.metadata = {
               ...cart.metadata,
               territory_type: territoryType,

@@ -64,18 +64,12 @@ export async function adjustCartPricingOnGet(
             ? adjustedPrice
             : calculatePriceWithoutTax(priceWithTax);
 
-          // Usar descuento ajustado desde metadata si existe, sino calcularlo
-          const adjustedDiscount = item.metadata?.adjusted_discount_total;
-          const discountToApply =
-            adjustedDiscount !== undefined
-              ? adjustedDiscount
-              : item.discount_total
-              ? adjustDiscountForTaxExempt(item.discount_total)
-              : 0;
+          // El descuento NO se modifica - mantener el valor original de BD
+          // El descuento en BD ya está calculado sobre precio sin IVA (0.25€)
+          // y es correcto para ambas regiones
 
-          // El subtotal se calcula sobre el precio SIN IVA, menos el descuento ajustado
-          const priceAfterDiscount = basePrice - discountToApply;
-          item.subtotal = priceAfterDiscount * (item.quantity || 1);
+          // El subtotal se calcula sobre el precio SIN IVA (sin descuentos)
+          item.subtotal = basePrice * (item.quantity || 1);
 
           console.log(
             `[cart-pricing-middleware] GET item ${
@@ -84,9 +78,11 @@ export async function adjustCartPricingOnGet(
               priceWithTax / 100
             ).toFixed(2)}€), basePrice: ${Math.round(basePrice)} cents (${(
               basePrice / 100
-            ).toFixed(2)}€), discount: ${Math.round(discountToApply)} cents (${(
-              discountToApply / 100
-            ).toFixed(2)}€), subtotal: ${item.subtotal} cents`
+            ).toFixed(2)}€), discount: ${item.discount_total} cents (${(
+              (item.discount_total || 0) / 100
+            ).toFixed(2)}€), subtotal: ${Math.round(item.subtotal)} cents (${(
+              item.subtotal / 100
+            ).toFixed(2)}€)`
           );
         }
       }
@@ -152,9 +148,16 @@ export async function adjustCartPricingOnGet(
       // Tax total es 0 para zonas tax-exempt
       cart.tax_total = 0;
 
-      // Total = subtotal neto (que ya incluye descuentos) + envío neto
-      // NO restamos discount_total aquí porque ya está aplicado en item.subtotal
-      cart.total = cart.subtotal + shippingTotal;
+      // Calcular el descuento total del carrito
+      const totalDiscount =
+        cart.items?.reduce(
+          (sum: number, item: any) => sum + (item.discount_total || 0),
+          0
+        ) || 0;
+      cart.discount_total = totalDiscount;
+
+      // Total = subtotal neto + envío neto - descuento total
+      cart.total = cart.subtotal + shippingTotal - totalDiscount;
 
       // Marcar en metadata el territorio (solo para información)
       cart.metadata = {

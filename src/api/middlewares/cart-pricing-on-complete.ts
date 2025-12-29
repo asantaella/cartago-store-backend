@@ -95,13 +95,22 @@ export async function persistCartPricingOnComplete(
         `[cart-pricing-middleware] Cart ${cartId} - pricesAlreadyAdjusted=${pricesAlreadyAdjusted}`
       );
 
-      // Para zonas tax-exempt: obtener precio ajustado desde metadata y persistir en unit_price
+      // Para zonas tax-exempt: calcular y persistir precios ajustados
       if (!pricesAlreadyAdjusted) {
-        // Actualizar precios de line items: obtener adjusted_unit_price desde metadata
+        // Actualizar precios de line items: obtener adjusted_unit_price desde metadata o calcularlo
         if (Array.isArray(cart.items) && cart.items.length > 0) {
           for (const item of cart.items) {
-            const adjustedPrice = item.metadata?.adjusted_unit_price;
-            const adjustedDiscount = item.metadata?.adjusted_discount_total;
+            // Obtener precio ajustado desde metadata o calcularlo
+            let adjustedPrice = item.metadata?.adjusted_unit_price;
+            
+            if (!adjustedPrice || typeof adjustedPrice !== "number") {
+              // Si no está en metadata, calcularlo ahora
+              const priceWithTax = item.unit_price;
+              adjustedPrice = Math.round(priceWithTax / 1.21);
+              console.log(
+                `[cart-pricing-middleware] WARNING: Item ${item.id} has no adjusted_unit_price in metadata, calculating now: ${adjustedPrice} cents`
+              );
+            }
 
             if (
               adjustedPrice &&
@@ -109,7 +118,6 @@ export async function persistCartPricingOnComplete(
               isFinite(adjustedPrice)
             ) {
               const originalPrice = item.unit_price;
-              const originalDiscount = item.discount_total || 0;
 
               // Actualizar unit_price con el precio ajustado
               // Solo actualizar si es diferente (tolerance de 1 centavo)
@@ -127,45 +135,32 @@ export async function persistCartPricingOnComplete(
                 );
               }
 
-              // Actualizar descuento con el descuento ajustado si existe
-              if (
-                adjustedDiscount !== undefined &&
-                typeof adjustedDiscount === "number" &&
-                isFinite(adjustedDiscount) &&
-                Math.abs(originalDiscount - adjustedDiscount) > 1
-              ) {
-                item.discount_total = adjustedDiscount;
-
-                console.log(
-                  `[cart-pricing-middleware] Persisted item ${
-                    item.id
-                  } discount: originalDiscount ${originalDiscount} cents (${(
-                    originalDiscount / 100
-                  ).toFixed(
-                    2
-                  )}€) → adjustedDiscount ${adjustedDiscount} cents (${(
-                    adjustedDiscount / 100
-                  ).toFixed(2)}€)`
-                );
-              }
+              // NO modificar discount_total - debe mantener el valor original
+              // El descuento es el mismo en ambas regiones
 
               await lineItemRepo.save(item);
               itemsUpdated++;
-            } else {
-              console.log(
-                `[cart-pricing-middleware] WARNING: Item ${item.id} has no adjusted_unit_price in metadata`
-              );
             }
           }
         }
 
-        // Actualizar precios de shipping methods: obtener adjusted_price desde data
+        // Actualizar precios de shipping methods: obtener adjusted_price desde data o calcularlo
         if (
           Array.isArray(cart.shipping_methods) &&
           cart.shipping_methods.length > 0
         ) {
           for (const method of cart.shipping_methods) {
-            const adjustedShippingPrice = method.data?.adjusted_price;
+            // Obtener precio ajustado desde data o calcularlo
+            let adjustedShippingPrice = method.data?.adjusted_price;
+            
+            if (!adjustedShippingPrice || typeof adjustedShippingPrice !== "number") {
+              // Si no está en data, calcularlo ahora
+              const priceWithTax = method.price;
+              adjustedShippingPrice = Math.round(priceWithTax / 1.21);
+              console.log(
+                `[cart-pricing-middleware] WARNING: Shipping method ${method.id} has no adjusted_price in data, calculating now: ${adjustedShippingPrice} cents`
+              );
+            }
 
             if (
               adjustedShippingPrice &&
@@ -192,10 +187,6 @@ export async function persistCartPricingOnComplete(
                   ).toFixed(2)}€)`
                 );
               }
-            } else {
-              console.log(
-                `[cart-pricing-middleware] WARNING: Shipping method ${method.id} has no adjusted_price in data`
-              );
             }
           }
         }
@@ -220,20 +211,19 @@ export async function persistCartPricingOnComplete(
         // (independientemente de si ya se persistieron o no en unit_price)
         const newSubtotal = cart.items.reduce((sum, item) => {
           const adjustedPrice = item.metadata?.adjusted_unit_price;
-          const adjustedDiscount = item.metadata?.adjusted_discount_total;
 
           const price =
             adjustedPrice && typeof adjustedPrice === "number"
               ? adjustedPrice
               : item.unit_price;
 
-          const discount =
-            adjustedDiscount !== undefined &&
-            typeof adjustedDiscount === "number"
-              ? adjustedDiscount
-              : item.discount_total || 0;
+          // El subtotal NO incluye descuentos
+          return sum + price * item.quantity;
+        }, 0);
 
-          return sum + (price - discount) * item.quantity;
+        // Calcular descuento total - usar el valor de BD sin ajustes
+        const totalDiscount = cart.items.reduce((sum, item) => {
+          return sum + (item.discount_total || 0);
         }, 0);
 
         const newShippingTotal = cart.shipping_methods.reduce((sum, method) => {
@@ -245,10 +235,10 @@ export async function persistCartPricingOnComplete(
           return sum + price;
         }, 0);
 
-        const newTotal = newSubtotal + newShippingTotal;
+        const newTotal = newSubtotal + newShippingTotal - totalDiscount;
 
         console.log(
-          `[cart-pricing-middleware] Updating payment sessions. Subtotal: ${newSubtotal} cents, Shipping: ${newShippingTotal} cents, New total: ${newTotal} cents (${(
+          `[cart-pricing-middleware] Updating payment sessions. Subtotal: ${newSubtotal} cents, Shipping: ${newShippingTotal} cents, Discount: ${totalDiscount} cents, New total: ${newTotal} cents (${(
             newTotal / 100
           ).toFixed(2)}€)`
         );
