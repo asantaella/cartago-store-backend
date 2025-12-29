@@ -4,6 +4,7 @@ import SpanishTaxService from "../../services/spanish-tax";
 import {
   calculatePriceWithoutTax,
   calculateTaxAmount,
+  adjustDiscountForTaxExempt,
 } from "./cart-pricing-helpers";
 
 /**
@@ -72,14 +73,21 @@ export async function adjustCartPricingOnPost(
                 // Calcular basePrice (sin IVA) dinámicamente
                 const basePrice = calculatePriceWithoutTax(priceWithTax);
 
-                // Guardar en metadata el precio ajustado (sin modificar unit_price)
+                // Calcular descuento ajustado (si existe)
+                const discountTotal = item.discount_total || 0;
+                const adjustedDiscount = discountTotal > 0 
+                  ? adjustDiscountForTaxExempt(discountTotal)
+                  : 0;
+
+                // Guardar en metadata los precios ajustados (sin modificar unit_price)
                 const dbItem = await lineItemRepo.findOne({
                   where: { id: item.id },
                 });
                 if (dbItem) {
                   dbItem.metadata = {
                     ...dbItem.metadata,
-                    adjusted_unit_price: Math.round(basePrice),
+                    adjusted_unit_price: basePrice,
+                    adjusted_discount_total: adjustedDiscount,
                   };
                   await lineItemRepo.save(dbItem);
 
@@ -90,12 +98,17 @@ export async function adjustCartPricingOnPost(
                       basePrice
                     )} cents (${(basePrice / 100).toFixed(
                       2
-                    )}€) in metadata. Original unit_price: ${priceWithTax} cents`
+                    )}€) and adjusted_discount: ${Math.round(
+                      adjustedDiscount
+                    )} cents (${(adjustedDiscount / 100).toFixed(
+                      2
+                    )}€) in metadata. Original: unit_price ${priceWithTax} cents, discount ${discountTotal} cents`
                   );
                 }
 
-                // Mostrar el subtotal ajustado en la respuesta
-                item.subtotal = basePrice * (item.quantity || 1);
+                // Mostrar el subtotal ajustado en la respuesta (unit_price - descuento) * cantidad
+                const adjustedSubtotal = (basePrice - adjustedDiscount) * (item.quantity || 1);
+                item.subtotal = adjustedSubtotal;
               }
             }
 
@@ -124,7 +137,7 @@ export async function adjustCartPricingOnPost(
                 if (dbMethod) {
                   dbMethod.data = {
                     ...dbMethod.data,
-                    adjusted_price: Math.round(baseShippingPrice),
+                    adjusted_price: baseShippingPrice,
                   };
                   await shippingMethodRepo.save(dbMethod);
 
@@ -169,7 +182,7 @@ export async function adjustCartPricingOnPost(
             cart.shipping_total = shippingTotal;
             cart.tax_total = 0;
             cart.total =
-              cart.subtotal + shippingTotal - (cart.discount_total || 0);
+              cart.subtotal + shippingTotal;
             cart.metadata = {
               ...cart.metadata,
               territory_type: territoryType,

@@ -1,6 +1,7 @@
 import { NextFunction, Response } from "express";
 import { MedusaRequest } from "@medusajs/medusa";
 import SpanishTaxService from "../../services/spanish-tax";
+import { adjustDiscountForTaxExempt } from "./cart-pricing-helpers";
 
 /**
  * Middleware que persiste los precios recalculados antes de completar la orden
@@ -100,6 +101,7 @@ export async function persistCartPricingOnComplete(
         if (Array.isArray(cart.items) && cart.items.length > 0) {
           for (const item of cart.items) {
             const adjustedPrice = item.metadata?.adjusted_unit_price;
+            const adjustedDiscount = item.metadata?.adjusted_discount_total;
 
             if (
               adjustedPrice &&
@@ -107,13 +109,13 @@ export async function persistCartPricingOnComplete(
               isFinite(adjustedPrice)
             ) {
               const originalPrice = item.unit_price;
+              const originalDiscount = item.discount_total || 0;
 
+              // Actualizar unit_price con el precio ajustado
               // Solo actualizar si es diferente (tolerance de 1 centavo)
               if (Math.abs(originalPrice - adjustedPrice) > 1) {
                 item.unit_price = adjustedPrice;
-                await lineItemRepo.save(item);
 
-                itemsUpdated++;
                 console.log(
                   `[cart-pricing-middleware] Persisted item ${
                     item.id
@@ -124,6 +126,31 @@ export async function persistCartPricingOnComplete(
                   ).toFixed(2)}€)`
                 );
               }
+
+              // Actualizar descuento con el descuento ajustado si existe
+              if (
+                adjustedDiscount !== undefined &&
+                typeof adjustedDiscount === "number" &&
+                isFinite(adjustedDiscount) &&
+                Math.abs(originalDiscount - adjustedDiscount) > 1
+              ) {
+                item.discount_total = adjustedDiscount;
+
+                console.log(
+                  `[cart-pricing-middleware] Persisted item ${
+                    item.id
+                  } discount: originalDiscount ${originalDiscount} cents (${(
+                    originalDiscount / 100
+                  ).toFixed(
+                    2
+                  )}€) → adjustedDiscount ${adjustedDiscount} cents (${(
+                    adjustedDiscount / 100
+                  ).toFixed(2)}€)`
+                );
+              }
+
+              await lineItemRepo.save(item);
+              itemsUpdated++;
             } else {
               console.log(
                 `[cart-pricing-middleware] WARNING: Item ${item.id} has no adjusted_unit_price in metadata`
@@ -193,11 +220,20 @@ export async function persistCartPricingOnComplete(
         // (independientemente de si ya se persistieron o no en unit_price)
         const newSubtotal = cart.items.reduce((sum, item) => {
           const adjustedPrice = item.metadata?.adjusted_unit_price;
+          const adjustedDiscount = item.metadata?.adjusted_discount_total;
+
           const price =
             adjustedPrice && typeof adjustedPrice === "number"
               ? adjustedPrice
               : item.unit_price;
-          return sum + price * item.quantity;
+
+          const discount =
+            adjustedDiscount !== undefined &&
+            typeof adjustedDiscount === "number"
+              ? adjustedDiscount
+              : item.discount_total || 0;
+
+          return sum + (price - discount) * item.quantity;
         }, 0);
 
         const newShippingTotal = cart.shipping_methods.reduce((sum, method) => {

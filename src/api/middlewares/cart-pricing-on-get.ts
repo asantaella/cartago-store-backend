@@ -4,6 +4,7 @@ import SpanishTaxService from "../../services/spanish-tax";
 import {
   calculatePriceWithoutTax,
   calculateTaxAmount,
+  adjustDiscountForTaxExempt,
 } from "./cart-pricing-helpers";
 
 /**
@@ -63,8 +64,18 @@ export async function adjustCartPricingOnGet(
             ? adjustedPrice
             : calculatePriceWithoutTax(priceWithTax);
 
-          // El subtotal se calcula sobre el precio SIN IVA (solo para mostrar)
-          item.subtotal = basePrice * (item.quantity || 1);
+          // Usar descuento ajustado desde metadata si existe, sino calcularlo
+          const adjustedDiscount = item.metadata?.adjusted_discount_total;
+          const discountToApply =
+            adjustedDiscount !== undefined
+              ? adjustedDiscount
+              : item.discount_total
+              ? adjustDiscountForTaxExempt(item.discount_total)
+              : 0;
+
+          // El subtotal se calcula sobre el precio SIN IVA, menos el descuento ajustado
+          const priceAfterDiscount = basePrice - discountToApply;
+          item.subtotal = priceAfterDiscount * (item.quantity || 1);
 
           console.log(
             `[cart-pricing-middleware] GET item ${
@@ -73,6 +84,8 @@ export async function adjustCartPricingOnGet(
               priceWithTax / 100
             ).toFixed(2)}€), basePrice: ${Math.round(basePrice)} cents (${(
               basePrice / 100
+            ).toFixed(2)}€), discount: ${Math.round(discountToApply)} cents (${(
+              discountToApply / 100
             ).toFixed(2)}€), subtotal: ${item.subtotal} cents`
           );
         }
@@ -139,8 +152,9 @@ export async function adjustCartPricingOnGet(
       // Tax total es 0 para zonas tax-exempt
       cart.tax_total = 0;
 
-      // Total = subtotal neto + envío neto - descuentos
-      cart.total = cart.subtotal + shippingTotal - (cart.discount_total || 0);
+      // Total = subtotal neto (que ya incluye descuentos) + envío neto
+      // NO restamos discount_total aquí porque ya está aplicado en item.subtotal
+      cart.total = cart.subtotal + shippingTotal;
 
       // Marcar en metadata el territorio (solo para información)
       cart.metadata = {
