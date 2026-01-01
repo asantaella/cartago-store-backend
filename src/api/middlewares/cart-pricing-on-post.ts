@@ -71,7 +71,7 @@ export async function adjustCartPricingOnPost(
                 }
 
                 // Calcular basePrice (sin IVA) dinámicamente
-                const basePrice = Math.round(calculatePriceWithoutTax(priceWithTax));
+                const basePrice = calculatePriceWithoutTax(priceWithTax);
 
                 // El descuento NO se modifica - ya está calculado sobre precio sin IVA
                 // No es necesario ajustarlo porque es correcto para ambas regiones
@@ -87,9 +87,9 @@ export async function adjustCartPricingOnPost(
                     ...dbItem.metadata,
                     adjusted_unit_price: basePrice,
                   };
-                  
+
                   // NO modificar discount_total - mantener el valor original
-                  
+
                   await lineItemRepo.save(dbItem);
 
                   console.log(
@@ -105,7 +105,7 @@ export async function adjustCartPricingOnPost(
 
                 // Mostrar el subtotal ajustado en la respuesta (sin descuentos, solo precio)
                 item.subtotal = basePrice * (item.quantity || 1);
-                
+
                 // NO modificar item.discount_total - mantener el valor original de BD
               }
             }
@@ -180,7 +180,7 @@ export async function adjustCartPricingOnPost(
 
             cart.shipping_total = shippingTotal;
             cart.tax_total = 0;
-            
+
             // Calcular el descuento total del carrito
             const totalDiscount =
               cart.items?.reduce(
@@ -188,10 +188,9 @@ export async function adjustCartPricingOnPost(
                 0
               ) || 0;
             cart.discount_total = totalDiscount;
-            
+
             // Total = subtotal + shipping - descuentos
-            cart.total =
-              cart.subtotal + shippingTotal - totalDiscount;
+            cart.total = cart.subtotal + shippingTotal - totalDiscount;
             cart.metadata = {
               ...cart.metadata,
               territory_type: territoryType,
