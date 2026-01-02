@@ -67,9 +67,7 @@ export function adjustDraftOrderPricingOnGet(
 
           // Ajustar el descuento para zonas tax-exempt (dividir entre 1.21)
           if (item.discount_total && typeof item.discount_total === "number") {
-            item.discount_total = Math.round(
-              calculatePriceWithoutTax(item.discount_total)
-            );
+            item.discount_total = calculatePriceWithoutTax(item.discount_total);
           }
         }
       }

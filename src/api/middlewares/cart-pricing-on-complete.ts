@@ -102,15 +102,18 @@ export async function persistCartPricingOnComplete(
           for (const item of cart.items) {
             // Obtener precio ajustado desde metadata o calcularlo
             let adjustedPrice = item.metadata?.adjusted_unit_price;
-            
+
             if (!adjustedPrice || typeof adjustedPrice !== "number") {
-              // Si no está en metadata, calcularlo ahora
+              // Si no está en metadata, calcularlo ahora y REDONDEAR
               const priceWithTax = item.unit_price;
               adjustedPrice = Math.round(priceWithTax / 1.21);
               console.log(
                 `[cart-pricing-middleware] WARNING: Item ${item.id} has no adjusted_unit_price in metadata, calculating now: ${adjustedPrice} cents`
               );
             }
+
+            // Asegurar que adjustedPrice sea un entero
+            adjustedPrice = Math.round(adjustedPrice);
 
             if (
               adjustedPrice &&
@@ -152,15 +155,21 @@ export async function persistCartPricingOnComplete(
           for (const method of cart.shipping_methods) {
             // Obtener precio ajustado desde data o calcularlo
             let adjustedShippingPrice = method.data?.adjusted_price;
-            
-            if (!adjustedShippingPrice || typeof adjustedShippingPrice !== "number") {
-              // Si no está en data, calcularlo ahora
+
+            if (
+              !adjustedShippingPrice ||
+              typeof adjustedShippingPrice !== "number"
+            ) {
+              // Si no está en data, calcularlo ahora y REDONDEAR
               const priceWithTax = method.price;
               adjustedShippingPrice = Math.round(priceWithTax / 1.21);
               console.log(
                 `[cart-pricing-middleware] WARNING: Shipping method ${method.id} has no adjusted_price in data, calculating now: ${adjustedShippingPrice} cents`
               );
             }
+
+            // Asegurar que adjustedShippingPrice sea un entero
+            adjustedShippingPrice = Math.round(adjustedShippingPrice);
 
             if (
               adjustedShippingPrice &&
