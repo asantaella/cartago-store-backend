@@ -1,192 +1,25 @@
 import { NextFunction, Response } from "express";
 import { MedusaRequest } from "@medusajs/medusa";
-import SpanishTaxService from "../../services/spanish-tax";
 import {
-  calculatePriceWithoutTax,
-  calculateTaxAmount,
-  adjustDiscountForTaxExempt,
+  CartEntity,
+  LineItemEntity,
+  ShippingMethodEntity,
+  Manager,
+  TransactionManager,
+  resolveSpanishTaxService,
+  resolveManager,
+  getTaxContext,
+  isValidPrice,
+  getAdjustedPrice,
+  loadCartWithRelations,
+  updateLineItemMetadata,
+  updateShippingMethodData,
+  updateCartMetadata,
+  log,
+  logError,
+  logCartOperation,
+  safeMiddlewareExecution,
 } from "./cart-pricing-helpers";
-
-// Type definitions
-type LineItemEntity = {
-  id: string;
-  unit_price: number;
-  discount_total?: number;
-  quantity?: number;
-  metadata?: Record<string, unknown> & { adjusted_unit_price?: number };
-  subtotal?: number;
-};
-
-type ShippingMethodEntity = {
-  id: string;
-  price: number;
-  data?: Record<string, unknown> & { adjusted_price?: number };
-};
-
-type CartEntity = {
-  id: string;
-  items?: LineItemEntity[];
-  shipping_methods?: ShippingMethodEntity[];
-  shipping_address?: { postal_code?: string };
-  metadata?: Record<string, unknown> & {
-    territory_type?: string;
-    prices_adjusted?: boolean;
-  };
-};
-
-type Repository<T> = {
-  findOne: (opts: {
-    where: { id: string };
-    relations?: string[];
-  }) => Promise<T | undefined>;
-  save: (entity: Partial<T>) => Promise<T>;
-};
-
-type TransactionManager = {
-  getRepository: <T>(name: string) => Repository<T>;
-};
-
-type Manager = {
-  transaction: <T>(
-    fn: (transactionalManager: TransactionManager) => Promise<T>
-  ) => Promise<T>;
-};
-
-/**
- * Middleware que persiste los precios ajustados en metadata para zonas tax-exempt
- * en las peticiones POST/PATCH del carrito.
- * IMPORTANTE: NO modifica unit_price original, solo guarda el precio ajustado en metadata
- */
-export async function adjustCartPricingOnPost(
-  req: MedusaRequest,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const cartId = req.params?.id as string | undefined;
-    if (!cartId) {
-      return next();
-    }
-
-    const spanishTaxService = req.scope.resolve(
-      "spanishTaxService"
-    ) as SpanishTaxService;
-    const manager = req.scope.resolve("manager") as unknown as Manager;
-
-    // Verificar si es una región tax-exempt ANTES de iniciar la transacción
-    const tempCartRepo =
-      manager.transaction === undefined
-        ? null
-        : await getCartForValidation(manager, cartId);
-
-    if (!tempCartRepo) {
-      return next();
-    }
-
-    const postalCode = tempCartRepo.shipping_address?.postal_code;
-    if (!postalCode) {
-      return next();
-    }
-
-    const isTaxExempt = spanishTaxService.isTaxExemptAddress(postalCode);
-    if (!isTaxExempt) {
-      return next();
-    }
-
-    const territoryType = spanishTaxService.getTerritoryType(postalCode);
-
-    // Solo ejecutar transacción si es zona tax-exempt
-    await manager.transaction(
-      async (transactionalManager: TransactionManager) => {
-        const cartRepo = transactionalManager.getRepository<CartEntity>("Cart");
-        const lineItemRepo =
-          transactionalManager.getRepository<LineItemEntity>("LineItem");
-        const shippingMethodRepo =
-          transactionalManager.getRepository<ShippingMethodEntity>(
-            "ShippingMethod"
-          );
-
-        const cart = await cartRepo.findOne({
-          where: { id: cartId },
-          relations: ["items", "shipping_methods", "shipping_address"],
-        });
-
-        if (!cart) {
-          return;
-        }
-
-        // Persistir adjusted_unit_price en line items
-        if (Array.isArray(cart.items) && cart.items.length > 0) {
-          for (const item of cart.items) {
-            const priceWithTax = item.unit_price;
-            if (typeof priceWithTax !== "number" || !isFinite(priceWithTax))
-              continue;
-
-            const basePrice = Math.round(
-              calculatePriceWithoutTax(priceWithTax)
-            );
-            const dbItem = await lineItemRepo.findOne({
-              where: { id: item.id },
-            });
-
-            if (dbItem) {
-              dbItem.metadata = {
-                ...dbItem.metadata,
-                adjusted_unit_price: basePrice,
-              };
-              await lineItemRepo.save(dbItem);
-            }
-          }
-        }
-
-        // Persistir adjusted_price en shipping methods
-        if (
-          Array.isArray(cart.shipping_methods) &&
-          cart.shipping_methods.length > 0
-        ) {
-          for (const method of cart.shipping_methods) {
-            const priceWithTax = method.price;
-            if (typeof priceWithTax !== "number" || !isFinite(priceWithTax))
-              continue;
-
-            const baseShippingPrice = Math.round(
-              calculatePriceWithoutTax(priceWithTax)
-            );
-            const dbMethod = await shippingMethodRepo.findOne({
-              where: { id: method.id },
-            });
-
-            if (dbMethod) {
-              dbMethod.data = {
-                ...dbMethod.data,
-                adjusted_price: baseShippingPrice,
-              };
-              await shippingMethodRepo.save(dbMethod);
-            }
-          }
-        }
-
-        // Actualizar metadata del carrito
-        cart.metadata = {
-          ...cart.metadata,
-          territory_type: territoryType,
-          prices_adjusted: true,
-        };
-
-        await cartRepo.save(cart);
-      }
-    );
-
-    return next();
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    console.error(
-      "[cart-pricing-middleware] Error persisting prices on POST/PATCH:",
-      msg
-    );
-    return next();
-  }
-}
 
 /**
  * Obtiene el carrito para validar si pertenece a una región tax-exempt
@@ -199,19 +32,153 @@ async function getCartForValidation(
   try {
     let cart: CartEntity | null = null;
 
-    await manager.transaction(
-      async (transactionalManager: TransactionManager) => {
-        const cartRepo = transactionalManager.getRepository<CartEntity>("Cart");
-        cart =
-          (await cartRepo.findOne({
-            where: { id: cartId },
-            relations: ["shipping_address"],
-          })) ?? null;
-      }
-    );
+    await manager.transaction(async (tm: TransactionManager) => {
+      cart = await loadCartWithRelations(tm, cartId, ["shipping_address", "region"]);
+    });
 
     return cart;
   } catch {
     return null;
   }
+}
+
+/**
+ * Persiste los precios ajustados en metadata para todos los line items
+ */
+async function persistLineItemPrices(
+  transactionalManager: TransactionManager,
+  items: LineItemEntity[]
+): Promise<number> {
+  let updatedCount = 0;
+
+  for (const item of items) {
+    if (!isValidPrice(item.unit_price)) continue;
+
+    const adjustedPrice = getAdjustedPrice(item.unit_price);
+    const updated = await updateLineItemMetadata(
+      transactionalManager,
+      item.id,
+      adjustedPrice
+    );
+
+    if (updated) {
+      updatedCount++;
+      log(
+        `POST item ${item.id} - adjusted_unit_price: ${adjustedPrice} cents (${(
+          adjustedPrice / 100
+        ).toFixed(2)}€)`
+      );
+    }
+  }
+
+  return updatedCount;
+}
+
+/**
+ * Persiste los precios ajustados en data para todos los shipping methods
+ */
+async function persistShippingMethodPrices(
+  transactionalManager: TransactionManager,
+  methods: ShippingMethodEntity[]
+): Promise<number> {
+  let updatedCount = 0;
+
+  for (const method of methods) {
+    if (!isValidPrice(method.price)) continue;
+
+    const adjustedPrice = getAdjustedPrice(method.price);
+    const updated = await updateShippingMethodData(
+      transactionalManager,
+      method.id,
+      adjustedPrice
+    );
+
+    if (updated) {
+      updatedCount++;
+      log(
+        `POST shipping ${
+          method.id
+        } - adjusted_price: ${adjustedPrice} cents (${(
+          adjustedPrice / 100
+        ).toFixed(2)}€)`
+      );
+    }
+  }
+
+  return updatedCount;
+}
+
+/**
+ * Middleware que persiste los precios ajustados en metadata para zonas tax-exempt
+ * en las peticiones POST/PATCH del carrito.
+ * IMPORTANTE: NO modifica unit_price original, solo guarda el precio ajustado en metadata
+ */
+export async function adjustCartPricingOnPost(
+  req: MedusaRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  await safeMiddlewareExecution(
+    "adjustCartPricingOnPost",
+    async () => {
+      const cartId = req.params?.id as string | undefined;
+      if (!cartId) {
+        next();
+        return;
+      }
+
+      const spanishTaxService = resolveSpanishTaxService(req);
+      const manager = resolveManager(req);
+
+      if (!spanishTaxService || !manager) {
+        next();
+        return;
+      }
+
+      // Verificar si es una región tax-exempt ANTES de iniciar la transacción
+      const tempCart = await getCartForValidation(manager, cartId);
+      if (!tempCart) {
+        next();
+        return;
+      }
+
+      const taxContext = getTaxContext(tempCart, spanishTaxService);
+      if (!taxContext || !taxContext.isTaxExempt) {
+        next();
+        return;
+      }
+
+      logCartOperation("POST", cartId, {
+        postal: taxContext.postalCode,
+        isTaxExempt: taxContext.isTaxExempt,
+        territory: taxContext.territoryType,
+      });
+
+      // Ejecutar transacción para persistir precios
+      await manager.transaction(async (tm: TransactionManager) => {
+        const cart = await loadCartWithRelations(tm, cartId);
+        if (!cart) return;
+
+        // Persistir precios ajustados en items
+        if (Array.isArray(cart.items) && cart.items.length > 0) {
+          await persistLineItemPrices(tm, cart.items);
+        }
+
+        // Persistir precios ajustados en shipping methods
+        if (
+          Array.isArray(cart.shipping_methods) &&
+          cart.shipping_methods.length > 0
+        ) {
+          await persistShippingMethodPrices(tm, cart.shipping_methods);
+        }
+
+        // Actualizar metadata del carrito
+        await updateCartMetadata(tm, cartId, taxContext.territoryType, true);
+      });
+
+      next();
+    },
+    next,
+    true
+  );
 }

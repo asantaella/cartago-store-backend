@@ -1,210 +1,202 @@
 import { NextFunction, Response } from "express";
 import { MedusaRequest } from "@medusajs/medusa";
-import SpanishTaxService from "../../services/spanish-tax";
 import {
+  CartEntity,
+  TaxContext,
+  resolveSpanishTaxService,
+  getTaxContext,
+  isValidPrice,
+  getLineItemAdjustedPrice,
+  getShippingMethodAdjustedPrice,
+  calculateItemsSubtotal,
+  calculateShippingTotal,
+  calculateTotalDiscount,
   calculatePriceWithoutTax,
-  calculateTaxAmount,
-  adjustDiscountForTaxExempt,
+  log,
+  logError,
+  safeJsonTransform,
 } from "./cart-pricing-helpers";
+
+/**
+ * Extrae el carrito de la respuesta, soportando múltiples formatos
+ */
+function extractCartFromBody(body: unknown): {
+  cart: CartEntity | null;
+  isDraftOrder: boolean;
+} {
+  if (!body || typeof body !== "object") {
+    return { cart: null, isDraftOrder: false };
+  }
+
+  const bodyObj = body as Record<string, unknown>;
+
+  if (bodyObj.cart) {
+    return { cart: bodyObj.cart as CartEntity, isDraftOrder: false };
+  }
+
+  if (
+    bodyObj.draft_order &&
+    typeof bodyObj.draft_order === "object" &&
+    (bodyObj.draft_order as Record<string, unknown>).cart
+  ) {
+    return {
+      cart: (bodyObj.draft_order as Record<string, unknown>).cart as CartEntity,
+      isDraftOrder: true,
+    };
+  }
+
+  return { cart: null, isDraftOrder: false };
+}
+
+/**
+ * Transforma los items del carrito para zonas tax-exempt
+ */
+function transformCartItemsForTaxExempt(cart: CartEntity): void {
+  if (!Array.isArray(cart.items)) return;
+
+  for (const item of cart.items) {
+    if (!isValidPrice(item.unit_price)) continue;
+
+    const basePrice = getLineItemAdjustedPrice(item);
+    item.subtotal = basePrice * (item.quantity || 1);
+
+    log(
+      `GET item ${item.id} - basePrice: ${Math.round(basePrice)} cents (${(
+        basePrice / 100
+      ).toFixed(2)}€), ` +
+        `discount: ${item.discount_total || 0} cents, subtotal: ${Math.round(
+          item.subtotal
+        )} cents`
+    );
+  }
+}
+
+/**
+ * Transforma los shipping methods del carrito para zonas tax-exempt
+ */
+function transformShippingMethodsForTaxExempt(cart: CartEntity): void {
+  if (!Array.isArray(cart.shipping_methods)) return;
+
+  for (const method of cart.shipping_methods) {
+    if (!isValidPrice(method.price)) continue;
+
+    const baseShippingPrice = getShippingMethodAdjustedPrice(method);
+    (method as Record<string, unknown>)["price_without_tax"] =
+      baseShippingPrice;
+
+    log(
+      `GET shipping - baseShippingPrice: ${Math.round(
+        baseShippingPrice
+      )} cents (${(baseShippingPrice / 100).toFixed(2)}€)`
+    );
+  }
+}
+
+/**
+ * Recalcula los totales del carrito para zonas tax-exempt
+ */
+function recalculateCartTotals(cart: CartEntity): void {
+  // Subtotal desde items ya transformados
+  cart.subtotal =
+    cart.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
+
+  // Envío neto
+  cart.shipping_total = calculateShippingTotal(
+    cart.shipping_methods || [],
+    true
+  );
+
+  // Tax es 0 para zonas tax-exempt
+  cart.tax_total = 0;
+
+  // Descuento total (sin modificar)
+  cart.discount_total = calculateTotalDiscount(cart.items || []);
+
+  // Total final
+  cart.total = cart.subtotal + cart.shipping_total - cart.discount_total;
+}
+
+function applyTaxRate(cart: CartEntity): void {
+  console.log("[CART] Applying tax rate 0% to cart", cart.id);
+  console.log("[CART] Original cart tax rate:", cart.tax_rate);
+  // En zonas tax-exempt, el tax rate es 0%
+  cart.tax_rate = 0;
+}
+
+/**
+ * Aplica las transformaciones de precio para zona tax-exempt
+ */
+function applyTaxExemptTransformations(
+  cart: CartEntity,
+  taxContext: TaxContext
+): void {
+  transformCartItemsForTaxExempt(cart);
+  transformShippingMethodsForTaxExempt(cart);
+  recalculateCartTotals(cart);
+  applyTaxRate(cart);
+
+  // Agregar metadata del territorio
+  cart.metadata = {
+    ...cart.metadata,
+    territory_type: taxContext.territoryType,
+  };
+}
 
 /**
  * Middleware que recalcula los precios del carrito en las respuestas GET
  * según el código postal de la dirección de envío para zonas con tax 0%
- * Lee los valores ajustados desde metadata si existen (para zonas tax-exempt)
  */
 export async function adjustCartPricingOnGet(
   req: MedusaRequest,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   const originalJson = res.json.bind(res);
 
-  res.json = function (body: any) {
-    try {
-      console.log(
-        `[cart-pricing-middleware] GET intercepted - body keys: ${
-          body ? Object.keys(body).join(", ") : "null"
-        }`
-      );
+  const spanishTaxService = resolveSpanishTaxService(req);
 
-      // Soportar tanto cart directo como draft_order.cart
-      let cart: any = null;
-      let isDraftOrder = false;
-
-      if (body?.cart) {
-        cart = body.cart;
-      } else if (body?.draft_order?.cart) {
-        cart = body.draft_order.cart;
-        isDraftOrder = true;
-      }
-
-      console.log(
-        `[cart-pricing-middleware] GET - isDraftOrder=${isDraftOrder}, cart exists=${!!cart}, cart.id=${
-          cart?.id
-        }`
-      );
-
-      // Solo procesar si hay un cart en la respuesta
-      if (!cart) {
-        return originalJson(body);
-      }
-
-      console.log(
-        `[cart-pricing-middleware] GET - shipping_address exists=${!!cart.shipping_address}, postal_code=${
-          cart.shipping_address?.postal_code
-        }`
-      );
-
-      const postalCode = cart.shipping_address?.postal_code;
-
-      if (!postalCode) {
-        return originalJson(body);
-      }
-
-      const spanishTaxService = req.scope.resolve(
-        "spanishTaxService"
-      ) as SpanishTaxService;
-
-      const isTaxExempt = spanishTaxService.isTaxExemptAddress(postalCode);
-      const territoryType = spanishTaxService.getTerritoryType(postalCode);
-
-      console.log(
-        `[cart-pricing-middleware] GET ${
-          isDraftOrder ? "draft_order" : "cart"
-        } ${
-          cart.id
-        } - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
-      );
-
-      // Solo ajustar precios si es zona tax-exempt
-      if (!isTaxExempt) {
-        return originalJson(body);
-      }
-
-      // Recalcular precios de line items: mostrar precio ajustado desde metadata si existe
-      if (Array.isArray(cart.items) && cart.items.length > 0) {
-        for (const item of cart.items) {
-          const priceWithTax = item.unit_price; // Precio con IVA desde BD
-
-          if (typeof priceWithTax !== "number" || !isFinite(priceWithTax)) {
-            continue;
-          }
-
-          // Usar precio ajustado desde metadata si existe, sino calcularlo
-          const adjustedPrice = item.metadata?.adjusted_unit_price;
-          const basePrice = adjustedPrice
-            ? adjustedPrice
-            : calculatePriceWithoutTax(priceWithTax);
-
-          // El descuento NO se modifica - mantener el valor original de BD
-          // El descuento en BD ya está calculado sobre precio sin IVA (0.25€)
-          // y es correcto para ambas regiones
-
-          // El subtotal se calcula sobre el precio SIN IVA (sin descuentos)
-          item.subtotal = basePrice * (item.quantity || 1);
-
-          console.log(
-            `[cart-pricing-middleware] GET item ${
-              item.id
-            } - priceWithTax: ${priceWithTax} cents (${(
-              priceWithTax / 100
-            ).toFixed(2)}€), basePrice: ${Math.round(basePrice)} cents (${(
-              basePrice / 100
-            ).toFixed(2)}€), discount: ${item.discount_total} cents (${(
-              (item.discount_total || 0) / 100
-            ).toFixed(2)}€), subtotal: ${Math.round(item.subtotal)} cents (${(
-              item.subtotal / 100
-            ).toFixed(2)}€)`
-          );
-        }
-      }
-
-      // Mostrar precios de shipping ajustados desde metadata si existen
-      if (
-        Array.isArray(cart.shipping_methods) &&
-        cart.shipping_methods.length > 0
-      ) {
-        for (const method of cart.shipping_methods) {
-          const priceWithTax = method.price; // Precio con IVA desde BD
-          if (typeof priceWithTax !== "number" || !isFinite(priceWithTax)) {
-            continue;
-          }
-
-          // Usar precio ajustado desde metadata si existe, sino calcularlo
-          const adjustedShippingPrice = method.data?.adjusted_price;
-          const baseShippingPrice = adjustedShippingPrice
-            ? adjustedShippingPrice
-            : calculatePriceWithoutTax(priceWithTax);
-
-          // Crear propiedad para mostrar el neto (no sobreescribir price)
-          (method as Record<string, unknown>)["price_without_tax"] =
-            baseShippingPrice;
-
-          console.log(
-            `[cart-pricing-middleware] GET shipping - priceWithTax: ${priceWithTax} cents (${(
-              priceWithTax / 100
-            ).toFixed(2)}€), baseShippingPrice: ${Math.round(
-              baseShippingPrice
-            )} cents (${(baseShippingPrice / 100).toFixed(2)}€)`
-          );
-        }
-      }
-
-      // Recalcular totales del carrito
-      // Subtotal = suma de precios netos (sin IVA) de los items
-      cart.subtotal =
-        cart.items?.reduce(
-          (sum: number, item: any) => sum + (item.subtotal || 0),
-          0
-        ) || 0;
-
-      // Envío neto (sin IVA) - calcular desde metadata o price con IVA
-      const shippingTotal =
-        cart.shipping_methods?.reduce((sum: number, method: any) => {
-          const shippingWithTax = method.price;
-          const adjustedShippingPrice = method.data?.adjusted_price;
-
-          if (adjustedShippingPrice) {
-            return sum + adjustedShippingPrice;
-          } else if (
-            typeof shippingWithTax === "number" &&
-            isFinite(shippingWithTax)
-          ) {
-            return sum + calculatePriceWithoutTax(shippingWithTax);
-          }
-          return sum;
-        }, 0) || 0;
-
-      cart.shipping_total = shippingTotal;
-
-      // Tax total es 0 para zonas tax-exempt
-      cart.tax_total = 0;
-
-      // Calcular el descuento total del carrito
-      const totalDiscount =
-        cart.items?.reduce(
-          (sum: number, item: any) => sum + (item.discount_total || 0),
-          0
-        ) || 0;
-      cart.discount_total = totalDiscount;
-
-      // Total = subtotal neto + envío neto - descuento total
-      cart.total = cart.subtotal + shippingTotal - totalDiscount;
-
-      // Marcar en metadata el territorio (solo para información)
-      cart.metadata = {
-        ...cart.metadata,
-        territory_type: territoryType,
-      };
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error(
-        "[cart-pricing-middleware] Error adjusting prices on GET:",
-        msg
-      );
+  res.json = function (body: unknown) {
+    // Si no hay servicio de impuestos, devolver respuesta sin modificar
+    if (!spanishTaxService) {
+      return originalJson(body);
     }
 
-    return originalJson(body);
+    const transform = safeJsonTransform((responseBody: unknown) => {
+      const { cart, isDraftOrder } = extractCartFromBody(responseBody);
+
+      log(
+        `GET intercepted - isDraftOrder=${isDraftOrder}, cart=${
+          cart?.id || "null"
+        }`
+      );
+
+      if (!cart) {
+        return responseBody;
+      }
+
+      const taxContext = getTaxContext(cart, spanishTaxService);
+
+      if (!taxContext) {
+        log(`GET cart ${cart.id} - no postal code, skipping`);
+        return responseBody;
+      }
+
+      log(
+        `GET ${isDraftOrder ? "draft_order" : "cart"} ${cart.id} - ` +
+          `postal=${taxContext.postalCode} isTaxExempt=${taxContext.isTaxExempt} territory=${taxContext.territoryType}`
+      );
+
+      // Solo transformar si es zona tax-exempt
+      if (!taxContext.isTaxExempt) {
+        return responseBody;
+      }
+
+      applyTaxExemptTransformations(cart, taxContext);
+
+      return responseBody;
+    }, "adjustCartPricingOnGet");
+
+    return originalJson(transform(body));
   };
 
   next();

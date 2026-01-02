@@ -7,6 +7,36 @@ export { adjustCartPricingOnGet } from "./cart-pricing-on-get";
 export { adjustCartPricingOnPost } from "./cart-pricing-on-post";
 export { persistCartPricingOnComplete } from "./cart-pricing-on-complete";
 export {
+  // Funciones de cálculo de precios
   calculatePriceWithoutTax,
   calculateTaxAmount,
+  adjustDiscountForTaxExempt,
+  getAdjustedPrice,
+  // Validaciones
+  isValidPrice,
+  pricesAreDifferent,
+  getTaxContext,
+  // Transformaciones
+  getLineItemAdjustedPrice,
+  getShippingMethodAdjustedPrice,
+  calculateItemsSubtotal,
+  calculateShippingTotal,
+  calculateTotalDiscount,
+  // Logging
+  log,
+  logError,
+  logCartOperation,
+  logPriceChange,
+  // Error handling
+  safeMiddlewareExecution,
+  safeJsonTransform,
+  // Tipos
+  type CartEntity,
+  type LineItemEntity,
+  type ShippingMethodEntity,
+  type PaymentSessionEntity,
+  type TaxContext,
+  type Manager,
+  type TransactionManager,
+  type Repository,
 } from "./cart-pricing-helpers";
