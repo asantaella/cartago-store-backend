@@ -6,6 +6,10 @@ import {
   adjustCartPricingOnPost,
   persistCartPricingOnComplete,
 } from "./middlewares/cart-pricing";
+import {
+  adjustDraftOrderPricingOnGet,
+  adjustDraftOrderPricingOnPost,
+} from "./middlewares/draft-order-pricing";
 
 export const config: MiddlewaresConfig = {
   routes: [
@@ -48,6 +52,12 @@ export const config: MiddlewaresConfig = {
       matcher: "/store/carts/:id/complete",
       method: "POST",
       middlewares: [persistCartPricingOnComplete],
+    },
+    // Middleware para ajustar precios en GET /admin/draft-orders/:id (solo lectura)
+    {
+      matcher: "/admin/draft-orders/:id",
+      method: "GET",
+      middlewares: [adjustDraftOrderPricingOnGet],
     },
   ],
 };

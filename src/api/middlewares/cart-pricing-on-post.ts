@@ -21,11 +21,27 @@ export async function adjustCartPricingOnPost(
 
   res.json = function (body: any): Response {
     try {
-      if (!(body && body.cart)) {
-        return originalJson(body);
+      console.log(`[cart-pricing-middleware] POST intercepted - body keys: ${body ? Object.keys(body).join(', ') : 'null'}`);
+      
+      // Soportar tanto cart directo como draft_order.cart
+      let cart: any = null;
+      let isDraftOrder = false;
+
+      if (body?.cart) {
+        cart = body.cart;
+      } else if (body?.draft_order?.cart) {
+        cart = body.draft_order.cart;
+        isDraftOrder = true;
       }
 
-      const cart = body.cart;
+      console.log(`[cart-pricing-middleware] POST - isDraftOrder=${isDraftOrder}, cart exists=${!!cart}, cart.id=${cart?.id}`);
+
+      if (!cart) {
+        return originalJson(body);
+      }
+      
+      console.log(`[cart-pricing-middleware] POST - shipping_address exists=${!!cart.shipping_address}, postal_code=${cart.shipping_address?.postal_code}`);
+      
       const postalCode = cart.shipping_address?.postal_code;
 
       if (!postalCode) {
@@ -40,7 +56,7 @@ export async function adjustCartPricingOnPost(
       const territoryType = spanishTaxService.getTerritoryType(postalCode);
 
       console.log(
-        `[cart-pricing-middleware] POST cart ${cart.id} - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
+        `[cart-pricing-middleware] POST ${isDraftOrder ? 'draft_order' : 'cart'} ${cart.id} - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
       );
 
       // Solo procesar si es zona tax-exempt

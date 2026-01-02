@@ -21,12 +21,40 @@ export async function adjustCartPricingOnGet(
 
   res.json = function (body: any) {
     try {
+      console.log(
+        `[cart-pricing-middleware] GET intercepted - body keys: ${
+          body ? Object.keys(body).join(", ") : "null"
+        }`
+      );
+
+      // Soportar tanto cart directo como draft_order.cart
+      let cart: any = null;
+      let isDraftOrder = false;
+
+      if (body?.cart) {
+        cart = body.cart;
+      } else if (body?.draft_order?.cart) {
+        cart = body.draft_order.cart;
+        isDraftOrder = true;
+      }
+
+      console.log(
+        `[cart-pricing-middleware] GET - isDraftOrder=${isDraftOrder}, cart exists=${!!cart}, cart.id=${
+          cart?.id
+        }`
+      );
+
       // Solo procesar si hay un cart en la respuesta
-      if (!(body && body.cart)) {
+      if (!cart) {
         return originalJson(body);
       }
 
-      const cart = body.cart;
+      console.log(
+        `[cart-pricing-middleware] GET - shipping_address exists=${!!cart.shipping_address}, postal_code=${
+          cart.shipping_address?.postal_code
+        }`
+      );
+
       const postalCode = cart.shipping_address?.postal_code;
 
       if (!postalCode) {
@@ -41,7 +69,11 @@ export async function adjustCartPricingOnGet(
       const territoryType = spanishTaxService.getTerritoryType(postalCode);
 
       console.log(
-        `[cart-pricing-middleware] GET cart ${cart.id} - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
+        `[cart-pricing-middleware] GET ${
+          isDraftOrder ? "draft_order" : "cart"
+        } ${
+          cart.id
+        } - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
       );
 
       // Solo ajustar precios si es zona tax-exempt
