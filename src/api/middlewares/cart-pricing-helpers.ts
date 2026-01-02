@@ -34,6 +34,10 @@ export type CartEntity = {
   shipping_methods?: ShippingMethodEntity[];
   shipping_address?: { postal_code?: string };
   payment_sessions?: PaymentSessionEntity[];
+  region?: {
+    tax_rate?: number;
+    [key: string]: unknown;
+  };
   metadata?: Record<string, unknown> & {
     territory_type?: string;
     prices_adjusted?: boolean;
@@ -336,7 +340,12 @@ export function safeJsonTransform<T>(
 export async function loadCartWithRelations(
   transactionalManager: TransactionManager,
   cartId: string,
-  relations: string[] = ["items", "shipping_methods", "shipping_address", "region"]
+  relations: string[] = [
+    "items",
+    "shipping_methods",
+    "shipping_address",
+    "region",
+  ]
 ): Promise<CartEntity | null> {
   const cartRepo = transactionalManager.getRepository<CartEntity>("Cart");
   const cart = await cartRepo.findOne({ where: { id: cartId }, relations });

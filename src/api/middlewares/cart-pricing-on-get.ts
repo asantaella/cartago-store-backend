@@ -117,10 +117,20 @@ function recalculateCartTotals(cart: CartEntity): void {
 }
 
 function applyTaxRate(cart: CartEntity): void {
-  console.log("[CART] Applying tax rate 0% to cart", cart.id);
-  console.log("[CART] Original cart tax rate:", cart.tax_rate);
-  // En zonas tax-exempt, el tax rate es 0%
-  cart.tax_rate = 0;
+  // En zonas tax-exempt, el tax rate de la región debe ser 0%
+  const originalTaxRate = cart.region?.tax_rate;
+
+  if (!cart.region) {
+    cart.region = {};
+  }
+
+  cart.region.tax_rate = 0;
+
+  log(
+    `Applied tax_rate 0% to region of cart ${cart.id} (original: ${
+      originalTaxRate ?? "undefined"
+    })`
+  );
 }
 
 /**

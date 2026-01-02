@@ -57,7 +57,7 @@ export const config: MiddlewaresConfig = {
     {
       matcher: "/admin/draft-orders/:id",
       method: "GET",
-      middlewares: [adjustDraftOrderPricingOnGet],
+      middlewares: [adjustCartPricingOnGet],
     },
   ],
 };
