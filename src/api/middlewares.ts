@@ -9,6 +9,7 @@ import {
 import {
   adjustDraftOrderPricingOnGet,
   adjustDraftOrderPricingOnPost,
+  persistDraftOrderPricing,
 } from "./middlewares/draft-order-pricing";
 
 export const config: MiddlewaresConfig = {
@@ -54,6 +55,16 @@ export const config: MiddlewaresConfig = {
       middlewares: [persistCartPricingOnComplete],
     },
     // Middleware para ajustar precios en GET /admin/draft-orders/:id (solo lectura)
+    {
+      matcher: "/admin/draft-orders/:id",
+      method: "GET",
+      middlewares: [adjustCartPricingOnGet],
+    },
+    {
+      matcher: "/admin/draft-orders/:id",
+      method: "POST",
+      middlewares: [adjustDraftOrderPricingOnPost],
+    },
     {
       matcher: "/admin/draft-orders/:id",
       method: "GET",

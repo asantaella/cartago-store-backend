@@ -6,8 +6,6 @@ import {
   resolveSpanishTaxService,
   getTaxContext,
   isValidPrice,
-  getLineItemAdjustedPrice,
-  getShippingMethodAdjustedPrice,
   calculateItemsSubtotal,
   calculateShippingTotal,
   calculateTotalDiscount,
@@ -15,6 +13,7 @@ import {
   log,
   logError,
   safeJsonTransform,
+  getLineItemAdjustedPrice,
 } from "./cart-pricing-helpers";
 
 /**
@@ -50,6 +49,7 @@ function extractCartFromBody(body: unknown): {
 
 /**
  * Transforma los items del carrito para zonas tax-exempt
+ * Recalcula tanto el precio base como el descuento asociado
  */
 function transformCartItemsForTaxExempt(cart: CartEntity): void {
   if (!Array.isArray(cart.items)) return;
@@ -57,16 +57,46 @@ function transformCartItemsForTaxExempt(cart: CartEntity): void {
   for (const item of cart.items) {
     if (!isValidPrice(item.unit_price)) continue;
 
-    const basePrice = getLineItemAdjustedPrice(item);
+    // Calcular el precio base ajustado
+    const originalPrice = item.unit_price;
+    const basePrice = item.metadata?.adjusted_unit_price || getLineItemAdjustedPrice(item);
+    
+    // Para el descuento, usar el valor ORIGINAL guardado en metadata si existe
+    // Esto evita recálculos acumulativos en múltiples GETs
+    const originalDiscountFromMetadata = item.metadata?.original_discount_total as number | undefined;
+    const currentDiscount = item.discount_total || 0;
+    
+    // Si ya existe original_discount_total en metadata, usar ese valor como base
+    // Si no, el valor actual es el original (primera vez que se procesa)
+    const originalDiscount = originalDiscountFromMetadata !== undefined 
+      ? originalDiscountFromMetadata 
+      : currentDiscount;
+    
+    // Calcular la proporción del ajuste de precio
+    const priceRatio = basePrice / originalPrice;
+    
+    // Ajustar el descuento proporcionalmente SOLO si hay descuento original
+    const adjustedDiscount = originalDiscount > 0 
+      ? Math.round(originalDiscount * priceRatio)
+      : 0;
+    
     item.subtotal = basePrice * (item.quantity || 1);
+    item.discount_total = adjustedDiscount;
+    
+    // Guardar el descuento original en metadata para futuras referencias
+    if (!item.metadata) {
+      item.metadata = {};
+    }
+    if (originalDiscountFromMetadata === undefined && currentDiscount > 0) {
+      (item.metadata as any).original_discount_total = currentDiscount;
+    }
 
     log(
       `GET item ${item.id} - basePrice: ${Math.round(basePrice)} cents (${(
         basePrice / 100
       ).toFixed(2)}€), ` +
-        `discount: ${item.discount_total || 0} cents, subtotal: ${Math.round(
-          item.subtotal
-        )} cents`
+        `discount: ${adjustedDiscount} cents (original: ${originalDiscount} cents), ` +
+        `subtotal: ${Math.round(item.subtotal)} cents`
     );
   }
 }
@@ -80,7 +110,9 @@ function transformShippingMethodsForTaxExempt(cart: CartEntity): void {
   for (const method of cart.shipping_methods) {
     if (!isValidPrice(method.price)) continue;
 
-    const baseShippingPrice = getShippingMethodAdjustedPrice(method);
+    // Usar el precio ajustado si existe en data, de lo contrario usar el price original
+    // No recalcular automáticamente - confiar en que fue persistido correctamente
+    const baseShippingPrice = method.data?.adjusted_price || method.price;
     (method as Record<string, unknown>)["price_without_tax"] =
       baseShippingPrice;
 
