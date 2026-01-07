@@ -12,13 +12,11 @@ import {
   isValidPrice,
   getAdjustedPrice,
   loadCartWithRelations,
-  updateLineItemMetadata,
   updateShippingMethodData,
   updateCartMetadata,
   log,
   logError,
   logCartOperation,
-  safeMiddlewareExecution,
 } from "./cart-pricing-helpers";
 
 /**
@@ -33,7 +31,10 @@ async function getCartForValidation(
     let cart: CartEntity | null = null;
 
     await manager.transaction(async (tm: TransactionManager) => {
-      cart = await loadCartWithRelations(tm, cartId, ["shipping_address", "region"]);
+      cart = await loadCartWithRelations(tm, cartId, [
+        "shipping_address",
+        "region",
+      ]);
     });
 
     return cart;
@@ -55,20 +56,33 @@ async function persistLineItemPrices(
     if (!isValidPrice(item.unit_price)) continue;
 
     const adjustedPrice = getAdjustedPrice(item.unit_price);
-    const updated = await updateLineItemMetadata(
-      transactionalManager,
-      item.id,
-      adjustedPrice
-    );
 
-    if (updated) {
-      updatedCount++;
-      log(
-        `POST item ${item.id} - adjusted_unit_price: ${adjustedPrice} cents (${(
-          adjustedPrice / 100
-        ).toFixed(2)}€)`
-      );
+    // También guardar el descuento original en metadata para uso posterior en COMPLETE
+    const originalDiscount = item.discount_total || 0;
+
+    // Actualizar metadata con precio ajustado y descuento original
+    if (!item.metadata) {
+      item.metadata = {};
     }
+    item.metadata.adjusted_unit_price = adjustedPrice;
+    if (originalDiscount > 0) {
+      item.metadata.original_discount_total = originalDiscount;
+    }
+
+    const repo = transactionalManager.getRepository<LineItemEntity>("LineItem");
+    await repo.save(item);
+
+    updatedCount++;
+    log(
+      `POST item ${item.id} - adjusted_unit_price: ${adjustedPrice} cents (${(
+        adjustedPrice / 100
+      ).toFixed(2)}€), original_discount: ${originalDiscount} cents`
+    );
+    log(
+      `POST item ${item.id} - metadata persisted: ${JSON.stringify(
+        item.metadata
+      )}`
+    );
   }
 
   return updatedCount;
@@ -118,67 +132,76 @@ export async function adjustCartPricingOnPost(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  await safeMiddlewareExecution(
-    "adjustCartPricingOnPost",
-    async () => {
-      const cartId = req.params?.id as string | undefined;
-      if (!cartId) {
-        next();
-        return;
-      }
-
-      const spanishTaxService = resolveSpanishTaxService(req);
-      const manager = resolveManager(req);
-
-      if (!spanishTaxService || !manager) {
-        next();
-        return;
-      }
-
-      // Verificar si es una región tax-exempt ANTES de iniciar la transacción
-      const tempCart = await getCartForValidation(manager, cartId);
-      if (!tempCart) {
-        next();
-        return;
-      }
-
-      const taxContext = getTaxContext(tempCart, spanishTaxService);
-      if (!taxContext || !taxContext.isTaxExempt) {
-        next();
-        return;
-      }
-
-      logCartOperation("POST", cartId, {
-        postal: taxContext.postalCode,
-        isTaxExempt: taxContext.isTaxExempt,
-        territory: taxContext.territoryType,
-      });
-
-      // Ejecutar transacción para persistir precios
-      await manager.transaction(async (tm: TransactionManager) => {
-        const cart = await loadCartWithRelations(tm, cartId);
-        if (!cart) return;
-
-        // Persistir precios ajustados en items
-        if (Array.isArray(cart.items) && cart.items.length > 0) {
-          await persistLineItemPrices(tm, cart.items);
-        }
-
-        // Persistir precios ajustados en shipping methods
-        if (
-          Array.isArray(cart.shipping_methods) &&
-          cart.shipping_methods.length > 0
-        ) {
-          await persistShippingMethodPrices(tm, cart.shipping_methods);
-        }
-
-        // Actualizar metadata del carrito
-        await updateCartMetadata(tm, cartId, taxContext.territoryType, true);
-      });
-
+  try {
+    const cartId = req.params?.id as string | undefined;
+    if (!cartId) {
       next();
-    },
-    next,
-    true
-  );
+      return;
+    }
+
+    // Excluir explícitamente el endpoint COMPLETE para que solo se ejecute
+    // persistCartPricingOnComplete en esa ruta (punto 1 del análisis anterior)
+    const requestPath = req.originalUrl || req.path || "";
+    const isCompleteEndpoint = /\/store\/carts\/[^/]+\/complete\/?$/.test(
+      requestPath
+    );
+    if (isCompleteEndpoint) {
+      next();
+      return;
+    }
+
+    const spanishTaxService = resolveSpanishTaxService(req);
+    const manager = resolveManager(req);
+
+    if (!spanishTaxService || !manager) {
+      next();
+      return;
+    }
+
+    // Verificar si es una región tax-exempt ANTES de iniciar la transacción
+    const tempCart = await getCartForValidation(manager, cartId);
+    if (!tempCart) {
+      next();
+      return;
+    }
+
+    const taxContext = getTaxContext(tempCart, spanishTaxService);
+    if (!taxContext || !taxContext.isTaxExempt) {
+      next();
+      return;
+    }
+
+    logCartOperation("POST", cartId, {
+      postal: taxContext.postalCode,
+      isTaxExempt: taxContext.isTaxExempt,
+      territory: taxContext.territoryType,
+    });
+
+    // Ejecutar transacción para persistir precios
+    await manager.transaction(async (tm: TransactionManager) => {
+      const cart = await loadCartWithRelations(tm, cartId);
+      if (!cart) return;
+
+      // Persistir precios ajustados en items
+      if (Array.isArray(cart.items) && cart.items.length > 0) {
+        await persistLineItemPrices(tm, cart.items);
+      }
+
+      // Persistir precios ajustados en shipping methods
+      if (
+        Array.isArray(cart.shipping_methods) &&
+        cart.shipping_methods.length > 0
+      ) {
+        await persistShippingMethodPrices(tm, cart.shipping_methods);
+      }
+
+      // Actualizar metadata del carrito
+      await updateCartMetadata(tm, cartId, taxContext.territoryType, true);
+    });
+
+    next();
+  } catch (error) {
+    logError("Error in adjustCartPricingOnPost", error);
+    next();
+  }
 }

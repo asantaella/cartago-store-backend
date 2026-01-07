@@ -13,6 +13,16 @@ export type LineItemEntity = {
   quantity?: number;
   metadata?: Record<string, unknown> & { adjusted_unit_price?: number };
   subtotal?: number;
+  adjustments?: Array<{ description?: string; amount?: number }>;
+};
+
+export type LineItemAdjustmentEntity = {
+  id: string;
+  line_item_id: string;
+  description?: string;
+  discount_id?: string;
+  amount: number;
+  metadata?: Record<string, unknown>;
 };
 
 export type ShippingMethodEntity = {
@@ -27,6 +37,13 @@ export type PaymentSessionEntity = {
   data?: Record<string, unknown>;
 };
 
+export type GiftCardTransaction = {
+  id: string;
+  gift_card_id: string;
+  amount: number;
+  [key: string]: unknown;
+};
+
 export type CartEntity = {
   id: string;
   type?: string;
@@ -34,6 +51,8 @@ export type CartEntity = {
   shipping_methods?: ShippingMethodEntity[];
   shipping_address?: { postal_code?: string };
   payment_sessions?: PaymentSessionEntity[];
+  gift_card_transactions?: GiftCardTransaction[];
+  discounts?: Array<{ code?: string; rule?: Record<string, unknown> }>;
   region?: {
     tax_rate?: number;
     [key: string]: unknown;
@@ -41,12 +60,14 @@ export type CartEntity = {
   metadata?: Record<string, unknown> & {
     territory_type?: string;
     prices_adjusted?: boolean;
+    original_gift_card_total?: number;
   };
   subtotal?: number;
   shipping_total?: number;
   tax_total?: number;
   tax_rate?: number;
   discount_total?: number;
+  gift_card_total?: number;
   total?: number;
 };
 
@@ -56,6 +77,10 @@ export type Repository<T> = {
     relations?: string[];
   }) => Promise<T | undefined>;
   save: (entity: Partial<T>) => Promise<T>;
+  find?: (opts?: any) => Promise<T[]>;
+  remove?: (entity: T) => Promise<T>;
+  update?: (id: string, data: Partial<T>) => Promise<void>;
+  delete?: (id: string) => Promise<void>;
 };
 
 export type TransactionManager = {
@@ -112,6 +137,22 @@ export function adjustDiscountForTaxExempt(discountInCents: number): number {
  */
 export function getAdjustedPrice(priceWithTax: number): number {
   return Math.round(calculatePriceWithoutTax(priceWithTax));
+}
+
+/**
+ * Calcula el descuento ajustado proporcionalmente al cambio de precio
+ * Fórmula: adjustedDiscount = originalDiscount * (adjustedPrice / originalPrice)
+ */
+export function calculateAdjustedDiscount(
+  originalDiscount: number,
+  originalPrice: number,
+  adjustedPrice: number
+): number {
+  if (originalDiscount <= 0 || originalPrice <= 0) {
+    return 0;
+  }
+  const priceRatio = adjustedPrice / originalPrice;
+  return Math.round(originalDiscount * priceRatio);
 }
 
 // ============================================================================
@@ -196,6 +237,31 @@ export function getLineItemAdjustedPrice(item: LineItemEntity): number {
 }
 
 /**
+ * Calcula el descuento ajustado proporcionalmente al cambio de precio
+ * Fórmula: adjustedDiscount = originalDiscount * (adjustedPrice / originalPrice)
+ */
+export function getLineItemAdjustedDiscount(item: LineItemEntity): number {
+  const originalPrice = item.unit_price;
+  const adjustedPrice = getLineItemAdjustedPrice(item);
+
+  // Obtener el descuento original desde adjustments si existen, si no desde discount_total
+  const originalDiscount =
+    calculateDiscountFromAdjustments((item as any).adjustments) ||
+    item.discount_total ||
+    0;
+
+  if (originalDiscount <= 0) {
+    return 0;
+  }
+
+  // Calcular la proporción del ajuste de precio
+  const priceRatio = adjustedPrice / originalPrice;
+
+  // Ajustar el descuento proporcionalmente
+  return Math.round(originalDiscount * priceRatio);
+}
+
+/**
  * Obtiene el precio ajustado de un método de envío
  * Prioriza el valor de data, si no existe lo calcula
  */
@@ -247,6 +313,42 @@ export function calculateShippingTotal(
 export function calculateTotalDiscount(items: LineItemEntity[]): number {
   if (!Array.isArray(items)) return 0;
   return items.reduce((sum, item) => sum + (item.discount_total || 0), 0);
+}
+
+/**
+ * Calcula el descuento de un item desde sus adjustments
+ * En Medusa, los descuentos se almacenan en adjustments con description: "discount"
+ */
+export function calculateDiscountFromAdjustments(
+  adjustments?: Array<{ description?: string; amount?: number }>
+): number {
+  if (!Array.isArray(adjustments)) return 0;
+  return adjustments.reduce((sum, adj) => {
+    if (adj.description === "discount" && adj.amount) {
+      return sum + Math.abs(adj.amount);
+    }
+    return sum;
+  }, 0);
+}
+
+/**
+ * Calcula el total de gift cards aplicados al carrito
+ */
+export function calculateGiftCardTotal(
+  transactions?: GiftCardTransaction[]
+): number {
+  if (!Array.isArray(transactions)) return 0;
+  return transactions.reduce(
+    (sum, transaction) => sum + (transaction.amount || 0),
+    0
+  );
+}
+
+/**
+ * Ajusta el gift_card_total para una región tax-exempt
+ */
+export function adjustGiftCardTotal(originalGiftCardTotal: number): number {
+  return Math.round(originalGiftCardTotal / IVA_RATE);
 }
 
 // ============================================================================

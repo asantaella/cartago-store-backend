@@ -12,6 +12,7 @@ export {
   calculateTaxAmount,
   adjustDiscountForTaxExempt,
   getAdjustedPrice,
+  calculateAdjustedDiscount,
   // Validaciones
   isValidPrice,
   pricesAreDifferent,
@@ -22,6 +23,7 @@ export {
   calculateItemsSubtotal,
   calculateShippingTotal,
   calculateTotalDiscount,
+  calculateDiscountFromAdjustments,
   // Logging
   log,
   logError,
@@ -33,6 +35,7 @@ export {
   // Tipos
   type CartEntity,
   type LineItemEntity,
+  type LineItemAdjustmentEntity,
   type ShippingMethodEntity,
   type PaymentSessionEntity,
   type TaxContext,

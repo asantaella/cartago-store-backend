@@ -10,6 +10,7 @@ import {
   calculateShippingTotal,
   calculateTotalDiscount,
   calculatePriceWithoutTax,
+  adjustGiftCardTotal,
   log,
   logError,
   safeJsonTransform,
@@ -59,30 +60,32 @@ function transformCartItemsForTaxExempt(cart: CartEntity): void {
 
     // Calcular el precio base ajustado
     const originalPrice = item.unit_price;
-    const basePrice = item.metadata?.adjusted_unit_price || getLineItemAdjustedPrice(item);
-    
+    const basePrice =
+      item.metadata?.adjusted_unit_price || getLineItemAdjustedPrice(item);
+
     // Para el descuento, usar el valor ORIGINAL guardado en metadata si existe
     // Esto evita recálculos acumulativos en múltiples GETs
-    const originalDiscountFromMetadata = item.metadata?.original_discount_total as number | undefined;
+    const originalDiscountFromMetadata = item.metadata
+      ?.original_discount_total as number | undefined;
     const currentDiscount = item.discount_total || 0;
-    
+
     // Si ya existe original_discount_total en metadata, usar ese valor como base
     // Si no, el valor actual es el original (primera vez que se procesa)
-    const originalDiscount = originalDiscountFromMetadata !== undefined 
-      ? originalDiscountFromMetadata 
-      : currentDiscount;
-    
+    const originalDiscount =
+      originalDiscountFromMetadata !== undefined
+        ? originalDiscountFromMetadata
+        : currentDiscount;
+
     // Calcular la proporción del ajuste de precio
     const priceRatio = basePrice / originalPrice;
-    
+
     // Ajustar el descuento proporcionalmente SOLO si hay descuento original
-    const adjustedDiscount = originalDiscount > 0 
-      ? Math.round(originalDiscount * priceRatio)
-      : 0;
-    
+    const adjustedDiscount =
+      originalDiscount > 0 ? Math.round(originalDiscount * priceRatio) : 0;
+
     item.subtotal = basePrice * (item.quantity || 1);
     item.discount_total = adjustedDiscount;
-    
+
     // Guardar el descuento original en metadata para futuras referencias
     if (!item.metadata) {
       item.metadata = {};
@@ -144,8 +147,41 @@ function recalculateCartTotals(cart: CartEntity): void {
   // Descuento total (sin modificar)
   cart.discount_total = calculateTotalDiscount(cart.items || []);
 
+  // Ajustar gift card total si existe
+  const originalGiftCardTotal = cart.metadata?.original_gift_card_total as
+    | number
+    | undefined;
+  const currentGiftCardTotal = cart.gift_card_total || 0;
+
+  if (currentGiftCardTotal > 0) {
+    // Si ya existe original_gift_card_total en metadata, usar ese valor como base
+    // Si no, el valor actual es el original (primera vez que se procesa)
+    const giftCardToAdjust =
+      originalGiftCardTotal !== undefined
+        ? originalGiftCardTotal
+        : currentGiftCardTotal;
+
+    cart.gift_card_total = adjustGiftCardTotal(giftCardToAdjust);
+
+    // Guardar el gift card total original en metadata para futuras referencias
+    if (!cart.metadata) {
+      cart.metadata = {};
+    }
+    if (originalGiftCardTotal === undefined && currentGiftCardTotal > 0) {
+      (cart.metadata as any).original_gift_card_total = currentGiftCardTotal;
+    }
+
+    log(
+      `GET cart - Gift card adjusted: ${giftCardToAdjust} cents → ${cart.gift_card_total} cents`
+    );
+  }
+
   // Total final
-  cart.total = cart.subtotal + cart.shipping_total - cart.discount_total;
+  cart.total =
+    cart.subtotal +
+    cart.shipping_total -
+    cart.discount_total -
+    (cart.gift_card_total || 0);
 }
 
 function applyTaxRate(cart: CartEntity): void {

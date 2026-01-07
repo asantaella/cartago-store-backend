@@ -45,10 +45,10 @@ export default async function handleOrderPlaced({
     await invoiceNumberGenerator.setOrderInvoiceNumber(order.id);
 
     // Enviar la notificación de pedido colocado
-    await receiptNotificationService.sendNotification(
+/*     await receiptNotificationService.sendNotification(
       OrderService.Events.PLACED,
       order
-    );
+    ); */
 
     console.log(
       `[NOTIFICATION] Successfully processed order.placed for order ${order.display_id}`
