@@ -17,7 +17,6 @@ import {
   calculateTotalDiscount,
   calculateDiscountFromAdjustments,
   calculateAdjustedDiscount,
-  adjustGiftCardTotal,
   pricesAreDifferent,
   log,
   logError,
@@ -218,38 +217,11 @@ export async function persistCartPricingOnComplete(
 
       const pricesAlreadyAdjusted = cart.metadata?.prices_adjusted === true;
       log(`Cart ${cartId} - pricesAlreadyAdjusted=${pricesAlreadyAdjusted}`);
-
       let itemsUpdated = 0;
       let shippingUpdated = 0;
-      let giftCardAdjusted = false;
 
       // Para zonas tax-exempt: calcular y persistir precios ajustados
       if (!pricesAlreadyAdjusted) {
-        // Ajustar gift_card_total si existe
-        const originalGiftCardTotal = cart.gift_card_total || 0;
-        if (originalGiftCardTotal > 0) {
-          const adjustedGiftCardTotal = adjustGiftCardTotal(
-            originalGiftCardTotal
-          );
-
-          // Guardar el gift card total original en metadata
-          if (!cart.metadata) {
-            cart.metadata = {};
-          }
-          cart.metadata.original_gift_card_total = originalGiftCardTotal;
-
-          // Actualizar el gift_card_total del carrito
-          cart.gift_card_total = adjustedGiftCardTotal;
-          giftCardAdjusted = true;
-
-          log(
-            `COMPLETE cart ${cartId} - Gift card adjusted: ${originalGiftCardTotal} cents (${(
-              originalGiftCardTotal / 100
-            ).toFixed(2)}€) → ${adjustedGiftCardTotal} cents (${(
-              adjustedGiftCardTotal / 100
-            ).toFixed(2)}€)`
-          );
-        }
         // Actualizar precios de line items
         if (Array.isArray(cart.items) && cart.items.length > 0) {
           for (const item of cart.items) {
@@ -299,21 +271,15 @@ export async function persistCartPricingOnComplete(
         log(`Cart ${cartId} prices already adjusted, skipping persistence`);
       }
 
-      // Actualizar metadata del carrito (esto también persiste gift_card_total si fue ajustado)
+      // Actualizar metadata del carrito
       cart.metadata = {
         ...cart.metadata,
         territory_type: taxContext.territoryType,
         prices_adjusted: true,
       };
 
-      // Persistir el carrito con todos los cambios (incluyendo gift_card_total ajustado)
+      // Persistir el carrito con todos los cambios
       await cartRepo.save(cart);
-
-      if (giftCardAdjusted) {
-        log(
-          `Cart ${cartId} gift_card_total persisted: ${cart.gift_card_total} cents`
-        );
-      }
 
       // Actualizar payment sessions para reflejar el nuevo total
       if (cart.payment_sessions && cart.payment_sessions.length > 0) {
@@ -343,9 +309,9 @@ export async function persistCartPricingOnComplete(
       log(
         `Persisted cart ${cartId}: territory=${taxContext.territoryType}, ` +
           `tax_exempt=${taxContext.isTaxExempt}, items=${itemsUpdated}, ` +
-          `shipping=${shippingUpdated}, gift_card=${
-            giftCardAdjusted ? "adjusted" : "none"
-          }, payment_sessions=${cart.payment_sessions?.length || 0}`
+          `shipping=${shippingUpdated}, payment_sessions=${
+            cart.payment_sessions?.length || 0
+          }`
       );
     });
 

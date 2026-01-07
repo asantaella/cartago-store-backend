@@ -10,7 +10,6 @@ import {
   calculateShippingTotal,
   calculateTotalDiscount,
   calculatePriceWithoutTax,
-  adjustGiftCardTotal,
   log,
   logError,
   safeJsonTransform,
@@ -147,34 +146,7 @@ function recalculateCartTotals(cart: CartEntity): void {
   // Descuento total (sin modificar)
   cart.discount_total = calculateTotalDiscount(cart.items || []);
 
-  // Ajustar gift card total si existe
-  const originalGiftCardTotal = cart.metadata?.original_gift_card_total as
-    | number
-    | undefined;
-  const currentGiftCardTotal = cart.gift_card_total || 0;
-
-  if (currentGiftCardTotal > 0) {
-    // Si ya existe original_gift_card_total en metadata, usar ese valor como base
-    // Si no, el valor actual es el original (primera vez que se procesa)
-    const giftCardToAdjust =
-      originalGiftCardTotal !== undefined
-        ? originalGiftCardTotal
-        : currentGiftCardTotal;
-
-    cart.gift_card_total = adjustGiftCardTotal(giftCardToAdjust);
-
-    // Guardar el gift card total original en metadata para futuras referencias
-    if (!cart.metadata) {
-      cart.metadata = {};
-    }
-    if (originalGiftCardTotal === undefined && currentGiftCardTotal > 0) {
-      (cart.metadata as any).original_gift_card_total = currentGiftCardTotal;
-    }
-
-    log(
-      `GET cart - Gift card adjusted: ${giftCardToAdjust} cents → ${cart.gift_card_total} cents`
-    );
-  }
+  // No modificar `gift_card_total` aquí: mantener el valor original
 
   // Total final
   cart.total =

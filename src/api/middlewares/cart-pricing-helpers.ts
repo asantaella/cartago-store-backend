@@ -60,7 +60,6 @@ export type CartEntity = {
   metadata?: Record<string, unknown> & {
     territory_type?: string;
     prices_adjusted?: boolean;
-    original_gift_card_total?: number;
   };
   subtotal?: number;
   shipping_total?: number;
@@ -347,9 +346,6 @@ export function calculateGiftCardTotal(
 /**
  * Ajusta el gift_card_total para una región tax-exempt
  */
-export function adjustGiftCardTotal(originalGiftCardTotal: number): number {
-  return Math.round(originalGiftCardTotal / IVA_RATE);
-}
 
 // ============================================================================
 // LOGGING
