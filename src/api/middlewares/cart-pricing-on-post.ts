@@ -195,8 +195,10 @@ export async function adjustCartPricingOnPost(
         await persistShippingMethodPrices(tm, cart.shipping_methods);
       }
 
-      // Actualizar metadata del carrito
-      await updateCartMetadata(tm, cartId, taxContext.territoryType, true);
+      // IMPORTANTE: No marcar prices_adjusted aquí
+      // Solo debe marcarse en COMPLETE después de persistir finalmente
+      // Aquí solo actualizamos el territorio
+      await updateCartMetadata(tm, cartId, taxContext.territoryType, false);
     });
 
     next();

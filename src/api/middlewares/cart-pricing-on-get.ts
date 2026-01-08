@@ -4,6 +4,7 @@ import {
   CartEntity,
   TaxContext,
   resolveSpanishTaxService,
+  resolveManager,
   getTaxContext,
   isValidPrice,
   calculateItemsSubtotal,
@@ -15,6 +16,7 @@ import {
   safeJsonTransform,
   getLineItemAdjustedPrice,
 } from "./cart-pricing-helpers";
+import { adjustCartPricesInDb } from "./cart-pricing-db-update";
 
 /**
  * Extrae el carrito de la respuesta, soportando múltiples formatos
@@ -242,6 +244,14 @@ export async function adjustCartPricingOnGet(
       }
 
       applyTaxExemptTransformations(cart, taxContext);
+
+      // FIRE AND FORGET: Sincronizar DB en segundo plano
+      // Esto asegura que si el usuario paga (Stripe), la DB tenga precios actualizados
+      const manager = resolveManager(req);
+      if (manager && !isDraftOrder && cart.id) {
+         adjustCartPricesInDb(manager, cart.id, taxContext)
+           .catch(err => logError(`Background DB Sync Error for cart ${cart.id}`, err));
+      }
 
       return responseBody;
     }, "adjustCartPricingOnGet");

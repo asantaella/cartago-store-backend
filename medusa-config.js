@@ -41,6 +41,18 @@ const DATABASE_URL =
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
 const plugins = [
+  {
+    resolve: "@medusajs/admin",
+    options: {
+      serve: false,
+      develop: {
+        open: false,
+        port: 7001,
+        host: "localhost",
+        allowedHosts: "auto",
+      },
+    },
+  },
   `medusa-fulfillment-manual`,
 
   {

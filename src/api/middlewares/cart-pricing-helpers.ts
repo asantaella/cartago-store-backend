@@ -34,6 +34,7 @@ export type ShippingMethodEntity = {
 export type PaymentSessionEntity = {
   id: string;
   amount: number;
+  provider_id: string;
   data?: Record<string, unknown>;
 };
 
@@ -90,6 +91,7 @@ export type Manager = {
   transaction: <T>(
     fn: (transactionalManager: TransactionManager) => Promise<T>
   ) => Promise<T>;
+  getRepository: <T>(name: string) => Repository<T>;
 };
 
 export interface TaxContext {
