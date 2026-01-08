@@ -15,100 +15,12 @@ import {
   calculateItemsSubtotal,
   calculateShippingTotal,
   calculateTotalDiscount,
-  calculateDiscountFromAdjustments,
-  calculateAdjustedDiscount,
-  pricesAreDifferent,
+  persistLineItemUnitPrice,
+  persistShippingMethodPrice,
   log,
   logError,
   logCartOperation,
-  logPriceChange,
 } from "./cart-pricing-helpers";
-
-/**
- * Persiste el precio ajustado directamente en unit_price del line item
- * Recalcula el descuento proporcionalmente y actualiza adjustments
- */
-async function persistLineItemUnitPrice(
-  lineItemRepo: { save: (item: LineItemEntity) => Promise<LineItemEntity> },
-  adjustmentRepo: any,
-  item: LineItemEntity,
-  adjustedPrice: number
-): Promise<boolean> {
-  const originalPrice = item.unit_price;
-
-  if (!pricesAreDifferent(originalPrice, adjustedPrice)) {
-    return false;
-  }
-
-  // Obtener el descuento original desde adjustments o discount_total
-  const discountFromAdjustments = calculateDiscountFromAdjustments(
-    (item as any).adjustments
-  );
-  const originalDiscount =
-    discountFromAdjustments > 0
-      ? discountFromAdjustments
-      : item.discount_total || 0;
-
-  // Recalcular descuento proporcionalmente al cambio de precio
-  const adjustedDiscount = calculateAdjustedDiscount(
-    originalDiscount,
-    originalPrice,
-    adjustedPrice
-  );
-
-  log(
-    `COMPLETE item ${item.id} - originalPrice: ${originalPrice}, adjustedPrice: ${adjustedPrice}, ` +
-      `originalDiscount: ${originalDiscount}, adjustedDiscount: ${adjustedDiscount}`
-  );
-
-  item.unit_price = adjustedPrice;
-  item.discount_total = adjustedDiscount;
-  await lineItemRepo.save(item);
-
-  // Actualizar los adjustments de descuento con el nuevo importe
-  if (Array.isArray((item as any).adjustments)) {
-    for (const adj of (item as any).adjustments) {
-      if (adj && adj.description === "discount") {
-        const sign = adj.amount >= 0 ? 1 : -1;
-        adj.amount = sign * Math.abs(adjustedDiscount);
-        await adjustmentRepo.save(adj);
-        log(
-          `Updated adjustment ${adj.id} for item ${item.id}: ${originalDiscount} cents → ${adj.amount} cents`
-        );
-      }
-    }
-  }
-
-  logPriceChange("Persisted item", item.id, originalPrice, adjustedPrice);
-  log(
-    `Persisted discount for item ${item.id}: ${originalDiscount} cents → ${adjustedDiscount} cents`
-  );
-
-  return true;
-}
-
-/**
- * Persiste el precio ajustado directamente en price del shipping method
- */
-async function persistShippingMethodPrice(
-  shippingMethodRepo: {
-    save: (method: ShippingMethodEntity) => Promise<ShippingMethodEntity>;
-  },
-  method: ShippingMethodEntity,
-  adjustedPrice: number
-): Promise<boolean> {
-  const originalPrice = method.price;
-
-  if (!pricesAreDifferent(originalPrice, adjustedPrice)) {
-    return false;
-  }
-
-  method.price = adjustedPrice;
-  await shippingMethodRepo.save(method);
-
-  logPriceChange("Persisted shipping", method.id, originalPrice, adjustedPrice);
-  return true;
-}
 
 /**
  * Actualiza las payment sessions usando el PaymentProviderService de Medusa
@@ -501,7 +413,7 @@ export async function persistCartPricingOnComplete(
 
       // Guardar el cart actualizado en el request para que Medusa lo use
       (req as any).cart = freshCart;
-      
+
       // CRÍTICO: Calcular y asignar el total correcto al cart
       // Esto asegura que cuando Medusa llame a cart.complete(), use el total correcto
       if (freshCart.metadata?.prices_adjusted === true) {
@@ -509,24 +421,32 @@ export async function persistCartPricingOnComplete(
           // Usar las mismas funciones que el middleware POST para calcular totales
           // Esto garantiza consistencia
           const subtotal = calculateItemsSubtotal(freshCart.items || [], false);
-          const shippingTotal = calculateShippingTotal(freshCart.shipping_methods || [], false);
+          const shippingTotal = calculateShippingTotal(
+            freshCart.shipping_methods || [],
+            false
+          );
           const discountTotal = calculateTotalDiscount(freshCart.items || []);
           const giftCardTotal = freshCart.gift_card_total || 0;
-          const correctedTotal = Math.max(0, subtotal + shippingTotal - discountTotal - giftCardTotal);
-          
+          const correctedTotal = Math.max(
+            0,
+            subtotal + shippingTotal - discountTotal - giftCardTotal
+          );
+
           // IMPORTANTE: Guardar el total en el cart
           freshCart.total = correctedTotal;
           (req as any).cart = freshCart;
-          
+
           log(
-            `Calculated corrected total for cart ${cartId}: ${correctedTotal} cents (${(correctedTotal / 100).toFixed(2)}€) ` +
-            `[subtotal=${subtotal}, shipping=${shippingTotal}, discount=${discountTotal}, giftCard=${giftCardTotal}]`
+            `Calculated corrected total for cart ${cartId}: ${correctedTotal} cents (${(
+              correctedTotal / 100
+            ).toFixed(2)}€) ` +
+              `[subtotal=${subtotal}, shipping=${shippingTotal}, discount=${discountTotal}, giftCard=${giftCardTotal}]`
           );
         } catch (calcError) {
           logError(`Error calculating total: ${calcError}`);
         }
       }
-      
+
       log(
         `Reloaded cart ${cartId} with prices_adjusted=${freshCart.metadata?.prices_adjusted}`
       );

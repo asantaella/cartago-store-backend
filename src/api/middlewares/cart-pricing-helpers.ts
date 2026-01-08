@@ -350,6 +350,169 @@ export function calculateGiftCardTotal(
  */
 
 // ============================================================================
+// TRANSFORMACIONES DE CART
+// ============================================================================
+
+/**
+ * Extrae el carrito de la respuesta, soportando múltiples formatos
+ */
+export function extractCartFromBody(body: unknown): {
+  cart: CartEntity | null;
+  isDraftOrder: boolean;
+} {
+  if (!body || typeof body !== "object") {
+    return { cart: null, isDraftOrder: false };
+  }
+
+  const bodyObj = body as Record<string, unknown>;
+
+  if (bodyObj.cart) {
+    return { cart: bodyObj.cart as CartEntity, isDraftOrder: false };
+  }
+
+  if (
+    bodyObj.draft_order &&
+    typeof bodyObj.draft_order === "object" &&
+    (bodyObj.draft_order as Record<string, unknown>).cart
+  ) {
+    return {
+      cart: (bodyObj.draft_order as Record<string, unknown>).cart as CartEntity,
+      isDraftOrder: true,
+    };
+  }
+
+  return { cart: null, isDraftOrder: false };
+}
+
+/**
+ * Transforma los items del carrito para zonas tax-exempt
+ */
+export function transformCartItemsForTaxExempt(cart: CartEntity): void {
+  if (!Array.isArray(cart.items)) return;
+
+  for (const item of cart.items) {
+    if (!isValidPrice(item.unit_price)) continue;
+
+    const originalPrice = item.unit_price;
+    const basePrice = getLineItemAdjustedPrice(item);
+
+    // Obtener el descuento original desde metadata si existe
+    const originalDiscountFromMetadata = item.metadata
+      ?.original_discount_total as number | undefined;
+    const currentDiscount = item.discount_total || 0;
+
+    const originalDiscount =
+      originalDiscountFromMetadata !== undefined
+        ? originalDiscountFromMetadata
+        : currentDiscount;
+
+    // Calcular el descuento ajustado proporcionalmente
+    const priceRatio = basePrice / originalPrice;
+    const adjustedDiscount =
+      originalDiscount > 0 ? Math.round(originalDiscount * priceRatio) : 0;
+
+    item.subtotal = basePrice * (item.quantity || 1);
+    item.discount_total = adjustedDiscount;
+
+    // Guardar el descuento original en metadata
+    if (!item.metadata) {
+      item.metadata = {};
+    }
+    if (originalDiscountFromMetadata === undefined && currentDiscount > 0) {
+      (item.metadata as any).original_discount_total = currentDiscount;
+    }
+
+    log(
+      `Transform item ${item.id} - basePrice: ${Math.round(
+        basePrice
+      )} cents, ` +
+        `discount: ${adjustedDiscount} cents (original: ${originalDiscount}), ` +
+        `subtotal: ${Math.round(item.subtotal)} cents`
+    );
+  }
+}
+
+/**
+ * Transforma los shipping methods del carrito para zonas tax-exempt
+ */
+export function transformShippingMethodsForTaxExempt(cart: CartEntity): void {
+  if (!Array.isArray(cart.shipping_methods)) return;
+
+  for (const method of cart.shipping_methods) {
+    if (!isValidPrice(method.price)) continue;
+
+    const baseShippingPrice = getShippingMethodAdjustedPrice(method);
+    (method as Record<string, unknown>)["price_without_tax"] =
+      baseShippingPrice;
+
+    log(
+      `Transform shipping ${method.id} - baseShippingPrice: ${Math.round(
+        baseShippingPrice
+      )} cents`
+    );
+  }
+}
+
+/**
+ * Recalcula los totales del carrito para zonas tax-exempt
+ */
+export function recalculateCartTotals(cart: CartEntity): void {
+  cart.subtotal =
+    cart.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
+
+  cart.shipping_total = calculateShippingTotal(
+    cart.shipping_methods || [],
+    true
+  );
+
+  cart.tax_total = 0;
+  cart.discount_total = calculateTotalDiscount(cart.items || []);
+
+  cart.total =
+    cart.subtotal +
+    cart.shipping_total -
+    cart.discount_total -
+    (cart.gift_card_total || 0);
+}
+
+/**
+ * Aplica tax rate 0% para zonas tax-exempt
+ */
+export function applyTaxRate(cart: CartEntity): void {
+  const originalTaxRate = cart.region?.tax_rate;
+
+  if (!cart.region) {
+    cart.region = {};
+  }
+
+  cart.region.tax_rate = 0;
+
+  log(
+    `Applied tax_rate 0% to region of cart ${cart.id} (original: ${
+      originalTaxRate ?? "undefined"
+    })`
+  );
+}
+
+/**
+ * Aplica todas las transformaciones de precio para zona tax-exempt
+ */
+export function applyTaxExemptTransformations(
+  cart: CartEntity,
+  taxContext: TaxContext
+): void {
+  transformCartItemsForTaxExempt(cart);
+  transformShippingMethodsForTaxExempt(cart);
+  recalculateCartTotals(cart);
+  applyTaxRate(cart);
+
+  cart.metadata = {
+    ...cart.metadata,
+    territory_type: taxContext.territoryType,
+  };
+}
+
+// ============================================================================
 // LOGGING
 // ============================================================================
 
@@ -521,4 +684,312 @@ export async function updateCartMetadata(
   } catch {
     return false;
   }
+}
+
+/**
+ * Detecta si ha habido un cambio de zona fiscal (standard <-> tax-exempt)
+ */
+export function detectTerritoryChange(
+  currentCart: CartEntity,
+  newTaxContext: TaxContext
+): { hasChanged: boolean; previouslyTaxExempt: boolean } {
+  const previousTerritoryType = currentCart.metadata?.territory_type as
+    | string
+    | undefined;
+  const currentTerritoryType = newTaxContext.territoryType;
+
+  // Si no hay territorio previo, no hay cambio
+  if (!previousTerritoryType) {
+    return { hasChanged: false, previouslyTaxExempt: false };
+  }
+
+  // Determinar si el territorio previo era tax-exempt
+  // Asumimos que cualquier territorio que no sea "PENINSULA" es tax-exempt
+  const previouslyTaxExempt = previousTerritoryType !== "standard";
+  const currentlyTaxExempt = newTaxContext.isTaxExempt;
+
+  // Ha habido cambio si el estado tax-exempt ha cambiado
+  const hasChanged = previouslyTaxExempt !== currentlyTaxExempt;
+
+  if (hasChanged) {
+    log(
+      `Territory change detected for cart ${currentCart.id}: ` +
+        `${previousTerritoryType} (exempt: ${previouslyTaxExempt}) -> ` +
+        `${currentTerritoryType} (exempt: ${currentlyTaxExempt})`
+    );
+  }
+
+  return { hasChanged, previouslyTaxExempt };
+}
+
+/**
+ * Restaura los precios originales de los line items cuando se vuelve a zona standard
+ */
+export async function restoreOriginalLineItemPrices(
+  transactionalManager: TransactionManager,
+  items: LineItemEntity[]
+): Promise<number> {
+  let restoredCount = 0;
+
+  for (const item of items) {
+    if (!item.metadata) continue;
+
+    const originalPrice = item.metadata.original_unit_price as
+      | number
+      | undefined;
+    const originalDiscount = item.metadata.original_discount_total as
+      | number
+      | undefined;
+
+    // Si hay precio original guardado y es diferente del actual, restaurar
+    if (originalPrice !== undefined && item.unit_price !== originalPrice) {
+      log(
+        `Restoring original price for item ${item.id}: ${item.unit_price} -> ${originalPrice} cents`
+      );
+
+      item.unit_price = originalPrice;
+
+      // Restaurar descuento original si existe
+      if (originalDiscount !== undefined) {
+        item.discount_total = originalDiscount;
+        log(
+          `Restoring original discount for item ${item.id}: ${item.discount_total} -> ${originalDiscount} cents`
+        );
+      }
+
+      // Limpiar metadata de ajustes
+      delete item.metadata.adjusted_unit_price;
+      delete item.metadata.original_discount_total;
+      delete item.metadata.original_unit_price;
+
+      const repo =
+        transactionalManager.getRepository<LineItemEntity>("LineItem");
+      await repo.save(item);
+      restoredCount++;
+    }
+  }
+
+  return restoredCount;
+}
+
+/**
+ * Restaura los precios originales de los shipping methods cuando se vuelve a zona standard
+ */
+export async function restoreOriginalShippingPrices(
+  transactionalManager: TransactionManager,
+  methods: ShippingMethodEntity[]
+): Promise<number> {
+  let restoredCount = 0;
+
+  for (const method of methods) {
+    if (!method.data) continue;
+
+    const originalPrice = method.data.original_price as number | undefined;
+
+    // Si hay precio original guardado y es diferente del actual, restaurar
+    if (originalPrice !== undefined && method.price !== originalPrice) {
+      log(
+        `Restoring original shipping price for method ${method.id}: ${method.price} -> ${originalPrice} cents`
+      );
+
+      method.price = originalPrice;
+
+      // Limpiar data de ajustes
+      delete method.data.adjusted_price;
+      delete method.data.original_price;
+
+      const repo =
+        transactionalManager.getRepository<ShippingMethodEntity>(
+          "ShippingMethod"
+        );
+      await repo.save(method);
+      restoredCount++;
+    }
+  }
+
+  return restoredCount;
+}
+/**
+ * Persiste los precios ajustados en metadata para line items
+ */
+export async function persistLineItemMetadataPrices(
+  transactionalManager: TransactionManager,
+  items: LineItemEntity[]
+): Promise<number> {
+  let updatedCount = 0;
+
+  for (const item of items) {
+    if (!isValidPrice(item.unit_price)) continue;
+
+    if (!item.metadata) {
+      item.metadata = {};
+    }
+
+    // Guardar precio original si no existe aún (primera vez)
+    if (item.metadata.original_unit_price === undefined) {
+      item.metadata.original_unit_price = item.unit_price;
+      log(`Item ${item.id} stored original price: ${item.unit_price} cents`);
+    }
+
+    const basePrice = item.metadata.original_unit_price as number;
+
+    // Calcular precio ajustado desde el original con IVA
+    const adjustedPrice = getAdjustedPrice(basePrice);
+    item.metadata.adjusted_unit_price = adjustedPrice;
+
+    // Guardar descuento original si existe y no está guardado
+    const originalDiscount = item.discount_total || 0;
+    if (
+      originalDiscount > 0 &&
+      item.metadata.original_discount_total === undefined
+    ) {
+      item.metadata.original_discount_total = originalDiscount;
+    }
+
+    const repo = transactionalManager.getRepository<LineItemEntity>("LineItem");
+    await repo.save(item);
+
+    updatedCount++;
+    log(
+      `Persisted metadata for item ${item.id} - original_unit_price: ${basePrice} cents, ` +
+        `adjusted_unit_price: ${adjustedPrice} cents, original_discount: ${originalDiscount} cents`
+    );
+  }
+
+  return updatedCount;
+}
+
+/**
+ * Persiste los precios ajustados en data para shipping methods
+ */
+export async function persistShippingMethodDataPrices(
+  transactionalManager: TransactionManager,
+  methods: ShippingMethodEntity[]
+): Promise<number> {
+  let updatedCount = 0;
+
+  for (const method of methods) {
+    if (!isValidPrice(method.price)) continue;
+
+    if (!method.data) {
+      method.data = {};
+    }
+
+    if (!method.data) {
+      method.data = {};
+    }
+
+    // Guardar precio original si no existe aún (primera vez)
+    if (method.data.original_price === undefined) {
+      method.data.original_price = method.price;
+      log(`Shipping ${method.id} stored original price: ${method.price} cents`);
+    }
+
+    const basePrice = method.data.original_price as number;
+
+    // Calcular precio ajustado desde el original con IVA
+    const adjustedPrice = getAdjustedPrice(basePrice);
+    method.data.adjusted_price = adjustedPrice;
+
+    const repo =
+      transactionalManager.getRepository<ShippingMethodEntity>(
+        "ShippingMethod"
+      );
+    await repo.save(method);
+
+    updatedCount++;
+    log(
+      `Persisted data for shipping ${method.id} - original_price: ${basePrice} cents, ` +
+        `adjusted_price: ${adjustedPrice} cents`
+    );
+  }
+
+  return updatedCount;
+}
+
+/**
+ * Persiste el precio ajustado directamente en unit_price del line item
+ * y recalcula el descuento proporcionalmente
+ */
+export async function persistLineItemUnitPrice(
+  lineItemRepo: { save: (item: LineItemEntity) => Promise<LineItemEntity> },
+  adjustmentRepo: any,
+  item: LineItemEntity,
+  adjustedPrice: number
+): Promise<boolean> {
+  const originalPrice = item.unit_price;
+
+  if (!pricesAreDifferent(originalPrice, adjustedPrice)) {
+    return false;
+  }
+
+  // Obtener el descuento original desde adjustments o discount_total
+  const discountFromAdjustments = calculateDiscountFromAdjustments(
+    (item as any).adjustments
+  );
+  const originalDiscount =
+    discountFromAdjustments > 0
+      ? discountFromAdjustments
+      : item.discount_total || 0;
+
+  // Recalcular descuento proporcionalmente
+  const adjustedDiscount = calculateAdjustedDiscount(
+    originalDiscount,
+    originalPrice,
+    adjustedPrice
+  );
+
+  log(
+    `Persist unit_price for item ${item.id} - originalPrice: ${originalPrice}, ` +
+      `adjustedPrice: ${adjustedPrice}, originalDiscount: ${originalDiscount}, ` +
+      `adjustedDiscount: ${adjustedDiscount}`
+  );
+
+  item.unit_price = adjustedPrice;
+  item.discount_total = adjustedDiscount;
+  await lineItemRepo.save(item);
+
+  // Actualizar los adjustments de descuento
+  if (Array.isArray((item as any).adjustments)) {
+    for (const adj of (item as any).adjustments) {
+      if (adj && adj.description === "discount") {
+        const sign = adj.amount >= 0 ? 1 : -1;
+        adj.amount = sign * Math.abs(adjustedDiscount);
+        await adjustmentRepo.save(adj);
+        log(
+          `Updated adjustment ${adj.id} for item ${item.id}: ${originalDiscount} → ${adj.amount} cents`
+        );
+      }
+    }
+  }
+
+  logPriceChange("Persisted item", item.id, originalPrice, adjustedPrice);
+  log(
+    `Persisted discount for item ${item.id}: ${originalDiscount} → ${adjustedDiscount} cents`
+  );
+
+  return true;
+}
+
+/**
+ * Persiste el precio ajustado directamente en price del shipping method
+ */
+export async function persistShippingMethodPrice(
+  shippingMethodRepo: {
+    save: (method: ShippingMethodEntity) => Promise<ShippingMethodEntity>;
+  },
+  method: ShippingMethodEntity,
+  adjustedPrice: number
+): Promise<boolean> {
+  const originalPrice = method.price;
+
+  if (!pricesAreDifferent(originalPrice, adjustedPrice)) {
+    return false;
+  }
+
+  method.price = adjustedPrice;
+  await shippingMethodRepo.save(method);
+
+  logPriceChange("Persisted shipping", method.id, originalPrice, adjustedPrice);
+  return true;
 }

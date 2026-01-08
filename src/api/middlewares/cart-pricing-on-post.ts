@@ -2,17 +2,15 @@ import { NextFunction, Response } from "express";
 import { MedusaRequest } from "@medusajs/medusa";
 import {
   CartEntity,
-  LineItemEntity,
-  ShippingMethodEntity,
   Manager,
   TransactionManager,
   resolveSpanishTaxService,
   resolveManager,
   getTaxContext,
-  isValidPrice,
-  getAdjustedPrice,
   loadCartWithRelations,
-  updateShippingMethodData,
+  detectTerritoryChange,
+  persistLineItemMetadataPrices,
+  persistShippingMethodDataPrices,
   updateCartMetadata,
   log,
   logError,
@@ -21,7 +19,6 @@ import {
 
 /**
  * Obtiene el carrito para validar si pertenece a una región tax-exempt
- * antes de iniciar la transacción principal
  */
 async function getCartForValidation(
   manager: Manager,
@@ -34,6 +31,8 @@ async function getCartForValidation(
       cart = await loadCartWithRelations(tm, cartId, [
         "shipping_address",
         "region",
+        "items",
+        "shipping_methods",
       ]);
     });
 
@@ -44,88 +43,9 @@ async function getCartForValidation(
 }
 
 /**
- * Persiste los precios ajustados en metadata para todos los line items
- */
-async function persistLineItemPrices(
-  transactionalManager: TransactionManager,
-  items: LineItemEntity[]
-): Promise<number> {
-  let updatedCount = 0;
-
-  for (const item of items) {
-    if (!isValidPrice(item.unit_price)) continue;
-
-    const adjustedPrice = getAdjustedPrice(item.unit_price);
-
-    // También guardar el descuento original en metadata para uso posterior en COMPLETE
-    const originalDiscount = item.discount_total || 0;
-
-    // Actualizar metadata con precio ajustado y descuento original
-    if (!item.metadata) {
-      item.metadata = {};
-    }
-    item.metadata.adjusted_unit_price = adjustedPrice;
-    if (originalDiscount > 0) {
-      item.metadata.original_discount_total = originalDiscount;
-    }
-
-    const repo = transactionalManager.getRepository<LineItemEntity>("LineItem");
-    await repo.save(item);
-
-    updatedCount++;
-    log(
-      `POST item ${item.id} - adjusted_unit_price: ${adjustedPrice} cents (${(
-        adjustedPrice / 100
-      ).toFixed(2)}€), original_discount: ${originalDiscount} cents`
-    );
-    log(
-      `POST item ${item.id} - metadata persisted: ${JSON.stringify(
-        item.metadata
-      )}`
-    );
-  }
-
-  return updatedCount;
-}
-
-/**
- * Persiste los precios ajustados en data para todos los shipping methods
- */
-async function persistShippingMethodPrices(
-  transactionalManager: TransactionManager,
-  methods: ShippingMethodEntity[]
-): Promise<number> {
-  let updatedCount = 0;
-
-  for (const method of methods) {
-    if (!isValidPrice(method.price)) continue;
-
-    const adjustedPrice = getAdjustedPrice(method.price);
-    const updated = await updateShippingMethodData(
-      transactionalManager,
-      method.id,
-      adjustedPrice
-    );
-
-    if (updated) {
-      updatedCount++;
-      log(
-        `POST shipping ${
-          method.id
-        } - adjusted_price: ${adjustedPrice} cents (${(
-          adjustedPrice / 100
-        ).toFixed(2)}€)`
-      );
-    }
-  }
-
-  return updatedCount;
-}
-
-/**
  * Middleware que persiste los precios ajustados en metadata para zonas tax-exempt
  * en las peticiones POST/PATCH del carrito.
- * IMPORTANTE: NO modifica unit_price original, solo guarda el precio ajustado en metadata
+ * Detecta cambios de zona fiscal y restaura o ajusta precios según corresponda.
  */
 export async function adjustCartPricingOnPost(
   req: MedusaRequest,
@@ -139,8 +59,7 @@ export async function adjustCartPricingOnPost(
       return;
     }
 
-    // Excluir explícitamente el endpoint COMPLETE para que solo se ejecute
-    // persistCartPricingOnComplete en esa ruta (punto 1 del análisis anterior)
+    // Excluir explícitamente el endpoint COMPLETE
     const requestPath = req.originalUrl || req.path || "";
     const isCompleteEndpoint = /\/store\/carts\/[^/]+\/complete\/?$/.test(
       requestPath
@@ -158,48 +77,92 @@ export async function adjustCartPricingOnPost(
       return;
     }
 
-    // Verificar si es una región tax-exempt ANTES de iniciar la transacción
-    const tempCart = await getCartForValidation(manager, cartId);
-    if (!tempCart) {
+    // Obtener el carrito completo para verificar cambios de zona
+    const currentCart = await getCartForValidation(manager, cartId);
+    if (!currentCart) {
       next();
       return;
     }
 
-    const taxContext = getTaxContext(tempCart, spanishTaxService);
-    if (!taxContext || !taxContext.isTaxExempt) {
+    const taxContext = getTaxContext(currentCart, spanishTaxService);
+    if (!taxContext) {
       next();
       return;
     }
+
+    // Detectar si ha habido un cambio de zona fiscal
+    const { hasChanged, previouslyTaxExempt } = detectTerritoryChange(
+      currentCart,
+      taxContext
+    );
 
     logCartOperation("POST", cartId, {
       postal: taxContext.postalCode,
       isTaxExempt: taxContext.isTaxExempt,
       territory: taxContext.territoryType,
+      territoryChanged: hasChanged,
+      previouslyTaxExempt: previouslyTaxExempt,
     });
 
-    // Ejecutar transacción para persistir precios
+    // Ejecutar transacción para ajustar o restaurar precios
     await manager.transaction(async (tm: TransactionManager) => {
       const cart = await loadCartWithRelations(tm, cartId);
       if (!cart) return;
 
-      // Persistir precios ajustados en items
-      if (Array.isArray(cart.items) && cart.items.length > 0) {
-        await persistLineItemPrices(tm, cart.items);
+      let itemsUpdated = 0;
+      let shippingUpdated = 0;
+
+      // CASO 1: Cambio de tax-exempt a standard (dejar que DB-UPDATE restaure)
+      if (hasChanged && previouslyTaxExempt && !taxContext.isTaxExempt) {
+        log(`Territory change detected: tax-exempt -> standard`);
+        // NO restaurar aquí, dejar que adjustCartPricesInDb lo haga
+      }
+      // CASO 2: Cambio de standard a tax-exempt O permanece tax-exempt (persistir metadata)
+      else if (taxContext.isTaxExempt) {
+        if (hasChanged && !previouslyTaxExempt) {
+          log(`Territory change detected: standard -> tax-exempt`);
+        }
+
+        // Persistir precios ajustados en items (guarda original si no existe)
+        if (Array.isArray(cart.items) && cart.items.length > 0) {
+          itemsUpdated = await persistLineItemMetadataPrices(tm, cart.items);
+        }
+
+        // Persistir precios ajustados en shipping methods
+        if (
+          Array.isArray(cart.shipping_methods) &&
+          cart.shipping_methods.length > 0
+        ) {
+          shippingUpdated = await persistShippingMethodDataPrices(
+            tm,
+            cart.shipping_methods
+          );
+        }
+
+        if (itemsUpdated > 0 || shippingUpdated > 0) {
+          log(
+            `Persisted prices metadata: ${itemsUpdated} items, ${shippingUpdated} shipping`
+          );
+        }
       }
 
-      // Persistir precios ajustados en shipping methods
-      if (
-        Array.isArray(cart.shipping_methods) &&
-        cart.shipping_methods.length > 0
-      ) {
-        await persistShippingMethodPrices(tm, cart.shipping_methods);
-      }
-
-      // IMPORTANTE: No marcar prices_adjusted aquí
-      // Solo debe marcarse en COMPLETE después de persistir finalmente
-      // Aquí solo actualizamos el territorio
+      // Actualizar metadata del territorio
       await updateCartMetadata(tm, cartId, taxContext.territoryType, false);
     });
+
+    // Sincronizar BD SOLO cuando hay cambio de territorio o está en zona tax-exempt
+    // Esto evita ajustes innecesarios en zonas standard sin cambios
+    if (hasChanged || taxContext.isTaxExempt) {
+      const manager2 = resolveManager(req);
+      if (manager2) {
+        const { adjustCartPricesInDb } = await import(
+          "./cart-pricing-db-update"
+        );
+        adjustCartPricesInDb(manager2, cartId, taxContext).catch((err) =>
+          log(`DB sync error in POST for cart ${cartId}: ${err}`)
+        );
+      }
+    }
 
     next();
   } catch (error) {

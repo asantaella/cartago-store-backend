@@ -17,13 +17,31 @@ export {
   isValidPrice,
   pricesAreDifferent,
   getTaxContext,
+  detectTerritoryChange,
   // Transformaciones
+  extractCartFromBody,
+  transformCartItemsForTaxExempt,
+  transformShippingMethodsForTaxExempt,
+  recalculateCartTotals,
+  applyTaxRate,
+  applyTaxExemptTransformations,
   getLineItemAdjustedPrice,
   getShippingMethodAdjustedPrice,
   calculateItemsSubtotal,
   calculateShippingTotal,
   calculateTotalDiscount,
   calculateDiscountFromAdjustments,
+  // Persistencia
+  persistLineItemMetadataPrices,
+  persistShippingMethodDataPrices,
+  persistLineItemUnitPrice,
+  persistShippingMethodPrice,
+  restoreOriginalLineItemPrices,
+  restoreOriginalShippingPrices,
+  loadCartWithRelations,
+  updateLineItemMetadata,
+  updateShippingMethodData,
+  updateCartMetadata,
   // Logging
   log,
   logError,
@@ -32,6 +50,9 @@ export {
   // Error handling
   safeMiddlewareExecution,
   safeJsonTransform,
+  // Resolvers
+  resolveSpanishTaxService,
+  resolveManager,
   // Tipos
   type CartEntity,
   type LineItemEntity,
