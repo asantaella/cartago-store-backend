@@ -31,7 +31,8 @@
     "dev": "cross-env npm run build:server && medusa develop",
     "dev:staging": "cross-env DEBUG=medusa:* NODE_ENV='staging' npm run dev",
     "dev:admin": "medusa-admin develop",
-    "dev:admin:staging": "cross-env NODE_ENV='staging' npm run dev:admin"
+    "dev:admin:staging": "cross-env NODE_ENV='staging' npm run dev:admin",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@json2csv/node": "^7.0.6",
@@ -85,6 +86,8 @@
     "medusa-file-cloudflare-r2": "^0.0.8",
     "medusa-file-r2": "^0.0.2",
     "medusa-test-utils": "^1.1.45",
+    "patch-package": "^8.0.1",
+    "postinstall-postinstall": "^2.1.0",
     "rimraf": "^3.0.2",
     "semver": "^7.5.4",
     "ts-jest": "^29.2.6",

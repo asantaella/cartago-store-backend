@@ -29,15 +29,10 @@ class ReceiptNotificationService extends AbstractNotificationService {
     super(container);
     this.orderNotificationService = new OrderNotificationService(container);
 
-    console.log("[NOTIFICATION] Order sender service initialized");
-
     try {
       this.mailerSendService = new MailerSend({
         apiKey: process.env.MAILERSEND_API_KEY,
       });
-      console.log(
-        "[NOTIFICATION] MailerSend client initialized successfully for order notifications"
-      );
     } catch (error) {
       console.error(
         "[NOTIFICATION] Error initializing MailerSend client for orders:",

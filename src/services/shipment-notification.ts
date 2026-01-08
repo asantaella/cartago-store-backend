@@ -29,10 +29,7 @@ class ShipmentNotificationService extends AbstractNotificationService {
     try {
       this.mailerSendService = new MailerSend({
         apiKey: process.env.MAILERSEND_API_KEY,
-      });
-      console.log(
-        "[NOTIFICATION] MailerSend client initialized successfully for shipment notifications"
-      );
+      });    
     } catch (error) {
       console.error(
         "[NOTIFICATION] Error initializing MailerSend client for shipments:",

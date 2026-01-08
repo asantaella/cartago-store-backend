@@ -40,16 +40,10 @@ class ResetPasswordService extends AbstractNotificationService {
       },
     };
 
-    console.log(
-      "[NOTIFICATION] Reset password service initialized:\n",
-      this.config
-    );
-
     try {
       this.mailerSendService = new MailerSend({
         apiKey: process.env.MAILERSEND_API_KEY,
       });
-      console.log("[NOTIFICATION] MailerSend client initialized successfully");
     } catch (error) {
       console.error(
         "[NOTIFICATION] Error initializing MailerSend client:",

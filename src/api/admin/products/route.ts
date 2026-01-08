@@ -1,8 +1,8 @@
-import { Router } from "express";
+import { Router, Router as ExpressRouter } from "express";
 import { sanitizeHandle } from "../../middlewares/sanitize-handle";
 import { MedusaError } from "@medusajs/utils";
 
-const router = Router();
+const router: ExpressRouter = Router();
 
 // Middleware para validar datos del producto
 
