@@ -69,6 +69,9 @@
     "typedi": "^0.10.0",
     "typeorm": "^0.3.20"
   },
+  "resolutions": {
+    "typeorm": "0.3.20"
+  },
   "devDependencies": {
     "@babel/cli": "^7.14.3",
     "@babel/core": "^7.14.3",
@@ -85,8 +88,6 @@
     "medusa-file-cloudflare-r2": "^0.0.8",
     "medusa-file-r2": "^0.0.2",
     "medusa-test-utils": "^1.1.45",
-    "patch-package": "^8.0.1",
-    "postinstall-postinstall": "^2.1.0",
     "rimraf": "^3.0.2",
     "semver": "^7.5.4",
     "ts-jest": "^29.2.6",
