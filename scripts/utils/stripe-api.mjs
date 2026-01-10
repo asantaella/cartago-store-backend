@@ -114,6 +114,7 @@ export async function confirmSepaPaymentIntent(
 
   const confirmPayload = {
     payment_method: paymentMethod,
+    return_url: "http://localhost:9000/store/orders/confirm",
   };
 
   const defaultMandateData = {
@@ -148,8 +149,8 @@ export const TEST_PAYMENT_METHODS = {
 };
 
 export const TEST_SEPA_IBANS = {
-  SUCCESS: "DE89370400440532013000",
-  FAILURE: "DE62370400440532013001",
+  SUCCESS: "ES2300120345030000067893",
+  FAILURE: "ES1700120345000000343434",
 };
 
 export default stripe;

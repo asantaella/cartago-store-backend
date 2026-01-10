@@ -12,8 +12,9 @@ import {
   logCart,
   getOrder,
   sleep,
+  MEDUSA_BACKEND_URL,
 } from "../utils/medusa-api.mjs";
-import { createOrder, captureOrder } from "../utils/paypal-api.mjs";
+import { captureOrder, simulateWebhook } from "../utils/paypal-api.mjs";
 
 const WEBHOOK_WAIT_MS = 5000;
 
@@ -27,20 +28,70 @@ async function main() {
 
   const shippingOptions = await listShippingOptions(medusa, cart.id);
   if (shippingOptions.length) {
-    await addShippingMethod(medusa, cart.id, shippingOptions[0].id);
+    const shippingOption = shippingOptions.find((option) =>
+      option.name.toLowerCase().includes("estándar")
+    );
+    if (shippingOption) {
+      await addShippingMethod(medusa, cart.id, shippingOption.id);
+    }
   }
 
   await createPaymentSessions(medusa, cart.id);
   await setPaymentSession(medusa, cart.id, "paypal");
 
-  logCart(cart);
+  const { cart: cartWithSession } = await medusa.carts.retrieve(cart.id);
+  logCart(cartWithSession);
 
-  const paypalOrder = await createOrder(
-    cart.id,
-    cart.total,
-    cart.region?.currency_code || "eur"
-  );
-  await captureOrder(paypalOrder.id);
+  const paypalSession = cartWithSession.payment_session;
+  if (!paypalSession || paypalSession.provider_id !== "paypal") {
+    throw new Error("No se encontró la sesión de pago de PayPal seleccionada");
+  }
+
+  const sessionData = paypalSession.data;
+  const paypalOrderId = sessionData?.id;
+  if (!paypalOrderId) {
+    throw new Error("La sesión de PayPal no tiene un ID de orden");
+  }
+
+  console.log("Capturando pago PayPal vía API...");
+  const capturedOrder = await captureOrder(paypalOrderId);
+
+  if (capturedOrder.id !== paypalOrderId) {
+    throw new Error(
+      `PayPal devolvió una orden distinta a la de la sesión: esperado ${paypalOrderId}, recibido ${capturedOrder.id}`
+    );
+  }
+
+  console.log("✓ Orden PayPal capturada");
+
+  const purchaseUnits =
+    capturedOrder.purchase_units?.map((unit) => ({
+      custom_id: unit.custom_id || cart.id,
+      reference_id: unit.reference_id || cart.id,
+      amount: unit.amount,
+      payments: unit.payments,
+    })) ||
+    sessionData.purchase_units?.map((unit) => ({
+      custom_id: unit.custom_id || cart.id,
+      reference_id: unit.reference_id || cart.id,
+      amount: unit.amount,
+      payments: unit.payments,
+    }));
+
+  if (!purchaseUnits?.length) {
+    throw new Error("No se pudieron obtener los purchase_units de PayPal");
+  }
+
+  const webhookBase = MEDUSA_BACKEND_URL.replace(/\/$/, "");
+  const webhookUrl = `${webhookBase}/webhooks/paypal`;
+  const completedOrder = {
+    id: capturedOrder.id,
+    status: capturedOrder.status,
+    purchase_units: purchaseUnits,
+  };
+
+  console.log("Simulando webhook CHECKOUT.ORDER.COMPLETED...");
+  await simulateWebhook("CHECKOUT.ORDER.COMPLETED", completedOrder, webhookUrl);
 
   console.log(
     `Esperando ${WEBHOOK_WAIT_MS}ms para que el webhook de PayPal se procese...`

@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 
 dotenv.config({ path: join(__dirname, "../../.env") });
 
-const MEDUSA_BACKEND_URL =
+export const MEDUSA_BACKEND_URL =
   process.env.MEDUSA_BACKEND_URL || "http://localhost:9000";
 
 export function createMedusaClient() {
