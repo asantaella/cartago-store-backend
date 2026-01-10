@@ -14,6 +14,23 @@ import {
 
 export const config: MiddlewaresConfig = {
   routes: [
+    // ============================================
+    // Webhooks de pago (Stripe y PayPal)
+    // Requieren raw body para verificación de firma
+    // ============================================
+    {
+      matcher: "/webhooks/stripe",
+      bodyParser: false,
+      middlewares: [raw({ type: "application/json" })],
+    },
+    {
+      matcher: "/webhooks/paypal",
+      bodyParser: false,
+      middlewares: [raw({ type: "application/json" })],
+    },
+    // ============================================
+    // Rutas de invoice
+    // ============================================
     {
       matcher: "/store/orders/*/invoice",
       bodyParser: false,

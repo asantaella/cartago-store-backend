@@ -1,0 +1,142 @@
+version: "1.0"
+name: "medusajs-stripe-webhook-testing-plan"
+description: "Plan completo para testear webhooks Stripe en MedusaJS localhost usando Stripe CLI"
+model: "claude-sonnet-4.5"
+
+objetivo:
+  descripcion: |
+    Elaborar un plan técnico detallado con código TypeScript/Node.js para testear los webhooks de Stripe
+    integrados en un backend MedusaJS v1.20.11 ejecutándose en localhost:9000, utilizando Stripe CLI
+    como herramienta para enviar y reenviar eventos de prueba.
+
+contexto_tecnico:
+  backend: "MedusaJS v1.20.11"
+  puerto: 9000
+  plugin: "medusa-payment-stripe"
+  endpoint_webhook: "/stripe/hooks" # ajustable según tu implementación real
+  herramienta_webhooks: "Stripe CLI"
+  entorno_stripe: "Test mode"
+  lenguaje: "TypeScript/Node.js"
+
+requerimientos_funcionales:
+  1_configuracion_entorno:
+    - Instalar Stripe CLI y autenticarlo con la cuenta de Stripe en modo test
+    - Conectar Stripe CLI con el endpoint local de webhooks (localhost:9000)
+    - Definir comandos para escuchar y reenviar eventos de Stripe al backend MedusaJS
+
+  2_scripts_testing:
+    descripcion: "Crear scripts en Node.js para simular casos de prueba automáticos"
+    casos_uso:
+      - caso_exito: "Pago completado exitosamente (charge.succeeded / payment_intent.succeeded)"
+      - caso_error: "Pago fallido (charge.failed / payment_intent.payment_failed)"
+    datos_entrada: "Cart mock de MedusaJS v1.20.11 definido en /scripts/__mocks__/cart-mock.json"
+    flujo_scripts:
+      - Leer cart-mock.json
+      - Crear un cart temporal en MedusaJS vía API
+      - Iniciar flujo de pago Stripe (creando PaymentIntent asociado al cart)
+      - Usar Stripe CLI para enviar o simular eventos de pago (éxito/error)
+      - Verificar que el webhook es recibido y procesado correctamente
+      - Validar cambios de estado en la Order de MedusaJS
+
+  3_estructura_archivos:
+    - "/scripts/payments/test-stripe-webhook-success.ts"
+    - "/scripts/payments/test-stripe-webhook-failure.ts"
+    - "/scripts/__mocks__/cart-mock.json"
+    - "/scripts/utils/medusa-api.ts" # helpers para interactuar con la API de Medusa
+    - "/scripts/utils/stripe-api.ts" # helpers para crear PaymentIntents, etc.
+
+instrucciones_detalladas:
+  rol: "Actúa como un ingeniero backend experto en MedusaJS, Stripe y testing automatizado"
+
+  tarea_principal: |
+    Desarrollar un plan paso a paso que incluya:
+
+    1. **Configuración inicial de Stripe CLI**:
+       - Comando para autenticar: `stripe login`
+       - Comandos para escuchar webhooks: `stripe listen --forward-to localhost:9000/stripe/hooks`
+       - Explicar cómo ver los eventos en tiempo real en la consola de Stripe CLI
+       - Cómo usar `--events` para filtrar tipos de eventos (por ejemplo, `payment_intent.succeeded`, `charge.failed`)
+
+    2. **Estructura del cart-mock.json**:
+       - Reutilizar/ajustar el mock compatible con MedusaJS v1.20.11
+       - Debe incluir: region_id, items, customer_email, shipping_address, billing_address, sales_channel_id
+       - Formato válido para crear un cart mediante `POST /store/carts`
+
+    3. **Script de prueba: pago exitoso**:
+       - Código TypeScript completo para `test-stripe-webhook-success.ts`
+       - Flujo esperado:
+         - Leer `cart-mock.json`
+         - Crear un cart en MedusaJS (API HTTP)
+         - Crear un PaymentIntent en Stripe asociado al cart (metadatos con cart_id / order_id)
+         - Confirmar el PaymentIntent (simulación de pago exitoso)
+         - Stripe envía `payment_intent.succeeded` / `charge.succeeded` a través de Stripe CLI al endpoint de Medusa
+         - Validar en Medusa que:
+           - El webhook fue recibido
+           - Se invocaron los servicios de cart/order correspondientes
+           - La Order quedó en estado “paid” o “completed” (según tu modelo)
+
+    4. **Script de prueba: pago fallido**:
+       - Código TypeScript para `test-stripe-webhook-failure.ts`
+       - Flujo esperado:
+         - Crear PaymentIntent con condiciones de fallo (por ejemplo, usando tarjetas de prueba que provocan error)
+         - Confirmar el PaymentIntent y provocar `payment_intent.payment_failed` / `charge.failed`
+         - Stripe CLI reenvía estos eventos al endpoint `/stripe/hooks`
+         - Validar que:
+           - El webhook de fallo es procesado
+           - La Order queda marcada como “failed” o “canceled” según tu lógica de negocio
+
+    5. **Funciones auxiliares**:
+       - `medusa-api.ts`:
+         - `createCartFromMock(mockPath: string)`
+         - `getOrderByCartId(cartId: string)`
+         - `logOrderStatus(orderId: string)`
+       - `stripe-api.ts`:
+        - `createPaymentIntent(cartId: string, amount: number, currency: string)`
+        - `confirmPaymentIntent(paymentIntentId: string, paymentMethodId: string)`
+        - Utilizar claves de Stripe en modo test y los payment method IDs oficiales de prueba (`pm_card_visa`, `pm_card_chargeDeclined`)
+
+    6. **Guía de ejecución**:
+       - Prerrequisitos:
+         - Node.js, TypeScript, Stripe CLI instalado
+         - Variables de entorno: `STRIPE_API_KEY`, `MEDUSA_BACKEND_URL`, etc.
+       - Comandos de ejemplo:
+         - Iniciar backend Medusa: `npm run start` o `medusa start`
+         - Iniciar escucha con Stripe CLI: `stripe listen --forward-to localhost:9000/stripe/hooks`
+         - Ejecutar script de éxito: `ts-node scripts/payments/test-stripe-webhook-success.ts`
+         - Ejecutar script de fallo: `ts-node scripts/payments/test-stripe-webhook-failure.ts`
+       - Cómo interpretar los logs de:
+         - Stripe CLI (eventos enviados)
+         - Backend Medusa (handlers de webhooks)
+         - Scripts (logs de verificación de estado de Order)
+
+    7. **Debugging y troubleshooting**:
+       - Qué revisar cuando:
+         - Stripe CLI recibe el evento pero Medusa no lo procesa
+         - El endpoint de webhook devuelve 4xx/5xx
+         - El estado de la Order no cambia como se espera
+       - Uso de `stripe trigger` para generar eventos estándar (por ejemplo, `stripe trigger payment_intent.succeeded`)
+
+output_esperado:
+  formato: "Documento técnico estructurado con código listo para usar"
+  secciones:
+    - Resumen del flujo de testing end-to-end
+    - Diagrama de flujo textual: Script → Medusa API → Stripe → Webhooks → Medusa
+    - Configuración paso a paso de Stripe CLI y webhooks
+    - Código completo de cada archivo TypeScript/JSON
+    - Instrucciones de ejecución con ejemplos de comandos
+    - Checklist de validación de resultados
+
+referencias_documentacion:
+  - "Stripe Webhooks: https://stripe.com/docs/webhooks"
+  - "Stripe CLI: https://stripe.com/docs/stripe-cli"
+  - "Stripe test cards: https://stripe.com/docs/testing"
+  - "Stripe Events: https://stripe.com/docs/api/events/types"
+  - "MedusaJS v1 API (store): https://docs.medusajs.com/api/store"
+  - "medusa-payment-stripe (v1.20.11): https://github.com/medusajs/medusa/tree/v1.20.11/packages/medusa-payment-stripe"
+
+criterios_calidad:
+  - Código en TypeScript con tipado estricto
+  - Manejo explícito de errores y logs claros
+  - Scripts reejecutables sin romper el entorno (idempotencia razonable)
+  - Separación clara entre lógica de negocio (Medusa) y lógica de prueba (scripts)
+  - Comentarios en puntos clave: creación de PaymentIntent, confirmación, recepción de webhook, actualización de Order

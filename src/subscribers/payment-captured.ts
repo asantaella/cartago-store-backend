@@ -1,0 +1,126 @@
+import {
+  type SubscriberConfig,
+  type SubscriberArgs,
+  OrderService,
+} from "@medusajs/medusa";
+import ReceiptNotificationService from "../services/receipt-notification";
+import { subscriberLogger } from "../utils/logger";
+
+/**
+ * Subscriber para el evento order.payment_captured.
+ *
+ * Se ejecuta cuando un pago es capturado exitosamente, especialmente útil para:
+ * - Pagos SEPA que se completan días después del checkout
+ * - Pagos con tarjeta que usan capture manual
+ *
+ * Acciones:
+ * 1. Envía notificación de recibo al cliente
+ *
+ * NOTA: Para pedidos normales con tarjeta/PayPal donde el pago se captura
+ * inmediatamente, el recibo ya se envía desde order-placed.ts.
+ * Este subscriber maneja el caso de pagos diferidos (SEPA).
+ */
+export default async function handlePaymentCaptured({
+  data,
+  eventName,
+  container,
+}: SubscriberArgs<Record<string, string>>) {
+  const logContext = {
+    order_id: data.id,
+    event: eventName,
+    subscriber: "payment-captured-handler",
+  };
+
+  subscriberLogger.info(logContext, "Payment captured subscriber triggered");
+
+  try {
+    const orderService: OrderService = container.resolve("orderService");
+    const receiptNotificationService: ReceiptNotificationService =
+      container.resolve("receiptNotificationService");
+
+    // Obtener el pedido con las relaciones necesarias
+    const order = await orderService.retrieve(data.id, {
+      relations: [
+        "items",
+        "items.variant",
+        "customer",
+        "shipping_address",
+        "billing_address",
+        "discounts",
+        "shipping_methods",
+        "payments",
+      ],
+    });
+
+    subscriberLogger.info(
+      {
+        ...logContext,
+        display_id: order.display_id,
+        payment_status: order.payment_status,
+        customer_email: order.email,
+      },
+      "Retrieved order for payment captured notification"
+    );
+
+    // Verificar si el pedido fue creado por SEPA (pago diferido)
+    // Para evitar enviar recibo duplicado en pagos inmediatos
+    const isSepaPayment = order.payments?.some(
+      (payment) =>
+        payment.provider_id === "stripe" &&
+        (payment.data as any)?.payment_method_types?.includes("sepa_debit")
+    );
+
+    if (isSepaPayment) {
+      subscriberLogger.info(
+        {
+          ...logContext,
+          display_id: order.display_id,
+        },
+        "SEPA payment captured, sending receipt notification"
+      );
+
+      // =====================================================
+      // PUNTO DE INTEGRACIÓN: Envío de recibo
+      // Llamar al servicio de notificación para enviar el recibo
+      // =====================================================
+      await receiptNotificationService.sendNotification(
+        OrderService.Events.PAYMENT_CAPTURED,
+        order
+      );
+
+      subscriberLogger.info(
+        {
+          ...logContext,
+          display_id: order.display_id,
+        },
+        "Receipt notification sent for SEPA payment"
+      );
+    } else {
+      subscriberLogger.debug(
+        {
+          ...logContext,
+          display_id: order.display_id,
+        },
+        "Non-SEPA payment, receipt already sent on order.placed"
+      );
+    }
+  } catch (error) {
+    subscriberLogger.error(
+      {
+        ...logContext,
+        error: error instanceof Error ? error.message : String(error),
+      },
+      "Error in payment captured subscriber"
+    );
+
+    // No relanzar el error para no bloquear otros subscribers
+    // El error ya está logueado para debugging
+  }
+}
+
+export const config: SubscriberConfig = {
+  event: OrderService.Events.PAYMENT_CAPTURED,
+  context: {
+    subscriberId: "payment-captured-handler",
+  },
+};

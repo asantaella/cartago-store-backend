@@ -1,0 +1,61 @@
+version: "1.0"
+name: "medusajs-webhooks-plan"
+description: "Plan de desarrollo en TypeScript para integrar webhooks Stripe, PayPal y subscribers en MedusaJS v1.20.11"
+model: "Claude-Opus-4.5"
+
+inputs:
+  objetivo_principal: |
+    Elaborar un plan técnico y código base en TypeScript para integrar webhooks de Stripe y PayPal y subscribers en MedusaJS v1.20.11.
+
+contexto_sistema: |
+  Backend MedusaJS v1.20.11 en producción con plugins:
+    - medusa-payment-stripe: https://github.com/medusajs/medusa/tree/v1.20.11/packages/medusa-payment-stripe
+    - medusa-payment-paypal: https://github.com/medusajs/medusa/tree/v1.20.11/packages/medusa-payment-paypal
+  Lenguaje: TypeScript (strict mode)
+  Objetivo: entregar un plan reproducible y código base listo para integrar en el repositorio.
+  Entorno local soportado por ngrok o stripe-cli para pruebas.
+
+instrucciones:
+  - Actúa como un **arquitecto backend experto en TypeScript** con experiencia en MedusaJS, Stripe y PayPal.
+  - Desarrolla un **plan técnico detallado y las bases de código** para implementar los siguientes webhooks y subscribers:
+    1. Webhooks `/webhooks/stripe` y `/webhooks/paypal` que capturen el evento `charge.captured`.
+       - Si el `payment_intent` es de tipo **tarjeta** o **PayPal Checkout**, invocar `cartService.completeCart(cart_id)` y marcar el pedido como **pagado**.
+       - Si el `payment_intent` es de tipo **SEPA Direct Debit**, obtener el `order_id` desde `metadata.order_id`, buscar la orden existente y marcarla como **pagado**.
+    2. Webhook para capturar `payment_intent.processing` (Stripe, solo SEPA):
+       - Invoca `CART COMPLETED` y marca el pedido como **pendiente de pago**.
+    3. Webhook `charge.failed`:
+       - Si el `payment_intent` es tipo SEPA, actualizar la orden relacionada a **Failed** usando `order_id` desde los metadatos.
+    4. Subscribers Medusa:
+       - Crear subscribers para evento `Order.PAYMENT_CAPTURED` (Stripe y PayPal).
+       - Añadir un comentario indicando el punto exacto donde llamar el servicio de notificación de recibos (`notificationService.sendReceipt(order_id)`).
+    5. Guía de pruebas locales:
+       - Explicar uso de **ngrok** y **stripe-cli** para probar los webhooks de Stripe.
+       - Describir simulación de eventos en **PayPal Sandbox**.
+    6. Añadir enlaces a documentación asociada:
+       - Stripe Webhooks → https://stripe.com/docs/webhooks
+       - Stripe Events → https://stripe.com/docs/api/events/types
+       - PayPal Webhooks → https://developer.paypal.com/docs/api/webhooks
+       - MedusaJS Docs → https://docs.medusajs.com
+       - Paquetes medusa-payment-stripe/paypal → enlaces GitHub (arriba)
+
+output_esperado:
+  - Resumen arquitectónico del flujo de eventos entre Stripe/PayPal → MedusaJS.
+  - Árbol de carpetas sugerido del módulo (`src/webhooks`, `src/subscribers`, `src/services`).
+  - Código base en TypeScript de los handlers de webhooks.
+  - Código base en TypeScript de los subscribers `Order.PAYMENT_CAPTURED`.
+  - Pseudocódigo para invocación a `cartService` y `orderService`.
+  - Pasos exactos para pruebas locales.
+  - Referencias documentadas agrupadas por proveedor.
+
+estructura_respuesta:
+  1. Resumen arquitectónico del flujo.
+  2. Plan paso a paso (por cada webhook/subscriber).
+  3. Snippets de código base en TypeScript.
+  4. Guía de pruebas locales.
+  5. Tabla con enlaces a documentación oficial.
+
+formato_de_salida:
+  tipo: "documento técnico estructurado"
+  lenguaje: "TypeScript"
+  tono: "profesional, técnico y detallado"
+  estilo: "paso a paso con ejemplos de código y explicaciones breves"

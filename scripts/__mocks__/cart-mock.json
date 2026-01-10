@@ -1,0 +1,38 @@
+{
+  "region_id": "reg_01HZZEJSR0CWRSVFWSZQ2ANKV7",
+  "country_code": "es",
+  "email": "a.santaella.m@gmail.com",
+  "items": [
+    {
+      "variant_id": "variant_01HZZEK1MZZS9734KZWPT9MYT9",
+      "quantity": 1
+    }
+  ],
+  "shipping_address": {
+    "first_name": "Juan",
+    "last_name": "Pérez",
+    "address_1": "Calle Mayor 123",
+    "address_2": "Piso 2B",
+    "city": "Madrid",
+    "country_code": "es",
+    "province": "Madrid",
+    "postal_code": "28013",
+    "phone": "+34612345678"
+  },
+  "billing_address": {
+    "first_name": "Juan",
+    "last_name": "Pérez",
+    "address_1": "Calle Mayor 123",
+    "address_2": "Piso 2B",
+    "city": "Madrid",
+    "country_code": "es",
+    "province": "Madrid",
+    "postal_code": "28013",
+    "phone": "+34612345678"
+  },
+  "context": {
+    "ip": "127.0.0.1",
+    "user_agent": "PayPal-Webhook-Test-Script/1.0"
+  },
+  "sales_channel_id": "sc_01HZZEJSEK49WA6BYM90S0MZRJ"
+}
