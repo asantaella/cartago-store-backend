@@ -802,7 +802,7 @@ class PaymentWebhookService extends TransactionBaseService {
           "Cart completed successfully from PayPal webhook"
         );
 
-        // Para PayPal con capture:true, verificamos si el pago necesita ser capturado
+        // Para PayPal con capture:true, intentar capturar el pago antes de emitir el evento
         try {
           const orderWithPayments = await this.orderService_.retrieve(
             order.id,
@@ -825,39 +825,82 @@ class PaymentWebhookService extends TransactionBaseService {
           );
 
           if (payment && !payment.captured_at) {
-            // Como la orden de PayPal ya fue capturada externamente,
-            // actualizamos directamente el payment en lugar de llamar capturePayment
-            const captureTime = new Date();
-            const paymentRepo = this.manager_.getRepository("Payment");
+            // Intentar capturar el pago vía paymentService.capture()
+            // Esto marca Payment.captured_at incluso si la captura externa ya ocurrió
+            try {
+              await this.paymentService_.capture(payment.id);
 
-            await paymentRepo.update(payment.id, {
-              captured_at: captureTime,
-            });
+              paymentLogger.info(
+                {
+                  ...logContext,
+                  order_id: order.id,
+                  payment_id: payment.id,
+                },
+                "Payment captured successfully via PaymentService in webhook"
+              );
+            } catch (captureError) {
+              paymentLogger.warn(
+                {
+                  ...logContext,
+                  order_id: order.id,
+                  payment_id: payment.id,
+                  error:
+                    captureError instanceof Error
+                      ? captureError.message
+                      : String(captureError),
+                },
+                "PaymentService.capture failed - updating captured_at directly since payment was captured externally"
+              );
 
-            paymentLogger.info(
-              {
-                ...logContext,
-                order_id: order.id,
-                payment_id: payment.id,
-                captured_at: captureTime.toISOString(),
-              },
-              "Payment marked as captured (external PayPal capture)"
-            );
+              // Como la captura falló pero sabemos que PayPal ya capturó la orden externamente,
+              // actualizamos captured_at directamente para que el subscriber pueda recalcular el payment_status
+              const paymentRepo = this.manager_.getRepository("Payment");
+              await paymentRepo.update(payment.id, {
+                captured_at: new Date(),
+              });
 
-            // Actualizar el payment_status de la orden
-            const orderRepo = this.manager_.getRepository("Order");
-            await orderRepo.update(order.id, {
-              payment_status: "captured",
-            });
+              paymentLogger.info(
+                {
+                  ...logContext,
+                  order_id: order.id,
+                  payment_id: payment.id,
+                },
+                "Payment.captured_at marked directly due to external PayPal capture"
+              );
+            }
 
-            paymentLogger.info(
-              {
-                ...logContext,
-                order_id: order.id,
-                payment_status: "captured",
-              },
-              "Order payment status updated to captured"
-            );
+            // Emitir evento para que el subscriber recalcule order.payment_status
+            try {
+              await this.eventBusService_.emit(
+                PaymentService.Events.PAYMENT_CAPTURED,
+                {
+                  id: payment.id,
+                  order_id: order.id,
+                }
+              );
+
+              paymentLogger.info(
+                {
+                  ...logContext,
+                  order_id: order.id,
+                  payment_id: payment.id,
+                },
+                "Emitted PAYMENT_CAPTURED event for subscriber to finalize order payment"
+              );
+            } catch (emitError) {
+              paymentLogger.error(
+                {
+                  ...logContext,
+                  order_id: order.id,
+                  payment_id: payment.id,
+                  error:
+                    emitError instanceof Error
+                      ? emitError.message
+                      : String(emitError),
+                },
+                "Failed to emit PAYMENT_CAPTURED"
+              );
+            }
           } else {
             paymentLogger.info(
               {

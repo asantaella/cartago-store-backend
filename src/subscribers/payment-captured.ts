@@ -9,22 +9,25 @@ import { subscriberLogger } from "../utils/logger";
 /**
  * Subscriber para el evento payment.payment_captured.
  *
- * Se ejecuta cuando un pago es capturado exitosamente en el servicio PaymentService.
- * Este evento se emite cuando:
- * - Un pago es capturado (Stripe charge.captured, PayPal CHECKOUT.ORDER.COMPLETED)
- * - Para SEPA Direct Debit, cuando el banco confirma el pago (días después)
+ * Se ejecuta cuando un pago debe ser capturado en la orden (típicamente de webhooks externos).
+ * El webhook intenta capturar el pago vía paymentService.capture(), pero si falla
+ * (porque ya fue capturado externamente), emite el evento de todos modos.
+ *
+ * El subscriber es responsable de:
+ * 1. Verificar el estado actual del payment
+ * 2. Llamar a orderService.capturePayment para recalcular Order.payment_status
  *
  * Acciones:
- * - Cambiar el estado del payment de "awaiting" a "captured"
- * - Si la orden existe pero está sin pago, marcarla como pagada
+ * - Llamar orderService.capturePayment(order_id) para recalcular y actualizar Order.payment_status
  */
 export default async function handlePaymentCaptured({
   data,
   eventName,
   container,
-}: SubscriberArgs<Record<string, string>>) {
+}: SubscriberArgs<Record<string, string | undefined>>) {
   const logContext = {
     payment_id: data.id,
+    order_id: data.order_id,
     event: eventName,
     subscriber: "payment-captured-handler",
   };
@@ -42,27 +45,42 @@ export default async function handlePaymentCaptured({
       "Payment captured event received"
     );
 
-    // Este subscriber se dispara cuando PaymentService.Events.PAYMENT_CAPTURED es emitido
-    // Lo que ocurre cuando:
-    // 1. Se captura un pago en el webhook (charge.captured)
-    // 2. El webhook emite explícitamente PaymentService.Events.PAYMENT_CAPTURED
-    //
-    // En este punto:
-    // - El pago ya fue capturado por Medusa
-    // - El status de la orden ya fue actualizado a "captured"
-    // - El evento order.payment_captured ya fue emitido
-    //
-    // Acciones futuras podrían incluir:
-    // - Actualizar inventario si no se hizo automáticamente
-    // - Generar documentación adicional
-    // - Notificar sistemas externos
+    if (!data.order_id) {
+      subscriberLogger.warn(
+        {
+          ...logContext,
+        },
+        "Payment captured event received but no order_id provided"
+      );
+      return;
+    }
 
-    subscriberLogger.info(
-      {
-        ...logContext,
-      },
-      "Payment captured handler completed"
-    );
+    // Llamar orderService.capturePayment para recalcular y actualizar Order.payment_status
+    // Esto itera los payments y establece payment_status a "captured" si todos tienen captured_at
+    try {
+      await orderService.capturePayment(data.order_id);
+
+      subscriberLogger.info(
+        {
+          ...logContext,
+          order_id: data.order_id,
+        },
+        "Order payment status updated to captured via OrderService.capturePayment"
+      );
+    } catch (captureOrderError) {
+      subscriberLogger.warn(
+        {
+          ...logContext,
+          order_id: data.order_id,
+          error:
+            captureOrderError instanceof Error
+              ? captureOrderError.message
+              : String(captureOrderError),
+        },
+        "OrderService.capturePayment failed (may already be fully captured)"
+      );
+      // No relanzar - el error ya está logueado
+    }
   } catch (error) {
     subscriberLogger.error(
       {

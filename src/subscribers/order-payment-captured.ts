@@ -66,10 +66,10 @@ export default async function handleOrderPaymentCaptured({
     // ENVÍO DE RECIBO
     // Enviar el recibo cuando el pago ha sido capturado
     // =====================================================
-    await receiptNotificationService.sendNotification(
+/*     await receiptNotificationService.sendNotification(
       OrderService.Events.PAYMENT_CAPTURED,
       order
-    );
+    ); */
 
     subscriberLogger.info(
       {
