@@ -5,6 +5,7 @@ import {
 } from "@medusajs/medusa";
 import ReceiptNotificationService from "../services/receipt-notification";
 import { subscriberLogger } from "../utils/logger";
+import { retryWithBackoff } from "../utils/retry-handler";
 
 /**
  * Subscriber para el evento order.payment_captured.
@@ -37,6 +38,7 @@ export default async function handleOrderPaymentCaptured({
     const orderService: OrderService = container.resolve("orderService");
     const receiptNotificationService: ReceiptNotificationService =
       container.resolve("receiptNotificationService");
+    const eventBusService = container.resolve("eventBusService");
 
     // Obtener el pedido con las relaciones necesarias
     const order = await orderService.retrieve(data.id, {
@@ -65,19 +67,49 @@ export default async function handleOrderPaymentCaptured({
     // =====================================================
     // ENVÍO DE RECIBO
     // Enviar el recibo cuando el pago ha sido capturado
+    // Usar retry con backoff para operación crítica
     // =====================================================
-/*     await receiptNotificationService.sendNotification(
-      OrderService.Events.PAYMENT_CAPTURED,
-      order
-    ); */
+    try {
+      await retryWithBackoff(
+        async () => {
+          await receiptNotificationService.sendNotification(
+            OrderService.Events.PAYMENT_CAPTURED,
+            order
+          );
+        },
+        {
+          maxRetries: 3,
+          delays: [1000, 5000, 15000],
+          context: {
+            order_id: data.id,
+            display_id: order.display_id,
+            operation: "send_receipt",
+          },
+          eventBus: eventBusService,
+        }
+      );
 
-    subscriberLogger.info(
-      {
-        ...logContext,
-        display_id: order.display_id,
-      },
-      "Receipt notification sent successfully"
-    );
+      subscriberLogger.info(
+        {
+          ...logContext,
+          display_id: order.display_id,
+        },
+        "Receipt notification sent successfully"
+      );
+    } catch (notificationError) {
+      subscriberLogger.error(
+        {
+          ...logContext,
+          display_id: order.display_id,
+          error:
+            notificationError instanceof Error
+              ? notificationError.message
+              : String(notificationError),
+        },
+        "Failed to send receipt notification after retries"
+      );
+      // No relanzar - el error ya está logueado y el evento crítico fue emitido si correspondía
+    }
   } catch (error) {
     subscriberLogger.error(
       {

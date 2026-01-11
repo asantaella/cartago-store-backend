@@ -406,57 +406,56 @@ class PaymentWebhookService extends TransactionBaseService {
           "Processing charge.captured for order"
         );
 
-        // Capturar el pago usando orderService
-        // Esto actualiza payment_status a "captured" y emite order.payment_captured automáticamente
+        // Obtener el payment de la orden para emitir el evento
         try {
-          await this.orderService_.capturePayment(order.id);
-
-          paymentLogger.info(
+          const orderWithPayments = await this.orderService_.retrieve(
+            order.id,
             {
-              ...logContext,
-              order_id: order.id,
-            },
-            "Payment captured successfully"
+              relations: ["payments"],
+            }
           );
 
-          // Emitir evento PaymentService.PAYMENT_CAPTURED para que se procese por subscribers
-          // Si hay pagos en la captura, emitir para cada uno
-          if (order.payments && order.payments.length > 0) {
-            for (const payment of order.payments) {
-              try {
-                await this.eventBusService_.emit(
-                  PaymentService.Events.PAYMENT_CAPTURED,
-                  {
-                    id: payment.id,
-                  }
-                );
-              } catch (emitError) {
-                paymentLogger.warn(
-                  {
-                    ...logContext,
-                    payment_id: payment.id,
-                    error:
-                      emitError instanceof Error
-                        ? emitError.message
-                        : String(emitError),
-                  },
-                  "Failed to emit PAYMENT_CAPTURED event"
-                );
+          const payment = orderWithPayments.payments?.[0];
+
+          if (payment) {
+            // Emitir evento PaymentService.PAYMENT_CAPTURED una sola vez
+            // El subscriber payment-captured.ts manejará la captura y recalculará order.payment_status
+            await this.eventBusService_.emit(
+              PaymentService.Events.PAYMENT_CAPTURED,
+              {
+                id: payment.id,
+                order_id: order.id,
               }
-            }
+            );
+
+            paymentLogger.info(
+              {
+                ...logContext,
+                order_id: order.id,
+                payment_id: payment.id,
+              },
+              "Emitted PAYMENT_CAPTURED event - subscriber will handle capture"
+            );
+          } else {
+            paymentLogger.warn(
+              {
+                ...logContext,
+                order_id: order.id,
+              },
+              "No payment found in order"
+            );
           }
-        } catch (captureError) {
-          // Si ya está capturado o hay error, registrar pero continuar
-          paymentLogger.warn(
+        } catch (emitError) {
+          paymentLogger.error(
             {
               ...logContext,
               order_id: order.id,
               error:
-                captureError instanceof Error
-                  ? captureError.message
-                  : String(captureError),
+                emitError instanceof Error
+                  ? emitError.message
+                  : String(emitError),
             },
-            "Payment capture warning (may already be captured)"
+            "Failed to emit PAYMENT_CAPTURED event"
           );
         }
 
@@ -610,23 +609,13 @@ class PaymentWebhookService extends TransactionBaseService {
         return { success: false, error: "No order_id or cart_id in metadata" };
       }
 
-      // Si tenemos order_id, actualizar la orden directamente
+      // Si tenemos order_id, emitir evento directamente
       if (orderId) {
         paymentLogger.info(
           { ...logContext, order_id: orderId },
-          "Updating order status to requires_action"
+          "Emitting payment_failed event for order"
         );
 
-        await this.orderService_.update(orderId, {
-          status: "requires_action",
-          metadata: {
-            payment_failure_code: charge.failure_code,
-            payment_failure_message: charge.failure_message,
-            payment_failed_at: new Date().toISOString(),
-          },
-        });
-
-        // Emitir evento para que los subscribers puedan notificar al cliente
         await this.eventBusService_.emit("order.payment_failed", {
           id: orderId,
           failure_code: charge.failure_code,
@@ -635,7 +624,7 @@ class PaymentWebhookService extends TransactionBaseService {
 
         paymentLogger.info(
           { ...logContext, order_id: orderId },
-          "Order updated to requires_action"
+          "Payment failed event emitted - subscriber will update order status"
         );
         return { success: true, order_id: orderId };
       }
@@ -655,14 +644,6 @@ class PaymentWebhookService extends TransactionBaseService {
 
           if (orders.length > 0) {
             const order = orders[0];
-            await this.orderService_.update(order.id, {
-              status: "requires_action",
-              metadata: {
-                payment_failure_code: charge.failure_code,
-                payment_failure_message: charge.failure_message,
-                payment_failed_at: new Date().toISOString(),
-              },
-            });
 
             await this.eventBusService_.emit("order.payment_failed", {
               id: order.id,
@@ -672,7 +653,7 @@ class PaymentWebhookService extends TransactionBaseService {
 
             paymentLogger.info(
               { ...logContext, order_id: order.id },
-              "Order found and updated to requires_action"
+              "Order found and payment failed event emitted"
             );
             return { success: true, order_id: order.id };
           }
@@ -802,7 +783,7 @@ class PaymentWebhookService extends TransactionBaseService {
           "Cart completed successfully from PayPal webhook"
         );
 
-        // Para PayPal con capture:true, intentar capturar el pago antes de emitir el evento
+        // Obtener el payment de la orden para emitir el evento
         try {
           const orderWithPayments = await this.orderService_.retrieve(
             order.id,
@@ -821,109 +802,81 @@ class PaymentWebhookService extends TransactionBaseService {
               payment_captured_at: payment?.captured_at,
               payment_amount: payment?.amount,
             },
-            "Payment state before capture attempt"
+            "Payment state for PayPal order"
           );
 
-          if (payment && !payment.captured_at) {
-            // Intentar capturar el pago vía paymentService.capture()
-            // Esto marca Payment.captured_at incluso si la captura externa ya ocurrió
-            try {
-              await this.paymentService_.capture(payment.id);
+          if (payment) {
+            // Si el pago aún no está capturado, marcar como capturado
+            // PayPal ya capturó el dinero externamente, así que actualizar captured_at directamente
+            if (!payment.captured_at) {
+              try {
+                const paymentRepo = this.manager_.getRepository("Payment");
+                await paymentRepo.update(payment.id, {
+                  captured_at: new Date(),
+                });
 
-              paymentLogger.info(
-                {
-                  ...logContext,
-                  order_id: order.id,
-                  payment_id: payment.id,
-                },
-                "Payment captured successfully via PaymentService in webhook"
-              );
-            } catch (captureError) {
-              paymentLogger.warn(
-                {
-                  ...logContext,
-                  order_id: order.id,
-                  payment_id: payment.id,
-                  error:
-                    captureError instanceof Error
-                      ? captureError.message
-                      : String(captureError),
-                },
-                "PaymentService.capture failed - updating captured_at directly since payment was captured externally"
-              );
-
-              // Como la captura falló pero sabemos que PayPal ya capturó la orden externamente,
-              // actualizamos captured_at directamente para que el subscriber pueda recalcular el payment_status
-              const paymentRepo = this.manager_.getRepository("Payment");
-              await paymentRepo.update(payment.id, {
-                captured_at: new Date(),
-              });
-
-              paymentLogger.info(
-                {
-                  ...logContext,
-                  order_id: order.id,
-                  payment_id: payment.id,
-                },
-                "Payment.captured_at marked directly due to external PayPal capture"
-              );
+                paymentLogger.info(
+                  {
+                    ...logContext,
+                    order_id: order.id,
+                    payment_id: payment.id,
+                  },
+                  "Payment.captured_at marked - external capture confirmed"
+                );
+              } catch (updateError) {
+                paymentLogger.warn(
+                  {
+                    ...logContext,
+                    order_id: order.id,
+                    payment_id: payment.id,
+                    error:
+                      updateError instanceof Error
+                        ? updateError.message
+                        : String(updateError),
+                  },
+                  "Failed to update Payment.captured_at directly"
+                );
+              }
             }
 
-            // Emitir evento para que el subscriber recalcule order.payment_status
-            try {
-              await this.eventBusService_.emit(
-                PaymentService.Events.PAYMENT_CAPTURED,
-                {
-                  id: payment.id,
-                  order_id: order.id,
-                }
-              );
+            // Emitir evento PaymentService.PAYMENT_CAPTURED una sola vez
+            // El subscriber payment-captured.ts manejará recalcular order.payment_status
+            await this.eventBusService_.emit(
+              PaymentService.Events.PAYMENT_CAPTURED,
+              {
+                id: payment.id,
+                order_id: order.id,
+              }
+            );
 
-              paymentLogger.info(
-                {
-                  ...logContext,
-                  order_id: order.id,
-                  payment_id: payment.id,
-                },
-                "Emitted PAYMENT_CAPTURED event for subscriber to finalize order payment"
-              );
-            } catch (emitError) {
-              paymentLogger.error(
-                {
-                  ...logContext,
-                  order_id: order.id,
-                  payment_id: payment.id,
-                  error:
-                    emitError instanceof Error
-                      ? emitError.message
-                      : String(emitError),
-                },
-                "Failed to emit PAYMENT_CAPTURED"
-              );
-            }
-          } else {
             paymentLogger.info(
               {
                 ...logContext,
                 order_id: order.id,
-                payment_captured_at: payment?.captured_at,
+                payment_id: payment.id,
               },
-              "Payment already captured"
+              "Emitted PAYMENT_CAPTURED event - subscriber will recalculate order payment status"
+            );
+          } else {
+            paymentLogger.warn(
+              {
+                ...logContext,
+                order_id: order.id,
+              },
+              "No payment found in PayPal order"
             );
           }
-        } catch (captureError) {
+        } catch (emitError) {
           paymentLogger.error(
             {
               ...logContext,
               order_id: order.id,
               error:
-                captureError instanceof Error
-                  ? captureError.message
-                  : String(captureError),
-              stack:
-                captureError instanceof Error ? captureError.stack : undefined,
+                emitError instanceof Error
+                  ? emitError.message
+                  : String(emitError),
             },
-            "Failed to capture payment"
+            "Failed to emit PAYMENT_CAPTURED event"
           );
         }
 

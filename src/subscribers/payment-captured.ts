@@ -5,6 +5,7 @@ import {
 } from "@medusajs/medusa";
 import PaymentService from "@medusajs/medusa/dist/services/payment";
 import { subscriberLogger } from "../utils/logger";
+import { retryWithBackoff } from "../utils/retry-handler";
 
 /**
  * Subscriber para el evento payment.payment_captured.
@@ -36,6 +37,7 @@ export default async function handlePaymentCaptured({
 
   try {
     const orderService: OrderService = container.resolve("orderService");
+    const eventBusService = container.resolve("eventBusService");
 
     subscriberLogger.info(
       {
@@ -57,8 +59,23 @@ export default async function handlePaymentCaptured({
 
     // Llamar orderService.capturePayment para recalcular y actualizar Order.payment_status
     // Esto itera los payments y establece payment_status a "captured" si todos tienen captured_at
+    // Usar retry con backoff para operación crítica
     try {
-      await orderService.capturePayment(data.order_id);
+      await retryWithBackoff(
+        async () => {
+          await orderService.capturePayment(data.order_id!);
+        },
+        {
+          maxRetries: 3,
+          delays: [1000, 5000, 15000],
+          context: {
+            payment_id: data.id,
+            order_id: data.order_id,
+            operation: "capture_payment",
+          },
+          eventBus: eventBusService,
+        }
+      );
 
       subscriberLogger.info(
         {
@@ -77,9 +94,9 @@ export default async function handlePaymentCaptured({
               ? captureOrderError.message
               : String(captureOrderError),
         },
-        "OrderService.capturePayment failed (may already be fully captured)"
+        "OrderService.capturePayment failed after retries (may already be fully captured)"
       );
-      // No relanzar - el error ya está logueado
+      // No relanzar - el error ya está logueado y el evento crítico fue emitido si correspondía
     }
   } catch (error) {
     subscriberLogger.error(
