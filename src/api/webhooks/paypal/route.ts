@@ -19,6 +19,14 @@ interface PayPalWebhookEvent {
   resource: {
     id: string;
     status: string;
+    resource_id?: string; // Cart ID
+    payer?: {
+      email_address?: string;
+      payer_id?: string;
+    };
+    status_details?: {
+      reason?: string;
+    };
     purchase_units?: Array<{
       custom_id?: string;
       reference_id?: string;
@@ -26,6 +34,9 @@ interface PayPalWebhookEvent {
         captures?: Array<{
           id: string;
           status: string;
+          status_details?: {
+            reason?: string;
+          };
         }>;
       };
     }>;
@@ -43,7 +54,7 @@ interface PayPalVerifyResponse {
  */
 async function getPayPalAccessToken(): Promise<string> {
   const auth = Buffer.from(
-    `${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`
+    `${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`,
   ).toString("base64");
 
   const response = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
@@ -70,12 +81,12 @@ async function getPayPalAccessToken(): Promise<string> {
  */
 async function verifyPayPalWebhook(
   req: MedusaRequest,
-  rawBody: string
+  rawBody: string,
 ): Promise<boolean> {
   if (!PAYPAL_AUTH_WEBHOOK_ID) {
     webhookLogger.warn(
       { path: "/webhooks/paypal" },
-      "PAYPAL_AUTH_WEBHOOK_ID not configured, skipping verification"
+      "PAYPAL_AUTH_WEBHOOK_ID not configured, skipping verification",
     );
     return true; // En desarrollo sin webhook_id configurado
   }
@@ -88,7 +99,7 @@ async function verifyPayPalWebhook(
     if (skipSignal) {
       webhookLogger.info(
         { path: "/webhooks/paypal", skip_verification: "test-override" },
-        "Skipping PayPal webhook verification"
+        "Skipping PayPal webhook verification",
       );
       return true;
     }
@@ -119,7 +130,7 @@ async function verifyPayPalWebhook(
             authAlgo: !!authAlgo,
           },
         },
-        "Missing PayPal webhook headers"
+        "Missing PayPal webhook headers",
       );
       return false;
     }
@@ -143,7 +154,7 @@ async function verifyPayPalWebhook(
           "Content-Type": "application/json",
         },
         body: JSON.stringify(verifyPayload),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -152,7 +163,7 @@ async function verifyPayPalWebhook(
           path: "/webhooks/paypal",
           status: response.status,
         },
-        "PayPal webhook verification request failed"
+        "PayPal webhook verification request failed",
       );
       return false;
     }
@@ -165,7 +176,7 @@ async function verifyPayPalWebhook(
         path: "/webhooks/paypal",
         error: error instanceof Error ? error.message : String(error),
       },
-      "PayPal webhook verification error"
+      "PayPal webhook verification error",
     );
     return false;
   }
@@ -174,25 +185,43 @@ async function verifyPayPalWebhook(
 /**
  * POST /webhooks/paypal
  *
- * Endpoint para recibir webhooks de PayPal.
+ * Endpoint para recibir webhooks de PayPal y completar carts en el backend.
+ *
+ * ESTRATEGIA DE CART COMPLETION:
+ * - El frontend NUNCA completa el cart después del pago de PayPal
+ * - El backend completa el cart al recibir el webhook de pago exitoso
+ * - El frontend solo hace polling para verificar que el cart tenga order_id
  *
  * Eventos manejados:
- * - CHECKOUT.ORDER.COMPLETED: Orden de PayPal completada y pagada
+ * - CHECKOUT.ORDER.APPROVED: Registrado pero NO completa el cart (pago no capturado aún)
+ * - CHECKOUT.ORDER.COMPLETED: Completa el cart si el pago está capturado
+ * - PAYMENT.CAPTURE.COMPLETED: Evento de backup para completar el cart
+ * - PAYMENT.CAPTURE.DENIED: Cancela la orden si el pago fue denegado
  *
  * @see https://developer.paypal.com/docs/api/webhooks/v1/
  * @see https://developer.paypal.com/docs/api-basics/notifications/webhooks/event-names/
  */
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+  console.log("[PayPal Webhook] POST /webhooks/paypal recibido");
+  console.log("[PayPal Webhook] Headers:", req.headers);
+  console.log(
+    "[PayPal Webhook] Body type:",
+    typeof req.body,
+    "Buffer?:",
+    Buffer.isBuffer(req.body),
+  );
+
   if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
     webhookLogger.error(
       { path: "/webhooks/paypal" },
-      "PayPal credentials not configured"
+      "PayPal credentials not configured",
     );
     return res.status(500).json({ error: "PayPal not configured" });
   }
 
   // El body viene como Buffer gracias al middleware raw()
   const rawBody = (req.body as Buffer).toString("utf8");
+  console.log("[PayPal Webhook] Raw body:", rawBody.substring(0, 200));
 
   // Verificar firma del webhook
   const isValid = await verifyPayPalWebhook(req, rawBody);
@@ -200,7 +229,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   if (!isValid) {
     webhookLogger.warn(
       { path: "/webhooks/paypal" },
-      "PayPal webhook signature verification failed"
+      "PayPal webhook signature verification failed",
     );
     return res
       .status(401)
@@ -214,7 +243,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   } catch (err) {
     webhookLogger.error(
       { path: "/webhooks/paypal" },
-      "Invalid JSON in PayPal webhook body"
+      "Invalid JSON in PayPal webhook body",
     );
     return res.status(400).json({ error: "Invalid JSON" });
   }
@@ -232,41 +261,229 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const paymentWebhookService = req.scope.resolve("paymentWebhookService");
 
     switch (event.event_type) {
-      case "CHECKOUT.ORDER.COMPLETED": {
+      case "CHECKOUT.ORDER.APPROVED": {
+        // CHECKOUT.ORDER.APPROVED: Usuario aprobó el pago en PayPal
+        // Sin embargo, el pago aún NO está capturado en este punto
+        // Solo registramos el evento pero NO completamos el cart
         webhookLogger.info(
-          { ...logContext, paypal_order_id: event.resource.id },
-          "Processing CHECKOUT.ORDER.COMPLETED"
+          {
+            ...logContext,
+            paypal_order_id: event.resource.id,
+            status: event.resource.status,
+            resource_id: event.resource.resource_id,
+            purchase_units: event.resource.purchase_units,
+          },
+          "CHECKOUT.ORDER.APPROVED received - payment approved but not captured yet",
         );
 
-        const result = await paymentWebhookService.handlePayPalCompleted({
-          id: event.resource.id,
-          status: event.resource.status,
-          purchase_units: event.resource.purchase_units || [],
-        });
+        // DEBUG: Verificar si hay capturas en el evento
+        const captures =
+          event.resource.purchase_units?.[0]?.payments?.captures || [];
+
+        if (captures.length > 0) {
+          const captureStatuses = captures.map((c) => c.status);
+          const hasPendingCapture = captureStatuses.some(
+            (s) => s === "PENDING",
+          );
+          const hasCompletedCapture = captureStatuses.some(
+            (s) => s === "COMPLETED",
+          );
+
+          webhookLogger.warn(
+            {
+              ...logContext,
+              captures_count: captures.length,
+              capture_statuses: captureStatuses,
+              capture_details: captures.map((c) => ({
+                id: c.id,
+                status: c.status,
+                status_details: c.status_details,
+              })),
+            },
+            "⚠️ APPROVED event has captures - checking status",
+          );
+
+          // CASO ESPECIAL: PayPal Sandbox a veces deja las capturas en PENDING
+          // En este caso, completamos el cart para desarrollo
+          if (hasPendingCapture && !hasCompletedCapture) {
+            webhookLogger.info(
+              {
+                ...logContext,
+                paypal_order_id: event.resource.id,
+              },
+              "🔧 Sandbox: Capture PENDING detected - completing cart for development",
+            );
+
+            // Completar el cart con requireCapture = false para PENDING
+            const result = await paymentWebhookService.handlePayPalCompleted(
+              {
+                id: event.resource.id,
+                status: event.resource.status,
+                resource_id: event.resource.resource_id,
+                purchase_units: event.resource.purchase_units || [],
+                payer: event.resource.payer,
+              },
+              true, // requireCapture = true
+              true, // allowPending = true para sandbox
+            );
+
+            if (result.success) {
+              webhookLogger.info(
+                {
+                  ...logContext,
+                  cart_id: result.cart_id,
+                  order_id: result.order_id,
+                },
+                "✓ Cart completed from APPROVED event (sandbox PENDING capture)",
+              );
+            } else {
+              webhookLogger.warn(
+                {
+                  ...logContext,
+                  cart_id: result.cart_id,
+                  error: result.error,
+                },
+                "⚠️ Failed to complete cart from APPROVED event",
+              );
+            }
+            break;
+          }
+
+          // Si hay COMPLETED capture, también completar
+          if (hasCompletedCapture) {
+            webhookLogger.info(
+              {
+                ...logContext,
+                paypal_order_id: event.resource.id,
+              },
+              "✓ COMPLETED capture found in APPROVED event - completing cart",
+            );
+
+            const result = await paymentWebhookService.handlePayPalCompleted(
+              {
+                id: event.resource.id,
+                status: event.resource.status,
+                resource_id: event.resource.resource_id,
+                purchase_units: event.resource.purchase_units || [],
+                payer: event.resource.payer,
+              },
+              true, // requireCapture = true
+              false, // allowPending = false (ya validamos manualmente COMPLETED)
+            );
+
+            if (result.success) {
+              webhookLogger.info(
+                {
+                  ...logContext,
+                  cart_id: result.cart_id,
+                  order_id: result.order_id,
+                },
+                "✓ Cart completed from APPROVED event (COMPLETED capture)",
+              );
+            }
+            break;
+          }
+        }
+
+        webhookLogger.info(
+          {
+            ...logContext,
+            next_step: "Frontend should call actions.order.capture()",
+            then: "PayPal will send CHECKOUT.ORDER.COMPLETED webhook",
+          },
+          "⏳ Waiting for frontend to capture payment...",
+        );
+
+        // Nota: El frontend DEBE capturar el pago después de la aprobación
+        // Esperamos a CHECKOUT.ORDER.COMPLETED para completar el cart
+        break;
+      }
+
+      case "CHECKOUT.ORDER.COMPLETED": {
+        // CHECKOUT.ORDER.COMPLETED: La orden de PayPal está completada
+        // Aquí completamos el cart en el backend
+        webhookLogger.info(
+          {
+            ...logContext,
+            paypal_order_id: event.resource.id,
+            status: event.resource.status,
+            resource: event.resource,
+          },
+          "CHECKOUT.ORDER.COMPLETED - completing cart in backend",
+        );
+
+        const result = await paymentWebhookService.handlePayPalCompleted(
+          {
+            id: event.resource.id,
+            status: event.resource.status,
+            resource_id: event.resource.resource_id, // ← Cart ID del plugin
+            purchase_units: event.resource.purchase_units || [],
+            payer: event.resource.payer,
+          },
+          true, // requireCapture = true
+          true, // allowPending = true (puede haber PENDING en sandbox)
+        );
 
         if (result.success) {
           webhookLogger.info(
-            { ...logContext, order_id: result.order_id },
-            "CHECKOUT.ORDER.COMPLETED processed successfully"
+            {
+              ...logContext,
+              cart_id: result.cart_id,
+              order_id: result.order_id,
+            },
+            "✓ CHECKOUT.ORDER.COMPLETED processed - cart completed successfully",
           );
         } else {
           webhookLogger.warn(
-            { ...logContext, error: result.error },
-            "CHECKOUT.ORDER.COMPLETED processing completed with warning"
+            {
+              ...logContext,
+              cart_id: result.cart_id,
+              error: result.error,
+            },
+            "⚠️ CHECKOUT.ORDER.COMPLETED processed with warning",
           );
         }
         break;
       }
 
       case "PAYMENT.CAPTURE.COMPLETED": {
-        // Este evento es complementario y puede usarse como backup
+        // PAYMENT.CAPTURE.COMPLETED: El pago fue capturado exitosamente
+        // Este evento es complementario - puede usarse como backup
+        // si no recibimos CHECKOUT.ORDER.COMPLETED
         webhookLogger.info(
           {
             ...logContext,
             capture_id: event.resource.id,
+            status: event.resource.status,
           },
-          "PAYMENT.CAPTURE.COMPLETED received (handled by PayPal plugin)"
+          "PAYMENT.CAPTURE.COMPLETED - backup event received",
         );
+
+        // Intentar completar el cart si aún no se completó
+        if (event.resource.purchase_units) {
+          const result = await paymentWebhookService.handlePayPalCompleted(
+            {
+              id: event.resource.id,
+              status: "COMPLETED",
+              resource_id: event.resource.resource_id,
+              purchase_units: event.resource.purchase_units || [],
+              payer: event.resource.payer,
+            },
+            true, // requireCapture = true
+            false, // allowPending = false (CAPTURE.COMPLETED debe tener COMPLETED)
+          );
+
+          if (result.success) {
+            webhookLogger.info(
+              {
+                ...logContext,
+                cart_id: result.cart_id,
+                order_id: result.order_id,
+              },
+              "✓ PAYMENT.CAPTURE.COMPLETED - cart completed via backup event",
+            );
+          }
+        }
         break;
       }
 
@@ -275,10 +492,29 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
           {
             ...logContext,
             capture_id: event.resource.id,
+            status_details: event.resource.status_details,
           },
-          "PAYMENT.CAPTURE.DENIED received"
+          "PAYMENT.CAPTURE.DENIED received - processing",
         );
-        // TODO: Implementar manejo de pago denegado similar a charge.failed de Stripe
+
+        const deniedResult =
+          await paymentWebhookService.handlePayPalCaptureDenied({
+            id: event.resource.id,
+            status: event.resource.status,
+            status_details: event.resource.status_details,
+          });
+
+        if (deniedResult.success) {
+          webhookLogger.info(
+            { ...logContext, order_id: deniedResult.order_id },
+            "PAYMENT.CAPTURE.DENIED processed successfully",
+          );
+        } else {
+          webhookLogger.error(
+            { ...logContext, error: deniedResult.error },
+            "Failed to process PAYMENT.CAPTURE.DENIED",
+          );
+        }
         break;
       }
 
@@ -293,7 +529,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       error instanceof Error ? error.message : "Unknown error";
     webhookLogger.error(
       { ...logContext, error: errorMessage },
-      "Error processing PayPal webhook"
+      "Error processing PayPal webhook",
     );
 
     // Responder 500 para que PayPal reintente

@@ -19,8 +19,8 @@ interface PaymentFailedData {
  * Este evento es emitido por PaymentWebhookService cuando recibe charge.failed de Stripe.
  *
  * Acciones:
- * - Actualizar order.status a 'requires_action'
- * - Agregar metadata con información del fallo
+ * - Agregar metadata con información del fallo y flag requires_action
+ * - Esto permite al frontend mostrar al usuario que se requiere acción
  */
 export default async function handleOrderPaymentFailed({
   data,
@@ -43,16 +43,16 @@ export default async function handleOrderPaymentFailed({
     const orderService: OrderService = container.resolve("orderService");
     const eventBusService = container.resolve("eventBusService");
 
-    // Actualizar el estado de la orden a requires_action con retry
+    // Actualizar el estado de la orden con metadata del fallo
     try {
       await retryWithBackoff(
         async () => {
           await orderService.update(data.id, {
-            status: "requires_action",
             metadata: {
               payment_failure_code: data.failure_code,
               payment_failure_message: data.failure_message,
               payment_failed_at: new Date().toISOString(),
+              requires_action: true,
             },
           });
         },
@@ -71,9 +71,8 @@ export default async function handleOrderPaymentFailed({
       subscriberLogger.info(
         {
           ...logContext,
-          status: "requires_action",
         },
-        "Order status updated to requires_action due to payment failure"
+        "Order metadata updated with payment failure information"
       );
     } catch (updateError) {
       subscriberLogger.error(

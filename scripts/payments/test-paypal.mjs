@@ -1,5 +1,26 @@
 #!/usr/bin/env node
 
+/**
+ * Script de testing para PayPal Checkout con backend cart completion.
+ *
+ * FLUJO DE ESTE SCRIPT (Testing):
+ * 1. Crea cart y selecciona PayPal
+ * 2. Captura el pago vía API de PayPal
+ * 3. Simula el webhook CHECKOUT.ORDER.COMPLETED
+ * 4. Verifica que el backend creó la orden
+ *
+ * FLUJO REAL EN PRODUCCIÓN:
+ * 1. Frontend crea cart y selecciona PayPal
+ * 2. Usuario aprueba el pago en PayPal → Webhook CHECKOUT.ORDER.APPROVED
+ * 3. Frontend captura el pago: actions.order.capture()
+ * 4. PayPal envía webhook CHECKOUT.ORDER.COMPLETED automáticamente
+ * 5. Backend completa el cart al recibir el webhook
+ * 6. Frontend hace polling y encuentra la orden
+ *
+ * NOTA: Este script simula el webhook manualmente porque no estamos
+ * pasando por el flujo de aprobación del usuario real de PayPal.
+ */
+
 import {
   createMedusaClient,
   createCart,
@@ -29,7 +50,7 @@ async function main() {
   const shippingOptions = await listShippingOptions(medusa, cart.id);
   if (shippingOptions.length) {
     const shippingOption = shippingOptions.find((option) =>
-      option.name.toLowerCase().includes("estándar")
+      option.name.toLowerCase().includes("estándar"),
     );
     if (shippingOption) {
       await addShippingMethod(medusa, cart.id, shippingOption.id);
@@ -58,12 +79,19 @@ async function main() {
 
   if (capturedOrder.id !== paypalOrderId) {
     throw new Error(
-      `PayPal devolvió una orden distinta a la de la sesión: esperado ${paypalOrderId}, recibido ${capturedOrder.id}`
+      `PayPal devolvió una orden distinta a la de la sesión: esperado ${paypalOrderId}, recibido ${capturedOrder.id}`,
     );
   }
 
   console.log("✓ Orden PayPal capturada");
+  console.log(
+    "  NOTA: En el frontend real, la captura se hace con actions.order.capture()",
+  );
+  console.log(
+    "        y PayPal envía automáticamente el webhook CHECKOUT.ORDER.COMPLETED",
+  );
 
+  // Extraer purchase_units con datos de captura
   const purchaseUnits =
     capturedOrder.purchase_units?.map((unit) => ({
       custom_id: unit.custom_id || cart.id,
@@ -82,30 +110,53 @@ async function main() {
     throw new Error("No se pudieron obtener los purchase_units de PayPal");
   }
 
+  // Simular webhook CHECKOUT.ORDER.COMPLETED
+  // En producción, PayPal envía este webhook automáticamente tras capturar el pago
   const webhookBase = MEDUSA_BACKEND_URL.replace(/\/$/, "");
   const webhookUrl = `${webhookBase}/webhooks/paypal`;
   const completedOrder = {
     id: capturedOrder.id,
     status: capturedOrder.status,
+    resource_id: cart.id, // Campo usado por el plugin de MedusaJS
     purchase_units: purchaseUnits,
   };
 
-  console.log("Simulando webhook CHECKOUT.ORDER.COMPLETED...");
+  console.log("\nSimulando webhook CHECKOUT.ORDER.COMPLETED...");
+  console.log("  URL:", webhookUrl);
+  console.log("  PayPal Order ID:", completedOrder.id);
+  console.log("  Cart ID:", cart.id);
   await simulateWebhook("CHECKOUT.ORDER.COMPLETED", completedOrder, webhookUrl);
 
   console.log(
-    `Esperando ${WEBHOOK_WAIT_MS}ms para que el webhook de PayPal se procese...`
+    `Esperando ${WEBHOOK_WAIT_MS}ms para que el webhook se procese en el backend...`,
   );
   await sleep(WEBHOOK_WAIT_MS);
 
+  // Verificar que el cart fue completado por el webhook
   const finalCart = await medusa.carts.retrieve(cart.id);
   logCart(finalCart.cart);
 
+  if (!finalCart.cart?.completed_at) {
+    console.error("❌ El cart NO fue completado por el webhook");
+    throw new Error("Cart not completed after webhook");
+  }
+
   if (finalCart.cart?.order_id) {
     const order = await getOrder(medusa, finalCart.cart.order_id);
-    console.log("Orden PayPal resultante:");
-    console.log(` - ID: ${order.id}`);
-    console.log(` - Status: ${order.status}`);
+    console.log("\n✓ Orden PayPal resultante:");
+    console.log(`  - ID: ${order.id}`);
+    console.log(`  - Display ID: #${order.display_id}`);
+    console.log(`  - Status: ${order.status}`);
+    console.log(`  - Payment Status: ${order.payment_status}`);
+    console.log(
+      `  - Total: ${order.total / 100} ${order.currency_code.toUpperCase()}`,
+    );
+    console.log(
+      "\n✅ TEST EXITOSO: El backend completó el cart tras el webhook",
+    );
+  } else {
+    console.error("❌ El cart fue completado pero NO tiene order_id");
+    throw new Error("Cart completed but no order created");
   }
 }
 
