@@ -17,7 +17,7 @@ describe("OrderInvoiceService", () => {
   });
 
   describe("getInvoiceNumber", () => {
-    it("should generate invoice number correctly", () => {
+    it("should generate invoice number correctly", async () => {
       const order = {
         display_id: 1,
       } as Order;
@@ -25,35 +25,38 @@ describe("OrderInvoiceService", () => {
       // Mock environment variable
       process.env.INVOICE_START_REF = "100";
 
-      const result = invoiceNumberGenerator.getInvoiceNumber(order);
+      // Mock listAndCount para devolver 1 orden pagada
+      mockOrderService.listAndCount = jest.fn().mockResolvedValue([[order], 1]);
+
+      const result = await invoiceNumberGenerator.getInvoiceNumber(order);
       const currentYear = new Date().getFullYear();
       const expectedInvoiceNumber = `${currentYear}-00101`;
 
       expect(result).toBe(expectedInvoiceNumber);
     });
 
-    it("should return undefined for order without display_id", () => {
+    it("should return undefined for order without display_id", async () => {
       const order = {} as Order;
 
-      const result = invoiceNumberGenerator.getInvoiceNumber(order);
+      const result = await invoiceNumberGenerator.getInvoiceNumber(order);
 
       expect(result).toBeUndefined();
     });
 
-    it("should return undefined for null order", () => {
-      const result = invoiceNumberGenerator.getInvoiceNumber(null);
+    it("should return undefined for null order", async () => {
+      const result = await invoiceNumberGenerator.getInvoiceNumber(null);
 
       expect(result).toBeUndefined();
     });
 
-    it("should handle missing INVOICE_START_REF environment variable", () => {
+    it("should handle missing INVOICE_START_REF environment variable", async () => {
       delete process.env.INVOICE_START_REF;
 
       const order = {
         display_id: 1,
       } as Order;
 
-      const result = invoiceNumberGenerator.getInvoiceNumber(order);
+      const result = await invoiceNumberGenerator.getInvoiceNumber(order);
       const currentYear = new Date().getFullYear();
       const expectedInvoiceNumber = `${currentYear}-00101`;
 
@@ -83,9 +86,8 @@ describe("OrderInvoiceService", () => {
 
       process.env.INVOICE_START_REF = "10000";
 
-      const result = await invoiceNumberGenerator.setOrderInvoiceNumber(
-        orderId
-      );
+      const result =
+        await invoiceNumberGenerator.setOrderInvoiceNumber(orderId);
 
       expect(mockOrderService.retrieve).toHaveBeenCalledWith(orderId, {
         relations: ["items", "customer", "shipping_address", "billing_address"],
@@ -111,9 +113,9 @@ describe("OrderInvoiceService", () => {
       mockOrderService.retrieve.mockResolvedValue(order);
 
       await expect(
-        invoiceNumberGenerator.setOrderInvoiceNumber(orderId)
+        invoiceNumberGenerator.setOrderInvoiceNumber(orderId),
       ).rejects.toThrow(
-        "No se pudo generar el número de factura para el pedido"
+        "No se pudo generar el número de factura para el pedido",
       );
     });
   });
