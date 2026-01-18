@@ -45,7 +45,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     "shippingProfileService"
   );
 
-  const cart = await cartService.retrieveWithTotals(cart_id, {
+  const cart = await cartService.retrieveWithTotals(cart_id as string, {
     relations: ["shipping_address"],
   });
 
@@ -69,7 +69,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     });
 
     data = await pricingService.setShippingOptionPrices(options, {
-      cart_id,
+      cart_id: cart_id as string,
     });
 
     // If the cart postal code belongs to Canarias, convert shipping prices

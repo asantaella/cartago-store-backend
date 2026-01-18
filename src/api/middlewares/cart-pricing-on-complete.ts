@@ -229,7 +229,7 @@ export async function persistCartPricingOnComplete(
 
       // Obtener cart con relaciones (incluir adjustments para calcular descuentos)
       const cart = await cartRepo.findOne({
-        where: { id: cartId },
+        where: { id: cartId as string },
         relations: [
           "items",
           "items.adjustments",
@@ -250,7 +250,7 @@ export async function persistCartPricingOnComplete(
         return;
       }
 
-      logCartOperation("COMPLETE", cartId, {
+      logCartOperation("COMPLETE", cartId as string, {
         postal: taxContext.postalCode,
         isTaxExempt: taxContext.isTaxExempt,
         territory: taxContext.territoryType,
@@ -354,7 +354,7 @@ export async function persistCartPricingOnComplete(
       log(`Updating payment sessions amount for cart ${cartId}`);
       await updatePaymentSessionsAmount(
         req,
-        cartId,
+        cartId as string,
         itemsToUpdate,
         shippingToUpdate,
         giftCardTotal

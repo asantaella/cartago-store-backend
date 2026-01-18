@@ -20,7 +20,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     console.log("\n🚀 Printing label order with id: ", id);
 
-    const response = await labelShipmentPrintService.generateLabel(id);
+    const response = await labelShipmentPrintService.generateLabel(id as string);
 
     const errors = response.error;
 

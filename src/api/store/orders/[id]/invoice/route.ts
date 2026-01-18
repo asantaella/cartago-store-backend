@@ -12,7 +12,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       "invoicePdfGeneratorService"
     );
 
-    const pdf = await invoiceService.generateInvoice(id, invoiceMode);
+    const pdf = await invoiceService.generateInvoice(id as string, invoiceMode);
     console.log("PDF filename =>>", pdf.fileName);
 
     res.set({

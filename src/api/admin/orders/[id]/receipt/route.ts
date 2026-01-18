@@ -36,7 +36,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Verificar que la orden existe
     const order: Order =
-      await orderNotificationService.retrieveOrderWithRelations(id);
+      await orderNotificationService.retrieveOrderWithRelations(id as string);
     if (!order) {
       return res.status(404).json({
         message: "Order not found",

@@ -14,7 +14,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     console.log("\n🚀 Correos preregister order:", id);
 
-    const response = await preregisterOrderService.register(id);
+    const response = await preregisterOrderService.register(id as string);
 
     console.log("Response preregister:", response);
 
