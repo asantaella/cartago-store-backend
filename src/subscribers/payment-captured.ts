@@ -2,8 +2,9 @@ import {
   type SubscriberConfig,
   type SubscriberArgs,
   OrderService,
+  PaymentService,
 } from "@medusajs/medusa";
-import PaymentService from "@medusajs/medusa/dist/services/payment";
+import PaymentServiceClass from "@medusajs/medusa/dist/services/payment";
 import { subscriberLogger } from "../utils/logger";
 import { retryWithBackoff } from "../utils/retry-handler";
 
@@ -11,14 +12,17 @@ import { retryWithBackoff } from "../utils/retry-handler";
  * Subscriber para el evento payment.payment_captured.
  *
  * Se ejecuta cuando un pago debe ser capturado en la orden (típicamente de webhooks externos).
- * El webhook intenta capturar el pago vía paymentService.capture(), pero si falla
- * (porque ya fue capturado externamente), emite el evento de todos modos.
+ * En lugar de llamar a paymentService.capture() (que intenta comunicarse con el proveedor),
+ * actualiza directamente payment.captured_at en la BD y recalcula el estado de la orden.
+ *
+ * Esto es necesario para PayPal sandbox que deja pagos en PENDING_REVIEW indefinidamente.
  *
  * El subscriber es responsable de:
- * 1. Verificar el estado actual del payment
+ * 1. Actualizar payment.captured_at en la BD
  * 2. Llamar a orderService.capturePayment para recalcular Order.payment_status
  *
  * Acciones:
+ * - Actualizar payment.captured_at directamente en la BD
  * - Llamar orderService.capturePayment(order_id) para recalcular y actualizar Order.payment_status
  */
 export default async function handlePaymentCaptured({
@@ -44,26 +48,45 @@ export default async function handlePaymentCaptured({
         ...logContext,
         event: eventName,
       },
-      "Payment captured event received"
+      "Payment captured event received",
     );
 
-    if (!data.order_id) {
+    if (!data.order_id || !data.id) {
       subscriberLogger.warn(
         {
           ...logContext,
         },
-        "Payment captured event received but no order_id provided"
+        "Payment captured event received but missing order_id or payment_id",
       );
       return;
     }
 
-    // Llamar orderService.capturePayment para recalcular y actualizar Order.payment_status
-    // Esto itera los payments y establece payment_status a "captured" si todos tienen captured_at
-    // Usar retry con backoff para operación crítica
     try {
+      const paymentRepository = container.resolve("paymentRepository");
+
+      // Primero: Actualizar payment.captured_at directamente en la BD
+      // (No llamamos a paymentService.capture() porque eso intenta comunicarse con el proveedor de pago)
       await retryWithBackoff(
         async () => {
-          await orderService.capturePayment(data.order_id!);
+          subscriberLogger.info(
+            {
+              ...logContext,
+              payment_id: data.id,
+            },
+            "Setting payment.captured_at to current timestamp",
+          );
+
+          await paymentRepository.update(data.id!, {
+            captured_at: new Date(),
+          });
+
+          subscriberLogger.info(
+            {
+              ...logContext,
+              payment_id: data.id,
+            },
+            "✅ Payment.captured_at updated successfully in DB",
+          );
         },
         {
           maxRetries: 3,
@@ -71,10 +94,44 @@ export default async function handlePaymentCaptured({
           context: {
             payment_id: data.id,
             order_id: data.order_id,
-            operation: "capture_payment",
+            operation: "update_payment_captured_at",
           },
           eventBus: eventBusService,
-        }
+        },
+      );
+
+      // Segundo: Recalcular el estado de pago de la orden
+      // MedusaJS auto-calcula order.payment_status basándose en los payments capturados
+      await retryWithBackoff(
+        async () => {
+          subscriberLogger.info(
+            {
+              ...logContext,
+              order_id: data.order_id,
+            },
+            "Calling orderService.capturePayment to recalculate order payment status",
+          );
+
+          await orderService.capturePayment(data.order_id!);
+
+          subscriberLogger.info(
+            {
+              ...logContext,
+              order_id: data.order_id,
+            },
+            "✅ Order payment status recalculated",
+          );
+        },
+        {
+          maxRetries: 3,
+          delays: [1000, 5000, 15000],
+          context: {
+            payment_id: data.id,
+            order_id: data.order_id,
+            operation: "capture_order_payment",
+          },
+          eventBus: eventBusService,
+        },
       );
 
       subscriberLogger.info(
@@ -82,7 +139,7 @@ export default async function handlePaymentCaptured({
           ...logContext,
           order_id: data.order_id,
         },
-        "Order payment status updated to captured via OrderService.capturePayment"
+        "✅ Payment captured: payment.captured_at set + order payment status updated to captured",
       );
     } catch (captureOrderError) {
       subscriberLogger.warn(
@@ -94,9 +151,9 @@ export default async function handlePaymentCaptured({
               ? captureOrderError.message
               : String(captureOrderError),
         },
-        "OrderService.capturePayment failed after retries (may already be fully captured)"
+        "Payment capture or order update failed after retries",
       );
-      // No relanzar - el error ya está logueado y el evento crítico fue emitido si correspondía
+      // No relanzar - el error ya está logueado
     }
   } catch (error) {
     subscriberLogger.error(
@@ -104,7 +161,7 @@ export default async function handlePaymentCaptured({
         ...logContext,
         error: error instanceof Error ? error.message : String(error),
       },
-      "Error in payment captured subscriber"
+      "Error in payment captured subscriber",
     );
 
     // No relanzar el error para no bloquear otros subscribers
@@ -113,7 +170,7 @@ export default async function handlePaymentCaptured({
 }
 
 export const config: SubscriberConfig = {
-  event: PaymentService.Events.PAYMENT_CAPTURED,
+  event: PaymentServiceClass.Events.PAYMENT_CAPTURED,
   context: {
     subscriberId: "payment-captured-handler",
   },

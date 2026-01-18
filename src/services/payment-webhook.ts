@@ -347,28 +347,23 @@ class PaymentWebhookService extends TransactionBaseService {
             { take: 1 },
           );
 
-          if (existingOrders.length === 0) {
-            paymentLogger.info(
-              {
-                paypal_order_id: paypalOrderId,
-                cart_id: session.cart_id,
-                session_id: session.id,
-                session_created: session.created_at,
-                method: "exact_order_id",
-              },
-              "✓ Found cart_id by exact PayPal order ID match",
-            );
-            return session.cart_id;
-          } else {
-            paymentLogger.info(
-              {
-                paypal_order_id: paypalOrderId,
-                cart_id: session.cart_id,
-                order_id: existingOrders[0].id,
-              },
-              "Order already exists for this cart - skipping",
-            );
-          }
+          // Si existe orden, retornar el cart_id de todas formas
+          // Puede que sea PAYMENT.CAPTURE.COMPLETED buscando actualizar la orden existente
+          paymentLogger.info(
+            {
+              paypal_order_id: paypalOrderId,
+              cart_id: session.cart_id,
+              session_id: session.id,
+              session_created: session.created_at,
+              order_exists: existingOrders.length > 0,
+              order_id: existingOrders[0]?.id,
+              method: "exact_order_id",
+            },
+            existingOrders.length > 0
+              ? "✓ Found cart_id with existing order - may be CAPTURE.COMPLETED"
+              : "✓ Found cart_id by exact PayPal order ID match",
+          );
+          return session.cart_id;
         }
       }
 
@@ -576,248 +571,6 @@ class PaymentWebhookService extends TransactionBaseService {
    */
   private isSepaPayment(paymentIntent: StripePaymentIntent): boolean {
     return paymentIntent.payment_method_types?.includes("sepa_debit") ?? false;
-  }
-
-  /**
-   * Crea una orden directamente desde el carrito para pagos SEPA.
-   * NO usa orderService.createFromCart() porque ese método valida que el payment
-   * tenga status "authorized" llamando a Stripe, y SEPA retorna "processing".
-   *
-   * En su lugar, crea la orden directamente usando repositorios, emulando
-   * lo que hace orderService.createFromCart() pero sin la validación del status.
-   *
-   * @param cartId - ID del carrito
-   * @returns La orden creada
-   */
-  private async createOrderFromCart(cartId: string): Promise<any | null> {
-    try {
-      // Buscar si ya existe una orden para este carrito (evitar duplicados)
-      const existingOrders = await this.orderService_.list(
-        { cart_id: cartId },
-        { take: 1 },
-      );
-
-      if (existingOrders.length > 0) {
-        paymentLogger.info(
-          { cart_id: cartId, order_id: existingOrders[0].id },
-          "Order already exists for cart - returning existing order",
-        );
-        return existingOrders[0];
-      }
-
-      // Obtener el carrito con todas sus relaciones necesarias y totales calculados
-      const cart = await this.cartService_.retrieveWithTotals(cartId, {
-        relations: [
-          "items",
-          "items.variant",
-          "items.variant.product",
-          "items.tax_lines",
-          "items.adjustments",
-          "region",
-          "region.tax_rates",
-          "shipping_address",
-          "billing_address",
-          "customer",
-          "payment_sessions",
-          "shipping_methods",
-          "shipping_methods.tax_lines",
-          "discounts",
-          "discounts.rule",
-          "gift_cards",
-          "sales_channel", // Agregar sales_channel
-        ],
-      });
-
-      // DEBUG: Log de totales del carrito
-      paymentLogger.info(
-        {
-          cart_id: cartId,
-          subtotal: cart.subtotal,
-          discount_total: cart.discount_total,
-          shipping_total: cart.shipping_total,
-          tax_total: cart.tax_total,
-          total: cart.total,
-          gift_card_total: cart.gift_card_total,
-        },
-        "Cart totals from retrieveWithTotals",
-      );
-
-      // Usar totalsService de Medusa para recalcular totales correctamente
-      const totals = await this.totalsService_.getTotal(cart);
-
-      paymentLogger.info(
-        {
-          cart_id: cartId,
-          subtotal: totals.subtotal,
-          discount_total: totals.discount_total,
-          shipping_total: totals.shipping_total,
-          tax_total: totals.tax_total,
-          total: totals.total,
-          gift_card_total: totals.gift_card_total,
-        },
-        "Cart totals recalculated using totalsService",
-      );
-
-      // Validaciones básicas
-      if (!cart.items || cart.items.length === 0) {
-        paymentLogger.warn(
-          { cart_id: cartId },
-          "Cannot create order - cart has no items",
-        );
-        return null;
-      }
-
-      if (!cart.region) {
-        paymentLogger.warn(
-          { cart_id: cartId },
-          "Cannot create order - cart has no region",
-        );
-        return null;
-      }
-
-      // Verificar que existe una sesión de pago de Stripe
-      const stripeSession = cart.payment_sessions?.find(
-        (session: any) => session.provider_id === "stripe",
-      );
-
-      if (!stripeSession) {
-        paymentLogger.warn(
-          { cart_id: cartId },
-          "Cannot create order - no Stripe payment session found",
-        );
-        return null;
-      }
-
-      // Crear el payment si no existe
-      let payment = await this.manager_.getRepository("Payment").findOne({
-        where: { cart_id: cartId },
-      });
-
-      if (!payment) {
-        // Crear payment usando PaymentProviderService
-        payment = await this.paymentProviderService_
-          .withTransaction(this.manager_)
-          .createPayment({
-            cart_id: cartId,
-            amount: cart.total,
-            currency_code: cart.region.currency_code,
-            payment_session: stripeSession,
-          });
-
-        paymentLogger.info(
-          { cart_id: cartId, payment_id: payment.id },
-          "Payment created for SEPA order",
-        );
-      }
-
-      // Generar display_id para la orden
-      const orderRepository = this.manager_.getRepository("Order");
-      const lastOrder = await orderRepository
-        .createQueryBuilder("order")
-        .select("MAX(order.display_id)", "max")
-        .getRawOne();
-      const displayId = (lastOrder?.max || 0) + 1;
-
-      // Crear la orden directamente en la BD
-      const orderData = {
-        display_id: displayId,
-        status: "pending",
-        fulfillment_status: "not_fulfilled",
-        payment_status: "awaiting", // SEPA siempre empieza en awaiting
-        cart_id: cartId,
-        customer_id: cart.customer_id,
-        email: cart.email,
-        region_id: cart.region_id,
-        sales_channel_id: cart.sales_channel_id, // Agregar sales_channel_id
-        currency_code: cart.region.currency_code,
-        tax_rate: cart.region.tax_rate || null,
-        shipping_address_id: cart.shipping_address_id,
-        billing_address_id: cart.billing_address_id,
-        // Totales obtenidos del servicio de totales de Medusa
-        subtotal: totals.subtotal,
-        discount_total: totals.discount_total,
-        shipping_total: totals.shipping_total,
-        tax_total: totals.tax_total,
-        total: totals.total,
-        gift_card_total: totals.gift_card_total,
-        gift_card_tax_total: totals.gift_card_tax_total || 0,
-        // Metadata
-        metadata: {
-          ...cart.metadata,
-          sepa_payment: true,
-          created_from_webhook: true,
-        },
-      };
-
-      const order = orderRepository.create(orderData);
-      await orderRepository.save(order);
-
-      paymentLogger.info(
-        { cart_id: cartId, order_id: order.id, display_id: displayId },
-        "Order entity created for SEPA payment",
-      );
-
-      // Asociar line items a la orden
-      const lineItemRepository = this.manager_.getRepository("LineItem");
-      for (const item of cart.items) {
-        await lineItemRepository.update(item.id, {
-          order_id: order.id,
-        });
-      }
-
-      // Asociar shipping methods a la orden
-      const shippingMethodRepository =
-        this.manager_.getRepository("ShippingMethod");
-      for (const method of cart.shipping_methods || []) {
-        await shippingMethodRepository.update(method.id, {
-          order_id: order.id,
-        });
-      }
-
-      // Asociar payment a la orden
-      const paymentRepository = this.manager_.getRepository("Payment");
-      await paymentRepository.update(payment.id, {
-        order_id: order.id,
-      });
-
-      // Marcar carrito como completado
-      const cartRepository = this.manager_.getRepository("Cart");
-      await cartRepository.update(cartId, {
-        completed_at: new Date(),
-        payment_id: payment.id,
-        payment_authorized_at: new Date(),
-      });
-
-      // Emitir evento order.placed
-      await this.eventBusService_.emit(OrderService.Events.PLACED, {
-        id: order.id,
-        no_notification: false,
-      });
-
-      paymentLogger.info(
-        {
-          cart_id: cartId,
-          order_id: order.id,
-          display_id: displayId,
-          payment_status: order.payment_status,
-        },
-        "SEPA order created successfully and order.placed event emitted",
-      );
-
-      return order;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-
-      paymentLogger.error(
-        {
-          cart_id: cartId,
-          error: message,
-        },
-        "Failed to create order from cart for SEPA",
-      );
-
-      return null;
-    }
   }
 
   /**
@@ -1048,17 +801,7 @@ class PaymentWebhookService extends TransactionBaseService {
 
       // Completar el carrito usando la estrategia estándar (ahora con sesión autorizada)
       const completionToken = `stripe-processing:${paymentIntent.id}`;
-      let order = await this.tryCompleteCart(cartId, completionToken);
-
-      // Fallback: si no se generó la orden (completion devolvió tipo cart/null), crearla manualmente
-      if (!order) {
-        paymentLogger.info(
-          { ...logContext, cart_id: cartId },
-          "Completion did not return order - attempting manual order creation for SEPA",
-        );
-
-        order = await this.createOrderFromCart(cartId);
-      }
+      const order = await this.tryCompleteCart(cartId, completionToken);
 
       if (order?.id) {
         // Asegurar que las órdenes SEPA queden en estado de pago "awaiting" sin SQL directo
@@ -1246,6 +989,9 @@ class PaymentWebhookService extends TransactionBaseService {
    * En producción: Solo acepta COMPLETED
    * En sandbox: También acepta PENDING (PayPal sandbox deja pagos en revisión)
    *
+   * NOTA: CHECKOUT.ORDER.COMPLETED no incluye captures[] en su estructura,
+   * solo order.status. Por eso verificamos primero el status de la orden.
+   *
    * @param paypalOrder - Objeto order de PayPal
    * @param allowPending - Si true, acepta capturas PENDING (útil para sandbox)
    */
@@ -1263,14 +1009,23 @@ class PaymentWebhookService extends TransactionBaseService {
       (capture) => capture.status === "PENDING",
     );
 
-    const isValid = hasCompletedCapture || (allowPending && hasPendingCapture);
+    // Si order.status es COMPLETED, considerar como capturado
+    // (CHECKOUT.ORDER.COMPLETED no incluye captures[])
+    const orderStatusCompleted = paypalOrder.status === "COMPLETED";
+
+    const isValid =
+      orderStatusCompleted ||
+      hasCompletedCapture ||
+      (allowPending && hasPendingCapture);
 
     paymentLogger.info(
       {
         paypal_order_id: paypalOrder.id,
+        order_status: paypalOrder.status,
         captures_count: captures.length,
         has_completed_capture: hasCompletedCapture,
         has_pending_capture: hasPendingCapture,
+        order_status_completed: orderStatusCompleted,
         allow_pending: allowPending,
         is_valid: isValid,
         capture_statuses: captures.map((c) => c.status),
@@ -1284,6 +1039,313 @@ class PaymentWebhookService extends TransactionBaseService {
     );
 
     return isValid;
+  }
+
+  /**
+   * Maneja el evento PAYMENT.CAPTURE.PENDING de PayPal.
+   * Crea una orden con payment_status "awaiting" cuando el pago está pendiente.
+   *
+   * @param paypalOrder - Objeto order de PayPal con datos del pago
+   * @returns cart_id y order_id para tracking
+   */
+  async handlePayPalCapturePending(paypalOrder: PayPalOrder): Promise<{
+    success: boolean;
+    cart_id?: string;
+    order_id?: string;
+    error?: string;
+  }> {
+    const logContext = {
+      paypal_order_id: paypalOrder.id,
+      status: paypalOrder.status,
+    };
+
+    paymentLogger.info(
+      logContext,
+      "Processing PayPal CAPTURE.PENDING - creating order with awaiting status",
+    );
+
+    try {
+      // Buscar el cart_id asociado
+      const cartId = await this.findCartIdForPayPalOrder(paypalOrder);
+
+      if (!cartId) {
+        paymentLogger.error(logContext, "No cart_id found for PayPal order");
+        return {
+          success: false,
+          error: "cart_id not found",
+        };
+      }
+
+      // Verificar si ya existe una orden para este cart
+      const existingOrders = await this.orderService_.list(
+        { cart_id: cartId },
+        { take: 1 },
+      );
+
+      if (existingOrders.length > 0) {
+        paymentLogger.info(
+          {
+            ...logContext,
+            cart_id: cartId,
+            order_id: existingOrders[0].id,
+          },
+          "Order already exists for cart - skipping creation",
+        );
+        return {
+          success: true,
+          cart_id: cartId,
+          order_id: existingOrders[0].id,
+        };
+      }
+
+      // Sincronizar payment session de PayPal antes de completar
+      await this.syncPayPalPaymentSession(cartId, paypalOrder);
+
+      // Completar el carrito usando la estrategia estándar
+      // NOTA: Para PENDING, el pago no tiene captured_at, resultando en payment_status 'awaiting'
+      const completionToken = `paypal-pending:${paypalOrder.id}`;
+      const order = await this.tryCompleteCart(cartId, completionToken);
+
+      if (!order) {
+        paymentLogger.error(
+          { ...logContext, cart_id: cartId },
+          "Failed to complete cart from PENDING webhook",
+        );
+        return {
+          success: false,
+          cart_id: cartId,
+          error: "Cart completion failed",
+        };
+      }
+
+      paymentLogger.info(
+        {
+          ...logContext,
+          cart_id: cartId,
+          order_id: order.id,
+          payment_status: order.payment_status,
+        },
+        "Order created with awaiting payment status",
+      );
+
+      return {
+        success: true,
+        cart_id: cartId,
+        order_id: order.id,
+      };
+    } catch (error) {
+      paymentLogger.error(
+        {
+          ...logContext,
+          error: error instanceof Error ? error.message : String(error),
+        },
+        "Error processing PayPal CAPTURE.PENDING",
+      );
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }
+
+  /**
+   * Maneja el evento PAYMENT.CAPTURE.COMPLETED de PayPal.
+   * Verifica si existe una orden con payment_status "awaiting" y la actualiza a "captured".
+   * Si no existe, crea una nueva orden con payment_status "captured".
+   *
+   * @param paypalOrder - Objeto order de PayPal con datos del pago
+   * @returns cart_id, order_id y action (updated o created) para tracking
+   */
+  async handlePayPalCaptureCompleted(paypalOrder: PayPalOrder): Promise<{
+    success: boolean;
+    cart_id?: string;
+    order_id?: string;
+    action?: "updated" | "created";
+    error?: string;
+  }> {
+    const logContext = {
+      paypal_order_id: paypalOrder.id,
+      status: paypalOrder.status,
+    };
+
+    paymentLogger.info(
+      logContext,
+      "Processing PayPal CAPTURE.COMPLETED - updating or creating order",
+    );
+
+    try {
+      // Buscar el cart_id asociado
+      const cartId = await this.findCartIdForPayPalOrder(paypalOrder);
+
+      if (!cartId) {
+        paymentLogger.error(logContext, "No cart_id found for PayPal order");
+        return {
+          success: false,
+          error: "cart_id not found",
+        };
+      }
+
+      // Verificar si ya existe una orden con payment_status "awaiting"
+      const existingOrders = await this.orderService_.list(
+        { cart_id: cartId },
+        { relations: ["payments"], take: 1 },
+      );
+
+      paymentLogger.info(
+        {
+          ...logContext,
+          cart_id: cartId,
+          existing_orders_count: existingOrders.length,
+        },
+        "Searched for existing orders in handlePayPalCaptureCompleted",
+      );
+
+      if (existingOrders.length > 0) {
+        const order = existingOrders[0];
+
+        // Verificar si el pago ya está capturado
+        const payment = order.payments?.[0];
+        if (payment?.captured_at) {
+          paymentLogger.info(
+            {
+              ...logContext,
+              cart_id: cartId,
+              order_id: order.id,
+            },
+            "Payment already captured - skipping update",
+          );
+          return {
+            success: true,
+            cart_id: cartId,
+            order_id: order.id,
+            action: "updated",
+          };
+        }
+
+        // Emitir evento PAYMENT_CAPTURED - el subscriber manejará la captura
+        if (payment) {
+          paymentLogger.info(
+            {
+              ...logContext,
+              cart_id: cartId,
+              order_id: order.id,
+              payment_id: payment.id,
+              payment_captured_at: payment.captured_at,
+              order_payment_status: order.payment_status,
+            },
+            "About to emit PAYMENT_CAPTURED event",
+          );
+
+          await this.eventBusService_.emit(
+            PaymentService.Events.PAYMENT_CAPTURED,
+            {
+              id: payment.id,
+              order_id: order.id,
+            },
+          );
+
+          paymentLogger.info(
+            {
+              ...logContext,
+              cart_id: cartId,
+              order_id: order.id,
+              payment_id: payment.id,
+              previous_status: order.payment_status,
+            },
+            "✅ PAYMENT_CAPTURED event emitted successfully - order will transition from awaiting to captured",
+          );
+        } else {
+          paymentLogger.warn(
+            {
+              ...logContext,
+              cart_id: cartId,
+              order_id: order.id,
+            },
+            "No payment found to emit PAYMENT_CAPTURED event",
+          );
+        }
+
+        return {
+          success: true,
+          cart_id: cartId,
+          order_id: order.id,
+          action: "updated",
+        };
+      }
+
+      // No existe orden, sincronizar payment session y completar el cart
+      await this.syncPayPalPaymentSession(cartId, paypalOrder);
+
+      const completionToken = `paypal-completed:${paypalOrder.id}`;
+      const order = await this.tryCompleteCart(cartId, completionToken);
+
+      if (!order) {
+        paymentLogger.error(
+          { ...logContext, cart_id: cartId },
+          "Failed to complete cart from COMPLETED webhook",
+        );
+        return {
+          success: false,
+          cart_id: cartId,
+          error: "Cart completion failed",
+        };
+      }
+
+      // Emitir evento PAYMENT_CAPTURED si el pago aún no está capturado
+      const orderWithPayments = await this.orderService_.retrieve(order.id, {
+        relations: ["payments"],
+      });
+      const payment = orderWithPayments.payments?.[0];
+
+      if (payment && !payment.captured_at) {
+        await this.eventBusService_.emit(
+          PaymentService.Events.PAYMENT_CAPTURED,
+          {
+            id: payment.id,
+            order_id: order.id,
+          },
+        );
+
+        paymentLogger.info(
+          {
+            ...logContext,
+            cart_id: cartId,
+            order_id: order.id,
+            payment_id: payment.id,
+          },
+          "PAYMENT_CAPTURED event emitted for new order",
+        );
+      }
+
+      paymentLogger.info(
+        {
+          ...logContext,
+          cart_id: cartId,
+          order_id: order.id,
+          payment_status: order.payment_status,
+        },
+        "New order created with captured payment status",
+      );
+
+      return {
+        success: true,
+        cart_id: cartId,
+        order_id: order.id,
+        action: "created",
+      };
+    } catch (error) {
+      paymentLogger.error(
+        {
+          ...logContext,
+          error: error instanceof Error ? error.message : String(error),
+        },
+        "Error processing PayPal CAPTURE.COMPLETED",
+      );
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
   }
 
   /**
@@ -1384,11 +1446,63 @@ class PaymentWebhookService extends TransactionBaseService {
             order_id: order.id,
             payment_status: order.payment_status,
           },
-          "✓ Order already exists (webhook retry) - confirming payment",
+          "✓ Order already exists (webhook retry) - checking payment status",
         );
 
-        // Confirmar que el pago está capturado
-        await this.confirmPaymentCaptured(order.id);
+        // Verificar si el pago está completado
+        // Reglas:
+        // 1. Si hay captures[] con COMPLETED = emitir evento
+        // 2. Si order.status = "COMPLETED" Y NO hay captures[] = emitir evento
+        // 3. Si hay captures[] con PENDING = NO emitir (esperar PAYMENT.CAPTURE.COMPLETED)
+        const captures =
+          paypalOrder.purchase_units?.[0]?.payments?.captures || [];
+        const hasCompletedCapture = captures.some(
+          (c) => c.status === "COMPLETED",
+        );
+        const hasPendingCapture = captures.some((c) => c.status === "PENDING");
+
+        const isPaymentCompleted =
+          hasCompletedCapture ||
+          (paypalOrder.status === "COMPLETED" && captures.length === 0);
+
+        if (isPaymentCompleted && !hasPendingCapture) {
+          const orderWithPayments = await this.orderService_.retrieve(
+            order.id,
+            {
+              relations: ["payments"],
+            },
+          );
+          const payment = orderWithPayments.payments?.[0];
+
+          if (payment && !payment.captured_at) {
+            await this.eventBusService_.emit(
+              PaymentService.Events.PAYMENT_CAPTURED,
+              {
+                id: payment.id,
+                order_id: order.id,
+              },
+            );
+
+            paymentLogger.info(
+              {
+                ...logContext,
+                order_id: order.id,
+                payment_id: payment.id,
+                order_status: paypalOrder.status,
+              },
+              "PAYMENT_CAPTURED event emitted for existing order",
+            );
+          }
+        } else {
+          paymentLogger.info(
+            {
+              ...logContext,
+              order_id: order.id,
+              allow_pending: allowPending,
+            },
+            "Payment not fully captured - order remains in current state",
+          );
+        }
 
         return { success: true, cart_id: cartId, order_id: order.id };
       }
@@ -1416,8 +1530,60 @@ class PaymentWebhookService extends TransactionBaseService {
           "✓ Cart completed successfully from webhook",
         );
 
-        // Confirmar captura del pago
-        await this.confirmPaymentCaptured(order.id);
+        // Verificar si el pago está completado
+        // Reglas:
+        // 1. Si hay captures[] con COMPLETED = emitir evento
+        // 2. Si order.status = "COMPLETED" Y NO hay captures[] = emitir evento
+        // 3. Si hay captures[] con PENDING = NO emitir (esperar PAYMENT.CAPTURE.COMPLETED)
+        const captures =
+          paypalOrder.purchase_units?.[0]?.payments?.captures || [];
+        const hasCompletedCapture = captures.some(
+          (c) => c.status === "COMPLETED",
+        );
+        const hasPendingCapture = captures.some((c) => c.status === "PENDING");
+
+        const isPaymentCompleted =
+          hasCompletedCapture ||
+          (paypalOrder.status === "COMPLETED" && captures.length === 0);
+
+        if (isPaymentCompleted && !hasPendingCapture) {
+          const orderWithPayments = await this.orderService_.retrieve(
+            order.id,
+            {
+              relations: ["payments"],
+            },
+          );
+          const payment = orderWithPayments.payments?.[0];
+
+          if (payment && !payment.captured_at) {
+            await this.eventBusService_.emit(
+              PaymentService.Events.PAYMENT_CAPTURED,
+              {
+                id: payment.id,
+                order_id: order.id,
+              },
+            );
+
+            paymentLogger.info(
+              {
+                ...logContext,
+                order_id: order.id,
+                payment_id: payment.id,
+                order_status: paypalOrder.status,
+              },
+              "PAYMENT_CAPTURED event emitted for completed payment",
+            );
+          }
+        } else {
+          paymentLogger.info(
+            {
+              ...logContext,
+              order_id: order.id,
+              allow_pending: allowPending,
+            },
+            "Payment not fully captured (PENDING) - order created in awaiting state",
+          );
+        }
 
         return { success: true, cart_id: cartId, order_id: order.id };
       }
@@ -1444,7 +1610,10 @@ class PaymentWebhookService extends TransactionBaseService {
   }
 
   /**
-   * Sincroniza la payment session de PayPal con los datos del webhook
+   * Sincroniza la payment session de PayPal con los datos del webhook.
+   * Detecta automáticamente el estado real del pago basado en:
+   * 1. order.status (COMPLETED, APPROVED, etc.)
+   * 2. purchase_units[].payments.captures[] (si existen)
    */
   private async syncPayPalPaymentSession(
     cartId: string,
@@ -1467,6 +1636,40 @@ class PaymentWebhookService extends TransactionBaseService {
         return;
       }
 
+      // ✅ Detectar el estado real basado en order.status Y capturas (si existen)
+      const captures =
+        paypalOrder.purchase_units?.[0]?.payments?.captures || [];
+      const hasCompletedCapture = captures.some(
+        (c) => c.status === "COMPLETED",
+      );
+      const hasPendingCapture = captures.some((c) => c.status === "PENDING");
+      const hasDeniedCapture = captures.some(
+        (c) => c.status === "DENIED" || c.status === "FAILED",
+      );
+
+      let sessionStatus: string;
+
+      // Prioridad: Si hay capturas explícitas, usarlas primero
+      if (hasCompletedCapture) {
+        // Captura COMPLETED = pago autorizado
+        sessionStatus = "authorized";
+      } else if (hasDeniedCapture) {
+        // Captura denegada = error
+        sessionStatus = "error";
+      } else if (hasPendingCapture) {
+        // Captura pendiente = esperar confirmación
+        sessionStatus = "pending";
+      } else if (paypalOrder.status === "COMPLETED" && captures.length === 0) {
+        // CHECKOUT.ORDER.COMPLETED sin captures[] = pago capturado
+        // (este webhook no incluye captures[], solo order.status)
+        sessionStatus = "authorized";
+      } else if (paypalOrder.status === "APPROVED") {
+        // APPROVED sin capturas = pendiente
+        sessionStatus = "pending";
+      } else {
+        sessionStatus = "pending"; // Default seguro
+      }
+
       // Actualizar la sesión con los datos del webhook
       const paymentSessionRepo = this.manager_.withRepository(
         PaymentSessionRepository,
@@ -1474,7 +1677,7 @@ class PaymentWebhookService extends TransactionBaseService {
 
       await paymentSessionRepo.update(paymentSession.id, {
         data: paypalOrder as any,
-        status: "authorized",
+        status: sessionStatus,
         is_selected: true,
       });
 
@@ -1483,8 +1686,12 @@ class PaymentWebhookService extends TransactionBaseService {
           cart_id: cartId,
           paypal_order_id: paypalOrder.id,
           session_id: paymentSession.id,
+          session_status: sessionStatus,
+          order_status: paypalOrder.status,
+          capture_statuses: captures.map((c) => c.status),
+          has_captures: captures.length > 0,
         },
-        "PayPal payment session synced from webhook",
+        "PayPal payment session synced with correct status",
       );
     } catch (error) {
       paymentLogger.error(
@@ -1496,61 +1703,6 @@ class PaymentWebhookService extends TransactionBaseService {
         "Error syncing PayPal payment session",
       );
       // No lanzar error, continuar con completion
-    }
-  }
-
-  /**
-   * Confirma que el pago de una orden está capturado
-   */
-  private async confirmPaymentCaptured(orderId: string): Promise<void> {
-    try {
-      const orderWithPayments = await this.orderService_.retrieve(orderId, {
-        relations: ["payments"],
-      });
-
-      const payment = orderWithPayments.payments?.[0];
-
-      if (!payment) {
-        paymentLogger.warn({ order_id: orderId }, "No payment found in order");
-        return;
-      }
-
-      // Si el pago ya está capturado, no hacer nada
-      if (payment.captured_at) {
-        paymentLogger.info(
-          { order_id: orderId, payment_id: payment.id },
-          "Payment already captured",
-        );
-        return;
-      }
-
-      // Marcar el pago como capturado
-      await this.manager_.transaction(async (transactionManager) => {
-        const paymentRepo = transactionManager.getRepository("Payment");
-        await paymentRepo.update(payment.id, {
-          captured_at: new Date(),
-        });
-      });
-
-      // Emitir evento de captura
-      await this.eventBusService_.emit(PaymentService.Events.PAYMENT_CAPTURED, {
-        id: payment.id,
-        order_id: orderId,
-      });
-
-      paymentLogger.info(
-        { order_id: orderId, payment_id: payment.id },
-        "Payment capture confirmed and event emitted",
-      );
-    } catch (error) {
-      paymentLogger.error(
-        {
-          order_id: orderId,
-          error: error instanceof Error ? error.message : String(error),
-        },
-        "Error confirming payment capture",
-      );
-      throw error;
     }
   }
 

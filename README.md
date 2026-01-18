@@ -34,7 +34,26 @@
 
 ## Compatibility
 
-This starter is compatible with versions >= 1.8.0 of `@medusajs/medusa`. 
+This starter is compatible with versions >= 1.8.0 of `@medusajs/medusa`.
+
+## Custom Documentation
+
+### Payment Integration
+
+- [PayPal - Flujo Simplificado](docs/paypal-simplified-flow.md) - **Flujo actual**: Backend completa carrito desde webhook, sin `createOrder` en frontend
+- [PayPal - Frontend Integration](docs/paypal-frontend-integration.md) - Guía de implementación del frontend con polling
+- [PayPal - Plugin Analysis](docs/paypal-plugin-analysis.md) - Análisis del plugin oficial para referencia
+
+### Cart & Pricing
+
+- [Cart Pricing Architecture](docs/cart-pricing-architecture.md)
+- [Cart Pricing Middleware](docs/cart-pricing-middleware.md)
+- [Payment Amount Fix](docs/payment-amount-fix.md)
+- [Cart Pricing Payment Fix](docs/cart-pricing-payment-fix.md)
+
+### Shipping
+
+- [Correos Integration](docs/correos-integration.md)
 
 ## Getting Started
 

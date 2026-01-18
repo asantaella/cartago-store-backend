@@ -57,9 +57,8 @@ export async function updateCart(medusa, cartId, data) {
 }
 
 export async function listShippingOptions(medusa, cartId) {
-  const { shipping_options } = await medusa.shippingOptions.listCartOptions(
-    cartId
-  );
+  const { shipping_options } =
+    await medusa.shippingOptions.listCartOptions(cartId);
   console.log(`✓ ${shipping_options.length} opciones de envío disponibles`);
   return shipping_options;
 }
@@ -76,7 +75,7 @@ export async function addShippingMethod(medusa, cartId, optionId) {
 export async function createPaymentSessions(medusa, cartId) {
   const { cart } = await medusa.carts.createPaymentSessions(cartId);
   console.log(
-    `✓ Payment sessions creadas: ${cart.payment_sessions?.length || 0}`
+    `✓ Payment sessions creadas: ${cart.payment_sessions?.length || 0}`,
   );
   return cart;
 }
@@ -134,4 +133,42 @@ export function logCart(cart) {
 
 export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Alias para compatibilidad
+export const wait = sleep;
+
+// Helpers adicionales para tests
+export async function loginAdmin(medusa, email, password) {
+  await medusa.admin.auth.getToken({ email, password });
+  return true;
+}
+
+export async function updateCartAddresses(medusa, cartId, addresses) {
+  const { cart } = await medusa.carts.update(cartId, addresses);
+  return cart;
+}
+
+export async function selectPayPalPayment(medusa, cartId) {
+  const { cart } = await medusa.carts.setPaymentSession(cartId, {
+    provider_id: "paypal",
+  });
+  return cart;
+}
+
+// Logging utilities
+export function logSuccess(message) {
+  console.log(`\x1b[32m${message}\x1b[0m`); // Green
+}
+
+export function logError(message) {
+  console.error(`\x1b[31m${message}\x1b[0m`); // Red
+}
+
+export function logInfo(message) {
+  console.log(`\x1b[36m${message}\x1b[0m`); // Cyan
+}
+
+export function logWarning(message) {
+  console.warn(`\x1b[33m${message}\x1b[0m`); // Yellow
 }

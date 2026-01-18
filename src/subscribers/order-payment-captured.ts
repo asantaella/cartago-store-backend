@@ -72,10 +72,10 @@ export default async function handleOrderPaymentCaptured({
     try {
       await retryWithBackoff(
         async () => {
-          await receiptNotificationService.sendNotification(
+        /*   await receiptNotificationService.sendNotification(
             OrderService.Events.PAYMENT_CAPTURED,
             order
-          );
+          ); */
         },
         {
           maxRetries: 3,
