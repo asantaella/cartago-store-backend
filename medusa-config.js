@@ -23,7 +23,7 @@ try {
   console.log("current STORE_CORS = ", process.env.STORE_CORS);
   console.log(
     "current MEDUSA_ADMIN_BACKEND = ",
-    process.env.MEDUSA_ADMIN_BACKEND_URL
+    process.env.MEDUSA_ADMIN_BACKEND_URL,
   );
   dotenv.config({ path: process.cwd() + "/.env" });
   dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME, override: false });
@@ -33,7 +33,6 @@ try {
   console.log("MEDUSA_ADMIN_BACKEND = ", process.env.MEDUSA_ADMIN_BACKEND_URL);
   console.log("BUCKET URL = ", process.env.R2_PUBLIC_URL);
 } catch (e) {}
-
 
 const DATABASE_URL =
   process.env.DATABASE_URL || "postgres://localhost/medusa-store";
@@ -85,7 +84,6 @@ const plugins = [
       automatic_payment_methods: true,
     },
   },
-
 ];
 
 const modules = {

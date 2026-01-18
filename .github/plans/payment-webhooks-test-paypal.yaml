@@ -1,0 +1,115 @@
+version: "1.0"
+name: "medusajs-paypal-webhook-testing-plan"
+description: "Plan completo para testear webhooks PayPal en MedusaJS localhost usando ngrok"
+model: "claude-sonnet-4.5"
+
+objetivo:
+  descripcion: |
+    Elaborar un plan técnico detallado con código TypeScript/Node.js para testear webhooks de PayPal
+    integrados en un backend MedusaJS v1.20.11 ejecutándose en localhost:9000, utilizando ngrok
+    como túnel de exposición.
+
+contexto_tecnico:
+  backend: "MedusaJS v1.20.11"
+  puerto: 9000
+  plugin: "medusa-payment-paypal"
+  endpoint_webhook: "/paypal/hooks"
+  herramienta_tunel: "ngrok"
+  entorno_paypal: "Sandbox"
+  lenguaje: "TypeScript/Node.js"
+
+requerimientos_funcionales:
+  1_configuracion_entorno:
+    - Instalar y configurar ngrok para exponer localhost:9000
+    - Registrar webhook en PayPal Developer Dashboard usando URL de ngrok
+    - Configurar variables de entorno necesarias (CLIENT_ID, CLIENT_SECRET, WEBHOOK_ID)
+  
+  2_scripts_testing:
+    descripcion: "Crear scripts en Node.js para simular casos de prueba automáticos"
+    casos_uso:
+      - caso_exito: "Pago completado exitosamente (PAYMENT.CAPTURE.COMPLETED)"
+      - caso_error: "Pago fallido o denegado (PAYMENT.CAPTURE.DENIED)"
+    datos_entrada: "Cart mock de MedusaJS v1.20.11 definido en /scripts/__mocks__/cart-mock.json"
+    flujo_scripts:
+      - Leer cart-mock.json
+      - Crear un cart temporal en MedusaJS vía API
+      - Iniciar flujo de pago PayPal usando PayPal SDK
+      - Simular captura de pago (éxito/error)
+      - Verificar que el webhook es recibido y procesado correctamente
+      - Validar cambios de estado en la Order de MedusaJS
+  
+  3_estructura_archivos:
+    - "/scripts/test-paypal-webhook-success.ts"
+    - "/scripts/test-paypal-webhook-failure.ts"
+    - "/scripts/__mocks__/cart-mock.json"
+    - "/scripts/utils/medusa-api.ts" (funciones helper para interactuar con API Medusa)
+    - "/scripts/utils/paypal-api.ts" (funciones helper para simular pagos PayPal)
+
+instrucciones_detalladas:
+  rol: "Actúa como un ingeniero backend experto en MedusaJS, PayPal y testing automatizado"
+  
+  tarea_principal: |
+    Desarrollar un plan paso a paso que incluya:
+    
+    1. **Configuración inicial de ngrok**:
+       - Comando exacto para iniciar ngrok en puerto 9000
+       - Cómo obtener la URL pública generada
+       - Pasos para registrar el webhook en PayPal Dashboard con formato: https://[ngrok-url]/paypal/hooks
+    
+    2. **Estructura del cart-mock.json**:
+       - Generar un archivo JSON completo compatible con MedusaJS v1.20.11
+       - Debe incluir: region_id, items (productos), customer_email, shipping_address, billing_address
+       - Formato válido para crear un cart mediante POST /store/carts
+    
+    3. **Script de prueba: pago exitoso**:
+       - Código TypeScript completo para test-paypal-webhook-success.ts
+       - Debe crear cart en Medusa, iniciar pago PayPal, capturar pago exitosamente
+       - Esperar webhook y validar que Order pasa a estado "completed"
+       - Incluir logs detallados en cada paso
+    
+    4. **Script de prueba: pago fallido**:
+       - Código TypeScript para test-paypal-webhook-failure.ts
+       - Simular un pago denegado o fallido
+       - Validar que webhook PAYMENT.CAPTURE.DENIED es procesado
+       - Verificar estado de Order (debe marcar como failed o canceled)
+    
+    5. **Funciones auxiliares**:
+       - medusa-api.ts: funciones para createCart, getOrder, completeCart
+       - paypal-api.ts: funciones para createOrder, capturePayment (success/failure)
+    
+    6. **Guía de ejecución**:
+       - Prerrequisitos (dependencias npm necesarias)
+       - Variables de entorno requeridas
+       - Comandos exactos para ejecutar cada script
+       - Cómo interpretar los resultados y logs
+    
+    7. **Debugging y troubleshooting**:
+       - Cómo verificar que ngrok está funcionando
+       - Cómo ver logs de webhooks en PayPal Dashboard
+       - Errores comunes y soluciones
+
+output_esperado:
+  formato: "Documento técnico estructurado con código listo para usar"
+  secciones:
+    - Resumen del flujo de testing end-to-end
+    - Diagrama de arquitectura (textual) del flujo: Script → MedusaJS API → PayPal → Webhook → MedusaJS
+    - Configuración paso a paso de ngrok y PayPal Dashboard
+    - Código completo de cada archivo TypeScript/JSON
+    - Instrucciones de ejecución con ejemplos de comandos
+    - Checklist de validación de resultados
+    - Referencias a documentación oficial
+
+referencias_documentacion:
+  - "MedusaJS v1 API Reference: https://docs.medusajs.com/api/store"
+  - "PayPal Webhooks: https://developer.paypal.com/docs/api/webhooks"
+  - "PayPal Events: https://developer.paypal.com/docs/api-basics/notifications/webhooks/event-names/"
+  - "ngrok Webhook Testing: https://ngrok.com/docs/guides/webhooks"
+  - "medusa-payment-paypal: https://github.com/medusajs/medusa/tree/v1.20.11/packages/medusa-payment-paypal"
+
+criterios_calidad:
+  - Código debe estar tipado completamente con TypeScript
+  - Incluir manejo de errores con try-catch
+  - Scripts deben ser idempotentes (se pueden ejecutar múltiples veces)
+  - Logs claros con timestamps y contexto
+  - Comentarios explicativos en partes complejas
+  - Validación de variables de entorno al inicio de cada script
