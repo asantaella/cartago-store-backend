@@ -181,7 +181,7 @@ class OrderNotificationService {
     orderId: string,
     relations: string[] = []
   ): Promise<Order> {
-    return await this.orderService.retrieve(orderId, {
+    return await this.orderService.retrieveWithTotals(orderId, {
       relations: [
         "shipping_address",
         "billing_address",
@@ -195,16 +195,7 @@ class OrderNotificationService {
         "region",
         "currency",
         ...relations,
-      ],
-      select: [
-        "subtotal",
-        "tax_total",
-        "shipping_total",
-        "discount_total",
-        "gift_card_total",
-        "total",
-        "paid_total",
-      ],
+      ] 
     });
   }
 

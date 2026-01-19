@@ -16,10 +16,10 @@ class InvoicePdfGeneratorService extends BaseService {
 
   async generateInvoice(
     orderId: string,
-    invoiceMode: InvoiceMode = "invoice"
+    invoiceMode: InvoiceMode = "invoice",
   ): Promise<{ buffer: Buffer; fileName: string }> {
     // Fetch the order details using the order service
-    const order: Order = await this.orderService.retrieve(orderId, {
+    const order: Order = await this.orderService.retrieveWithTotals(orderId, {
       relations: [
         "items",
         "items.variant",
@@ -31,15 +31,6 @@ class InvoicePdfGeneratorService extends BaseService {
         "shipping_methods",
         "shipping_methods.tax_lines",
         "items.tax_lines",
-      ],
-      select: [
-        "subtotal",
-        "tax_total",
-        "shipping_total",
-        "discount_total",
-        "gift_card_total",
-        "total",
-        "paid_total",
       ],
     });
 
@@ -143,7 +134,7 @@ class InvoicePdfGeneratorService extends BaseService {
             text: orderInvoice.getInvoiceId(),
             alignment: "left",
           },
-        ]
+        ],
       );
     }
 
@@ -296,7 +287,7 @@ class InvoicePdfGeneratorService extends BaseService {
 
                             const parentCategories =
                               variantUtils.formatVariantCategories(
-                                item.variant
+                                item.variant,
                               );
 
                             return [
