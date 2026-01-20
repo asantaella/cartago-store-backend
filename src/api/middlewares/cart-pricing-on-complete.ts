@@ -197,7 +197,7 @@ export async function persistCartPricingOnComplete(
   next: NextFunction
 ): Promise<void> {
   try {
-    const cartId = req.params.id;
+    const cartId = req.params.id as string;
     if (!cartId) {
       next();
       return;
