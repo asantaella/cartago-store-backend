@@ -5,6 +5,7 @@ import {
   ProductVariantService,
 } from "@medusajs/medusa";
 import AlgoliaService from "../services/algolia";
+import { ProductStatus } from "@medusajs/types";
 
 export default async function handleProductUpdate({
   data,
@@ -46,7 +47,9 @@ export default async function handleProductUpdate({
         });
 
         // Sincronizar con Algolia de forma asíncrona
-        await algoliaService.syncProduct(product);
+        if (product.status === ProductStatus.PUBLISHED) {
+          await algoliaService.syncProduct(product);
+        }
 
         console.log(
           `[PRODUCT-UPDATE] Producto ${productId} procesado correctamente`
