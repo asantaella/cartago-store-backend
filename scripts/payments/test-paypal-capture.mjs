@@ -2,7 +2,7 @@
 
 /**
  * Script de testing para PayPal Checkout con CAPTURE flow.
- * 
+ *
  * Este script prueba el flujo CAPTURE (capture: true) en lugar de AUTHORIZE
  * para determinar si el problema es específico del flujo AUTHORIZE.
  */
@@ -48,7 +48,7 @@ async function main() {
 
   const updatedCart = await medusa.carts.retrieve(cart.id);
   console.log(
-    `✓ Total: ${updatedCart.cart.total / 100} ${updatedCart.cart.region.currency_code.toUpperCase()}`
+    `✓ Total: ${updatedCart.cart.total / 100} ${updatedCart.cart.region.currency_code.toUpperCase()}`,
   );
 
   await createPaymentSessions(medusa, cart.id);
@@ -71,12 +71,12 @@ async function main() {
   console.log("\n▶ CAPTURANDO pago PayPal vía API (CAPTURE flow)...");
   const captureResponse = await captureOrder(paypalOrderId);
 
-  const captureId = captureResponse.purchase_units?.[0]?.payments
-    ?.captures?.[0]?.id;
+  const captureId =
+    captureResponse.purchase_units?.[0]?.payments?.captures?.[0]?.id;
 
   if (!captureId) {
     throw new Error(
-      "No se pudo extraer el ID de captura de la respuesta de PayPal"
+      "No se pudo extraer el ID de captura de la respuesta de PayPal",
     );
   }
 
@@ -98,7 +98,9 @@ async function main() {
     console.log("\n❌ FALLO - El webhook de CAPTURE NO completó el cart");
     console.log("El problema puede estar en:");
     console.log("  1. El flujo CAPTURE también tiene el mismo problema");
-    console.log("  2. El webhook de PAYMENT.CAPTURE.COMPLETED no está siendo enviado");
+    console.log(
+      "  2. El webhook de PAYMENT.CAPTURE.COMPLETED no está siendo enviado",
+    );
     console.log("  3. Hay un problema general con el setup de webhooks");
   }
 }

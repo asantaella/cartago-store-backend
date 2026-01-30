@@ -2,7 +2,7 @@
 
 /**
  * Script de DEBUG para PayPal Checkout.
- * 
+ *
  * Este script investiga exactamente qué está sucediendo en el flujo de webhooks.
  */
 
@@ -19,7 +19,10 @@ import {
   getOrder,
   sleep,
 } from "../utils/medusa-api.mjs";
-import { authorizeOrder, getOrder as getPayPalOrder } from "../utils/paypal-api.mjs";
+import {
+  authorizeOrder,
+  getOrder as getPayPalOrder,
+} from "../utils/paypal-api.mjs";
 
 const WEBHOOK_WAIT_MS = 15000; // Esperar más para ver logs
 
@@ -48,7 +51,7 @@ async function main() {
 
   const updatedCart = await medusa.carts.retrieve(cart.id);
   console.log(
-    `✓ Total: ${updatedCart.cart.total / 100} ${updatedCart.cart.region.currency_code.toUpperCase()}`
+    `✓ Total: ${updatedCart.cart.total / 100} ${updatedCart.cart.region.currency_code.toUpperCase()}`,
   );
 
   // 2. Crear sesiones de pago
@@ -107,7 +110,8 @@ async function main() {
     console.log("\n✓ Orden PayPal recuperada. Estructura actual:");
     console.log(`  Status: ${currentOrder.status}`);
     console.log(`  Purchase Units: ${currentOrder.purchase_units?.length}`);
-    const currentAuth = currentOrder.purchase_units?.[0]?.payments?.authorizations?.[0];
+    const currentAuth =
+      currentOrder.purchase_units?.[0]?.payments?.authorizations?.[0];
     if (currentAuth) {
       console.log(`  Authorization ID: ${currentAuth.id}`);
       console.log(`  Authorization Status: ${currentAuth.status}`);
@@ -137,9 +141,9 @@ async function main() {
 
   // Obtener detalles de la sesión de pago
   const finalSession = finalCart.payment_sessions?.find(
-    (s) => s.provider_id === "paypal"
+    (s) => s.provider_id === "paypal",
   );
-  
+
   console.log("\n📋 Estado de la Payment Session:");
   if (finalSession) {
     console.log(`  ID: ${finalSession.id}`);
@@ -156,9 +160,15 @@ async function main() {
     console.log("\n❌ WEBHOOK NO COMPLETÓ EL CART");
     console.log("\n📍 DIAGNÓSTICO:");
     console.log(`  - Authorization ID enviado: ${authorizationId}`);
-    console.log(`  - El plugin intentaría recuperar: GET /v2/payments/authorizations/${authorizationId}`);
-    console.log(`  - Si obtiene 404: La autorización NO existe en PayPal con ese ID`);
-    console.log(`  - Si obtiene 200 pero falla después: El problema es otro (permisos, datos, etc.)`);
+    console.log(
+      `  - El plugin intentaría recuperar: GET /v2/payments/authorizations/${authorizationId}`,
+    );
+    console.log(
+      `  - Si obtiene 404: La autorización NO existe en PayPal con ese ID`,
+    );
+    console.log(
+      `  - Si obtiene 200 pero falla después: El problema es otro (permisos, datos, etc.)`,
+    );
   }
 }
 

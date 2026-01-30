@@ -4,7 +4,7 @@
  * Script para investigar la discrepancia entre:
  * - El Authorization ID que retorna authorizeOrder()
  * - El Authorization ID que PayPal envía en el webhook
- * 
+ *
  * HIPÓTESIS:
  * El problema es que en v1.20.11 del plugin, la estructura del webhook
  * o la forma en que el plugin procesa el Authorization ID es diferente.
@@ -62,8 +62,8 @@ async function main() {
   console.log("\n▶ Autorizando orden...");
   const authResponse = await authorizeOrder(paypalOrderId);
 
-  const authIdFromAPI = authResponse.purchase_units?.[0]?.payments
-    ?.authorizations?.[0]?.id;
+  const authIdFromAPI =
+    authResponse.purchase_units?.[0]?.payments?.authorizations?.[0]?.id;
 
   console.log(`\n✓ Authorization ID del API: ${authIdFromAPI}`);
 
@@ -71,15 +71,19 @@ async function main() {
   console.log("\n▶ Recuperando orden después de authorize...");
   const orderAfterAuth = await getOrder(paypalOrderId);
 
-  const authIdFromOrder = orderAfterAuth.purchase_units?.[0]?.payments
-    ?.authorizations?.[0]?.id;
+  const authIdFromOrder =
+    orderAfterAuth.purchase_units?.[0]?.payments?.authorizations?.[0]?.id;
 
   console.log(`✓ Authorization ID en orden: ${authIdFromOrder}`);
-  console.log(`✓ ¿IDs coinciden? ${authIdFromAPI === authIdFromOrder ? "SÍ" : "NO"}`);
+  console.log(
+    `✓ ¿IDs coinciden? ${authIdFromAPI === authIdFromOrder ? "SÍ" : "NO"}`,
+  );
 
   // Comparar estructuras
   console.log("\n📋 ESTRUCTURA DEL WEBHOOK ESPERADO:");
-  console.log("Según la guía de PayPal, el webhook PAYMENT.AUTHORIZATION.CREATED debe contener:");
+  console.log(
+    "Según la guía de PayPal, el webhook PAYMENT.AUTHORIZATION.CREATED debe contener:",
+  );
   console.log(`  event_type: PAYMENT.AUTHORIZATION.CREATED`);
   console.log(`  resource.id: ${authIdFromAPI} (el Authorization ID)`);
   console.log(`  resource.status: CREATED`);
@@ -101,14 +105,20 @@ async function main() {
     console.log("\n💡 POSIBLES CAUSAS:");
     console.log("  1. El webhook nunca llegó a Medusa");
     console.log("  2. El webhook llegó pero el plugin no lo procesó");
-    console.log("  3. El plugin recibió 404 al intentar recuperar la autorización");
-    console.log("  4. El Authorization ID en el webhook NO es el que retornó authorize()");
+    console.log(
+      "  3. El plugin recibió 404 al intentar recuperar la autorización",
+    );
+    console.log(
+      "  4. El Authorization ID en el webhook NO es el que retornó authorize()",
+    );
   }
 
   console.log("\n📌 RECOMENDACIÓN:");
   console.log("Ejecuta el servidor debug webhook:");
   console.log("  node scripts/payments/paypal-webhook-server.mjs");
-  console.log("Luego configura ngrok para apuntar a ese servidor y observa exactamente");
+  console.log(
+    "Luego configura ngrok para apuntar a ese servidor y observa exactamente",
+  );
   console.log("qué Authorization ID está enviando PayPal en el webhook.");
 }
 
