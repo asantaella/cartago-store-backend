@@ -20,6 +20,7 @@ class StripeProviderServiceExtended extends StripeProviderService {
   }
 
   async getPaymentStatus(paymentSessionData: Record<string, unknown>) {
+    console.log("Getting payment status for session:", paymentSessionData);
     const id = String(paymentSessionData?.id ?? "");
     if (!id) {
       return super.getPaymentStatus(paymentSessionData);
@@ -27,14 +28,16 @@ class StripeProviderServiceExtended extends StripeProviderService {
 
     const stripe = this.getStripe();
     const paymentIntent = await stripe.paymentIntents.retrieve(id);
-
+    console.log("Retrieved payment intent:", paymentIntent);
     if (
       paymentIntent.status === "processing" &&
       paymentIntent.payment_method_types?.includes("sepa_debit")
     ) {
+      console.log("SEPA Direct Debit payment is processing, marking as authorized.");
       return PaymentSessionStatus.AUTHORIZED;
     }
 
+    console.log("Payment intent status:", paymentIntent.status);
     switch (paymentIntent.status) {
       case "requires_payment_method":
       case "requires_confirmation":

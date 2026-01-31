@@ -6,7 +6,8 @@
 
 import Medusa from "@medusajs/medusa-js";
 import dotenv from "dotenv";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
+import { promises as fs } from "fs";
 import { dirname, join } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -108,10 +109,8 @@ export async function getOrder(medusa, orderId) {
 
 export async function loadCartMock() {
   const mockPath = join(__dirname, "../__mocks__/cart-mock.json");
-  const { default: mock } = await import(mockPath, {
-    assert: { type: "json" },
-  });
-  return mock;
+  const content = await fs.readFile(mockPath, "utf8");
+  return JSON.parse(content);
 }
 
 export function logOrder(order) {
