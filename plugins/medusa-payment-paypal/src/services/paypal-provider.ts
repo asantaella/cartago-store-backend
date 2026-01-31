@@ -177,7 +177,22 @@ class PayPalProviderService extends AbstractPaymentProcessor {
       purchase_units: PurchaseUnits
     }
 
-    const id = purchase_units[0].payments.authorizations[0].id
+    // Check if already captured (capture mode - payment was captured by PayPal automatically)
+    const existingCaptures = purchase_units?.[0]?.payments?.captures
+    if (existingCaptures?.length > 0 && existingCaptures[0].status === "COMPLETED") {
+      console.log("Payment already captured in PayPal, skipping capture")
+      return await this.retrievePayment(paymentSessionData)
+    }
+
+    // For authorization mode - capture the authorized payment
+    const authorizations = purchase_units?.[0]?.payments?.authorizations
+    if (!authorizations?.length) {
+      // If no authorizations and no captures, return current data
+      console.log("No authorizations found, returning current payment data")
+      return await this.retrievePayment(paymentSessionData)
+    }
+
+    const id = authorizations[0].id
 
     try {
       await this.paypal_.captureAuthorizedPayment(id)

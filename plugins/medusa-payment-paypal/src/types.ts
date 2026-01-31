@@ -33,7 +33,7 @@ export type PaypalOrder = {
 
 export type PurchaseUnits = {
   payments: {
-    captures: { id: string }[]
+    captures: { id: string; status?: string }[]
     authorizations: { id: string }[]
   }
   amount: {

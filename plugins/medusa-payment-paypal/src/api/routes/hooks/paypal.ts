@@ -29,14 +29,54 @@ export default async (req, res) => {
     return id && id.startsWith("paycol")
   }
 
-  async function autorizeCart(req, cartId) {
+  async function autorizeCart(req, cartId, isCapture = false) {
     const manager = req.scope.resolve("manager")
     const cartService = req.scope.resolve("cartService")
     const swapService = req.scope.resolve("swapService")
     const orderService = req.scope.resolve("orderService")
 
+    // First, check if order already exists (idempotency check)
+    const existingOrder = await orderService
+      .retrieveByCartId(cartId, { relations: ["payments"] })
+      .catch((_) => undefined)
+
+    if (existingOrder) {
+      console.log(`Order ${existingOrder.id} already exists for cart ${cartId}`)
+      
+      // If capture mode and payment not yet captured, capture it
+      if (isCapture && existingOrder.payment_status === "awaiting") {
+        console.log(`Capturing payment for existing order ${existingOrder.id}`)
+        await orderService.capturePayment(existingOrder.id)
+        console.log(`Payment captured successfully for order ${existingOrder.id}`)
+      }
+      return
+    }
+
     await manager.transaction(async (m) => {
-      const cart = await cartService.withTransaction(m).retrieve(cartId)
+      const cart = await cartService.withTransaction(m).retrieve(cartId, {
+        relations: ["items", "items.variant", "payment_sessions", "region"]
+      })
+
+      // Verify cart has items and valid total
+      console.log(`Cart ${cartId} status:`, {
+        itemCount: cart.items?.length || 0,
+        total: cart.total,
+        subtotal: cart.subtotal,
+        paymentSessions: cart.payment_sessions?.length || 0,
+        completedAt: cart.completed_at
+      })
+
+      // Don't process if cart is already completed
+      if (cart.completed_at) {
+        console.log(`Cart ${cartId} already completed at ${cart.completed_at}, skipping`)
+        return
+      }
+
+      // Don't process if cart has no items
+      if (!cart.items || cart.items.length === 0) {
+        console.log(`Cart ${cartId} has no items, skipping`)
+        return
+      }
 
       switch (cart.type) {
         case "swap": {
@@ -56,22 +96,29 @@ export default async (req, res) => {
         }
 
         default: {
-          const order = await orderService
+          await cartService
             .withTransaction(m)
-            .retrieveByCartId(cartId)
-            .catch((_) => undefined)
-
-          if (!order) {
-            await cartService
-              .withTransaction(m)
-              .setPaymentSession(cartId, "paypal")
-            await cartService.withTransaction(m).authorizePayment(cartId)
-            await orderService.withTransaction(m).createFromCart(cartId)
-          }
+            .setPaymentSession(cartId, "paypal")
+          await cartService.withTransaction(m).authorizePayment(cartId)
+          
+          console.log(`Creating order from cart ${cartId} with total: ${cart.total}`)
+          await orderService.withTransaction(m).createFromCart(cartId)
+          console.log(`Order created successfully from cart ${cartId}`)
           break
         }
       }
     })
+
+    // If payment was captured in PayPal, capture it in the order
+    if (isCapture) {
+      const order = await orderService.retrieveByCartId(cartId)
+      
+      if (order && order.payment_status === "awaiting") {
+        console.log(`Capturing payment for order ${order.id}`)
+        await orderService.capturePayment(order.id)
+        console.log(`Payment captured successfully for order ${order.id}`)
+      }
+    }
   }
 
   async function autorizePaymentCollection(req, id, orderId) {
@@ -98,6 +145,7 @@ export default async (req, res) => {
     })
 
     let order
+    let isCapture = false
 
     // For capture mode, only process PAYMENT.CAPTURE.COMPLETED
     // CHECKOUT.ORDER.APPROVED arrives before capture, so we ignore it
@@ -111,6 +159,7 @@ export default async (req, res) => {
     if (eventType && eventType.includes("CAPTURE")) {
       // For capture events (when capture: true)
       console.log("Processing as CAPTURE event")
+      isCapture = true
       const paymentResource = await paypalService.retrieveCapture(resourceId)
       console.log("Capture resource retrieved:", paymentResource)
       order = await paypalService.retrieveOrderFromCapture(paymentResource)
@@ -149,9 +198,10 @@ export default async (req, res) => {
       console.log("Authorizing payment collection:", customId)
       await autorizePaymentCollection(req, customId, orderId)
     } else {
-      console.log("Authorizing cart:", customId)
+      const action = isCapture ? "Capturing" : "Authorizing"
+      console.log(`${action} cart:`, customId)
       try {
-        await autorizeCart(req, customId)
+        await autorizeCart(req, customId, isCapture)
         console.log("Cart authorization completed successfully")
       } catch (authError) {
         console.error("Error during cart authorization:", authError)
