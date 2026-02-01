@@ -24,7 +24,7 @@ export default async function handleOrderPlaced({
       container.resolve("invoiceNumberGeneratorService");
 
     // Obtener el pedido con las relaciones necesarias
-    const order = await orderService.retrieve(data.id, {
+    const order = await orderService.retrieveWithTotals(data.id, {
       relations: [
         "items",
         "items.variant",
@@ -33,7 +33,8 @@ export default async function handleOrderPlaced({
         "billing_address",
         "discounts",
         "shipping_methods",
-        "payments",
+        "payments",        
+        "gift_cards",
       ],
     });
 

@@ -53,8 +53,8 @@ export default async (req, res) => {
     }
 
     await manager.transaction(async (m) => {
-      const cart = await cartService.withTransaction(m).retrieve(cartId, {
-        relations: ["items", "items.variant", "payment_sessions", "region"]
+      const cart = await cartService.withTransaction(m).retrieveWithTotals(cartId, {
+        relations: ["items", "items.variant", "payment_sessions", "region", "discounts", "gift_cards"],
       })
 
       // Verify cart has items and valid total

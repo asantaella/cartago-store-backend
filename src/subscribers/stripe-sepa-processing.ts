@@ -93,10 +93,10 @@ async function handleStripeSepaProcessing({
         });
       }
 
-      // Recuperar el cart
+      // Recuperar el cart (solo necesitamos el context para el IP)
       const cart = await cartService
         .withTransaction(transactionManager)
-        .retrieve(cartId, { select: ["context"] });
+        .retrieve(cartId, { select: ["id", "context"] });
 
       // Completar el cart
       const { response_code, response_body } = await cartCompletionStrategy
