@@ -1,5 +1,10 @@
 import { BaseService } from "medusa-interfaces";
-import { Order, OrderService } from "@medusajs/medusa";
+import {
+  Order,
+  OrderService,
+  OrderStatus,
+  PaymentStatus,
+} from "@medusajs/medusa";
 
 class InvoiceNumberGeneratorService extends BaseService {
   protected orderService_: OrderService;
@@ -14,16 +19,24 @@ class InvoiceNumberGeneratorService extends BaseService {
    * @param order - El pedido para el cual generar el número de factura
    * @returns El número de factura formateado o undefined si no se puede generar
    */
-  getInvoiceNumber(order: Order): string | undefined {
-    if (!order || !order.display_id || !process.env.INVOICE_START_REF) {
+  async getInvoiceNumber(order: Order): Promise<string | undefined> {
+    if (!order || !process.env.INVOICE_START_REF) {
       return undefined;
     }
 
     const invoiceStartRef = parseInt(process.env.INVOICE_START_REF || "0");
     const year = new Date().getFullYear();
-    const invoiceNumber = invoiceStartRef + order.display_id;
+
+    // Obtener todas las órdenes y filtrar las que tengan al menos un payment capturado
+    const [orders] = await this.orderService_.listAndCount(
+      {
+        payment_status: [PaymentStatus.CAPTURED],
+      },
+      { relations: ["payments"] },
+    );
+    const totalOrdersPaid = orders.length;
+    const invoiceNumber = invoiceStartRef + totalOrdersPaid;
     const invoiceRef = invoiceNumber.toString().padStart(5, "0");
- 
     return `${year}-${invoiceRef}`;
   }
 
@@ -37,11 +50,11 @@ class InvoiceNumberGeneratorService extends BaseService {
       relations: ["items", "customer", "shipping_address", "billing_address"],
     });
 
-    const invoiceNumber = this.getInvoiceNumber(order);
+    const invoiceNumber = await this.getInvoiceNumber(order);
 
     if (!invoiceNumber) {
       throw new Error(
-        `No se pudo generar el número de factura para el pedido ${order.display_id}`
+        `No se pudo generar el número de factura para el pedido ${order.display_id}`,
       );
     }
 
