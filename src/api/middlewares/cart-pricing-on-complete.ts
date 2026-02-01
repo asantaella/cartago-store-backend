@@ -197,7 +197,7 @@ export async function persistCartPricingOnComplete(
   next: NextFunction
 ): Promise<void> {
   try {
-    const cartId = req.params.id;
+    const cartId = req.params.id as string;
     if (!cartId) {
       next();
       return;
@@ -378,7 +378,7 @@ export async function persistCartPricingOnComplete(
     // Esto asegura que CartService.complete() use el cart actualizado
     try {
       const cartService = req.scope.resolve("cartService") as any;
-      const freshCart = await cartService.retrieve(cartId, {
+      const freshCart = await cartService.withTransaction(cartId, {
         select: [
           "id",
           "email",

@@ -10,7 +10,7 @@ import OrderNotificationService from "../../../../../services/order-notification
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const toClient = req.query.toClient === "true";
     const toAdmin = req.query.toAdmin === "true";
 
@@ -51,7 +51,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         const clientNotification =
           await receiptNotificationService.sendNotification(
             "order.placed",
-            order
+            order,
           );
         results.toClient = {
           status: clientNotification.status,
@@ -73,7 +73,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
           await receiptNotificationService.sendNotificationToAdmin(
             "order.placed",
             order,
-            "sent"
+            "sent",
           );
         results.toAdmin = {
           status: adminNotification.status,
