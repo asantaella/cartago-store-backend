@@ -21,16 +21,40 @@ interface SubscribeResult {
   subscription?: ProductAlertSubscription;
 }
 
-// Nodemailer Transporter Factory
+// Nodemailer Transporter Factory with lazy loading
 class NodemailerTransporterFactory {
+  private static instance: nodemailer.Transporter | null = null;
+
+  static validateSmtpConfig(): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    if (!process.env.SMTP_USER) {
+      errors.push("SMTP_USER environment variable is not configured");
+    }
+    if (!process.env.SMTP_PASS) {
+      errors.push("SMTP_PASS environment variable is not configured");
+    }
+    
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
+  }
+
   static createTransporter(): nodemailer.Transporter {
+    const validation = this.validateSmtpConfig();
+    if (!validation.valid) {
+      const errorMsg = `SMTP configuration invalid: ${validation.errors.join(", ")}`;
+      console.warn(`[ProductAlertService] ${errorMsg}. Email functionality will be disabled.`);
+    }
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
       port: parseInt(process.env.SMTP_PORT || "587", 10),
       secure: process.env.SMTP_SECURE === "true" || false,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.SMTP_USER || "",
+        pass: process.env.SMTP_PASS || "",
       },
     });
 
@@ -47,6 +71,13 @@ class NodemailerTransporterFactory {
     transporter.use("compile", hbs(handlebarsOptions));
 
     return transporter;
+  }
+
+  static getInstance(): nodemailer.Transporter {
+    if (!this.instance) {
+      this.instance = this.createTransporter();
+    }
+    return this.instance;
   }
 }
 
@@ -89,11 +120,18 @@ class ProductAlertValidator {
 // Notification class
 class ProductAlertNotifier {
   private brevoEcommerceService: BrevoEcommerceService;
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter | null = null;
 
   constructor(brevoEcommerceService: BrevoEcommerceService) {
     this.brevoEcommerceService = brevoEcommerceService;
-    this.transporter = NodemailerTransporterFactory.createTransporter();
+    // Defer transporter creation to first use (lazy loading)
+  }
+
+  private getTransporter(): nodemailer.Transporter {
+    if (!this.transporter) {
+      this.transporter = NodemailerTransporterFactory.getInstance();
+    }
+    return this.transporter;
   }
 
     private smtpBaseConfig(email: string, subject: string) {
@@ -124,8 +162,7 @@ class ProductAlertNotifier {
 
       const subject = isNew ? `[Copia] Nueva suscripción: ${variantTitle}` : `[Copia] Suscripción: ${variantTitle}`;
 
-      // Send email using Nodemailer with Handlebars template
-      await this.transporter.sendMail({
+      await this.getTransporter().sendMail({
        ...this.smtpBaseConfig(adminEmail, subject),
         template: "client-product-subscription-alert",
         context: {
@@ -169,8 +206,7 @@ class ProductAlertNotifier {
       // Send emails to all subscribers
       const emailPromises = subscriptions.map((sub) => {
         const unsubscribeUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/account/alerts/unsubscribe?email=${encodeURIComponent(sub.email)}&variant=${variantId}`;
-
-        return this.transporter.sendMail({
+        return this.getTransporter().sendMail({
           ...this.smtpBaseConfig(sub.email, `¡${variantTitle} está de vuelta en stock!`),
           template: "back-in-stock-alert",
           context: {
@@ -214,8 +250,7 @@ class ProductAlertNotifier {
     if (!adminEmail) return;
 
     try {
-      // Send email using Nodemailer with Handlebars template
-      await this.transporter.sendMail({
+      await this.getTransporter().sendMail({
         ...this.smtpBaseConfig(adminEmail, `[Copia] Aviso de disponibilidad: ${variantTitle}`),
         template: "back-in-stock-alert-admin",
         context: {

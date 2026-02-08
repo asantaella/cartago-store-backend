@@ -41,7 +41,10 @@ const loaders = require("@medusajs/medusa/dist/loaders/index").default;
       process.on("SIGTERM", gracefulShutDown);
       process.on("SIGINT", gracefulShutDown);
     } catch (err) {
-      console.error("Error starting server", err);
+      console.error("Error starting server:", err);
+      if (err.stack) {
+        console.error("Stack trace:", err.stack);
+      }
       process.exit(1);
     }
   }
