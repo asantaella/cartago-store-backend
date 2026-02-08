@@ -10,7 +10,6 @@ import {
 } from "../models/product-alert-subscription";
 
 import * as nodemailer from "nodemailer";
-import hbs from "nodemailer-express-handlebars";
 import * as path from "path";
 
 type ProductAlertSubscriptionRepository = typeof import("../repositories/product-alert-subscription").default;
@@ -68,7 +67,14 @@ class NodemailerTransporterFactory {
       extName: ".handlebars",
     };
 
-    transporter.use("compile", hbs(handlebarsOptions));
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const hbsModule = require("nodemailer-express-handlebars");
+      const hbs = hbsModule.default || hbsModule;
+      transporter.use("compile", hbs(handlebarsOptions));
+    } catch (error) {
+      console.error("[ProductAlertService] Failed to load nodemailer-express-handlebars:", error);
+    }
 
     return transporter;
   }
