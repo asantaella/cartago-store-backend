@@ -8,7 +8,7 @@ import {
   ProductAlertSubscription,
   ProductAlertStatus,
 } from "../models/product-alert-subscription";
-import BrevoEcommerceService from "./brevo-ecommerce";
+
 import * as nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import * as path from "path";
@@ -119,13 +119,7 @@ class ProductAlertValidator {
 
 // Notification class
 class ProductAlertNotifier {
-  private brevoEcommerceService: BrevoEcommerceService;
   private transporter: nodemailer.Transporter | null = null;
-
-  constructor(brevoEcommerceService: BrevoEcommerceService) {
-    this.brevoEcommerceService = brevoEcommerceService;
-    // Defer transporter creation to first use (lazy loading)
-  }
 
   private getTransporter(): nodemailer.Transporter {
     if (!this.transporter) {
@@ -275,30 +269,6 @@ class ProductAlertNotifier {
   }
 }
 
-// Brevo Operations class
-/* class BrevoOperations {
-  private brevoEcommerceService: BrevoEcommerceService;
-
-  constructor(brevoEcommerceService: BrevoEcommerceService) {
-    this.brevoEcommerceService = brevoEcommerceService;
-  }
-
-  async ensureContact(email: string): Promise<{ success: boolean; data?: any; error?: any }> {
-    return this.brevoEcommerceService.ensureContact(email);
-  }
-
-  async syncVariant(variant: any, product: any): Promise<{ success: boolean; error?: any }> {
-    return this.brevoEcommerceService.syncVariant(variant, product);
-  }
-
-  async createProductAlert(email: string, variantId: string, contactId?: string): Promise<{ success: boolean; error?: any }> {
-    return this.brevoEcommerceService.createProductAlert(email, variantId, contactId);
-  }
-
-  async createProductAlertForProduct(email: string, productId: string): Promise<{ success: boolean; error?: any }> {
-    return this.brevoEcommerceService.createProductAlert(email, productId);
-  }
-} */
 
 // Repository Management class
 class ProductAlertRepositoryManager {
@@ -333,11 +303,9 @@ class ProductAlertService extends TransactionBaseService {
   protected productAlertSubscriptionRepository_: ProductAlertSubscriptionRepository;
   protected productVariantService_: ProductVariantService;
   protected productService_: ProductService;
-  protected brevoEcommerceService_: BrevoEcommerceService;
 
   private validator: ProductAlertValidator;
   private notifier: ProductAlertNotifier;
- // private brevoOps: BrevoOperations;
   private repoManager: ProductAlertRepositoryManager;
 
   constructor(container) {
@@ -346,11 +314,7 @@ class ProductAlertService extends TransactionBaseService {
       container.productAlertSubscriptionRepository;
     this.productVariantService_ = container.productVariantService;
     this.productService_ = container.productService;
-    this.brevoEcommerceService_ = container.brevoEcommerceService;
-
     this.validator = new ProductAlertValidator(this.productVariantService_, this.productService_);
-    this.notifier = new ProductAlertNotifier(this.brevoEcommerceService_);
-   // this.brevoOps = new BrevoOperations(this.brevoEcommerceService_);
     this.repoManager = new ProductAlertRepositoryManager(this.productAlertSubscriptionRepository_);
   }
 
