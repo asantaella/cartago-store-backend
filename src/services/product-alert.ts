@@ -10,7 +10,6 @@ import {
 } from "../models/product-alert-subscription";
 
 import * as nodemailer from "nodemailer";
-import hbs from "nodemailer-express-handlebars";
 import * as path from "path";
 
 type ProductAlertSubscriptionRepository = typeof import("../repositories/product-alert-subscription").default;
@@ -42,7 +41,7 @@ class NodemailerTransporterFactory {
     };
   }
 
-  private static configureHandlebars(transporter: nodemailer.Transporter): void {
+  private static configureHandlebars(transporter: nodemailer.Transporter): boolean {
     try {
       const handlebarsOptions = {
         viewEngine: {
@@ -53,13 +52,19 @@ class NodemailerTransporterFactory {
         extName: ".handlebars",
       };
 
+      // Dynamic require to prevent startup crashes
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const hbsModule = require("nodemailer-express-handlebars");
+      const hbs = hbsModule.default || hbsModule;
+      
       transporter.use("compile", hbs(handlebarsOptions));
+      return true;
     } catch (error) {
       console.error(
-        "[ProductAlertService] Failed to configure Handlebars templates:",
+        "[ProductAlertService] Failed to configure Handlebars templates. Email templates will not be available:",
         error instanceof Error ? error.message : error
       );
-      throw new Error("Handlebars configuration failed");
+      return false;
     }
   }
 
@@ -81,7 +86,15 @@ class NodemailerTransporterFactory {
         },
       });
 
-      this.configureHandlebars(transporter);
+      // Try to configure Handlebars, but don't fail if it's not available
+      const handlebarsConfigured = this.configureHandlebars(transporter);
+      
+      if (!handlebarsConfigured) {
+        console.warn(
+          "[ProductAlertService] Transporter created without Handlebars template support. " +
+          "Emails will need to be sent with plain HTML instead."
+        );
+      }
       
       return transporter;
     } catch (error) {
@@ -92,7 +105,11 @@ class NodemailerTransporterFactory {
       );
       this.initializationError = error instanceof Error ? error : new Error(errorMessage);
       
-      // Return a dummy transporter that will throw on actual use
+      // Return a dummy transporter that won't crash but will log errors on use
+      console.warn(
+        "[ProductAlertService] Creating fallback transporter. Email functionality may not work."
+      );
+      
       const dummyTransporter = nodemailer.createTransport({
         streamTransport: true,
         newline: "unix",
