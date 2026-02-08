@@ -1,0 +1,56 @@
+{{!--
+Footer Partial - Cartago4x4 Email Template
+Ultra-optimized for minimum height with inline CSS
+--}}
+
+<!-- Inline-styled ultra-compact footer for maximum email-client compatibility -->
+<tr>
+    <td
+        style="background-color:#1a1a1a;color:#999;padding:12px 15px 8px 15px;font-size:10px;border-top:2px solid #ff6b35;line-height:1.1;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            <tr>
+                <td style="padding:0;vertical-align:top;text-align:left;width:50%;">
+                    <div
+                        style="font-weight:600;color:#ffffff;font-size:10px;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.2px;">
+                        Cartago4x4</div>
+                    <div style="color:#999;line-height:1.0;font-size:10px;margin:0;">
+                        <p style="margin:4px 0;"><a href="mailto:contacto@cartago4x4.es"
+                                style="color:#ff6b35;text-decoration:none;font-size:10px;">contacto@cartago4x4.es</a></p>
+                        <p style="margin:4px 0;"><a href="tel:+34699091026"
+                                style="color:#ff6b35;text-decoration:none;font-size:10px;">+34699091026</a></p>
+                    </div>
+                </td>
+
+                <td style="padding:0;vertical-align:top;text-align:right;width:50%;">
+                    <div style="font-size:10px;">
+                        <a href="https://cartago4x4.es"
+                            style="color:#ff6b35;text-decoration:none;margin-right:6px;font-size:10px;">Tienda</a>|
+                        <a href="https://cartago4x4.es/#contacto"
+                            style="color:#ff6b35;text-decoration:none;margin-left:6px;font-size:10px;">Contacto</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div style="border-top:1px solid #333;margin:6px 4px;height:1px;line-height:1rem;">&nbsp;</div>
+
+        <div style="text-align:center;margin-bottom:6px;">
+            <p style="margin-bottom: 4px;">Instagram</p>
+            <a href="https://www.instagram.com/cartago4x4.es/" title="Instagram"
+                style="display:inline-block;width:18px;height:18px;background-color:#ff6b35;color:#ffffff;text-align:center;line-height:18px;border-radius:50%;margin-right:3px;text-decoration:none;font-size:10px;">📷</a>
+        </div>
+
+        <div style="border-top:1px solid #333;margin:6px 0;height:1px;line-height:1rem;">&nbsp;</div>
+
+        <div style="text-align:center;color:#666;font-size:10px;line-height:1rem;">
+            <p style="margin:4px 0;">Recibes este email por suscripción a alertas.</p>
+            <p style="margin:4px 0;">{{#if unsubscribe_url}}<a href="{{unsubscribe_url}}"
+                    style="color:#ff6b35;text-decoration:none;font-size:10px;">Desuscribirse</a>|{{/if}} <a
+                    href="https://cartago4x4.es/politica-privacidad"
+                    style="color:#ff6b35;text-decoration:none;font-size:10px;">Privacidad</a>| <a
+                    href="https://cartago4x4.es/terminos-condiciones"
+                    style="color:#ff6b35;text-decoration:none;font-size:10px;">Términos</a></p>
+            <p style="margin:4px 0;">{{current_year}} Cartago4x4 © Todos los derechos reservados.</p>
+        </div>
+    </td>
+</tr>

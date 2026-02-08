@@ -10,7 +10,7 @@ import OrderNotificationService from "../../../../../services/order-notification
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
-    const { id } = req.params;
+    const  id  = req.params.id as string;
     const toClient = req.query.toClient === "true";
     const toAdmin = req.query.toAdmin === "true";
 

@@ -1,6 +1,5 @@
 import { Router, Router as ExpressRouter } from "express";
 import { sanitizeHandle } from "../../middlewares/sanitize-handle";
-import { MedusaError } from "@medusajs/utils";
 
 const router: ExpressRouter = Router();
 

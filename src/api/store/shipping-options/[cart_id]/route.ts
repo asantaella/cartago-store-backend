@@ -5,7 +5,6 @@ import {
   MedusaResponse,
   ShippingOption,
 } from "@medusajs/medusa";
-import { listShippingOptionsForCartWorkflow } from "@medusajs/core-flows";
 import {
   CartService,
   PricingService,
@@ -37,7 +36,7 @@ import { MedusaError } from "@medusajs/utils";
  *                 $ref: "#/components/schemas/shipping_option"
  */
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-  const { cart_id } = req.params;
+  const  cart_id  = req.params.cart_id as string;
 
   const cartService: CartService = req.scope.resolve("cartService");
   const pricingService: PricingService = req.scope.resolve("pricingService");
