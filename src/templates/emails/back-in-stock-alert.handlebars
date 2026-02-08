@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Tu producto está disponible!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-collapse: collapse;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 4px solid #e64a19;
+        }
+
+        .logo {
+            max-width: 180px;
+            height: auto;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 30px;
+        }
+
+        .greeting {
+            font-size: 16px;
+            color: #1a1a1a;
+            margin-bottom: 25px;
+        }
+
+        .alert-message {
+            background-color: #f0f7ff;
+            border-left: 4px solid #e64a19;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        .alert-message h2 {
+            color: #e64a19;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .alert-message p {
+            color: #555;
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .product-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            background-color: #fafafa;
+            text-align: center;
+        }
+
+        .product-image {
+            max-width: 200px;
+            height: auto;
+            border-radius: 8px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 15px 0;
+        }
+
+        .product-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #e64a19;
+            margin: 10px 0;
+        }
+
+        .product-sku {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #e64a19;
+            color: #ffffff;
+            padding: 14px 40px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 25px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #d84315;
+        }
+
+        .description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+            margin: 25px 0;
+        }
+
+        /* Footer */
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+
+            .main-content {
+                padding: 25px 15px;
+            }
+
+            .product-card {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .product-name {
+                font-size: 16px;
+            }
+
+            .product-price {
+                font-size: 20px;
+            }
+
+            .cta-button {
+                width: 100%;
+                display: block;
+                padding: 16px 20px;
+                color: #ffffff;
+            }
+
+            .footer {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table class="email-container" width="100%" cellpadding="0" cellspacing="0">
+        <!-- Header -->
+        <tr>
+            <td class="header">
+                <img src="https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/logo_96x96.png?v=1767832537545&w=256&q=75"
+                    alt="Cartago4x4" class="logo">
+                <h1>¡Buenas noticias!</h1>
+            </td>
+        </tr>
+
+        <!-- Main Content -->
+        <tr>
+            <td class="main-content">
+                <div class="greeting">
+                    <p>Hola, {{subscriber_name}}</p>
+                </div>
+
+                <div class="alert-message">
+                    <h2>✓ Tu producto está disponible</h2>
+                    <p>El artículo que estabas buscando vuelve a estar en stock. ¡No esperes más para adquirirlo!</p>
+                </div>
+
+                <div class="product-card">
+                    {{#if product_image}}
+                    <img src="{{product_image}}" alt="{{product_name}}" class="product-image">
+                    {{/if}}
+
+                    <div class="product-name">{{product_name}}</div>
+
+                    {{#if product_price}}
+                    <div class="product-price">€{{product_price}}</div>
+                    {{/if}}
+
+                    {{#if variant_sku}}
+                    <div class="product-sku">SKU: {{variant_sku}}</div>
+                    {{/if}}
+
+                    <a href="{{product_url}}" class="cta-button">Ver producto</a>
+                </div>
+
+                <div class="description">
+                    <p>Sabemos que has estado esperando este producto. Ahora que vuelve a estar disponible, te
+                        recomendamos que realices tu pedido lo antes posible, ya que las existencias pueden limitarse.
+                    </p>
+
+                    <p>Si tienes alguna pregunta sobre este producto, nuestro equipo está aquí para ayudarte.</p>
+                </div>
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        {{> footer}}
+    </table>
+</body>
+
+</html>

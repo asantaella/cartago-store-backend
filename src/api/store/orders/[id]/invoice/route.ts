@@ -3,7 +3,7 @@ import InvoicePdfGeneratorService from "../../../../../services/invoice-pdf-gene
 import { InvoiceMode } from "../../../../../types/order-invoice.model";
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-  const { id } = req.params;
+  const  id  = req.params.id as string;
   const { invoiceMode } = req.query as { invoiceMode?: InvoiceMode };
 
   try {

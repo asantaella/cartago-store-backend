@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviso de disponibilidad enviado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-collapse: collapse;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 4px solid #2e7d32;
+        }
+
+        .logo {
+            max-width: 180px;
+            height: auto;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            color: #2e7d32;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 30px;
+        }
+
+        .greeting {
+            font-size: 16px;
+            color: #1a1a1a;
+            margin-bottom: 25px;
+        }
+
+        .info-box {
+            background-color: #f0f7f0;
+            border-left: 4px solid #2e7d32;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        .info-box h2 {
+            color: #2e7d32;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            gap: 15px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2e7d32;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            background-color: #fafafa;
+            text-align: center;
+        }
+
+        .product-image {
+            max-width: 200px;
+            height: auto;
+            border-radius: 8px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 15px 0;
+        }
+
+        .product-sku {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #2e7d32;
+            color: #ffffff;
+            padding: 14px 40px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #27632a;
+        }
+
+        .subscribers-section {
+            margin: 30px 0;
+        }
+
+        .subscribers-section h3 {
+            font-size: 16px;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .subscribers-list {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .subscriber-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .subscriber-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background-color: #2e7d32;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 10px;
+        }
+
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+
+            .main-content {
+                padding: 25px 15px;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .product-card {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .product-name {
+                font-size: 16px;
+            }
+
+            .cta-button {
+                width: 100%;
+                display: block;
+                padding: 16px 20px;
+            }
+
+            .footer {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table class="email-container" width="100%" cellpadding="0" cellspacing="0">
+        <!-- Header -->
+        <tr>
+            <td class="header">
+                <img src="https://pub-9f70c8529e1d47ab90225640bcffecd9.r2.dev/logo_96x96.png?v=1767832537545&w=256&q=75"
+                    alt="Cartago4x4" class="logo">
+                <h1>Notificación de Disponibilidad</h1>
+                <div class="header-subtitle">Copia de administración</div>
+            </td>
+        </tr>
+
+        <!-- Main Content -->
+        <tr>
+            <td class="main-content">
+                <div class="greeting">
+                    <p>Hola Administrador,</p>
+                </div>
+
+                <div class="info-box">
+                    <h2>✓ Aviso de disponibilidad procesado</h2>
+                    <p>Se ha completado el envío de notificaciones para un producto que vuelve a estar disponible.</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-number">{{subscribers_count}}</div>
+                        <div class="stat-label">Clientes notificados</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">✓</div>
+                        <div class="stat-label">Envíos completados</div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    {{#if image_url}}
+                    <img src="{{image_url}}" alt="{{variant_title}}" class="product-image">
+                    {{/if}}
+
+                    <div class="product-name">{{variant_title}}</div>
+
+                    <a href="{{product_url}}" class="cta-button">Ir al producto</a>
+                </div>
+
+                <div class="subscribers-section">
+                    <h3>Clientes notificados ({{subscribers_count}})</h3>
+                    <div class="subscribers-list">
+                        {{#each subscribers}}
+                        <div class="subscriber-item">
+                            • {{this.email}}
+                            <span class="status-badge">Enviado</span>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        {{> footer}}
+    </table>
+</body>
+
+</html>
