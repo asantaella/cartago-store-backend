@@ -10,6 +10,7 @@ import {
 } from "../models/product-alert-subscription";
 
 import * as nodemailer from "nodemailer";
+import hbs from "nodemailer-express-handlebars";
 import * as path from "path";
 
 type ProductAlertSubscriptionRepository = typeof import("../repositories/product-alert-subscription").default;
@@ -20,9 +21,10 @@ interface SubscribeResult {
   subscription?: ProductAlertSubscription;
 }
 
-// Nodemailer Transporter Factory with lazy loading
+// Nodemailer Transporter Factory with lazy loading and safe initialization
 class NodemailerTransporterFactory {
   private static instance: nodemailer.Transporter | null = null;
+  private static initializationError: Error | null = null;
 
   static validateSmtpConfig(): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
@@ -40,6 +42,27 @@ class NodemailerTransporterFactory {
     };
   }
 
+  private static configureHandlebars(transporter: nodemailer.Transporter): void {
+    try {
+      const handlebarsOptions = {
+        viewEngine: {
+          partialsDir: path.join(__dirname, "../templates/partials/"),
+          defaultLayout: false,
+        },
+        viewPath: path.join(__dirname, "../templates/emails/"),
+        extName: ".handlebars",
+      };
+
+      transporter.use("compile", hbs(handlebarsOptions));
+    } catch (error) {
+      console.error(
+        "[ProductAlertService] Failed to configure Handlebars templates:",
+        error instanceof Error ? error.message : error
+      );
+      throw new Error("Handlebars configuration failed");
+    }
+  }
+
   static createTransporter(): nodemailer.Transporter {
     const validation = this.validateSmtpConfig();
     if (!validation.valid) {
@@ -47,43 +70,55 @@ class NodemailerTransporterFactory {
       console.warn(`[ProductAlertService] ${errorMsg}. Email functionality will be disabled.`);
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
-      port: parseInt(process.env.SMTP_PORT || "587", 10),
-      secure: process.env.SMTP_SECURE === "true" || false,
-      auth: {
-        user: process.env.SMTP_USER || "",
-        pass: process.env.SMTP_PASS || "",
-      },
-    });
-
-    // Configure Handlebars template engine
-    const handlebarsOptions = {
-      viewEngine: {
-        partialsDir: path.join(__dirname, "../templates/partials/"),
-        defaultLayout: false,
-      },
-      viewPath: path.join(__dirname, "../templates/emails/"),
-      extName: ".handlebars",
-    };
-
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const hbsModule = require("nodemailer-express-handlebars");
-      const hbs = hbsModule.default || hbsModule;
-      transporter.use("compile", hbs(handlebarsOptions));
-    } catch (error) {
-      console.error("[ProductAlertService] Failed to load nodemailer-express-handlebars:", error);
-    }
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
+        port: parseInt(process.env.SMTP_PORT || "587", 10),
+        secure: process.env.SMTP_SECURE === "true" || false,
+        auth: {
+          user: process.env.SMTP_USER || "",
+          pass: process.env.SMTP_PASS || "",
+        },
+      });
 
-    return transporter;
+      this.configureHandlebars(transporter);
+      
+      return transporter;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(
+        "[ProductAlertService] Failed to create SMTP transporter:",
+        errorMessage
+      );
+      this.initializationError = error instanceof Error ? error : new Error(errorMessage);
+      
+      // Return a dummy transporter that will throw on actual use
+      const dummyTransporter = nodemailer.createTransport({
+        streamTransport: true,
+        newline: "unix",
+      });
+      
+      return dummyTransporter;
+    }
   }
 
   static getInstance(): nodemailer.Transporter {
     if (!this.instance) {
       this.instance = this.createTransporter();
     }
+    
+    if (this.initializationError) {
+      console.warn(
+        "[ProductAlertService] Transporter was not properly initialized. Email sending may fail."
+      );
+    }
+    
     return this.instance;
+  }
+
+  static resetInstance(): void {
+    this.instance = null;
+    this.initializationError = null;
   }
 }
 
