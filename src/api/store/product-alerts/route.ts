@@ -32,6 +32,7 @@ export async function POST(
     const result = await productAlertService.subscribe(email, variant_id);
 
     if (result.success) {
+      console.log(`[ProductAlerts API] New subscription: ${email} for variant ${variant_id}`);
       res.status(201).json({
         success: true,
         message: result.message,
@@ -46,6 +47,7 @@ export async function POST(
           : undefined,
       });
     } else {
+      console.warn(`[ProductAlerts API] Subscription failed for ${email} and variant ${variant_id}: ${result.message}`);
       res.status(400).json({
         success: false,
         message: result.message,

@@ -373,6 +373,8 @@ class ProductAlertService extends TransactionBaseService {
     this.productVariantService_ = container.productVariantService;
     this.productService_ = container.productService;
     this.validator = new ProductAlertValidator(this.productVariantService_, this.productService_);
+    // Initialize notifier to ensure email notifications can be sent
+    this.notifier = new ProductAlertNotifier();
     this.repoManager = new ProductAlertRepositoryManager(this.productAlertSubscriptionRepository_);
   }
 
