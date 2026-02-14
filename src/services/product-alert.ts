@@ -41,7 +41,7 @@ class NodemailerTransporterFactory {
     };
   }
 
-  private static configureHandlebars(transporter: nodemailer.Transporter): boolean {
+  private static async configureHandlebars(transporter: nodemailer.Transporter): Promise<boolean> {
     try {
       const handlebarsOptions = {
         viewEngine: {
@@ -52,9 +52,8 @@ class NodemailerTransporterFactory {
         extName: ".handlebars",
       };
 
-      // Dynamic require to prevent startup crashes
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const hbsModule = require("nodemailer-express-handlebars");
+      // Use dynamic import to handle ES Module compatibility
+      const hbsModule = await import("nodemailer-express-handlebars");
       const hbs = hbsModule.default || hbsModule;
       
       transporter.use("compile", hbs(handlebarsOptions));
@@ -68,7 +67,7 @@ class NodemailerTransporterFactory {
     }
   }
 
-  static createTransporter(): nodemailer.Transporter {
+  static async createTransporter(): Promise<nodemailer.Transporter> {
     const validation = this.validateSmtpConfig();
     if (!validation.valid) {
       const errorMsg = `SMTP configuration invalid: ${validation.errors.join(", ")}`;
@@ -80,6 +79,8 @@ class NodemailerTransporterFactory {
         host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
         port: parseInt(process.env.SMTP_PORT || "587", 10),
         secure: process.env.SMTP_SECURE === "true" || false,
+        connectionTimeout: 60000, // 60 seconds
+        socketTimeout: 60000, // 60 seconds
         auth: {
           user: process.env.SMTP_USER || "",
           pass: process.env.SMTP_PASS || "",
@@ -87,7 +88,7 @@ class NodemailerTransporterFactory {
       });
 
       // Try to configure Handlebars, but don't fail if it's not available
-      const handlebarsConfigured = this.configureHandlebars(transporter);
+      const handlebarsConfigured = await this.configureHandlebars(transporter);
       
       if (!handlebarsConfigured) {
         console.warn(
@@ -119,9 +120,9 @@ class NodemailerTransporterFactory {
     }
   }
 
-  static getInstance(): nodemailer.Transporter {
+  static async getInstance(): Promise<nodemailer.Transporter> {
     if (!this.instance) {
-      this.instance = this.createTransporter();
+      this.instance = await this.createTransporter();
     }
     
     if (this.initializationError) {
@@ -179,9 +180,9 @@ class ProductAlertValidator {
 class ProductAlertNotifier {
   private transporter: nodemailer.Transporter | null = null;
 
-  private getTransporter(): nodemailer.Transporter {
+  private async getTransporter(): Promise<nodemailer.Transporter> {
     if (!this.transporter) {
-      this.transporter = NodemailerTransporterFactory.getInstance();
+      this.transporter = await NodemailerTransporterFactory.getInstance();
     }
     return this.transporter;
   }
@@ -214,7 +215,8 @@ class ProductAlertNotifier {
 
       const subject = isNew ? `[Copia] Nueva suscripción: ${variantTitle}` : `[Copia] Suscripción: ${variantTitle}`;
 
-      await this.getTransporter().sendMail({
+      const transporter = await this.getTransporter();
+      await transporter.sendMail({
        ...this.smtpBaseConfig(adminEmail, subject),
         template: "client-product-subscription-alert",
         context: {
@@ -256,9 +258,10 @@ class ProductAlertNotifier {
 
     try {
       // Send emails to all subscribers
+      const transporter = await this.getTransporter();
       const emailPromises = subscriptions.map((sub) => {
         const unsubscribeUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/account/alerts/unsubscribe?email=${encodeURIComponent(sub.email)}&variant=${variantId}`;
-        return this.getTransporter().sendMail({
+        return transporter.sendMail({
           ...this.smtpBaseConfig(sub.email, `¡${variantTitle} está de vuelta en stock!`),
           template: "back-in-stock-alert",
           context: {
@@ -302,7 +305,8 @@ class ProductAlertNotifier {
     if (!adminEmail) return;
 
     try {
-      await this.getTransporter().sendMail({
+      const transporter = await this.getTransporter();
+      await transporter.sendMail({
         ...this.smtpBaseConfig(adminEmail, `[Copia] Aviso de disponibilidad: ${variantTitle}`),
         template: "back-in-stock-alert-admin",
         context: {
