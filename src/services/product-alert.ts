@@ -125,16 +125,51 @@ class NodemailerTransporterFactory {
     }
 
     try {
+      const port = parseInt(process.env.SMTP_PORT || "587", 10);
+      const secure = process.env.SMTP_SECURE === "true" || port === 465;
+      const host = process.env.SMTP_HOST || "smtp-relay.brevo.com";
+
+      console.log(`[ProductAlertService] Creating SMTP transporter with config:`, {
+        host,
+        port,
+        secure,
+        user: process.env.SMTP_USER ? `${process.env.SMTP_USER.substring(0, 4)}***` : 'not set',
+      });
+
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
-        port: parseInt(process.env.SMTP_PORT || "587", 10),
-        secure: process.env.SMTP_SECURE === "true" || false,
-        connectionTimeout: 60000, // 60 seconds
-        socketTimeout: 60000, // 60 seconds
+        host,
+        port,
+        secure, // true for 465, false for other ports
+        pool: true, // Use pooled connections
+        maxConnections: 5,
+        maxMessages: 10,
+        rateDelta: 1000, // 1 message per second
+        rateLimit: 5,
+        connectionTimeout: 120000, // 120 seconds for production environments
+        greetingTimeout: 30000,
+        socketTimeout: 120000,
         auth: {
           user: process.env.SMTP_USER || "",
           pass: process.env.SMTP_PASS || "",
         },
+        tls: {
+          // Do not fail on invalid certs (for some providers)
+          rejectUnauthorized: process.env.SMTP_TLS_REJECT_UNAUTHORIZED !== "false",
+          minVersion: 'TLSv1.2',
+        },
+        // Enable debug logging in production if needed
+        logger: process.env.SMTP_DEBUG === "true",
+        debug: process.env.SMTP_DEBUG === "true",
+      });
+
+      // Verify connection on initialization
+      transporter.verify((error, success) => {
+        if (error) {
+          console.error("[ProductAlertService] SMTP connection verification failed:", error.message);
+          console.error("[ProductAlertService] This may cause email sending failures. Please check SMTP configuration.");
+        } else {
+          console.log("[ProductAlertService] SMTP server is ready to send emails");
+        }
       });
 
       console.log("[ProductAlertService] SMTP Transporter created successfully with direct Handlebars support");
@@ -221,12 +256,53 @@ class ProductAlertValidator {
 // Notification class
 class ProductAlertNotifier {
   private transporter: nodemailer.Transporter | null = null;
+  private static readonly MAX_RETRIES = 3;
+  private static readonly RETRY_DELAY = 2000; // 2 seconds
 
   private getTransporter(): nodemailer.Transporter {
     if (!this.transporter) {
       this.transporter = NodemailerTransporterFactory.getInstance();
     }
     return this.transporter;
+  }
+
+  private async sendMailWithRetry(
+    transporter: nodemailer.Transporter,
+    mailOptions: any,
+    context: string
+  ): Promise<void> {
+    let lastError: Error | null = null;
+    
+    for (let attempt = 1; attempt <= ProductAlertNotifier.MAX_RETRIES; attempt++) {
+      try {
+        console.log(`[ProductAlertNotifier] ${context} - Attempt ${attempt}/${ProductAlertNotifier.MAX_RETRIES}`);
+        await transporter.sendMail(mailOptions);
+        console.log(`[ProductAlertNotifier] ${context} - Email sent successfully`);
+        return;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        console.error(
+          `[ProductAlertNotifier] ${context} - Attempt ${attempt} failed:`,
+          lastError.message
+        );
+        
+        // Don't retry on auth errors or other permanent failures
+        if (lastError.message.includes('Invalid login') || 
+            lastError.message.includes('Authentication failed') ||
+            lastError.message.includes('535')) {
+          console.error(`[ProductAlertNotifier] ${context} - Permanent error detected, not retrying`);
+          throw lastError;
+        }
+        
+        if (attempt < ProductAlertNotifier.MAX_RETRIES) {
+          const delay = ProductAlertNotifier.RETRY_DELAY * attempt;
+          console.log(`[ProductAlertNotifier] ${context} - Waiting ${delay}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+    
+    throw lastError || new Error('Failed to send email after retries');
   }
 
     private smtpBaseConfig(email: string, subject: string) {
@@ -238,54 +314,61 @@ class ProductAlertNotifier {
     };
   }
 
-  async sendAdminNotification(
+  sendAdminNotification(
     email: string,
     variant: any,
     product: any,
     variantId: string,
     isNew: boolean
-  ): Promise<void> {
+  ): void {
     const adminEmail = process.env.ADMIN_EMAIL || process.env.MAILERSEND_ADMIN_EMAIL;
     if (!adminEmail) return;
 
-    try {
-      const variantTitle = variant.title !== "Default Title"
-        ? `${variant.title}`
-        : product.title;
-      const imageUrl = product.thumbnail || product.images?.[0]?.url;
-      const productUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/products/${product.handle}?variant=${variantId}`;
+    // Send admin notification asynchronously without blocking the main thread
+    setImmediate(async () => {
+      try {
+        const variantTitle = variant.title !== "Default Title"
+          ? `${variant.title}`
+          : product.title;
+        const imageUrl = product.thumbnail || product.images?.[0]?.url;
+        const productUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/products/${product.handle}?variant=${variantId}`;
 
-      const subject = isNew ? `[Copia] Nueva suscripción: ${variantTitle}` : `[Copia] Suscripción: ${variantTitle}`;
+        const subject = isNew ? `[Copia] Nueva suscripción: ${variantTitle}` : `[Copia] Suscripción: ${variantTitle}`;
 
-      const html = EmailTemplateCompiler.renderTemplate("client-product-subscription-alert", {
-        is_new: isNew,
-        subscriber_email: email,
-        image_url: imageUrl,
-        variant_title: variantTitle,
-        product_sku: variant.sku || "N/A",
-        product_url: productUrl,
-        current_year: new Date().getFullYear(),
-      });
+        const html = EmailTemplateCompiler.renderTemplate("client-product-subscription-alert", {
+          is_new: isNew,
+          subscriber_email: email,
+          image_url: imageUrl,
+          variant_title: variantTitle,
+          product_sku: variant.sku || "N/A",
+          product_url: productUrl,
+          current_year: new Date().getFullYear(),
+        });
 
-      if (!html) {
-        console.error("[ProductAlertNotifier] Failed to render admin notification template");
-        return;
+        if (!html) {
+          console.error("[ProductAlertNotifier] Failed to render admin notification template");
+          return;
+        }
+
+        await this.sendMailWithRetry(
+          this.getTransporter(),
+          {
+            ...this.smtpBaseConfig(adminEmail, subject),
+            html,
+          },
+          `Admin notification for ${email}`
+        );
+
+        console.log(
+          `[ProductAlertNotifier] Admin notification sent to ${adminEmail} for ${isNew ? 'new' : 'reactivated'} subscription`
+        );
+      } catch (error) {
+        console.error(
+          `[ProductAlertNotifier] Failed to send admin notification (async):`,
+          error
+        );
       }
-
-      await this.getTransporter().sendMail({
-        ...this.smtpBaseConfig(adminEmail, subject),
-        html,
-      });
-
-      console.log(
-        `[ProductAlertNotifier] Admin notification sent to ${adminEmail} for ${isNew ? 'new' : 'reactivated'} subscription`
-      );
-    } catch (error) {
-      console.error(
-        `[ProductAlertNotifier] Failed to send admin notification:`,
-        error
-      );
-    }
+    });
   }
 
   async sendBackInStockNotifications(
@@ -306,7 +389,7 @@ class ProductAlertNotifier {
     try {
       // Send emails to all subscribers
       const transporter = this.getTransporter();
-      const emailPromises = subscriptions.map((sub) => {
+      const emailPromises = subscriptions.map(async (sub) => {
         const unsubscribeUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/account/alerts/unsubscribe?email=${encodeURIComponent(sub.email)}&variant=${variantId}`;
         
         const html = EmailTemplateCompiler.renderTemplate("back-in-stock-alert", {
@@ -321,13 +404,17 @@ class ProductAlertNotifier {
 
         if (!html) {
           console.error(`[ProductAlertNotifier] Failed to render back-in-stock template for ${sub.email}`);
-          return Promise.resolve();
+          return;
         }
 
-        return transporter.sendMail({
-          ...this.smtpBaseConfig(sub.email, `¡${variantTitle} está de vuelta en stock!`),
-          html,
-        });
+        return this.sendMailWithRetry(
+          transporter,
+          {
+            ...this.smtpBaseConfig(sub.email, `¡${variantTitle} está de vuelta en stock!`),
+            html,
+          },
+          `Back-in-stock alert for ${sub.email}`
+        );
       });
 
       await Promise.all(emailPromises);
@@ -346,7 +433,7 @@ class ProductAlertNotifier {
     }
   }
 
-  private async sendAdminBackInStockNotification(
+  async sendAdminBackInStockNotification(
     subscriptions: ProductAlertSubscription[],
     variant: any,
     product: any,
@@ -373,10 +460,14 @@ class ProductAlertNotifier {
         return;
       }
 
-      await this.getTransporter().sendMail({
-        ...this.smtpBaseConfig(adminEmail, `[Copia] Aviso de disponibilidad: ${variantTitle}`),
-        html,
-      });
+      await this.sendMailWithRetry(
+        this.getTransporter(),
+        {
+          ...this.smtpBaseConfig(adminEmail, `[Copia] Aviso de disponibilidad: ${variantTitle}`),
+          html,
+        },
+        `Admin back-in-stock notification for variant ${variantId}`
+      );
 
       console.log(
         `[ProductAlertNotifier] Admin notification sent to ${adminEmail}`
@@ -499,7 +590,8 @@ class ProductAlertService extends TransactionBaseService {
           `[ProductAlertService] Reactivated subscription ${reactivatedSubscription.id} for ${email} on variant ${variantId}`
         );
 
-        await this.notifier.sendAdminNotification(email, variant, product, variantId, false);
+        // Send admin notification asynchronously, don't wait for it
+        this.notifier.sendAdminNotification(email, variant, product, variantId, false);
 
         return {
           success: true,
@@ -573,7 +665,8 @@ class ProductAlertService extends TransactionBaseService {
         `[ProductAlertService] Created subscription ${savedSubscription.id} for ${email} on variant ${variantId}`
       );
 
-      await this.notifier.sendAdminNotification(email, variant, product, variantId, true);
+      // Send admin notification asynchronously, don't wait for it
+      this.notifier.sendAdminNotification(email, variant, product, variantId, false);
 
       return {
         success: true,
@@ -642,7 +735,7 @@ class ProductAlertService extends TransactionBaseService {
       }
 
       console.log(
-        `[ProductAlertService] Processing ${pendingSubscriptions.length} subscriptions for variant ${variantId}`
+        `[ProductAlertService] Processing ${pendingSubscriptions.length} subscriptions for variant ${variantId} (emails will be sent asynchronously)`
       );
 
       const variantProduct = await this.validator.validateVariant(variantId);
@@ -656,9 +749,26 @@ class ProductAlertService extends TransactionBaseService {
 
      // await this.brevoOps.syncVariant(variant, product);
 
-      await this.notifier.sendBackInStockNotifications(pendingSubscriptions, variant, product, variantId);
+      const variantTitle = variant.title !== "Default Title"
+        ? `${variant.title}`
+        : product.title;
+      const imageUrl = product.thumbnail || product.images?.[0]?.url;
+      const productUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/products/${product.handle}?variant=${variantId}`;
 
-      // Mark as notified
+      // Send back-in-stock notifications asynchronously
+      setImmediate(async () => {
+        try {
+          await this.notifier.sendBackInStockNotifications(pendingSubscriptions, variant, product, variantId);
+
+          // Send admin notification
+          await this.notifier.sendAdminBackInStockNotification(pendingSubscriptions, variant, product, variantId, variantTitle, imageUrl, productUrl);
+        } catch (error) {
+          console.error(
+            `[ProductAlertService] Failed to send back-in-stock notifications asynchronously:`,
+            error
+          );
+        }
+      });
       const now = new Date();
       for (const subscription of pendingSubscriptions) {
         subscription.status = ProductAlertStatus.NOTIFIED;
