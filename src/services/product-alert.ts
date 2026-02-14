@@ -11,6 +11,8 @@ import {
 
 import * as nodemailer from "nodemailer";
 import * as path from "path";
+import * as fs from "fs";
+import * as Handlebars from "handlebars";
 
 type ProductAlertSubscriptionRepository = typeof import("../repositories/product-alert-subscription").default;
 
@@ -18,6 +20,78 @@ interface SubscribeResult {
   success: boolean;
   message: string;
   subscription?: ProductAlertSubscription;
+}
+
+// Email Template Compiler
+class EmailTemplateCompiler {
+  private static templateCache: Map<string, HandlebarsTemplateDelegate> = new Map();
+  private static partialsRegistered = false;
+
+  static registerPartials(): void {
+    if (this.partialsRegistered) return;
+
+    try {
+      const partialsDir = path.join(__dirname, "../templates/partials/");
+      if (fs.existsSync(partialsDir)) {
+        const partialFiles = fs.readdirSync(partialsDir).filter(f => f.endsWith('.handlebars'));
+        
+        partialFiles.forEach(file => {
+          const partialName = file.replace('.handlebars', '');
+          const partialPath = path.join(partialsDir, file);
+          const partialContent = fs.readFileSync(partialPath, 'utf8');
+          Handlebars.registerPartial(partialName, partialContent);
+        });
+        
+        console.log(`[EmailTemplateCompiler] Registered ${partialFiles.length} Handlebars partials`);
+      }
+      this.partialsRegistered = true;
+    } catch (error) {
+      console.error('[EmailTemplateCompiler] Failed to register partials:', error);
+    }
+  }
+
+  static compileTemplate(templateName: string): HandlebarsTemplateDelegate | null {
+    try {
+      // Check cache first
+      if (this.templateCache.has(templateName)) {
+        return this.templateCache.get(templateName)!;
+      }
+
+      // Register partials if not already done
+      this.registerPartials();
+
+      // Load and compile template
+      const templatePath = path.join(__dirname, "../templates/emails/", `${templateName}.handlebars`);
+      
+      if (!fs.existsSync(templatePath)) {
+        console.error(`[EmailTemplateCompiler] Template not found: ${templatePath}`);
+        return null;
+      }
+
+      const templateSource = fs.readFileSync(templatePath, 'utf8');
+      const template = Handlebars.compile(templateSource);
+      
+      // Cache the compiled template
+      this.templateCache.set(templateName, template);
+      
+      return template;
+    } catch (error) {
+      console.error(`[EmailTemplateCompiler] Failed to compile template ${templateName}:`, error);
+      return null;
+    }
+  }
+
+  static renderTemplate(templateName: string, context: any): string | null {
+    const template = this.compileTemplate(templateName);
+    if (!template) return null;
+
+    try {
+      return template(context);
+    } catch (error) {
+      console.error(`[EmailTemplateCompiler] Failed to render template ${templateName}:`, error);
+      return null;
+    }
+  }
 }
 
 // Nodemailer Transporter Factory with lazy loading and safe initialization
@@ -41,33 +115,9 @@ class NodemailerTransporterFactory {
     };
   }
 
-  private static async configureHandlebars(transporter: nodemailer.Transporter): Promise<boolean> {
-    try {
-      const handlebarsOptions = {
-        viewEngine: {
-          partialsDir: path.join(__dirname, "../templates/partials/"),
-          defaultLayout: false,
-        },
-        viewPath: path.join(__dirname, "../templates/emails/"),
-        extName: ".handlebars",
-      };
+  // Removed - no longer needed with direct Handlebars compilation
 
-      // Use dynamic import to handle ES Module compatibility
-      const hbsModule = await import("nodemailer-express-handlebars");
-      const hbs = hbsModule.default || hbsModule;
-      
-      transporter.use("compile", hbs(handlebarsOptions));
-      return true;
-    } catch (error) {
-      console.error(
-        "[ProductAlertService] Failed to configure Handlebars templates. Email templates will not be available:",
-        error instanceof Error ? error.message : error
-      );
-      return false;
-    }
-  }
-
-  static async createTransporter(): Promise<nodemailer.Transporter> {
+  static createTransporter(): nodemailer.Transporter {
     const validation = this.validateSmtpConfig();
     if (!validation.valid) {
       const errorMsg = `SMTP configuration invalid: ${validation.errors.join(", ")}`;
@@ -87,15 +137,7 @@ class NodemailerTransporterFactory {
         },
       });
 
-      // Try to configure Handlebars, but don't fail if it's not available
-      const handlebarsConfigured = await this.configureHandlebars(transporter);
-      
-      if (!handlebarsConfigured) {
-        console.warn(
-          "[ProductAlertService] Transporter created without Handlebars template support. " +
-          "Emails will need to be sent with plain HTML instead."
-        );
-      }
+      console.log("[ProductAlertService] SMTP Transporter created successfully with direct Handlebars support");
       
       return transporter;
     } catch (error) {
@@ -120,9 +162,9 @@ class NodemailerTransporterFactory {
     }
   }
 
-  static async getInstance(): Promise<nodemailer.Transporter> {
+  static getInstance(): nodemailer.Transporter {
     if (!this.instance) {
-      this.instance = await this.createTransporter();
+      this.instance = this.createTransporter();
     }
     
     if (this.initializationError) {
@@ -180,9 +222,9 @@ class ProductAlertValidator {
 class ProductAlertNotifier {
   private transporter: nodemailer.Transporter | null = null;
 
-  private async getTransporter(): Promise<nodemailer.Transporter> {
+  private getTransporter(): nodemailer.Transporter {
     if (!this.transporter) {
-      this.transporter = await NodemailerTransporterFactory.getInstance();
+      this.transporter = NodemailerTransporterFactory.getInstance();
     }
     return this.transporter;
   }
@@ -215,19 +257,24 @@ class ProductAlertNotifier {
 
       const subject = isNew ? `[Copia] Nueva suscripción: ${variantTitle}` : `[Copia] Suscripción: ${variantTitle}`;
 
-      const transporter = await this.getTransporter();
-      await transporter.sendMail({
-       ...this.smtpBaseConfig(adminEmail, subject),
-        template: "client-product-subscription-alert",
-        context: {
-          is_new: isNew,
-          subscriber_email: email,
-          image_url: imageUrl,
-          variant_title: variantTitle,
-          product_sku: variant.sku || "N/A",
-          product_url: productUrl,
-          current_year: new Date().getFullYear(),
-        },
+      const html = EmailTemplateCompiler.renderTemplate("client-product-subscription-alert", {
+        is_new: isNew,
+        subscriber_email: email,
+        image_url: imageUrl,
+        variant_title: variantTitle,
+        product_sku: variant.sku || "N/A",
+        product_url: productUrl,
+        current_year: new Date().getFullYear(),
+      });
+
+      if (!html) {
+        console.error("[ProductAlertNotifier] Failed to render admin notification template");
+        return;
+      }
+
+      await this.getTransporter().sendMail({
+        ...this.smtpBaseConfig(adminEmail, subject),
+        html,
       });
 
       console.log(
@@ -258,21 +305,28 @@ class ProductAlertNotifier {
 
     try {
       // Send emails to all subscribers
-      const transporter = await this.getTransporter();
+      const transporter = this.getTransporter();
       const emailPromises = subscriptions.map((sub) => {
         const unsubscribeUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/account/alerts/unsubscribe?email=${encodeURIComponent(sub.email)}&variant=${variantId}`;
+        
+        const html = EmailTemplateCompiler.renderTemplate("back-in-stock-alert", {
+          product_name: variantTitle,
+          product_url: productUrl,
+          product_image: imageUrl,
+          product_price: price,
+          variant_sku: variant.sku || "",
+          unsubscribe_url: unsubscribeUrl,
+          current_year: new Date().getFullYear(),
+        });
+
+        if (!html) {
+          console.error(`[ProductAlertNotifier] Failed to render back-in-stock template for ${sub.email}`);
+          return Promise.resolve();
+        }
+
         return transporter.sendMail({
           ...this.smtpBaseConfig(sub.email, `¡${variantTitle} está de vuelta en stock!`),
-          template: "back-in-stock-alert",
-          context: {
-            product_name: variantTitle,
-            product_url: productUrl,
-            product_image: imageUrl,
-            product_price: price,
-            variant_sku: variant.sku || "",
-            unsubscribe_url: unsubscribeUrl,
-            current_year: new Date().getFullYear(),
-          },
+          html,
         });
       });
 
@@ -305,18 +359,23 @@ class ProductAlertNotifier {
     if (!adminEmail) return;
 
     try {
-      const transporter = await this.getTransporter();
-      await transporter.sendMail({
+      const html = EmailTemplateCompiler.renderTemplate("back-in-stock-alert-admin", {
+        subscribers_count: subscriptions.length,
+        image_url: imageUrl,
+        variant_title: variantTitle,
+        product_url: productUrl,
+        subscribers: subscriptions,
+        current_year: new Date().getFullYear(),
+      });
+
+      if (!html) {
+        console.error("[ProductAlertNotifier] Failed to render admin back-in-stock template");
+        return;
+      }
+
+      await this.getTransporter().sendMail({
         ...this.smtpBaseConfig(adminEmail, `[Copia] Aviso de disponibilidad: ${variantTitle}`),
-        template: "back-in-stock-alert-admin",
-        context: {
-          subscribers_count: subscriptions.length,
-          image_url: imageUrl,
-          variant_title: variantTitle,
-          product_url: productUrl,
-          subscribers: subscriptions,
-          current_year: new Date().getFullYear(),
-        },
+        html,
       });
 
       console.log(
