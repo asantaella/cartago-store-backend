@@ -9,7 +9,6 @@ import {
   ProductAlertStatus,
 } from "../models/product-alert-subscription";
 
-import * as nodemailer from "nodemailer";
 import * as path from "path";
 import * as fs from "fs";
 import * as Handlebars from "handlebars";
@@ -94,19 +93,36 @@ class EmailTemplateCompiler {
   }
 }
 
-// Nodemailer Transporter Factory with lazy loading and safe initialization
-class NodemailerTransporterFactory {
-  private static instance: nodemailer.Transporter | null = null;
-  private static initializationError: Error | null = null;
+// Brevo API Client for transactional emails
+interface BrevoEmailPayload {
+  sender: {
+    name: string;
+    email: string;
+  };
+  to: Array<{
+    email: string;
+    name?: string;
+  }>;
+  subject: string;
+  htmlContent: string;
+  tags?: string[];
+}
 
-  static validateSmtpConfig(): { valid: boolean; errors: string[] } {
+class BrevoApiClient {
+  private static instance: BrevoApiClient | null = null;
+  private apiKey: string | null = null;
+  private apiUrl: string = "https://api.brevo.com/v3/smtp/email";
+  private initializationError: Error | null = null;
+
+  private constructor() {
+    this.validateConfig();
+  }
+
+  static validateConfig(): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
     
-    if (!process.env.SMTP_USER) {
-      errors.push("SMTP_USER environment variable is not configured");
-    }
-    if (!process.env.SMTP_PASS) {
-      errors.push("SMTP_PASS environment variable is not configured");
+    if (!process.env.BREVO_API_KEY) {
+      errors.push("BREVO_API_KEY environment variable is not configured");
     }
     
     return {
@@ -115,105 +131,66 @@ class NodemailerTransporterFactory {
     };
   }
 
-  // Removed - no longer needed with direct Handlebars compilation
-
-  static createTransporter(): nodemailer.Transporter {
-    const validation = this.validateSmtpConfig();
+  private validateConfig(): void {
+    const validation = BrevoApiClient.validateConfig();
     if (!validation.valid) {
-      const errorMsg = `SMTP configuration invalid: ${validation.errors.join(", ")}`;
+      const errorMsg = `Brevo API configuration invalid: ${validation.errors.join(", ")}`;
       console.warn(`[ProductAlertService] ${errorMsg}. Email functionality will be disabled.`);
+      this.initializationError = new Error(errorMsg);
+      return;
     }
 
-    try {
-      const port = parseInt(process.env.SMTP_PORT || "587", 10);
-      const secure = process.env.SMTP_SECURE === "true" || port === 465;
-      const host = process.env.SMTP_HOST || "smtp-relay.brevo.com";
-
-      console.log(`[ProductAlertService] Creating SMTP transporter with config:`, {
-        host,
-        port,
-        secure,
-        user: process.env.SMTP_USER ? `${process.env.SMTP_USER.substring(0, 4)}***` : 'not set',
-      });
-
-      const transporter = nodemailer.createTransport({
-        host,
-        port,
-        secure, // true for 465, false for other ports
-        pool: true, // Use pooled connections
-        maxConnections: 5,
-        maxMessages: 10,
-        rateDelta: 1000, // 1 message per second
-        rateLimit: 5,
-        connectionTimeout: 120000, // 120 seconds for production environments
-        greetingTimeout: 30000,
-        socketTimeout: 120000,
-        auth: {
-          user: process.env.SMTP_USER || "",
-          pass: process.env.SMTP_PASS || "",
-        },
-        tls: {
-          // Do not fail on invalid certs (for some providers)
-          rejectUnauthorized: process.env.SMTP_TLS_REJECT_UNAUTHORIZED !== "false",
-          minVersion: 'TLSv1.2',
-        },
-        // Enable debug logging in production if needed
-        logger: process.env.SMTP_DEBUG === "true",
-        debug: process.env.SMTP_DEBUG === "true",
-      });
-
-      // Verify connection on initialization
-      transporter.verify((error, success) => {
-        if (error) {
-          console.error("[ProductAlertService] SMTP connection verification failed:", error.message);
-          console.error("[ProductAlertService] This may cause email sending failures. Please check SMTP configuration.");
-        } else {
-          console.log("[ProductAlertService] SMTP server is ready to send emails");
-        }
-      });
-
-      console.log("[ProductAlertService] SMTP Transporter created successfully with direct Handlebars support");
-      
-      return transporter;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(
-        "[ProductAlertService] Failed to create SMTP transporter:",
-        errorMessage
-      );
-      this.initializationError = error instanceof Error ? error : new Error(errorMessage);
-      
-      // Return a dummy transporter that won't crash but will log errors on use
-      console.warn(
-        "[ProductAlertService] Creating fallback transporter. Email functionality may not work."
-      );
-      
-      const dummyTransporter = nodemailer.createTransport({
-        streamTransport: true,
-        newline: "unix",
-      });
-      
-      return dummyTransporter;
+    this.apiKey = process.env.BREVO_API_KEY || null;
+    
+    if (this.apiKey) {
+      console.log(`[ProductAlertService] Brevo API client initialized successfully`);
+      console.log(`[ProductAlertService] API Key: ${this.apiKey.substring(0, 8)}...`);
     }
   }
 
-  static getInstance(): nodemailer.Transporter {
+  static getInstance(): BrevoApiClient {
     if (!this.instance) {
-      this.instance = this.createTransporter();
+      this.instance = new BrevoApiClient();
     }
-    
-    if (this.initializationError) {
-      console.warn(
-        "[ProductAlertService] Transporter was not properly initialized. Email sending may fail."
-      );
-    }
-    
     return this.instance;
+  }
+
+  async sendEmail(payload: BrevoEmailPayload): Promise<{ messageId: string }> {
+    if (this.initializationError) {
+      throw new Error(`Brevo API client not properly initialized: ${this.initializationError.message}`);
+    }
+
+    if (!this.apiKey) {
+      throw new Error("BREVO_API_KEY is not configured");
+    }
+
+    try {
+      const response = await fetch(this.apiUrl, {
+        method: "POST",
+        headers: {
+          "accept": "application/json",
+          "api-key": this.apiKey,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Brevo API error (${response.status}): ${errorText}`);
+      }
+
+      const result = await response.json();
+      return { messageId: result.messageId };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("[ProductAlertService] Failed to send email via Brevo API:", errorMessage);
+      throw error;
+    }
   }
 
   static resetInstance(): void {
     this.instance = null;
-    this.initializationError = null;
   }
 }
 
@@ -255,29 +232,29 @@ class ProductAlertValidator {
 
 // Notification class
 class ProductAlertNotifier {
-  private transporter: nodemailer.Transporter | null = null;
+  private client: BrevoApiClient | null = null;
   private static readonly MAX_RETRIES = 3;
   private static readonly RETRY_DELAY = 2000; // 2 seconds
 
-  private getTransporter(): nodemailer.Transporter {
-    if (!this.transporter) {
-      this.transporter = NodemailerTransporterFactory.getInstance();
+  private getClient(): BrevoApiClient {
+    if (!this.client) {
+      this.client = BrevoApiClient.getInstance();
     }
-    return this.transporter;
+    return this.client;
   }
 
-  private async sendMailWithRetry(
-    transporter: nodemailer.Transporter,
-    mailOptions: any,
+  private async sendEmailWithRetry(
+    payload: BrevoEmailPayload,
     context: string
   ): Promise<void> {
     let lastError: Error | null = null;
+    const client = this.getClient();
     
     for (let attempt = 1; attempt <= ProductAlertNotifier.MAX_RETRIES; attempt++) {
       try {
         console.log(`[ProductAlertNotifier] ${context} - Attempt ${attempt}/${ProductAlertNotifier.MAX_RETRIES}`);
-        await transporter.sendMail(mailOptions);
-        console.log(`[ProductAlertNotifier] ${context} - Email sent successfully`);
+        const result = await client.sendEmail(payload);
+        console.log(`[ProductAlertNotifier] ${context} - Email sent successfully. MessageId: ${result.messageId}`);
         return;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
@@ -287,9 +264,10 @@ class ProductAlertNotifier {
         );
         
         // Don't retry on auth errors or other permanent failures
-        if (lastError.message.includes('Invalid login') || 
-            lastError.message.includes('Authentication failed') ||
-            lastError.message.includes('535')) {
+        if (lastError.message.includes('401') || 
+            lastError.message.includes('403') ||
+            lastError.message.includes('invalid') ||
+            lastError.message.includes('unauthorized')) {
           console.error(`[ProductAlertNotifier] ${context} - Permanent error detected, not retrying`);
           throw lastError;
         }
@@ -305,12 +283,16 @@ class ProductAlertNotifier {
     throw lastError || new Error('Failed to send email after retries');
   }
 
-    private smtpBaseConfig(email: string, subject: string) {
+  private buildEmailPayload(email: string, subject: string, htmlContent: string, tags?: string[]): BrevoEmailPayload {
     return {
-       from: {address: process.env.SMTP_FROM || "equipo@cartago4x4.es",
-        name: process.env.SMTP_SENDER || "Cartago4x4"},
-        to: email,
-        subject,
+      sender: {
+        email: process.env.SMTP_FROM || "equipo@cartago4x4.es",
+        name: process.env.SMTP_SENDER || "Cartago4x4"
+      },
+      to: [{ email }],
+      subject,
+      htmlContent,
+      tags,
     };
   }
 
@@ -350,12 +332,15 @@ class ProductAlertNotifier {
           return;
         }
 
-        await this.sendMailWithRetry(
-          this.getTransporter(),
-          {
-            ...this.smtpBaseConfig(adminEmail, subject),
-            html,
-          },
+        const payload = this.buildEmailPayload(
+          adminEmail,
+          subject,
+          html,
+          ["product-alert", "admin-notification"]
+        );
+
+        await this.sendEmailWithRetry(
+          payload,
           `Admin notification for ${email}`
         );
 
@@ -388,7 +373,6 @@ class ProductAlertNotifier {
 
     try {
       // Send emails to all subscribers
-      const transporter = this.getTransporter();
       const emailPromises = subscriptions.map(async (sub) => {
         const unsubscribeUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/account/alerts/unsubscribe?email=${encodeURIComponent(sub.email)}&variant=${variantId}`;
         
@@ -407,12 +391,15 @@ class ProductAlertNotifier {
           return;
         }
 
-        return this.sendMailWithRetry(
-          transporter,
-          {
-            ...this.smtpBaseConfig(sub.email, `¡${variantTitle} está de vuelta en stock!`),
-            html,
-          },
+        const payload = this.buildEmailPayload(
+          sub.email,
+          `¡${variantTitle} está de vuelta en stock!`,
+          html,
+          ["product-alert", "back-in-stock"]
+        );
+
+        return this.sendEmailWithRetry(
+          payload,
           `Back-in-stock alert for ${sub.email}`
         );
       });
@@ -460,12 +447,15 @@ class ProductAlertNotifier {
         return;
       }
 
-      await this.sendMailWithRetry(
-        this.getTransporter(),
-        {
-          ...this.smtpBaseConfig(adminEmail, `[Copia] Aviso de disponibilidad: ${variantTitle}`),
-          html,
-        },
+      const payload = this.buildEmailPayload(
+        adminEmail,
+        `[Copia] Aviso de disponibilidad: ${variantTitle}`,
+        html,
+        ["product-alert", "admin-notification", "back-in-stock"]
+      );
+
+      await this.sendEmailWithRetry(
+        payload,
         `Admin back-in-stock notification for variant ${variantId}`
       );
 
