@@ -1,16 +1,14 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import PreregisterOrderService from "../../../../../services/preregister-order";
 
-
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-  const  id  = req.params.id as string;
-
+  const id = req.params.id as string;
 
   try {
     // Resolver el servicio de pedidos
 
     const preregisterOrderService = req.scope.resolve<PreregisterOrderService>(
-      "preregisterOrderService"
+      "preregisterOrderService",
     );
 
     console.log("\n🚀 Correos preregister order:", id);
@@ -24,7 +22,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     if (!response || errors.length) {
       console.error(
         "Error validating preregister order with Correos:",
-        response
+        response,
       );
       return res.status(409).json([...errors]);
     }

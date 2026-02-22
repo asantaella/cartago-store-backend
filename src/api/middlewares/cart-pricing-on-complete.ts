@@ -378,7 +378,7 @@ export async function persistCartPricingOnComplete(
     // Esto asegura que CartService.complete() use el cart actualizado
     try {
       const cartService = req.scope.resolve("cartService") as any;
-      const freshCart = await cartService.retrieve(cartId, {
+      const freshCart = await cartService.withTransaction(cartId, {
         select: [
           "id",
           "email",

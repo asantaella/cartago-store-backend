@@ -67,12 +67,13 @@ const plugins = [
   },
   `medusa-payment-manual`,
   {
-    resolve: `medusa-payment-paypal`,
+    resolve: `./plugins/medusa-payment-paypal`,
+   // resolve: `medusa-payment-paypal`,
     options: {
       client_id: process.env.PAYPAL_CLIENT_ID,
       client_secret: process.env.PAYPAL_CLIENT_SECRET,
       sandbox: process.env.PAYPAL_SANDBOX === "true",
-      auth_webhook_id: process.env.PAYPAL_AUTH_WEBHOOK_ID,
+      auth_webhook_id: process.env.PAYPAL_AUTH_WEBHOOK_ID,      
       capture: true,
     },
   },

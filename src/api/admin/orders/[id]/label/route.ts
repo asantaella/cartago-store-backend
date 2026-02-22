@@ -12,7 +12,7 @@ import LabelShipmentPrintService from "../../../../../services/label-shipment-pr
  * GET /admin/orders/order_01H1VT5VXKQY7W8D6BQZPJ7J7E/preregister/validate
  */
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-  const  id  = req.params.id as string;
+  const id = req.params.id as string;
 
   try {
     const labelShipmentPrintService =

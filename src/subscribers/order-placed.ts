@@ -24,7 +24,7 @@ export default async function handleOrderPlaced({
       container.resolve("invoiceNumberGeneratorService");
 
     // Obtener el pedido con las relaciones necesarias
-    const order = await orderService.retrieve(data.id, {
+    const order = await orderService.retrieveWithTotals(data.id, {
       relations: [
         "items",
         "items.variant",
@@ -33,7 +33,8 @@ export default async function handleOrderPlaced({
         "billing_address",
         "discounts",
         "shipping_methods",
-        "payments",
+        "payments",        
+        "gift_cards",
       ],
     });
 
@@ -45,17 +46,18 @@ export default async function handleOrderPlaced({
     await invoiceNumberGenerator.setOrderInvoiceNumber(order.id);
 
     // Enviar la notificación de pedido colocado
-     await receiptNotificationService.sendNotification(
-      OrderService.Events.PLACED,
+    // Enviar la notificación en el evento de pago capturado
+    await receiptNotificationService.sendNotification(
+      OrderService.Events.PAYMENT_CAPTURED,
       order
-    ); 
-
-    console.log(
-      `[NOTIFICATION] Successfully processed order.placed for order ${order.display_id}`
     );
 
     console.log(
-      `[NOTIFICATION][ADMIN] Successfully processed order.placed for order ${order.display_id}`
+      `[NOTIFICATION] Successfully processed order.payment_captured for order ${order.display_id}`
+    );
+
+    console.log(
+      `[NOTIFICATION][ADMIN] Successfully processed order.payment_captured for order ${order.display_id}`
     );
   } catch (error) {
     console.error(
@@ -66,8 +68,8 @@ export default async function handleOrderPlaced({
 }
 
 export const config: SubscriberConfig = {
-  event: OrderService.Events.PLACED,
+  event: OrderService.Events.PAYMENT_CAPTURED,
   context: {
-    subscriberId: "order-placed-handler",
+    subscriberId: "order-payment-captured-handler",
   },
 };
