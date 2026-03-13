@@ -41,7 +41,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const cartService: CartService = req.scope.resolve("cartService");
   const pricingService: PricingService = req.scope.resolve("pricingService");
   const shippingProfileService: ShippingProfileService = req.scope.resolve(
-    "shippingProfileService"
+    "shippingProfileService",
   );
 
   const cart = await cartService.retrieveWithTotals(cart_id, {
@@ -49,6 +49,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   });
 
   const postalCode = cart.shipping_address?.postal_code;
+  const countryCode = cart.shipping_address?.country_code;
+
+  if (!postalCode || !countryCode) {
+    throw new MedusaError(
+      MedusaError.Types.INVALID_DATA,
+      "Cart must have a shipping address with postal code and country code to retrieve shipping options.",
+    );
+  }
 
   let data = [];
 
@@ -60,11 +68,22 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       const postalCodeConstraints = option.metadata?.postal_code_constraints as
         | string
         | undefined;
-      if (!postalCodeConstraints) {
+      const countryCodeConstraint = option.metadata?.country_code_constraint as
+        | string
+        | undefined;
+        
+      if (!postalCodeConstraints || !countryCodeConstraint) {
         return false;
       }
+      const postalCodeMatch = new RegExp(postalCodeConstraints).test(
+        postalCode,
+      );
 
-      return new RegExp(postalCodeConstraints).test(postalCode);
+      const countryCodeMatch = new RegExp(countryCodeConstraint).test(
+        countryCode,
+      );
+
+      return countryCodeMatch && postalCodeMatch;
     });
 
     data = await pricingService.setShippingOptionPrices(options, {
@@ -85,14 +104,16 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         data = data.map((opt: any) => {
           try {
             if (typeof opt.amount === "number") {
-              opt.amount = spanishTaxService.calculatePriceWithoutTax(opt.amount);
+              opt.amount = spanishTaxService.calculatePriceWithoutTax(
+                opt.amount,
+              );
             }
             if (typeof opt.price === "number") {
               opt.price = spanishTaxService.calculatePriceWithoutTax(opt.price);
             }
             if (typeof opt.price_incl_tax === "number") {
               opt.price_incl_tax = spanishTaxService.calculatePriceWithoutTax(
-                opt.price_incl_tax
+                opt.price_incl_tax,
               );
             }
             // Some shapes include a nested shipping_option object with price
@@ -100,16 +121,17 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
               opt.shipping_option &&
               typeof opt.shipping_option.price === "number"
             ) {
-              opt.shipping_option.price = spanishTaxService.calculatePriceWithoutTax(
-                opt.shipping_option.price
-              );
+              opt.shipping_option.price =
+                spanishTaxService.calculatePriceWithoutTax(
+                  opt.shipping_option.price,
+                );
             }
           } catch (e) {
             // Non-fatal: leave the option as-is if conversion fails
             // eslint-disable-next-line no-console
             console.warn(
               "[shipping-options route] could not adjust shipping option price:",
-              e
+              e,
             );
           }
           return opt;
@@ -120,7 +142,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       // eslint-disable-next-line no-console
       console.warn(
         "[shipping-options route] spanishTaxService not available:",
-        e
+        e,
       );
     }
   }
