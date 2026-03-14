@@ -1,0 +1,271 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedido recibido</title>
+    <style>
+      body {
+        font-family: "Inter", Helvetica, Arial, sans-serif;
+        background-color: #f4f7fa;
+        color: #4a5566;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 640px;
+        background-color: #fff;
+        margin: 40px auto;
+        padding: 40px 50px;
+        border-radius: 6px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+        border: 2px solid #555;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        color: #111;
+        font-size: 24px;
+        line-height: 36px;
+        font-weight: 600;
+        margin-bottom: 24px;
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 28px;
+      }
+
+      .notice {
+        background-color: #f5f8ff;
+        border-left: 4px solid #0052e2;
+        border-radius: 4px;
+        padding: 16px 18px;
+        margin: 22px 0 30px;
+      }
+
+      .customer-section {
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        overflow: hidden;
+      }
+
+      .customer-section .header {
+        background-color: #f8f8f8;
+        padding: 10px 15px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .customer-section td {
+        padding: 6px 15px;
+        font-size: 14px;
+      }
+
+      .info-label {
+        color: #4a5566;
+        font-weight: 600;
+        vertical-align: top;
+      }
+
+      .info-value {
+        color: #555;
+      }
+
+      .table-section {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        margin-bottom: 30px;
+      }
+
+      .table-section th {
+        background-color: #f8f8f8;
+        padding: 10px;
+        font-size: 14px;
+        text-align: left;
+        border-bottom: 2px solid #e2e8f0;
+        color: #333;
+      }
+
+      .table-section td {
+        padding: 10px;
+        font-size: 14px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #555;
+        vertical-align: top;
+      }
+
+      .table-section tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #96a2b3;
+        margin-top: 20px;
+        background-color: #f1f1f1;
+        padding: 30px 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p class="logo">
+        <img
+          class="max-width"
+          border="0"
+          style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:100% !important; width:100%; height:auto !important;"
+          width="600"
+          alt="Cartago4x4"
+          data-proportionally-constrained="true"
+          data-responsive="true"
+          src="http://cdn.mcauto-images-production.sendgrid.net/54b412839bf00c0a/2770dc28-348f-4b7f-b46b-d3df6786e14a/1311x103.jpg"
+        />
+      </p>
+
+      <h1>Hola {{customer.first_name}},</h1>
+
+      <p>Hemos recibido correctamente tu pedido. A continuación te compartimos
+        el resumen de compra y la información del pago.</p>
+
+      <div class="notice">
+        <strong>Método de pago:</strong>
+        {{payment_method_label}}<br />
+        {{payment_note}}
+      </div>
+
+      <table class="customer-section" width="100%">
+        <tr>
+          <td class="header" colspan="2">Información del pedido</td>
+        </tr>
+        <tr>
+          <td class="info-label" width="40%">Nombre completo:</td>
+          <td class="info-value">{{customer.full_name}}</td>
+        </tr>
+        <tr>
+          <td class="info-label">Email:</td>
+          <td class="info-value">{{customer.email}}</td>
+        </tr>
+        {{#if customer.nif_cif}}
+          <tr>
+            <td class="info-label">NIF/CIF:</td>
+            <td class="info-value">{{customer.nif_cif}}</td>
+          </tr>
+        {{/if}}
+        <tr>
+          <td class="info-label">Dirección de envío:</td>
+          <td class="info-value">{{shipping_address}}</td>
+        </tr>
+        {{#if billing_address}}
+          <tr>
+            <td class="info-label">Dirección de facturación:</td>
+            <td class="info-value">{{billing_address}}</td>
+          </tr>
+        {{/if}}
+        <tr>
+          <td class="info-label">Nº Pedido:</td>
+          <td class="info-value">{{display_id}}</td>
+        </tr>
+        <tr>
+          <td class="info-label">Fecha:</td>
+          <td class="info-value">{{order_date}}</td>
+        </tr>
+      </table>
+
+      <table class="table-section">
+        <thead>
+          <tr>
+            <th>Artículo</th>
+            <th style="text-align:center">Cantidad</th>
+            <th style="text-align:right">Unidad</th>
+            <th style="text-align:right">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each items}}
+            <tr>
+              <td>
+                <div>{{variant}}</div>
+                <div style="font-size:12px; color:#85878E;">Ref: {{ref}}</div>
+              </td>
+              <td style="text-align:center">{{quantity}}</td>
+              <td style="text-align:right">{{unit_price_ex_tax}}</td>
+              <td style="text-align:right">{{totals.subtotal}}</td>
+            </tr>
+          {{/each}}
+          <tr>
+            <td
+              colspan="3"
+              style="text-align:right; font-weight:600;"
+            >Subtotal</td>
+            <td style="text-align:right">{{subtotal_ex_tax}}</td>
+          </tr>
+          {{#if discount_total}}
+            <tr>
+              <td
+                colspan="3"
+                style="text-align:right; font-weight:600;"
+              >Descuento</td>
+              <td style="text-align:right">- {{discount_total}}</td>
+            </tr>
+          {{/if}}
+          <tr>
+            <td colspan="3" style="text-align:right; font-weight:600;">
+              <div>Gastos de envío</div>
+              <div style="font-size:12px; color:#85878E;">Tipo:
+                {{shipping_method}}</div>
+            </td>
+            <td style="text-align:right">{{shipping_total}}</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align:right; font-weight:600;">Impuestos
+              ({{tax_rate}}% IVA)</td>
+            <td style="text-align:right">{{tax_total}}</td>
+          </tr>
+          <tr>
+            <td
+              colspan="3"
+              style="text-align:right; font-weight:600;"
+            >Total</td>
+            <td style="text-align:right">{{total}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p
+        style="text-align:center; margin-top: 60px; margin-bottom: 20px;"
+      >Gracias por confiar en nosotros.</p>
+      <p style="font-size:12px; text-align:center;">
+        Si tienes cualquier duda sobre tu pedido, escríbenos a
+        <a
+          href="mailto:contacto@cartago4x4.es"
+          style="color:#0052e2;"
+        >contacto@cartago4x4.es</a>.
+      </p>
+      <p style="font-size:12px; text-align:center;">
+        <a
+          href="https://cartago4x4.es/terminos-condiciones"
+          style="margin-right:1rem"
+        >Términos y Condiciones</a>
+        <a href="https://cartago4x4.es/politica-privacidad">Política de
+          privacidad</a>
+      </p>
+    </div>
+
+    <div class="footer">
+      <p style="margin: 0 0 12px;">&copy; 2026
+        {{company_name}}. Todos los derechos reservados.</p>
+      <p style="margin: 0;">Alameda de San Antón n23<br />Apartado de Correos
+        5085<br />30205 Cartagena, Murcia</p>
+    </div>
+  </body>
+</html>

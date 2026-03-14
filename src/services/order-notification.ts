@@ -10,7 +10,7 @@ import { formatMoney, formatDate, formatAddress } from "../utils/format-utils";
 import { OrderInvoice } from "../types/order-invoice.model";
 import { isNumber } from "util";
 
-interface MailerSendOrderPlacedNotification {
+export interface MailerSendOrderPlacedNotification {
   to_email: string;
   from_email: string;
   to_name: string;
@@ -18,7 +18,7 @@ interface MailerSendOrderPlacedNotification {
   data?: MailerSendOrderData;
 }
 
-interface MailerSendOrderData {
+export interface MailerSendOrderData {
   company_name: string;
   display_id: number;
   order_date: string;
@@ -59,6 +59,8 @@ interface MailerSendOrderData {
   }>;
   discount_total?: string;
   order_url?: string;
+  payment_method_label?: string;
+  payment_note?: string;
 }
 
 class OrderNotificationService {
@@ -112,7 +114,7 @@ class OrderNotificationService {
         sku: item.variant ? item.variant.sku : undefined,
         unit_price_ex_tax: formatMoney(
           item.subtotal / item.quantity,
-          currencyCode
+          currencyCode,
         ),
         unit_price: formatMoney(item.total / item.quantity, currencyCode),
         totals: {
@@ -153,18 +155,18 @@ class OrderNotificationService {
         subtotal_ex_tax: formatMoney(order.subtotal, currencyCode),
         subtotal: formatMoney(
           order.subtotal + order.tax_total || 0,
-          currencyCode
+          currencyCode,
         ),
         tax_total: formatMoney(
           invoiceOrder.getTaxes() || 0,
           currencyCode,
-          false
+          false,
         ),
         tax_rate: taxRate,
         discount_total: formatMoney(
           invoiceOrder.getDiscount() || 0,
           currencyCode,
-          false
+          false,
         ),
         total: formatMoney(invoiceOrder.getTotal() || 0, currencyCode, false),
         items: formattedItems,
@@ -179,7 +181,7 @@ class OrderNotificationService {
 
   async retrieveOrderWithRelations(
     orderId: string,
-    relations: string[] = []
+    relations: string[] = [],
   ): Promise<Order> {
     return await this.orderService.retrieveWithTotals(orderId, {
       relations: [
@@ -195,14 +197,14 @@ class OrderNotificationService {
         "region",
         "currency",
         ...relations,
-      ] 
+      ],
     });
   }
 
   getShipmentTemplateData(
     event: string,
     order: Order,
-    fulfillment?: Fulfillment
+    fulfillment?: Fulfillment,
   ): MailerSendShipmentNotification {
     if (!order || typeof order !== "object") {
       return {
@@ -231,7 +233,7 @@ class OrderNotificationService {
         sku: item.variant ? item.variant.sku : undefined,
         unit_price_ex_tax: formatMoney(
           item.subtotal / item.quantity,
-          currencyCode
+          currencyCode,
         ),
         unit_price: formatMoney(item.total / item.quantity, currencyCode),
         totals: {
@@ -249,7 +251,7 @@ class OrderNotificationService {
             (ff?.metadata?.delivery as string) ||
             `https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=${tl.tracking_number}` ||
             "https://www.correos.es/es/es/herramientas/localizador/envios",
-        }))
+        })),
       ) || [];
 
     let taxRate = order.items[0]?.tax_lines[0]?.rate;
@@ -257,7 +259,7 @@ class OrderNotificationService {
     taxRate = typeof taxRate === "number" ? taxRate : order.region?.tax_rate;
 
     console.log(
-      `\n\n[OrderNotificationService] [getShipmentTemplateData] Event: ${taxRate}\n\n`
+      `\n\n[OrderNotificationService] [getShipmentTemplateData] Event: ${taxRate}\n\n`,
     );
 
     return {
@@ -270,7 +272,7 @@ class OrderNotificationService {
         display_id: order?.display_id,
         order_date: formatDate(order.created_at || new Date()),
         shipment_date: formatDate(
-          fulfillment?.shipped_at || fulfillment?.created_at || new Date()
+          fulfillment?.shipped_at || fulfillment?.created_at || new Date(),
         ),
         tracking_links: trackingLinks,
         customer: {
@@ -287,19 +289,19 @@ class OrderNotificationService {
         shipping_method: invoiceOrder.getShippingMethodName(),
         shipping_total: formatMoney(
           invoiceOrder.getShipping() || 0,
-          currencyCode
+          currencyCode,
         ),
         currency: currencyCode,
         subtotal_ex_tax: formatMoney(order.subtotal, currencyCode),
         subtotal: formatMoney(
           order.subtotal + order.tax_total || 0,
-          currencyCode
+          currencyCode,
         ),
         tax_total: formatMoney(invoiceOrder.getTaxes() || 0, currencyCode),
         tax_rate: taxRate,
         discount_total: formatMoney(
           invoiceOrder.getDiscount() || 0,
-          currencyCode
+          currencyCode,
         ),
         total: formatMoney(invoiceOrder.getTotal(), currencyCode),
         items: formattedItems,
@@ -362,9 +364,4 @@ interface MailerSendShipmentData {
 }
 
 export default OrderNotificationService;
-export {
-  MailerSendOrderPlacedNotification,
-  MailerSendOrderData,
-  MailerSendShipmentNotification,
-  MailerSendShipmentData,
-};
+export { MailerSendShipmentNotification, MailerSendShipmentData };
