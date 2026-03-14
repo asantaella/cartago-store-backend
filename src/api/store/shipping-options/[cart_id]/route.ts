@@ -51,13 +51,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const postalCode = cart.shipping_address?.postal_code;
   const countryCode = cart.shipping_address?.country_code;
 
-  if (!postalCode || !countryCode) {
-    throw new MedusaError(
-      MedusaError.Types.INVALID_DATA,
-      "Cart must have a shipping address with postal code and country code to retrieve shipping options.",
-    );
-  }
-
   let data = [];
 
   if (postalCode) {
@@ -71,7 +64,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       const countryCodeConstraint = option.metadata?.country_code_constraint as
         | string
         | undefined;
-        
+
       if (!postalCodeConstraints || !countryCodeConstraint) {
         return false;
       }
