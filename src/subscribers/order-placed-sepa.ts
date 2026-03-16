@@ -9,6 +9,11 @@ type OrderPlacedPayload = {
   id: string;
 };
 
+const SEPA_PROCESSING_CONFIRMATION_WAIT_MS = 60_000;
+
+const wait = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 export default async function handleOrderPlacedSepa({
   data,
   container,
@@ -17,6 +22,8 @@ export default async function handleOrderPlacedSepa({
     const orderService: OrderService = container.resolve("orderService");
     const placeOrderEmailNotificationService: PlaceOrderEmailNotificationService =
       container.resolve("placeOrderEmailNotificationService");
+
+    await wait(SEPA_PROCESSING_CONFIRMATION_WAIT_MS);
 
     const order = await orderService.retrieveWithTotals(data.id, {
       relations: [
@@ -38,9 +45,13 @@ export default async function handleOrderPlacedSepa({
       ],
     });
 
-    if (!placeOrderEmailNotificationService.isSepaDirectDebitOrder(order)) {
+    if (
+      !placeOrderEmailNotificationService.isSepaDirectDebitOrderProcessing(
+        order,
+      )
+    ) {
       console.log(
-        `[NOTIFICATION][ORDER_PLACED_SEPA] Skipping order ${order.display_id}: no Stripe SEPA Direct Debit payment found`,
+        `[NOTIFICATION][ORDER_PLACED_SEPA] Skipping order ${order.display_id}: payment is not Stripe SEPA Direct Debit in processing status after 60 seconds`,
       );
       return;
     }

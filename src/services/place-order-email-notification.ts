@@ -10,6 +10,8 @@ type PaymentLike = {
   data?: Record<string, unknown> | null;
 };
 
+type RecordLike = Record<string, unknown>;
+
 class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification {
   protected orderNotificationService: OrderNotificationService;
 
@@ -49,7 +51,49 @@ class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification 
     return [];
   }
 
-  isSepaDirectDebitOrder(order: Order): boolean {
+  private isRecord(value: unknown): value is RecordLike {
+    return !!value && typeof value === "object";
+  }
+
+
+  private extractPaymentIntentStatus(data: unknown): string | undefined {
+    if (!this.isRecord(data)) {
+      return undefined;
+    }
+
+    const directStatusCandidates = [
+      data.status,
+      this.isRecord(data.payment_intent)
+        ? data.payment_intent.status
+        : undefined,
+      this.isRecord(data.paymentIntent) ? data.paymentIntent.status : undefined,
+    ];
+
+    for (const candidate of directStatusCandidates) {
+      if (typeof candidate === "string" && candidate.length > 0) {
+        return candidate;
+      }
+    }
+
+    const nestedCandidates = [
+      data.payment_intent,
+      data.paymentIntent,
+      data.data,
+    ];
+
+    for (const candidate of nestedCandidates) {
+      const nestedStatus = this.extractPaymentIntentStatus(candidate);
+      if (nestedStatus) {     
+        return nestedStatus;
+      }
+    }
+
+    return undefined;
+  }
+
+
+
+  isSepaDirectDebitOrderProcessing(order: Order): boolean {
     const payments = (
       (order as unknown as { payments?: PaymentLike[] }).payments || []
     ).filter(Boolean);
@@ -57,9 +101,10 @@ class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification 
     return payments.some((payment) => {
       const providerId = payment.provider_id;
       const isStripeProvider = !providerId || providerId === "stripe";
-      const paymentMethodTypes = this.normalizePaymentMethodTypes(payment.data);
-
-      return isStripeProvider && paymentMethodTypes.includes("sepa_debit");
+  
+      return (
+        isStripeProvider && this.extractPaymentIntentStatus(payment.data) === "processing"
+      );
     });
   }
 
@@ -157,9 +202,9 @@ class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification 
           ["payments", "customer", "gift_cards", "items.tax_lines"],
         );
 
-      if (!this.isSepaDirectDebitOrder(order)) {
+      if (!this.isSepaDirectDebitOrderProcessing(order)) {
         console.log(
-          `[NOTIFICATION][ORDER_PLACED_SEPA] Skipping ${event} for order ${order.display_id}: payment method is not Stripe SEPA Direct Debit`,
+          `[NOTIFICATION][ORDER_PLACED_SEPA] Skipping ${event} for order ${order.display_id}: payment is not Stripe SEPA Direct Debit in processing status`,
         );
 
         return {
