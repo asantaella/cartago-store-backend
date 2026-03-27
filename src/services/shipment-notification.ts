@@ -29,11 +29,11 @@ class ShipmentNotificationService extends AbstractNotificationService {
     try {
       this.mailerSendService = new MailerSend({
         apiKey: process.env.MAILERSEND_API_KEY,
-      });    
+      });
     } catch (error) {
       console.error(
         "[NOTIFICATION] Error initializing MailerSend client for shipments:",
-        error
+        error,
       );
     }
   }
@@ -41,11 +41,11 @@ class ShipmentNotificationService extends AbstractNotificationService {
   // El método getTemplateData para envíos ahora está en OrderNotificationService como getShipmentTemplateData
 
   async buildPDFAttachment(
-    order: Order
+    order: Order,
   ): Promise<{ content: string; filename: string }> {
     try {
       const invoiceData = await this.invoicePdfGeneratorService.generateInvoice(
-        order.id
+        order.id,
       );
       return {
         content: invoiceData.buffer.toString("base64"),
@@ -60,7 +60,7 @@ class ShipmentNotificationService extends AbstractNotificationService {
   async sendNotification(
     event: string,
     data: any,
-    attachmentGenerator?: unknown
+    attachmentGenerator?: unknown,
   ): Promise<{
     to: string;
     status: string;
@@ -85,11 +85,11 @@ class ShipmentNotificationService extends AbstractNotificationService {
       const orderData: Order =
         await this.orderNotificationService.retrieveOrderWithRelations(
           orderId,
-          ["fulfillments", "fulfillments.tracking_links"]
+          ["fulfillments", "fulfillments.tracking_links"],
         );
 
       console.log(
-        `[NOTIFICATION] Processing ${event} for order ${orderData.display_id}`
+        `[NOTIFICATION] Processing ${event} for order ${orderData.display_id}`,
       );
 
       const {
@@ -99,7 +99,7 @@ class ShipmentNotificationService extends AbstractNotificationService {
       } = this.orderNotificationService.getShipmentTemplateData(
         event,
         orderData,
-        fulfillment
+        fulfillment,
       );
 
       // Comprobar si tenemos los datos necesarios
@@ -132,10 +132,10 @@ class ShipmentNotificationService extends AbstractNotificationService {
 
       emailParams.setAttachments(attachments);
 
-       await this.mailerSendService.email.send(emailParams);
+      await this.mailerSendService.email.send(emailParams);
 
       emailNotification.setToEmail(
-        process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.es"
+        process.env.MAILERSEND_ADMIN_EMAIL || "equipo@cartago4x4.es",
       );
 
       const emailAdminParams = emailNotification.getEmailParams();
@@ -143,7 +143,7 @@ class ShipmentNotificationService extends AbstractNotificationService {
       await this.mailerSendService.email.send(emailAdminParams);
 
       console.log(
-        `[NOTIFICATION] Successfully sent ${event} email with invoice to ${to_email} for order ${templateData.display_id}`
+        `[NOTIFICATION] Successfully sent ${event} email with invoice to ${to_email} for order ${templateData.display_id}`,
       );
 
       return {
@@ -165,7 +165,7 @@ class ShipmentNotificationService extends AbstractNotificationService {
   async resendNotification(
     notification: unknown,
     config: unknown,
-    attachmentGenerator: unknown
+    attachmentGenerator: unknown,
   ): Promise<{
     to: string;
     status: string;
@@ -187,7 +187,7 @@ class ShipmentNotificationService extends AbstractNotificationService {
       return this.sendNotification(
         typedNotification.event_name,
         updatedData,
-        attachmentGenerator
+        attachmentGenerator,
       );
     }
 

@@ -97,19 +97,24 @@ export async function adjustCartPricesInDb(
         if (isTaxExempt) {
           // ZONA TAX-EXEMPT: Guardar original y aplicar precio ajustado
           if (originalPrice === undefined) {
-            // Primera vez que se ajusta: el price actual es el original con IVA
-            originalPrice = method.price;
+            // Primera vez que se ajusta: el price actual es el original SIN el extra de variante
+            // (el extra se gestiona por separado en shipping_extra_total)
+            const existingExtra = (method.data.shipping_extra_total as number) ?? 0;
+            originalPrice = method.price - existingExtra;
             method.data.original_price = originalPrice;
             log(
-              `DB Update: shipping ${method.id} stored original price: ${originalPrice} cents`
+              `DB Update: shipping ${method.id} stored original price: ${originalPrice} cents ` +
+                `(price=${method.price}, extra=${existingExtra})`
             );
           }
-          targetPrice = getAdjustedPrice(originalPrice);
-          method.data.adjusted_price = targetPrice;
+          const existingExtra = (method.data.shipping_extra_total as number) ?? 0;
+          targetPrice = getAdjustedPrice(originalPrice) + existingExtra;
+          method.data.adjusted_price = getAdjustedPrice(originalPrice);
         } else {
           // ZONA STANDARD: Restaurar precio original si existe
           if (originalPrice !== undefined) {
-            targetPrice = originalPrice;
+            const existingExtra = (method.data.shipping_extra_total as number) ?? 0;
+            targetPrice = originalPrice + existingExtra;
             // NO borrar original_price, mantenerlo como referencia permanente
             // Solo borrar adjusted_price
             delete method.data.adjusted_price;

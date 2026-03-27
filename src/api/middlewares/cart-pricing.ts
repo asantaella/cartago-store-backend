@@ -3,6 +3,8 @@
  * Las implementaciones se han movido a archivos separados.
  */
 
+export { adjustCartShippingExtraOnGet } from "./cart-shipping-extra-on-get";
+export { adjustCartShippingExtraOnPost } from "./cart-shipping-extra-on-post";
 export { adjustCartPricingOnGet } from "./cart-pricing-on-get";
 export { adjustCartPricingOnPost } from "./cart-pricing-on-post";
 export { persistCartPricingOnComplete } from "./cart-pricing-on-complete";

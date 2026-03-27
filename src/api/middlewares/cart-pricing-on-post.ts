@@ -22,7 +22,7 @@ import {
  */
 async function getCartForValidation(
   manager: Manager,
-  cartId: string
+  cartId: string,
 ): Promise<CartEntity | null> {
   try {
     let cart: CartEntity | null = null;
@@ -50,7 +50,7 @@ async function getCartForValidation(
 export async function adjustCartPricingOnPost(
   req: MedusaRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const cartId = req.params?.id as string | undefined;
@@ -62,17 +62,23 @@ export async function adjustCartPricingOnPost(
     // Excluir explícitamente el endpoint COMPLETE
     const requestPath = req.originalUrl || req.path || "";
     const isCompleteEndpoint = /\/store\/carts\/[^/]+\/complete\/?$/.test(
-      requestPath
+      requestPath,
     );
     if (isCompleteEndpoint) {
       next();
       return;
     }
 
-    const spanishTaxService = resolveSpanishTaxService(req);
     const manager = resolveManager(req);
 
-    if (!spanishTaxService || !manager) {
+    if (!manager) {
+      next();
+      return;
+    }
+
+    const spanishTaxService = resolveSpanishTaxService(req);
+
+    if (!spanishTaxService) {
       next();
       return;
     }
@@ -93,7 +99,7 @@ export async function adjustCartPricingOnPost(
     // Detectar si ha habido un cambio de zona fiscal
     const { hasChanged, previouslyTaxExempt } = detectTerritoryChange(
       currentCart,
-      taxContext
+      taxContext,
     );
 
     logCartOperation("POST", cartId, {
@@ -135,13 +141,13 @@ export async function adjustCartPricingOnPost(
         ) {
           shippingUpdated = await persistShippingMethodDataPrices(
             tm,
-            cart.shipping_methods
+            cart.shipping_methods,
           );
         }
 
         if (itemsUpdated > 0 || shippingUpdated > 0) {
           log(
-            `Persisted prices metadata: ${itemsUpdated} items, ${shippingUpdated} shipping`
+            `Persisted prices metadata: ${itemsUpdated} items, ${shippingUpdated} shipping`,
           );
         }
       }
@@ -155,11 +161,10 @@ export async function adjustCartPricingOnPost(
     if (hasChanged || taxContext.isTaxExempt) {
       const manager2 = resolveManager(req);
       if (manager2) {
-        const { adjustCartPricesInDb } = await import(
-          "./cart-pricing-db-update"
-        );
+        const { adjustCartPricesInDb } =
+          await import("./cart-pricing-db-update");
         adjustCartPricesInDb(manager2, cartId, taxContext).catch((err) =>
-          log(`DB sync error in POST for cart ${cartId}: ${err}`)
+          log(`DB sync error in POST for cart ${cartId}: ${err}`),
         );
       }
     }

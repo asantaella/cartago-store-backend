@@ -11,6 +11,7 @@ import {
   ShippingProfileService,
 } from "@medusajs/medusa/dist/services";
 import SpanishTaxService from "../../../../services/spanish-tax";
+import VariantShippingPriceService from "../../../../services/variant-shipping-price.service";
 import { MedusaError } from "@medusajs/utils";
 
 /**
@@ -45,7 +46,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   );
 
   const cart = await cartService.retrieveWithTotals(cart_id, {
-    relations: ["shipping_address"],
+    relations: ["shipping_address", "items", "items.variant"],
   });
 
   const postalCode = cart.shipping_address?.postal_code;
@@ -82,6 +83,27 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     data = await pricingService.setShippingOptionPrices(options, {
       cart_id,
     });
+
+    // Apply per-variant shipping surcharge to each option's amount
+    try {
+      const variantShippingService: VariantShippingPriceService =
+        req.scope.resolve("variantShippingPriceService");
+      const extraTotal = variantShippingService.calculateCartShippingExtra(
+        cart as any,
+      );
+      if (extraTotal > 0 && Array.isArray(data)) {
+        data = variantShippingService.applyExtraToShippingOptions(
+          data as any,
+          extraTotal,
+        ) as any;
+      }
+    } catch (e) {
+      // Non-fatal: if service not available, skip
+      console.warn(
+        "[shipping-options route] variantShippingPriceService not available:",
+        e,
+      );
+    }
 
     // If the cart postal code belongs to Canarias, convert shipping prices
     // from gross (incl. IVA) to net before returning so that the client and

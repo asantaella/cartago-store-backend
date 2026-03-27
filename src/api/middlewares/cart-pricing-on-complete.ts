@@ -17,6 +17,7 @@ import {
   calculateTotalDiscount,
   persistLineItemUnitPrice,
   persistShippingMethodPrice,
+  calculateShippingExtra,
   log,
   logError,
   logCartOperation,
@@ -233,6 +234,7 @@ export async function persistCartPricingOnComplete(
         relations: [
           "items",
           "items.adjustments",
+          "items.variant",
           "shipping_methods",
           "shipping_address",
           "payment_sessions",
@@ -256,9 +258,29 @@ export async function persistCartPricingOnComplete(
         territory: taxContext.territoryType,
       });
 
+      // Persist variant shipping extra for ALL carts (tax-exempt and standard).
+      // Must happen before order creation so the order total is correct.
+      if (Array.isArray(cart.shipping_methods) && cart.shipping_methods.length > 0) {
+        const extraTotal = calculateShippingExtra(cart as any);
+        for (const method of cart.shipping_methods) {
+          if (!method.data) method.data = {};
+          const currentExtra = (method.data.shipping_extra_total as number) ?? 0;
+          if (currentExtra !== extraTotal) {
+            const basePrice = method.price - currentExtra;
+            method.price = basePrice + extraTotal;
+            method.data.shipping_extra_total = extraTotal;
+            await shippingMethodRepo.save(method);
+            log(
+              `COMPLETE: synced shipping extra for method ${method.id}: ` +
+                `extra ${currentExtra} → ${extraTotal} cents`
+            );
+          }
+        }
+      }
+
       // Solo procesar si es zona tax-exempt
       if (!taxContext.isTaxExempt) {
-        log(`Cart ${cartId} is not tax-exempt, skipping persistence`);
+        log(`Cart ${cartId} is not tax-exempt, skipping tax-exempt persistence`);
         return;
       }
 

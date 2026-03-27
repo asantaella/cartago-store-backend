@@ -14,6 +14,9 @@ export type LineItemEntity = {
   metadata?: Record<string, unknown> & { adjusted_unit_price?: number };
   subtotal?: number;
   adjustments?: Array<{ description?: string; amount?: number }>;
+  variant?: {
+    shipping_option_price_extra?: number;
+  } | null;
 };
 
 export type LineItemAdjustmentEntity = {
@@ -28,7 +31,15 @@ export type LineItemAdjustmentEntity = {
 export type ShippingMethodEntity = {
   id: string;
   price: number;
-  data?: Record<string, unknown> & { adjusted_price?: number };
+  includes_tax?: boolean;
+  subtotal?: number;
+  total?: number;
+  tax_total?: number;
+  data?: Record<string, unknown> & {
+    adjusted_price?: number;
+    original_price?: number;
+    shipping_extra_total?: number;
+  };
 };
 
 export type PaymentSessionEntity = {
@@ -64,10 +75,13 @@ export type CartEntity = {
   };
   subtotal?: number;
   shipping_total?: number;
+  item_tax_total?: number;
+  shipping_tax_total?: number;
   tax_total?: number;
   tax_rate?: number;
   discount_total?: number;
   gift_card_total?: number;
+  gift_card_tax_total?: number;
   total?: number;
 };
 
@@ -89,7 +103,7 @@ export type TransactionManager = {
 
 export type Manager = {
   transaction: <T>(
-    fn: (transactionalManager: TransactionManager) => Promise<T>
+    fn: (transactionalManager: TransactionManager) => Promise<T>,
   ) => Promise<T>;
   getRepository: <T>(name: string) => Repository<T>;
 };
@@ -147,7 +161,7 @@ export function getAdjustedPrice(priceWithTax: number): number {
 export function calculateAdjustedDiscount(
   originalDiscount: number,
   originalPrice: number,
-  adjustedPrice: number
+  adjustedPrice: number,
 ): number {
   if (originalDiscount <= 0 || originalPrice <= 0) {
     return 0;
@@ -173,7 +187,7 @@ export function isValidPrice(value: unknown): value is number {
 export function pricesAreDifferent(
   price1: number,
   price2: number,
-  tolerance = 1
+  tolerance = 1,
 ): boolean {
   return Math.abs(price1 - price2) > tolerance;
 }
@@ -183,7 +197,7 @@ export function pricesAreDifferent(
  */
 export function getTaxContext(
   cart: CartEntity,
-  spanishTaxService: SpanishTaxService
+  spanishTaxService: SpanishTaxService,
 ): TaxContext | null {
   const postalCode = cart.shipping_address?.postal_code;
   if (!postalCode) return null;
@@ -199,7 +213,7 @@ export function getTaxContext(
  * Resuelve el servicio de impuestos españoles desde el scope de la request
  */
 export function resolveSpanishTaxService(
-  req: MedusaRequest
+  req: MedusaRequest,
 ): SpanishTaxService | null {
   try {
     return req.scope.resolve("spanishTaxService") as SpanishTaxService;
@@ -267,12 +281,19 @@ export function getLineItemAdjustedDiscount(item: LineItemEntity): number {
  * Prioriza el valor de data, si no existe lo calcula
  */
 export function getShippingMethodAdjustedPrice(
-  method: ShippingMethodEntity
+  method: ShippingMethodEntity,
 ): number {
   const dataPrice = method.data?.adjusted_price;
+  const shippingExtraTotal = method.data?.shipping_extra_total;
+
   if (isValidPrice(dataPrice)) {
-    return Math.round(dataPrice);
+    const adjustedExtra = isValidPrice(shippingExtraTotal)
+      ? getAdjustedPrice(shippingExtraTotal)
+      : 0;
+
+    return Math.round(dataPrice + adjustedExtra);
   }
+
   return getAdjustedPrice(method.price);
 }
 
@@ -281,7 +302,7 @@ export function getShippingMethodAdjustedPrice(
  */
 export function calculateItemsSubtotal(
   items: LineItemEntity[],
-  useAdjustedPrices: boolean
+  useAdjustedPrices: boolean,
 ): number {
   if (!Array.isArray(items)) return 0;
   return items.reduce((sum, item) => {
@@ -297,7 +318,7 @@ export function calculateItemsSubtotal(
  */
 export function calculateShippingTotal(
   methods: ShippingMethodEntity[],
-  useAdjustedPrices: boolean
+  useAdjustedPrices: boolean,
 ): number {
   if (!Array.isArray(methods)) return 0;
   return methods.reduce((sum, method) => {
@@ -321,7 +342,7 @@ export function calculateTotalDiscount(items: LineItemEntity[]): number {
  * En Medusa, los descuentos se almacenan en adjustments con description: "discount"
  */
 export function calculateDiscountFromAdjustments(
-  adjustments?: Array<{ description?: string; amount?: number }>
+  adjustments?: Array<{ description?: string; amount?: number }>,
 ): number {
   if (!Array.isArray(adjustments)) return 0;
   return adjustments.reduce((sum, adj) => {
@@ -336,12 +357,12 @@ export function calculateDiscountFromAdjustments(
  * Calcula el total de gift cards aplicados al carrito
  */
 export function calculateGiftCardTotal(
-  transactions?: GiftCardTransaction[]
+  transactions?: GiftCardTransaction[],
 ): number {
   if (!Array.isArray(transactions)) return 0;
   return transactions.reduce(
     (sum, transaction) => sum + (transaction.amount || 0),
-    0
+    0,
   );
 }
 
@@ -424,10 +445,10 @@ export function transformCartItemsForTaxExempt(cart: CartEntity): void {
 
     log(
       `Transform item ${item.id} - basePrice: ${Math.round(
-        basePrice
+        basePrice,
       )} cents, ` +
         `discount: ${adjustedDiscount} cents (original: ${originalDiscount}), ` +
-        `subtotal: ${Math.round(item.subtotal)} cents`
+        `subtotal: ${Math.round(item.subtotal)} cents`,
     );
   }
 }
@@ -447,8 +468,8 @@ export function transformShippingMethodsForTaxExempt(cart: CartEntity): void {
 
     log(
       `Transform shipping ${method.id} - baseShippingPrice: ${Math.round(
-        baseShippingPrice
-      )} cents`
+        baseShippingPrice,
+      )} cents`,
     );
   }
 }
@@ -462,7 +483,7 @@ export function recalculateCartTotals(cart: CartEntity): void {
 
   cart.shipping_total = calculateShippingTotal(
     cart.shipping_methods || [],
-    true
+    true,
   );
 
   cart.tax_total = 0;
@@ -490,7 +511,7 @@ export function applyTaxRate(cart: CartEntity): void {
   log(
     `Applied tax_rate 0% to region of cart ${cart.id} (original: ${
       originalTaxRate ?? "undefined"
-    })`
+    })`,
   );
 }
 
@@ -499,7 +520,7 @@ export function applyTaxRate(cart: CartEntity): void {
  */
 export function applyTaxExemptTransformations(
   cart: CartEntity,
-  taxContext: TaxContext
+  taxContext: TaxContext,
 ): void {
   transformCartItemsForTaxExempt(cart);
   transformShippingMethodsForTaxExempt(cart);
@@ -528,7 +549,7 @@ export function logError(message: string, error?: unknown): void {
 export function logCartOperation(
   operation: string,
   cartId: string,
-  details: Record<string, unknown>
+  details: Record<string, unknown>,
 ): void {
   const detailsStr = Object.entries(details)
     .map(([k, v]) => `${k}=${v}`)
@@ -540,14 +561,14 @@ export function logPriceChange(
   entityType: string,
   entityId: string,
   originalPrice: number,
-  adjustedPrice: number
+  adjustedPrice: number,
 ): void {
   log(
     `${entityType} ${entityId}: ${originalPrice} cents (${(
       originalPrice / 100
     ).toFixed(2)}€) → ${adjustedPrice} cents (${(adjustedPrice / 100).toFixed(
-      2
-    )}€)`
+      2,
+    )}€)`,
   );
 }
 
@@ -562,7 +583,7 @@ export async function safeMiddlewareExecution(
   operationName: string,
   operation: () => Promise<void>,
   next: NextFunction,
-  continueOnError = true
+  continueOnError = true,
 ): Promise<void> {
   try {
     await operation();
@@ -581,7 +602,7 @@ export async function safeMiddlewareExecution(
  */
 export function safeJsonTransform<T>(
   transform: (body: T) => T,
-  operationName: string
+  operationName: string,
 ): (body: T) => T {
   return (body: T) => {
     try {
@@ -605,10 +626,11 @@ export async function loadCartWithRelations(
   cartId: string,
   relations: string[] = [
     "items",
+    "items.variant",
     "shipping_methods",
     "shipping_address",
     "region",
-  ]
+  ],
 ): Promise<CartEntity | null> {
   const cartRepo = transactionalManager.getRepository<CartEntity>("Cart");
   const cart = await cartRepo.findOne({ where: { id: cartId }, relations });
@@ -621,7 +643,7 @@ export async function loadCartWithRelations(
 export async function updateLineItemMetadata(
   transactionalManager: TransactionManager,
   itemId: string,
-  adjustedPrice: number
+  adjustedPrice: number,
 ): Promise<boolean> {
   try {
     const repo = transactionalManager.getRepository<LineItemEntity>("LineItem");
@@ -642,12 +664,12 @@ export async function updateLineItemMetadata(
 export async function updateShippingMethodData(
   transactionalManager: TransactionManager,
   methodId: string,
-  adjustedPrice: number
+  adjustedPrice: number,
 ): Promise<boolean> {
   try {
     const repo =
       transactionalManager.getRepository<ShippingMethodEntity>(
-        "ShippingMethod"
+        "ShippingMethod",
       );
     const method = await repo.findOne({ where: { id: methodId } });
     if (!method) return false;
@@ -667,7 +689,7 @@ export async function updateCartMetadata(
   transactionalManager: TransactionManager,
   cartId: string,
   territoryType: string,
-  pricesAdjusted: boolean
+  pricesAdjusted: boolean,
 ): Promise<boolean> {
   try {
     const cartRepo = transactionalManager.getRepository<CartEntity>("Cart");
@@ -691,7 +713,7 @@ export async function updateCartMetadata(
  */
 export function detectTerritoryChange(
   currentCart: CartEntity,
-  newTaxContext: TaxContext
+  newTaxContext: TaxContext,
 ): { hasChanged: boolean; previouslyTaxExempt: boolean } {
   const previousTerritoryType = currentCart.metadata?.territory_type as
     | string
@@ -715,7 +737,7 @@ export function detectTerritoryChange(
     log(
       `Territory change detected for cart ${currentCart.id}: ` +
         `${previousTerritoryType} (exempt: ${previouslyTaxExempt}) -> ` +
-        `${currentTerritoryType} (exempt: ${currentlyTaxExempt})`
+        `${currentTerritoryType} (exempt: ${currentlyTaxExempt})`,
     );
   }
 
@@ -727,7 +749,7 @@ export function detectTerritoryChange(
  */
 export async function restoreOriginalLineItemPrices(
   transactionalManager: TransactionManager,
-  items: LineItemEntity[]
+  items: LineItemEntity[],
 ): Promise<number> {
   let restoredCount = 0;
 
@@ -744,7 +766,7 @@ export async function restoreOriginalLineItemPrices(
     // Si hay precio original guardado y es diferente del actual, restaurar
     if (originalPrice !== undefined && item.unit_price !== originalPrice) {
       log(
-        `Restoring original price for item ${item.id}: ${item.unit_price} -> ${originalPrice} cents`
+        `Restoring original price for item ${item.id}: ${item.unit_price} -> ${originalPrice} cents`,
       );
 
       item.unit_price = originalPrice;
@@ -753,7 +775,7 @@ export async function restoreOriginalLineItemPrices(
       if (originalDiscount !== undefined) {
         item.discount_total = originalDiscount;
         log(
-          `Restoring original discount for item ${item.id}: ${item.discount_total} -> ${originalDiscount} cents`
+          `Restoring original discount for item ${item.id}: ${item.discount_total} -> ${originalDiscount} cents`,
         );
       }
 
@@ -777,7 +799,7 @@ export async function restoreOriginalLineItemPrices(
  */
 export async function restoreOriginalShippingPrices(
   transactionalManager: TransactionManager,
-  methods: ShippingMethodEntity[]
+  methods: ShippingMethodEntity[],
 ): Promise<number> {
   let restoredCount = 0;
 
@@ -789,7 +811,7 @@ export async function restoreOriginalShippingPrices(
     // Si hay precio original guardado y es diferente del actual, restaurar
     if (originalPrice !== undefined && method.price !== originalPrice) {
       log(
-        `Restoring original shipping price for method ${method.id}: ${method.price} -> ${originalPrice} cents`
+        `Restoring original shipping price for method ${method.id}: ${method.price} -> ${originalPrice} cents`,
       );
 
       method.price = originalPrice;
@@ -800,7 +822,7 @@ export async function restoreOriginalShippingPrices(
 
       const repo =
         transactionalManager.getRepository<ShippingMethodEntity>(
-          "ShippingMethod"
+          "ShippingMethod",
         );
       await repo.save(method);
       restoredCount++;
@@ -814,7 +836,7 @@ export async function restoreOriginalShippingPrices(
  */
 export async function persistLineItemMetadataPrices(
   transactionalManager: TransactionManager,
-  items: LineItemEntity[]
+  items: LineItemEntity[],
 ): Promise<number> {
   let updatedCount = 0;
 
@@ -852,7 +874,7 @@ export async function persistLineItemMetadataPrices(
     updatedCount++;
     log(
       `Persisted metadata for item ${item.id} - original_unit_price: ${basePrice} cents, ` +
-        `adjusted_unit_price: ${adjustedPrice} cents, original_discount: ${originalDiscount} cents`
+        `adjusted_unit_price: ${adjustedPrice} cents, original_discount: ${originalDiscount} cents`,
     );
   }
 
@@ -864,7 +886,7 @@ export async function persistLineItemMetadataPrices(
  */
 export async function persistShippingMethodDataPrices(
   transactionalManager: TransactionManager,
-  methods: ShippingMethodEntity[]
+  methods: ShippingMethodEntity[],
 ): Promise<number> {
   let updatedCount = 0;
 
@@ -893,14 +915,14 @@ export async function persistShippingMethodDataPrices(
 
     const repo =
       transactionalManager.getRepository<ShippingMethodEntity>(
-        "ShippingMethod"
+        "ShippingMethod",
       );
     await repo.save(method);
 
     updatedCount++;
     log(
       `Persisted data for shipping ${method.id} - original_price: ${basePrice} cents, ` +
-        `adjusted_price: ${adjustedPrice} cents`
+        `adjusted_price: ${adjustedPrice} cents`,
     );
   }
 
@@ -915,7 +937,7 @@ export async function persistLineItemUnitPrice(
   lineItemRepo: { save: (item: LineItemEntity) => Promise<LineItemEntity> },
   adjustmentRepo: any,
   item: LineItemEntity,
-  adjustedPrice: number
+  adjustedPrice: number,
 ): Promise<boolean> {
   const originalPrice = item.unit_price;
 
@@ -925,7 +947,7 @@ export async function persistLineItemUnitPrice(
 
   // Obtener el descuento original desde adjustments o discount_total
   const discountFromAdjustments = calculateDiscountFromAdjustments(
-    (item as any).adjustments
+    (item as any).adjustments,
   );
   const originalDiscount =
     discountFromAdjustments > 0
@@ -936,13 +958,13 @@ export async function persistLineItemUnitPrice(
   const adjustedDiscount = calculateAdjustedDiscount(
     originalDiscount,
     originalPrice,
-    adjustedPrice
+    adjustedPrice,
   );
 
   log(
     `Persist unit_price for item ${item.id} - originalPrice: ${originalPrice}, ` +
       `adjustedPrice: ${adjustedPrice}, originalDiscount: ${originalDiscount}, ` +
-      `adjustedDiscount: ${adjustedDiscount}`
+      `adjustedDiscount: ${adjustedDiscount}`,
   );
 
   item.unit_price = adjustedPrice;
@@ -957,7 +979,7 @@ export async function persistLineItemUnitPrice(
         adj.amount = sign * Math.abs(adjustedDiscount);
         await adjustmentRepo.save(adj);
         log(
-          `Updated adjustment ${adj.id} for item ${item.id}: ${originalDiscount} → ${adj.amount} cents`
+          `Updated adjustment ${adj.id} for item ${item.id}: ${originalDiscount} → ${adj.amount} cents`,
         );
       }
     }
@@ -965,7 +987,7 @@ export async function persistLineItemUnitPrice(
 
   logPriceChange("Persisted item", item.id, originalPrice, adjustedPrice);
   log(
-    `Persisted discount for item ${item.id}: ${originalDiscount} → ${adjustedDiscount} cents`
+    `Persisted discount for item ${item.id}: ${originalDiscount} → ${adjustedDiscount} cents`,
   );
 
   return true;
@@ -979,7 +1001,7 @@ export async function persistShippingMethodPrice(
     save: (method: ShippingMethodEntity) => Promise<ShippingMethodEntity>;
   },
   method: ShippingMethodEntity,
-  adjustedPrice: number
+  adjustedPrice: number,
 ): Promise<boolean> {
   const originalPrice = method.price;
 
@@ -992,4 +1014,24 @@ export async function persistShippingMethodPrice(
 
   logPriceChange("Persisted shipping", method.id, originalPrice, adjustedPrice);
   return true;
+}
+
+// ============================================================================
+// SHIPPING EXTRA POR VARIANTE
+// ============================================================================
+
+/**
+ * Calcula el recargo total de envío aportado por las variantes del carrito.
+ * Regla: extra_total = SUM(variant.shipping_option_price_extra * item.quantity)
+ *
+ * Requiere que los items se hayan cargado con la relación "items.variant".
+ */
+export function calculateShippingExtra(cart: CartEntity): number {
+  if (!Array.isArray(cart.items) || cart.items.length === 0) return 0;
+
+  return cart.items.reduce((sum, item) => {
+    const extra = (item.variant as any)?.shipping_option_price_extra ?? 0;
+    if (typeof extra !== "number" || extra <= 0) return sum;
+    return sum + extra * (item.quantity || 1);
+  }, 0);
 }

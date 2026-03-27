@@ -2,6 +2,8 @@ import type { MiddlewaresConfig } from "@medusajs/medusa";
 import { raw } from "body-parser";
 import cors from "cors";
 import {
+  adjustCartShippingExtraOnGet,
+  adjustCartShippingExtraOnPost,
   adjustCartPricingOnGet,
   adjustCartPricingOnPost,
   persistCartPricingOnComplete,
@@ -40,13 +42,13 @@ export const config: MiddlewaresConfig = {
     {
       matcher: "/store/carts/*",
       method: "GET",
-      middlewares: [adjustCartPricingOnGet],
+      middlewares: [adjustCartPricingOnGet, adjustCartShippingExtraOnGet],
     },
     // Middleware para ajustar precios en POST/PATCH /store/carts/* (solo en respuesta)
     {
       matcher: "/store/carts/*",
       method: ["POST", "PATCH"],
-      middlewares: [adjustCartPricingOnPost],
+      middlewares: [adjustCartShippingExtraOnPost, adjustCartPricingOnPost],
     },
     // Middleware para persistir precios antes de completar la orden
     {
