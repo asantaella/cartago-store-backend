@@ -1,9 +1,9 @@
 import { Order } from "@medusajs/medusa";
 import AbstractBrevoEmailNotification from "./abstract-brevo-email-notification";
 import EmailTemplateCompiler from "./email-template-compiler";
-import OrderNotificationService, {
-  MailerSendOrderData,
-} from "./order-notification";
+import OrderPlacedNotificationService, {
+  OrderPlacedNotificationTemplateData,
+} from "./order-placed-notification";
 
 type PaymentLike = {
   provider_id?: string;
@@ -13,11 +13,13 @@ type PaymentLike = {
 type RecordLike = Record<string, unknown>;
 
 class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification {
-  protected orderNotificationService: OrderNotificationService;
+  protected orderNotificationService: OrderPlacedNotificationService;
 
   constructor(container) {
     super();
-    this.orderNotificationService = new OrderNotificationService(container);
+    this.orderNotificationService = new OrderPlacedNotificationService(
+      container,
+    );
   }
 
   private normalizePaymentMethodTypes(data: unknown): string[] {
@@ -55,7 +57,6 @@ class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification 
     return !!value && typeof value === "object";
   }
 
-
   private extractPaymentIntentStatus(data: unknown): string | undefined {
     if (!this.isRecord(data)) {
       return undefined;
@@ -83,15 +84,13 @@ class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification 
 
     for (const candidate of nestedCandidates) {
       const nestedStatus = this.extractPaymentIntentStatus(candidate);
-      if (nestedStatus) {     
+      if (nestedStatus) {
         return nestedStatus;
       }
     }
 
     return undefined;
   }
-
-
 
   isSepaDirectDebitOrderProcessing(order: Order): boolean {
     const payments = (
@@ -101,9 +100,10 @@ class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification 
     return payments.some((payment) => {
       const providerId = payment.provider_id;
       const isStripeProvider = !providerId || providerId === "stripe";
-  
+
       return (
-        isStripeProvider && this.extractPaymentIntentStatus(payment.data) === "processing"
+        isStripeProvider &&
+        this.extractPaymentIntentStatus(payment.data) === "processing"
       );
     });
   }
@@ -111,7 +111,7 @@ class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification 
   private buildTemplateData(order: Order): {
     toEmail: string;
     toName: string;
-    templateData: MailerSendOrderData;
+    templateData: OrderPlacedNotificationTemplateData;
   } {
     const { to_email, to_name, data } =
       this.orderNotificationService.getTemplateData(order);
@@ -134,7 +134,9 @@ class PlaceOrderEmailNotificationService extends AbstractBrevoEmailNotification 
     };
   }
 
-  private renderOrderTemplate(templateData: MailerSendOrderData): string {
+  private renderOrderTemplate(
+    templateData: OrderPlacedNotificationTemplateData,
+  ): string {
     const html = EmailTemplateCompiler.renderTemplate(
       "order-placed-SEPA-transfer",
       templateData,

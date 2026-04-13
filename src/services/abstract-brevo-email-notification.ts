@@ -3,6 +3,11 @@ type BrevoRecipient = {
   name?: string;
 };
 
+type BrevoAttachment = {
+  content: string;
+  name: string;
+};
+
 export type BrevoEmailPayload = {
   sender: {
     name: string;
@@ -12,6 +17,7 @@ export type BrevoEmailPayload = {
   subject: string;
   htmlContent: string;
   tags?: string[];
+  attachment?: BrevoAttachment[];
 };
 
 class BrevoApiClient {
@@ -117,6 +123,7 @@ abstract class AbstractBrevoEmailNotification {
     htmlContent: string,
     tags?: string[],
     name?: string,
+    attachment?: BrevoAttachment[],
   ): BrevoEmailPayload {
     return {
       sender: {
@@ -127,6 +134,7 @@ abstract class AbstractBrevoEmailNotification {
       subject,
       htmlContent,
       tags,
+      attachment,
     };
   }
 

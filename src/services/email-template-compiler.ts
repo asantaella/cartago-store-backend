@@ -8,15 +8,30 @@ export default class EmailTemplateCompiler {
 
   private static partialsRegistered = false;
 
+  private static resolveTemplatePath(relativePath: string): string | null {
+    const candidatePaths = [
+      path.join(__dirname, relativePath),
+      path.join(process.cwd(), "src", relativePath),
+    ];
+
+    for (const candidatePath of candidatePaths) {
+      if (fs.existsSync(candidatePath)) {
+        return candidatePath;
+      }
+    }
+
+    return null;
+  }
+
   static registerPartials(): void {
     if (this.partialsRegistered) {
       return;
     }
 
     try {
-      const partialsDir = path.join(__dirname, "../templates/partials/");
+      const partialsDir = this.resolveTemplatePath("../templates/partials/");
 
-      if (fs.existsSync(partialsDir)) {
+      if (partialsDir) {
         const partialFiles = fs
           .readdirSync(partialsDir)
           .filter((file) => file.endsWith(".handlebars"));
@@ -55,15 +70,13 @@ export default class EmailTemplateCompiler {
 
       this.registerPartials();
 
-      const templatePath = path.join(
-        __dirname,
-        "../templates/emails/",
-        `${templateName}.handlebars`,
+      const templatePath = this.resolveTemplatePath(
+        `../templates/emails/${templateName}.handlebars`,
       );
 
-      if (!fs.existsSync(templatePath)) {
+      if (!templatePath) {
         console.error(
-          `[EmailTemplateCompiler] Template not found: ${templatePath}`,
+          `[EmailTemplateCompiler] Template not found: ${templateName}`,
         );
         return null;
       }

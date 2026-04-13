@@ -1,5 +1,6 @@
 import { BaseService } from "medusa-interfaces";
 import {
+  FulfillmentStatus,
   Order,
   OrderService,
   OrderStatus,
@@ -30,7 +31,7 @@ class InvoiceNumberGeneratorService extends BaseService {
     // Obtener todas las órdenes y filtrar las que tengan al menos un payment capturado
     const [orders] = await this.orderService_.listAndCount(
       {
-        payment_status: [PaymentStatus.CAPTURED],
+        payment_status: [PaymentStatus.CAPTURED],       
       },
       { relations: ["payments"] },
     );

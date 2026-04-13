@@ -6,7 +6,7 @@ import {
   OrderService,
 } from "@medusajs/medusa";
 import ReceiptNotificationService from "../../../../../services/receipt-notification";
-import OrderNotificationService from "../../../../../services/order-notification";
+import OrderPlacedNotificationService from "../../../../../services/order-placed-notification";
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
@@ -28,9 +28,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     }
 
     // Obtener servicios del contenedor
-    const orderService: OrderService = req.scope.resolve("orderService");
-    const orderNotificationService: OrderNotificationService =
-      req.scope.resolve("orderNotificationService");
+    const orderNotificationService = new OrderPlacedNotificationService(
+      req.scope,
+    );
     const receiptNotificationService: ReceiptNotificationService =
       req.scope.resolve("receiptNotificationService");
 

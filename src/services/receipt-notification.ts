@@ -11,9 +11,9 @@ import { MailerSend, Recipient, EmailParams } from "mailersend";
 // Importar las utilidades
 import { formatMoney, formatDate } from "../utils/format-utils";
 
-import OrderNotificationService, {
-  MailerSendOrderData,
-} from "./order-notification";
+import OrderPlacedNotificationService, {
+  OrderPlacedNotificationTemplateData,
+} from "./order-placed-notification";
 import { OrderInvoice } from "../types/order-invoice.model";
 import { EmailNotification } from "../types/email-notification.model";
 
@@ -24,10 +24,12 @@ class ReceiptNotificationService extends AbstractNotificationService {
   static is_installed = true;
   protected config: any;
   private mailerSendService: MailerSend;
-  private orderNotificationService: OrderNotificationService;
+  private orderNotificationService: OrderPlacedNotificationService;
   constructor(container, options) {
     super(container);
-    this.orderNotificationService = new OrderNotificationService(container);
+    this.orderNotificationService = new OrderPlacedNotificationService(
+      container,
+    );
 
     try {
       this.mailerSendService = new MailerSend({
@@ -36,7 +38,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
     } catch (error) {
       console.error(
         "[NOTIFICATION] Error initializing MailerSend client for orders:",
-        error
+        error,
       );
     }
   }
@@ -90,7 +92,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
       ...item,
       unit_price_ex_tax: formatMoney(
         item.subtotal / item.quantity,
-        currencyCode
+        currencyCode,
       ),
       unit_price: formatMoney(item.total / item.quantity, currencyCode),
       totals: {
@@ -112,7 +114,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
   async sendNotification(
     event: string,
     data: Order,
-    attachmentGenerator?: unknown
+    attachmentGenerator?: unknown,
   ): Promise<{
     to: string;
     status: string;
@@ -121,7 +123,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
     try {
       const orderData: Order =
         await this.orderNotificationService.retrieveOrderWithRelations(
-          (data as Order).id as string
+          (data as Order).id as string,
         );
 
       const {
@@ -147,14 +149,14 @@ class ReceiptNotificationService extends AbstractNotificationService {
       });
       console.log(
         "[NOTIFICATION][RECEIPT] EmailNotification: ",
-        emailNotification.toString()
+        emailNotification.toString(),
       );
       const emailParams = emailNotification.getEmailParams();
       console.log("[NOTIFICATION] [RECEIPT] ready to send ... ", to_email);
       await this.mailerSendService.email.send(emailParams);
 
       emailNotification.setToEmail(
-        process.env.MAILERSEND_ADMIN_EMAIL || "cartago4x4@gmail.com"
+        process.env.MAILERSEND_ADMIN_EMAIL || "cartago4x4@gmail.com",
       );
 
       const emailAdminParams = emailNotification.getEmailParams();
@@ -172,7 +174,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
       await this.mailerSendService.email.send(emailAdminParams);
 
       console.log(
-        `[NOTIFICATION][RECEIPT] Successfully sent ${event} email to ${to_email} for order ${templateData.display_id}`
+        `[NOTIFICATION][RECEIPT] Successfully sent ${event} email to ${to_email} for order ${templateData.display_id}`,
       );
 
       return {
@@ -183,7 +185,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
     } catch (error) {
       console.error(
         `[NOTIFICATION][RECEIPT] Error sending ${event} email:`,
-        error
+        error,
       );
 
       return {
@@ -211,7 +213,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
     });
     console.log(
       "[NOTIFICATION][RECEIPT] EmailNotification to admin",
-      emailNotification
+      emailNotification,
     );
 
     const emailAdminParams = emailNotification.getEmailParams();
@@ -230,7 +232,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
       .catch(() => "failed");
 
     console.log(
-      `[NOTIFICATION][RECEIPT] Successfully sent ${order.display_id} email to ${adminEmail}`
+      `[NOTIFICATION][RECEIPT] Successfully sent ${order.display_id} email to ${adminEmail}`,
     );
 
     return {
@@ -243,7 +245,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
   async resendNotification(
     notification: unknown,
     config: unknown,
-    attachmentGenerator: unknown
+    attachmentGenerator: unknown,
   ): Promise<{
     to: string;
     status: string;
@@ -265,7 +267,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
       return this.sendNotification(
         typedNotification.event_name,
         updatedData,
-        attachmentGenerator
+        attachmentGenerator,
       );
     }
 

@@ -1,0 +1,19 @@
+<table class="tracking-card" role="presentation">
+  <thead>
+    <tr>
+      <th colspan="2">Información de seguimiento</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each tracking_links}}
+      <tr>
+        <td class="label">Localizador</td>
+        <td>{{tracking_number}}</td>
+      </tr>
+      <tr>
+        <td class="label">Enlace de seguimiento</td>
+        <td><a class="tracking-link" href="{{url}}">{{url}}</a></td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

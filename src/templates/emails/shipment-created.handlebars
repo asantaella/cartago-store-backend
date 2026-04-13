@@ -1,0 +1,84 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedido enviado</title>
+    {{> email-shared-styles}}
+  </head>
+  <body>
+    <div class="frame">
+      <div class="shell">
+        <div class="topbar">
+          <img
+            src="https://cdn.mcauto-images-production.sendgrid.net/54b412839bf00c0a/2770dc28-348f-4b7f-b46b-d3df6786e14a/1311x103.jpg"
+            alt="Cartago4x4"
+          />
+        </div>
+
+        <div class="hero">
+          <h1>Pedido enviado</h1>
+        </div>
+
+        <div class="section">
+          {{#if showTrackingDeliverySection}}
+            {{> tracking-card tracking_links=tracking_links}}
+          {{/if}}
+
+          <div class="order-title">
+            <h2>Datos del pedido</h2>
+          </div>
+
+          <table class="info-table" role="presentation">
+            <tr>
+              <td class="label">Nº Pedido</td>
+              <td>{{display_id}}</td>
+            </tr>
+            <tr>
+              <td class="label">Método de envío</td>
+              <td>{{shipping_method}}</td>
+            </tr>
+            <tr>
+              <td class="label">Dirección envío</td>
+              <td>{{shipping_address}}</td>
+            </tr>
+            <tr>
+              <td class="label">Cliente</td>
+              <td>{{customer.first_name}} {{customer.last_name}}</td>
+            </tr>
+            <tr>
+              <td class="label">Email</td>
+              <td>{{customer.email}}</td>
+            </tr>
+            <tr>
+              <td class="label">Fecha</td>
+              <td>{{order_date}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="footer">
+          <img
+            src="https://bucket.mailersendapp.com/z3m5jgr8emldpyo6/nrw7gym9mrjg2k8e/images/9f785312-8b91-4092-98af-d87c0b11fde9.png"
+            border="0"
+            alt=""
+            width="40"
+            style="max-width:40px;display:inline-block"
+            class="CToWUd"
+            data-bit="iit"
+          />
+          <div class="footer-links">
+            <a href="https://cartago4x4.es/terminos-condiciones">Términos y
+              condiciones</a>
+            |
+            <a href="https://cartago4x4.es/politica-privacidad">Política
+              privacidad</a>
+            |
+            <a href="https://cartago4x4.es/#contacto">Contacto</a>
+          </div>
+          <p class="footer-copy">&copy; 2026
+            {{company_name}}. Todos los derechos reservados.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

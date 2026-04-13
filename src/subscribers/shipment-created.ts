@@ -13,7 +13,7 @@ export default async function handleShipmentCreated({
 }: SubscriberArgs<Record<string, string>>) {
   try {
     console.log(
-      `[NOTIFICATION] Shipment created subscriber triggered for fulfillment ${data.id}`
+      `[NOTIFICATION] Shipment created subscriber triggered for fulfillment ${data.id}`,
     );
 
     const shipmentNotificationService: ShipmentNotificationService =
@@ -46,24 +46,22 @@ export default async function handleShipmentCreated({
     }
 
     console.log(
-      `[NOTIFICATION] Sending shipment.created notification for order ${fulfillment.order.display_id}`
+      `[NOTIFICATION] Sending shipment.created notification for order ${fulfillment.order.display_id}`,
     );
 
     // Enviar la notificación de envío creado con el PDF de la factura
     await shipmentNotificationService.sendNotification(
       OrderService.Events.SHIPMENT_CREATED,
-      fulfillment
+      fulfillment,
     );
 
-
-
     console.log(
-      `[NOTIFICATION] Successfully processed shipment.created for order ${fulfillment.order.display_id}`
+      `[NOTIFICATION] Successfully processed shipment.created for order ${fulfillment.order.display_id}`,
     );
   } catch (error) {
     console.error(
       "[NOTIFICATION] Error processing shipment created notification:",
-      error
+      error,
     );
   }
 }
