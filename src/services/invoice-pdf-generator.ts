@@ -31,6 +31,7 @@ class InvoicePdfGeneratorService extends BaseService {
         "shipping_methods",
         "shipping_methods.tax_lines",
         "items.tax_lines",
+        "fulfillments"
       ],
     });
 
