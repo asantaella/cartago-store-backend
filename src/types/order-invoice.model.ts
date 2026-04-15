@@ -61,13 +61,13 @@ export class OrderInvoice {
 
     const shippingTotal = formatMoney(
       shippingWithoutTax > 0 ? shippingMethod?.price : 0,
-      currencyCode
+      currencyCode,
     );
     const discountTotal = formatMoney(0, currencyCode);
     const shippingSubtotal = formatMoney(
       this.getShippingWithoutTax() || 0,
       currencyCode,
-      false
+      false,
     );
 
     return `${shippingMethodName};;1;${shippingSubtotal};${shippingTotal};${shippingSubtotal};${discountTotal};${shippingTotal};;`;
@@ -158,8 +158,8 @@ export class OrderInvoice {
     return this.order.billing_address
       ? `${this.order.billing_address.phone}`
       : this.order.shipping_address.phone
-      ? `${this.order.shipping_address.phone}`
-      : `${this.order.customer.phone}`;
+        ? `${this.order.shipping_address.phone}`
+        : `${this.order.customer.phone}`;
   }
 
   /**
@@ -183,7 +183,7 @@ export class OrderInvoice {
   public getItemsTaxes(): number {
     const itemsTaxes = this.order.items.reduce(
       (acc, item) => acc + (item.tax_total || 0),
-      0
+      0,
     );
     return itemsTaxes / 100;
   }
@@ -257,7 +257,6 @@ export class OrderInvoice {
     return (discount + giftCardTotal) / 100;
   }
 
-
   /**
    * Calcula el total del pedido, corrigiendo el problema con los descuentos en gastos de envío
    */
@@ -290,19 +289,34 @@ export class OrderInvoice {
     });
   }
 
-  public getInvoiceCreatedAt(): string {
-    if (this.order.fulfillments && this.order.fulfillments.length > 0) {
-      
-      const createdAt = this.order.created_at;
-      const customInvoiceDate = this.order.billing_address?.metadata?.invoice_date as string || this.order.shipping_address?.metadata?.invoice_date as string
-      const invoiceDate = customInvoiceDate || createdAt
-      return new Date(invoiceDate).toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    }
-    return this.getOrderCreatedAt();
+  public getInvoiceDate(): string {
+    const paymentDate =
+      this.order.payments && this.order.payments.length > 0
+        ? this.order.payments[0].updated_at
+        : null;
+    const shippingDate =
+      this.order.fulfillments && this.order.fulfillments.length > 0
+        ? this.order.fulfillments[0].shipped_at
+        : null;
+    const customInvoiceDate = this.order.billing_address?.metadata
+      ?.invoice_date as string;
+
+    console.log("Payment Date:", paymentDate);
+    console.log("Shipping Date:", shippingDate);
+
+    let _invoiceDate = shippingDate
+     if(shippingDate && paymentDate)   {
+      _invoiceDate = shippingDate > paymentDate ? shippingDate : paymentDate
+     }
+    const invoiceDate = customInvoiceDate || _invoiceDate;
+
+    console.log("Invoice Date:", invoiceDate);
+
+    return new Date(invoiceDate).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   }
 
   public getInvoiceId(): string {

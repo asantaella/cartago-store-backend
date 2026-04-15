@@ -31,7 +31,7 @@ class InvoicePdfGeneratorService extends BaseService {
         "shipping_methods",
         "shipping_methods.tax_lines",
         "items.tax_lines",
-        "fulfillments"
+        "fulfillments",
       ],
     });
 
@@ -120,7 +120,7 @@ class InvoicePdfGeneratorService extends BaseService {
             margin: [0, 0, 5, 0],
           },
           {
-            text: orderInvoice.getInvoiceCreatedAt(),
+            text: orderInvoice.getInvoiceDate(),
             alignment: "left",
           },
         ],
