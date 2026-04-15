@@ -294,7 +294,7 @@ export class OrderInvoice {
     if (this.order.fulfillments && this.order.fulfillments.length > 0) {
       
       const createdAt = this.order.created_at;
-      const customInvoiceDate = this.order.billing_address?.metadata?.invoice_date as string
+      const customInvoiceDate = this.order.billing_address?.metadata?.invoice_date as string || this.order.shipping_address?.metadata?.invoice_date as string
       const invoiceDate = customInvoiceDate || createdAt
       return new Date(invoiceDate).toLocaleDateString("es-ES", {
         day: "2-digit",
