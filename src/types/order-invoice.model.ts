@@ -294,32 +294,22 @@ export class OrderInvoice {
       this.order.payments && this.order.payments.length > 0
         ? this.order.payments[0].updated_at
         : null;
-    const shippingDate =
-      this.order.fulfillments && this.order.fulfillments.length > 0
-        ? this.order.fulfillments[0].shipped_at
-        : null;
+
     const customInvoiceDate = this.order.billing_address?.metadata
       ?.invoice_date as string;
 
-    console.log("Payment Date:", paymentDate);
-    console.log("Shipping Date:", shippingDate);
-
-    let _invoiceDate = shippingDate
-     if(shippingDate && paymentDate)   {
-      _invoiceDate = shippingDate > paymentDate ? shippingDate : paymentDate
-     }
-    const invoiceDate = customInvoiceDate || _invoiceDate;
+    const invoiceDate = customInvoiceDate || paymentDate;
 
     console.log("Invoice Date:", invoiceDate);
-
-    if(invoiceDate){
+    if (invoiceDate) {
       return new Date(invoiceDate).toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
       });
     }
-    return '-'
+
+    return "-";
   }
 
   public getInvoiceId(): string {
