@@ -292,7 +292,7 @@ export class OrderInvoice {
   public getInvoiceDate(): string {
     const paymentDate =
       this.order.payments && this.order.payments.length > 0
-        ? this.order.payments[0].updated_at
+        ? this.order.payments[0].captured_at
         : null;
 
     const customInvoiceDate = this.order.billing_address?.metadata
