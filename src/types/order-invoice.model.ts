@@ -217,6 +217,10 @@ export class OrderInvoice {
     return this.calculateShippingTaxTotal() / 100;
   }
 
+  public getRefundedTotal(): number {
+    return (this.order.refunded_total || 0) / 100;
+  }
+
   /**
    * Calcula el impuesto de envío si no está disponible shipping_tax_total
    */
@@ -264,16 +268,16 @@ export class OrderInvoice {
     // Calculamos el total corregido manualmente
 
     const shipping = this.getShippingWithoutTax();
+    const refundedTotal = this.getRefundedTotal();
 
     if (shipping > 0) {
-      return this.order.total / 100;
+      return this.order.total / 100 - refundedTotal;
     }
     const subtotal = this.getSubtotal();
     const taxes = this.getTaxes();
     const discount = this.getDiscount() || 0;
-    //const shippingTax = this.getShippingTax();
 
-    const total = subtotal + taxes - discount;
+    const total = subtotal + taxes - discount - refundedTotal;
 
     return total;
   }

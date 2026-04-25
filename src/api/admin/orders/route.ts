@@ -44,6 +44,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
           "fulfillment_status",
           "payment_status",
           "total",
+          "paid_total",
+          "refunded_total",
           "shipping_total",
           "currency_code",
         ];
@@ -275,7 +277,17 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
           }
         );
 
-        const { total: recalculatedTotal, shippingTotal } =
+        console.log(`Order with totals for order ${order.display_id}:`, {
+          total: orderWithTotals.total,
+          shipping_total: orderWithTotals.shipping_total,
+          paid_total: orderWithTotals.paid_total,
+          refunded_total: orderWithTotals.refunded_total,
+        });
+        if(order.display_id === 2809) {
+          console.log(`Order 2809 details:`, JSON.stringify(orderWithTotals, null, 2));
+        }
+
+        const { total: recalculatedTotal, shippingTotal, paidTotal } =
           calculateOrderTotal(orderWithTotals);
 
         // Mantener solo los campos solicitados en el select si se especificaron
@@ -292,7 +304,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
           });
         }
-
+        //console.log(`Orden ${order.display_id}: total original=${order.total}, recalculado=${recalculatedTotal}, shipping_total=${shippingTotal}, paid_total=${paidTotal}, refund_total=${order.refunded_total}`);
+       // console.log(`${JSON.stringify(orderWithTotals, null, 2)}`);
         return {
           ...orderResponse,
           total: recalculatedTotal,
@@ -596,6 +609,7 @@ function normalizedILike(value: string): ReturnType<typeof Raw> {
 function calculateOrderTotal(order: any): {
   total: number;
   shippingTotal: number;
+  paidTotal?: number;
 } {
   const shippingTotal = order.shipping_total || 0;
 
@@ -604,8 +618,13 @@ function calculateOrderTotal(order: any): {
     _total -= order.shipping_tax_total;
   }
 
+  if(order.refunded_total > 0) {
+    _total -= order.refunded_total; 
+  }
+
   return {
     total: _total,
+    paidTotal: order.paid_total,
     shippingTotal: Math.round(shippingTotal),
   };
 }
