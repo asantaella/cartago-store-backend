@@ -14,9 +14,20 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const orderRepo = manager.getRepository(Order);
   try {
     // Extraer parámetros de query
-    const { expand, fields, offset = 0, limit = 15, phone, first_name, last_name, ...filters } = req.query;
+    const {
+      expand,
+      fields,
+      offset = 0,
+      limit = 15,
+      phone,
+      first_name,
+      last_name,
+      ...filters
+    } = req.query;
     const phoneFilter = Array.isArray(phone) ? phone[0] : phone;
-    const firstNameFilter = Array.isArray(first_name) ? first_name[0] : first_name;
+    const firstNameFilter = Array.isArray(first_name)
+      ? first_name[0]
+      : first_name;
     const lastNameFilter = Array.isArray(last_name) ? last_name[0] : last_name;
 
     // Preparar las relaciones a expandir
@@ -114,7 +125,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             phone: Raw(
               (alias) =>
                 `REPLACE(${alias}, ' ', '') ILIKE REPLACE(:phoneVal, ' ', '')`,
-              { phoneVal: `%${qValueStr}%` }
+              { phoneVal: `%${qValueStr}%` },
             ),
           },
         }),
@@ -122,12 +133,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
           email: ILike(qLike),
         }),
         mergeConstraints(baseWhere, {
-          display_id: Raw(
-            (alias) => `CAST(${alias} as varchar) ILike :q`,
-            {
-              q: qLike,
-            }
-          ),
+          display_id: Raw((alias) => `CAST(${alias} as varchar) ILike :q`, {
+            q: qLike,
+          }),
         }),
         mergeConstraints(baseWhere, {
           customer: {
@@ -147,7 +155,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             phone: Raw(
               (alias) =>
                 `REPLACE(${alias}, ' ', '') ILIKE REPLACE(:phoneVal2, ' ', '')`,
-              { phoneVal2: `%${qValueStr}%` }
+              { phoneVal2: `%${qValueStr}%` },
             ),
           },
         }),
@@ -171,12 +179,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
               first_name: normalizedILike(words[0]),
               last_name: normalizedILike(words[1]),
             },
-          })
+          }),
         );
 
         // Buscar todas las palabras en last_name
         if (words.length > 2) {
-          const lastNamePart = words.slice(1).join(' ');
+          const lastNamePart = words.slice(1).join(" ");
           searchConditions.push(
             mergeConstraints(baseWhere, {
               shipping_address: {
@@ -191,7 +199,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 first_name: normalizedILike(words[0]),
                 last_name: normalizedILike(lastNamePart),
               },
-            })
+            }),
           );
         }
       }
@@ -209,7 +217,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             phone: Raw(
               (alias) =>
                 `REPLACE(${alias}, ' ', '') ILIKE REPLACE(:phoneVal, ' ', '')`,
-              { phoneVal: `%${phoneVal}%` }
+              { phoneVal: `%${phoneVal}%` },
             ),
           },
         },
@@ -221,8 +229,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
       query.where = baseConditions.flatMap((condition) =>
         phoneConstraints.map((constraint) =>
-          mergeConstraints(condition ?? {}, constraint)
-        )
+          mergeConstraints(condition ?? {}, constraint),
+        ),
       );
     }
 
@@ -237,13 +245,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       const nameConstraints = buildNameConstraints(
         firstNameFilter,
         lastNameFilter,
-        innerJoinLikeConstraints
+        innerJoinLikeConstraints,
       );
 
       query.where = baseConditions.flatMap((condition) =>
         nameConstraints.map((constraint) =>
-          mergeConstraints(condition ?? {}, constraint)
-        )
+          mergeConstraints(condition ?? {}, constraint),
+        ),
       );
     }
 
@@ -274,21 +282,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
           order.id,
           {
             relations,
-          }
+          },
         );
 
-        console.log(`Order with totals for order ${order.display_id}:`, {
-          total: orderWithTotals.total,
-          shipping_total: orderWithTotals.shipping_total,
-          paid_total: orderWithTotals.paid_total,
-          refunded_total: orderWithTotals.refunded_total,
-        });
-        if(order.display_id === 2809) {
-          console.log(`Order 2809 details:`, JSON.stringify(orderWithTotals, null, 2));
-        }
-
-        const { total: recalculatedTotal, shippingTotal, paidTotal } =
-          calculateOrderTotal(orderWithTotals);
+        const {
+          total: recalculatedTotal,
+          shippingTotal,
+          paidTotal,
+        } = calculateOrderTotal(orderWithTotals);
 
         // Mantener solo los campos solicitados en el select si se especificaron
         let orderResponse: any = orderWithTotals;
@@ -305,14 +306,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
           });
         }
         //console.log(`Orden ${order.display_id}: total original=${order.total}, recalculado=${recalculatedTotal}, shipping_total=${shippingTotal}, paid_total=${paidTotal}, refund_total=${order.refunded_total}`);
-       // console.log(`${JSON.stringify(orderWithTotals, null, 2)}`);
+        // console.log(`${JSON.stringify(orderWithTotals, null, 2)}`);
         return {
           ...orderResponse,
           total: recalculatedTotal,
           shipping_total: shippingTotal, // Actualizar shipping_total
           original_total: orderWithTotals.total, // Guardar el total original para referencia
         };
-      })
+      }),
     );
     return res.status(200).json({
       orders: ordersWithRecalculatedTotal,
@@ -343,7 +344,7 @@ function sortByRelevance(orders: Order[], searchTerm: string): Order[] {
   }
 
   const firstWord = removeAccents(words[0]).toLowerCase();
-  const secondWord = removeAccents(words.slice(1).join(' ')).toLowerCase();
+  const secondWord = removeAccents(words.slice(1).join(" ")).toLowerCase();
 
   // Calcular score para cada orden
   const ordersWithScore = orders.map((order) => {
@@ -352,16 +353,16 @@ function sortByRelevance(orders: Order[], searchTerm: string): Order[] {
     // Obtener nombres normalizados de shipping_address y customer
     const saFirstName = order.shipping_address?.first_name
       ? removeAccents(order.shipping_address.first_name).toLowerCase()
-      : '';
+      : "";
     const saLastName = order.shipping_address?.last_name
       ? removeAccents(order.shipping_address.last_name).toLowerCase()
-      : '';
+      : "";
     const custFirstName = order.customer?.first_name
       ? removeAccents(order.customer.first_name).toLowerCase()
-      : '';
+      : "";
     const custLastName = order.customer?.last_name
       ? removeAccents(order.customer.last_name).toLowerCase()
-      : '';
+      : "";
 
     // Score 1000: Coincidencia exacta de nombre completo (first_name + last_name)
     if (
@@ -379,21 +380,32 @@ function sortByRelevance(orders: Order[], searchTerm: string): Order[] {
     }
     // Score 300: first_name empieza con primera palabra Y last_name empieza con segunda
     else if (
-      (saFirstName.startsWith(firstWord) && saLastName.startsWith(secondWord)) ||
-      (custFirstName.startsWith(firstWord) && custLastName.startsWith(secondWord))
+      (saFirstName.startsWith(firstWord) &&
+        saLastName.startsWith(secondWord)) ||
+      (custFirstName.startsWith(firstWord) &&
+        custLastName.startsWith(secondWord))
     ) {
       score = 300;
     }
     // Score 100: first_name contiene primera palabra
-    else if (saFirstName.includes(firstWord) || custFirstName.includes(firstWord)) {
+    else if (
+      saFirstName.includes(firstWord) ||
+      custFirstName.includes(firstWord)
+    ) {
       score = 100;
       // Bonus si last_name contiene algo de la segunda palabra
-      if (saLastName.includes(secondWord) || custLastName.includes(secondWord)) {
+      if (
+        saLastName.includes(secondWord) ||
+        custLastName.includes(secondWord)
+      ) {
         score += 50;
       }
     }
     // Score 80: last_name contiene segunda palabra
-    else if (saLastName.includes(secondWord) || custLastName.includes(secondWord)) {
+    else if (
+      saLastName.includes(secondWord) ||
+      custLastName.includes(secondWord)
+    ) {
       score = 80;
     }
     // Score 50: Coincide el término completo en algún campo
@@ -420,7 +432,10 @@ function sortByRelevance(orders: Order[], searchTerm: string): Order[] {
       return b.score - a.score;
     }
     // Si tienen mismo score, ordenar por fecha
-    return new Date(b.order.created_at).getTime() - new Date(a.order.created_at).getTime();
+    return (
+      new Date(b.order.created_at).getTime() -
+      new Date(a.order.created_at).getTime()
+    );
   });
 
   return ordersWithScore.map((item) => item.order);
@@ -435,7 +450,7 @@ function sortByRelevance(orders: Order[], searchTerm: string): Order[] {
 function buildNameConstraints(
   firstNameFilter: any,
   lastNameFilter: any,
-  innerJoinLikeConstraints: any
+  innerJoinLikeConstraints: any,
 ) {
   const constraints: any[] = [];
 
@@ -457,12 +472,12 @@ function buildNameConstraints(
             ...innerJoinLikeConstraints.customer,
             first_name: normalizedILike(fname),
           },
-        }
+        },
       );
     } else {
       // Múltiples palabras: primera palabra en first_name Y resto en last_name
       const firstWord = words[0];
-      const restWords = words.slice(1).join(' ');
+      const restWords = words.slice(1).join(" ");
 
       constraints.push(
         {
@@ -478,7 +493,7 @@ function buildNameConstraints(
             first_name: normalizedILike(firstWord),
             last_name: normalizedILike(restWords),
           },
-        }
+        },
       );
 
       // También buscar todo el texto en first_name
@@ -494,7 +509,7 @@ function buildNameConstraints(
             ...innerJoinLikeConstraints.customer,
             first_name: normalizedILike(fname),
           },
-        }
+        },
       );
     }
   } else if (lastNameFilter && !firstNameFilter) {
@@ -515,12 +530,12 @@ function buildNameConstraints(
             ...innerJoinLikeConstraints.customer,
             last_name: normalizedILike(lname),
           },
-        }
+        },
       );
     } else {
       // Múltiples palabras: primera palabra en first_name Y resto en last_name
       const firstWord = words[0];
-      const restWords = words.slice(1).join(' ');
+      const restWords = words.slice(1).join(" ");
 
       constraints.push(
         {
@@ -536,7 +551,7 @@ function buildNameConstraints(
             first_name: normalizedILike(firstWord),
             last_name: normalizedILike(restWords),
           },
-        }
+        },
       );
 
       // También buscar todo el texto en last_name
@@ -552,7 +567,7 @@ function buildNameConstraints(
             ...innerJoinLikeConstraints.customer,
             last_name: normalizedILike(lname),
           },
-        }
+        },
       );
     }
   } else if (firstNameFilter && lastNameFilter) {
@@ -574,7 +589,7 @@ function buildNameConstraints(
           first_name: normalizedILike(fname),
           last_name: normalizedILike(lname),
         },
-      }
+      },
     );
   }
 
@@ -586,8 +601,8 @@ function buildNameConstraints(
  */
 function removeAccents(str: string): string {
   return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 }
 
@@ -597,12 +612,12 @@ function removeAccents(str: string): string {
  */
 function normalizedILike(value: string): ReturnType<typeof Raw> {
   // Normalizar en JavaScript (remover tildes y espacios)
-  const normalized = removeAccents(value).replace(/\s+/g, '');
-  
+  const normalized = removeAccents(value).replace(/\s+/g, "");
+
   return Raw(
     (alias) =>
       `LOWER(REPLACE(TRANSLATE(${alias}, 'áéíóúàèìòùâêîôûãõäëïöüçñÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÄËÏÖÜÇÑ', 'aeiouaeiouaeiouaoaeiouccnAEIOUAEIOUAEIOUAOAEIOUCCN'), ' ', '')) ILIKE :nval`,
-    { nval: `%${normalized}%` }
+    { nval: `%${normalized}%` },
   );
 }
 
@@ -618,8 +633,8 @@ function calculateOrderTotal(order: any): {
     _total -= order.shipping_tax_total;
   }
 
-  if(order.refunded_total > 0) {
-    _total -= order.refunded_total; 
+  if (order.refunded_total > 0) {
+    _total -= order.refunded_total;
   }
 
   return {
