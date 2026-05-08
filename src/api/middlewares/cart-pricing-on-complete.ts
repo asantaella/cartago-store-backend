@@ -37,7 +37,7 @@ async function updatePaymentSessionsAmount(
   cartId: string,
   items: LineItemEntity[],
   shippingMethods: ShippingMethodEntity[],
-  giftCardTotal: number
+  giftCardTotal: number,
 ): Promise<void> {
   try {
     // Calcular el nuevo total usando los precios ya persistidos en la BD
@@ -50,12 +50,12 @@ async function updatePaymentSessionsAmount(
       `Calculated total for payment sessions: subtotal=${subtotal}, shipping=${shippingTotal}, ` +
         `discount=${discount}, giftCard=${giftCardTotal}, total=${total} (${(
           total / 100
-        ).toFixed(2)}€)`
+        ).toFixed(2)}€)`,
     );
 
     // Resolver servicios de Medusa
     const paymentProviderService = req.scope.resolve(
-      "paymentProviderService"
+      "paymentProviderService",
     ) as any;
     const manager = resolveManager(req) as any;
 
@@ -86,9 +86,8 @@ async function updatePaymentSessionsAmount(
       const oldAmount = session.amount;
 
       // Usar PaymentProviderService para actualizar payment session
-      // ESTRATEGIA:
-      // - Para otros proveedores: usar updateSession
-      // - Para Stripe: actualizar solo la BD (ya que updatePayment falla)
+      // Esto mantiene alineado el importe externo del provider con el total
+      // ya persistido en la BD antes de completar la orden.
       try {
         const sessionInput = {
           provider_id: session.provider_id,
@@ -104,45 +103,27 @@ async function updatePaymentSessionsAmount(
 
         let updatedSession;
 
-        // Para Stripe, actualizar solo la BD sin llamar al provider
-        // Ya que updatePayment y refreshSession causan problemas
-        // El monto en la BD está correcto, lo importante es que no haya error
-        if (session.provider_id === "stripe") {
-          log(
-            `Updating Stripe session ${session.id} in DB only (skipping provider call)`
-          );
-          // Actualizar solo la BD para evitar errores del provider
-          session.amount = total;
-          session.data = {
-            ...(session.data || {}),
+        updatedSession = await paymentProviderService.updateSession(
+          {
+            id: session.id,
+            data: session.data || {},
+            provider_id: session.provider_id,
+          },
+          sessionInput,
+        );
+
+        // Guardar metadata adicional
+        if (updatedSession) {
+          updatedSession.data = {
+            ...(updatedSession.data || {}),
             amount_adjusted_for_tax_exempt: true,
             original_amount: oldAmount,
           };
-          updatedSession = await paymentSessionRepo.save(session);
-        } else {
-          // Para otros proveedores, usar updateSession
-          updatedSession = await paymentProviderService.updateSession(
-            {
-              id: session.id,
-              data: session.data || {},
-              provider_id: session.provider_id,
-            },
-            sessionInput
-          );
-
-          // Guardar metadata adicional
-          if (updatedSession) {
-            updatedSession.data = {
-              ...(updatedSession.data || {}),
-              amount_adjusted_for_tax_exempt: true,
-              original_amount: oldAmount,
-            };
-            await paymentSessionRepo.save(updatedSession);
-          }
+          await paymentSessionRepo.save(updatedSession);
         }
 
         log(
-          `Updated payment session ${session.id} (${session.provider_id}): ${oldAmount} → ${total} cents`
+          `Updated payment session ${session.id} (${session.provider_id}): ${oldAmount} → ${total} cents`,
         );
       } catch (providerError) {
         const msg =
@@ -150,7 +131,7 @@ async function updatePaymentSessionsAmount(
             ? providerError.message
             : String(providerError);
         logError(
-          `Error updating session ${session.id} via provider ${session.provider_id}: ${msg}`
+          `Error updating session ${session.id} via provider ${session.provider_id}: ${msg}`,
         );
 
         // Fallback: actualizar solo la BD local
@@ -163,7 +144,7 @@ async function updatePaymentSessionsAmount(
         };
         await paymentSessionRepo.save(session);
         log(
-          `Fallback: Updated payment session ${session.id} in DB only: ${oldAmount} → ${total} cents`
+          `Fallback: Updated payment session ${session.id} in DB only: ${oldAmount} → ${total} cents`,
         );
       }
     }
@@ -177,7 +158,7 @@ async function updatePaymentSessionsAmount(
       .execute();
 
     log(
-      `Payment sessions updated for cart ${cartId}: ${sessions.length} sessions via PaymentProviderService`
+      `Payment sessions updated for cart ${cartId}: ${sessions.length} sessions via PaymentProviderService`,
     );
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
@@ -195,7 +176,7 @@ async function updatePaymentSessionsAmount(
 export async function persistCartPricingOnComplete(
   req: MedusaRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const cartId = req.params.id as string;
@@ -260,11 +241,15 @@ export async function persistCartPricingOnComplete(
 
       // Persist variant shipping extra for ALL carts (tax-exempt and standard).
       // Must happen before order creation so the order total is correct.
-      if (Array.isArray(cart.shipping_methods) && cart.shipping_methods.length > 0) {
+      if (
+        Array.isArray(cart.shipping_methods) &&
+        cart.shipping_methods.length > 0
+      ) {
         const extraTotal = calculateShippingExtra(cart as any);
         for (const method of cart.shipping_methods) {
           if (!method.data) method.data = {};
-          const currentExtra = (method.data.shipping_extra_total as number) ?? 0;
+          const currentExtra =
+            (method.data.shipping_extra_total as number) ?? 0;
           if (currentExtra !== extraTotal) {
             const basePrice = method.price - currentExtra;
             method.price = basePrice + extraTotal;
@@ -272,7 +257,7 @@ export async function persistCartPricingOnComplete(
             await shippingMethodRepo.save(method);
             log(
               `COMPLETE: synced shipping extra for method ${method.id}: ` +
-                `extra ${currentExtra} → ${extraTotal} cents`
+                `extra ${currentExtra} → ${extraTotal} cents`,
             );
           }
         }
@@ -280,7 +265,9 @@ export async function persistCartPricingOnComplete(
 
       // Solo procesar si es zona tax-exempt
       if (!taxContext.isTaxExempt) {
-        log(`Cart ${cartId} is not tax-exempt, skipping tax-exempt persistence`);
+        log(
+          `Cart ${cartId} is not tax-exempt, skipping tax-exempt persistence`,
+        );
         return;
       }
 
@@ -301,9 +288,9 @@ export async function persistCartPricingOnComplete(
                 `discount_total: ${
                   item.discount_total || 0
                 } cents, adjustments: ${JSON.stringify(
-                  item.adjustments || []
+                  item.adjustments || [],
                 )}, ` +
-                `adjustedPrice: ${adjustedPrice} cents`
+                `adjustedPrice: ${adjustedPrice} cents`,
             );
 
             if (isValidPrice(adjustedPrice)) {
@@ -311,7 +298,7 @@ export async function persistCartPricingOnComplete(
                 lineItemRepo,
                 adjustmentRepo,
                 item,
-                adjustedPrice
+                adjustedPrice,
               );
               if (updated) itemsUpdated++;
             }
@@ -330,7 +317,7 @@ export async function persistCartPricingOnComplete(
               const updated = await persistShippingMethodPrice(
                 shippingMethodRepo,
                 method,
-                adjustedPrice
+                adjustedPrice,
               );
               if (updated) shippingUpdated++;
             }
@@ -353,7 +340,7 @@ export async function persistCartPricingOnComplete(
       log(
         `Persisted cart ${cartId}: territory=${taxContext.territoryType}, ` +
           `tax_exempt=${taxContext.isTaxExempt}, items=${itemsUpdated}, ` +
-          `shipping=${shippingUpdated}`
+          `shipping=${shippingUpdated}`,
       );
       // Guardar información para actualizar payment sessions después
       if (itemsUpdated > 0 || shippingUpdated > 0) {
@@ -366,7 +353,7 @@ export async function persistCartPricingOnComplete(
       log(
         `Persisted cart ${cartId}: territory=${taxContext.territoryType}, ` +
           `tax_exempt=${taxContext.isTaxExempt}, items=${itemsUpdated}, ` +
-          `shipping=${shippingUpdated}`
+          `shipping=${shippingUpdated}`,
       );
     });
 
@@ -379,7 +366,7 @@ export async function persistCartPricingOnComplete(
         cartId,
         itemsToUpdate,
         shippingToUpdate,
-        giftCardTotal
+        giftCardTotal,
       );
     }
 
@@ -445,13 +432,13 @@ export async function persistCartPricingOnComplete(
           const subtotal = calculateItemsSubtotal(freshCart.items || [], false);
           const shippingTotal = calculateShippingTotal(
             freshCart.shipping_methods || [],
-            false
+            false,
           );
           const discountTotal = calculateTotalDiscount(freshCart.items || []);
           const giftCardTotal = freshCart.gift_card_total || 0;
           const correctedTotal = Math.max(
             0,
-            subtotal + shippingTotal - discountTotal - giftCardTotal
+            subtotal + shippingTotal - discountTotal - giftCardTotal,
           );
 
           // IMPORTANTE: Guardar el total en el cart
@@ -462,7 +449,7 @@ export async function persistCartPricingOnComplete(
             `Calculated corrected total for cart ${cartId}: ${correctedTotal} cents (${(
               correctedTotal / 100
             ).toFixed(2)}€) ` +
-              `[subtotal=${subtotal}, shipping=${shippingTotal}, discount=${discountTotal}, giftCard=${giftCardTotal}]`
+              `[subtotal=${subtotal}, shipping=${shippingTotal}, discount=${discountTotal}, giftCard=${giftCardTotal}]`,
           );
         } catch (calcError) {
           logError(`Error calculating total: ${calcError}`);
@@ -470,14 +457,14 @@ export async function persistCartPricingOnComplete(
       }
 
       log(
-        `Reloaded cart ${cartId} with prices_adjusted=${freshCart.metadata?.prices_adjusted}`
+        `Reloaded cart ${cartId} with prices_adjusted=${freshCart.metadata?.prices_adjusted}`,
       );
     } catch (reloadError) {
       logError(`Warning: Could not reload cart: ${reloadError}`);
     }
 
     log(
-      `Cart ${cartId} prices persisted and payment sessions updated. Proceeding to create order.`
+      `Cart ${cartId} prices persisted and payment sessions updated. Proceeding to create order.`,
     );
     next();
   } catch (error) {
