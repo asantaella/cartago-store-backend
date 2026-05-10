@@ -61,7 +61,7 @@ export type CartEntity = {
   type?: string;
   items?: LineItemEntity[];
   shipping_methods?: ShippingMethodEntity[];
-  shipping_address?: { postal_code?: string };
+  shipping_address?: { postal_code?: string; country_code?: string };
   payment_sessions?: PaymentSessionEntity[];
   gift_card_transactions?: GiftCardTransaction[];
   discounts?: Array<{ code?: string; rule?: Record<string, unknown> }>;
@@ -109,6 +109,7 @@ export type Manager = {
 };
 
 export interface TaxContext {
+  countryCode: string;
   postalCode: string;
   isTaxExempt: boolean;
   territoryType: string;
@@ -199,13 +200,20 @@ export function getTaxContext(
   cart: CartEntity,
   spanishTaxService: SpanishTaxService,
 ): TaxContext | null {
+  const countryCode = cart.shipping_address?.country_code ?? "";
   const postalCode = cart.shipping_address?.postal_code;
   if (!postalCode) return null;
 
-  return {
+  const territoryType = spanishTaxService.getTerritoryType(
+    countryCode,
     postalCode,
-    isTaxExempt: spanishTaxService.isTaxExemptAddress(postalCode),
-    territoryType: spanishTaxService.getTerritoryType(postalCode),
+  );
+
+  return {
+    countryCode,
+    postalCode,
+    isTaxExempt: spanishTaxService.isTaxExemptAddress(countryCode, postalCode),
+    territoryType,
   };
 }
 
