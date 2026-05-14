@@ -23,6 +23,7 @@ export function adjustDraftOrderPricingOnGet(
         return originalJson(body);
       }
 
+      const countryCode = cart.shipping_address?.country_code ?? "";
       const postalCode = cart.shipping_address?.postal_code;
 
       if (!postalCode) {
@@ -39,8 +40,14 @@ export function adjustDraftOrderPricingOnGet(
         return originalJson(body);
       }
 
-      const isTaxExempt = spanishTaxService.isTaxExemptAddress(postalCode);
-      const territoryType = spanishTaxService.getTerritoryType(postalCode);
+      const isTaxExempt = spanishTaxService.isTaxExemptAddress(
+        countryCode,
+        postalCode
+      );
+      const territoryType = spanishTaxService.getTerritoryType(
+        countryCode,
+        postalCode
+      );
 
       console.log(
         `[draft-order-pricing] GET draft_order ${body.draft_order.id} - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
@@ -165,6 +172,7 @@ export function adjustDraftOrderPricingOnPost(
         return originalJson(body);
       }
 
+      const countryCode = cart.shipping_address?.country_code ?? "";
       const postalCode = cart.shipping_address?.postal_code;
 
       if (!postalCode) {
@@ -184,8 +192,14 @@ export function adjustDraftOrderPricingOnPost(
         return originalJson(body);
       }
 
-      const isTaxExempt = spanishTaxService.isTaxExemptAddress(postalCode);
-      const territoryType = spanishTaxService.getTerritoryType(postalCode);
+      const isTaxExempt = spanishTaxService.isTaxExemptAddress(
+        countryCode,
+        postalCode
+      );
+      const territoryType = spanishTaxService.getTerritoryType(
+        countryCode,
+        postalCode
+      );
 
       console.log(
         `[draft-order-pricing] POST draft_order ${body.draft_order.id} - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`
@@ -449,6 +463,7 @@ export async function persistDraftOrderPricing(
       }
 
       const cart = draftOrder.cart;
+      const countryCode = cart.shipping_address?.country_code ?? "";
       const postalCode = cart.shipping_address?.postal_code;
 
       if (!postalCode) {
@@ -456,8 +471,14 @@ export async function persistDraftOrderPricing(
         return;
       }
 
-      const isTaxExempt = spanishTaxService.isTaxExemptAddress(postalCode);
-      const territoryType = spanishTaxService.getTerritoryType(postalCode);
+      const isTaxExempt = spanishTaxService.isTaxExemptAddress(
+        countryCode,
+        postalCode
+      );
+      const territoryType = spanishTaxService.getTerritoryType(
+        countryCode,
+        postalCode
+      );
 
       console.log(
         `[draft-order-pricing] PAY cart ${cart.id} - postal=${postalCode} isTaxExempt=${isTaxExempt} territory=${territoryType}`

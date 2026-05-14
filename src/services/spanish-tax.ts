@@ -27,6 +27,31 @@ class SpanishTaxService extends AbstractTaxService {
     /^52\d{3}$/,
   ];
 
+  private normalizeCountryCode(countryCode?: string): string {
+    return (countryCode || "").trim().toUpperCase();
+  }
+
+  private normalizePostalCode(postalCode?: string): string {
+    return (postalCode || "").replace(/\s/g, "");
+  }
+
+  private resolveAddressParts(
+    countryCodeOrPostalCode?: string,
+    postalCode?: string
+  ): { countryCode: string; postalCode: string } {
+    if (typeof postalCode === "string") {
+      return {
+        countryCode: countryCodeOrPostalCode || "",
+        postalCode,
+      };
+    }
+
+    return {
+      countryCode: "ES",
+      postalCode: countryCodeOrPostalCode || "",
+    };
+  }
+
   async getTaxLines(
     itemLines: ItemTaxCalculationLine[],
     shippingLines: ShippingTaxCalculationLine[],
@@ -34,11 +59,10 @@ class SpanishTaxService extends AbstractTaxService {
   ): Promise<ProviderTaxLine[]> {
     const taxLines: ProviderTaxLine[] = [];
 
-    const isTaxExempt = this.isTaxExemptAddress(
-      context.shipping_address?.postal_code
-    );
+    const countryCode = context.shipping_address?.country_code ?? "";
+    const postalCode = context.shipping_address?.postal_code ?? "";
 
-    const postalCode = context.shipping_address?.postal_code;
+    const isTaxExempt = this.isTaxExemptAddress(countryCode, postalCode);
 
     // Productos
     for (const line of itemLines) {
@@ -52,14 +76,14 @@ class SpanishTaxService extends AbstractTaxService {
 
         taxLines.push({
           rate: 0,
-          name: this.getTaxExemptName(postalCode),
-          code: this.getTaxExemptCode(postalCode),
+          name: this.getTaxExemptName(countryCode, postalCode),
+          code: this.getTaxExemptCode(countryCode, postalCode),
           item_id: line.item.id,
           metadata: {
             original_price: original,
             price_without_tax: priceWithoutTax,
             tax_removed: original - priceWithoutTax,
-            territory_type: this.getTerritoryType(postalCode),
+            territory_type: this.getTerritoryType(countryCode, postalCode),
           },
         });
       } else {
@@ -86,14 +110,14 @@ class SpanishTaxService extends AbstractTaxService {
         const priceWithoutTax = this.calculatePriceWithoutTax(original);
         taxLines.push({
           rate: 0,
-          name: this.getShippingTaxExemptName(postalCode),
-          code: this.getShippingTaxExemptCode(postalCode),
+          name: this.getShippingTaxExemptName(countryCode, postalCode),
+          code: this.getShippingTaxExemptCode(countryCode, postalCode),
           shipping_method_id: line.shipping_method.id,
           metadata: {
             original_price: original,
             price_without_tax: priceWithoutTax,
             tax_removed: original - priceWithoutTax,
-            territory_type: this.getTerritoryType(postalCode),
+            territory_type: this.getTerritoryType(countryCode, postalCode),
           },
         });
       } else {
@@ -117,11 +141,23 @@ class SpanishTaxService extends AbstractTaxService {
   }
 
   // Alias for backward compatibility and clearer naming
-  public isTaxExemptAddress(postalCode?: string): boolean {
-    if (!postalCode) return false;
+  public isTaxExemptAddress(countryCode: string, postalCode?: string): boolean;
+  public isTaxExemptAddress(postalCode?: string): boolean;
+  public isTaxExemptAddress(
+    countryCodeOrPostalCode?: string,
+    postalCode?: string
+  ): boolean {
+    const { countryCode, postalCode: resolvedPostalCode } =
+      this.resolveAddressParts(countryCodeOrPostalCode, postalCode);
+
+    if (this.normalizeCountryCode(countryCode) !== "ES") {
+      return false;
+    }
+
+    if (!resolvedPostalCode) return false;
 
     return this.taxExemptPostalCodes.some((pattern) =>
-      pattern.test(postalCode.replace(/\s/g, ""))
+      pattern.test(this.normalizePostalCode(resolvedPostalCode))
     );
   }
 
@@ -141,12 +177,24 @@ class SpanishTaxService extends AbstractTaxService {
   // la maneja Medusa cuando prices.includes_tax=true y tax_inclusive_pricing está activo.
 
   /**
-   * Determina el tipo de territorio basado en el código postal
+   * Determina el tipo de territorio basado en el código postal y el país
    */
-  public getTerritoryType(postalCode?: string): string {
-    if (!postalCode) return "standard";
+  public getTerritoryType(countryCode: string, postalCode: string): string;
+  public getTerritoryType(postalCode?: string): string;
+  public getTerritoryType(
+    countryCodeOrPostalCode?: string,
+    postalCode?: string
+  ): string {
+    const { countryCode, postalCode: resolvedPostalCode } =
+      this.resolveAddressParts(countryCodeOrPostalCode, postalCode);
 
-    const cleanPostal = postalCode.replace(/\s/g, "");
+    if (this.normalizeCountryCode(countryCode) !== "ES") {
+      return "standard";
+    }
+
+    if (!resolvedPostalCode) return "standard";
+
+    const cleanPostal = this.normalizePostalCode(resolvedPostalCode);
 
     if (/^35\d{3}$/.test(cleanPostal) || /^38\d{3}$/.test(cleanPostal)) {
       return "canarias";
@@ -164,8 +212,16 @@ class SpanishTaxService extends AbstractTaxService {
   /**
    * Obtiene el nombre del impuesto para territorios exentos
    */
-  public getTaxExemptName(postalCode?: string): string {
-    const territoryType = this.getTerritoryType(postalCode);
+  public getTaxExemptName(countryCode: string, postalCode: string): string;
+  public getTaxExemptName(postalCode?: string): string;
+  public getTaxExemptName(
+    countryCodeOrPostalCode?: string,
+    postalCode?: string
+  ): string {
+    const territoryType =
+      postalCode === undefined
+        ? this.getTerritoryType(countryCodeOrPostalCode)
+        : this.getTerritoryType(countryCodeOrPostalCode as string, postalCode);
 
     switch (territoryType) {
       case "canarias":
@@ -182,8 +238,16 @@ class SpanishTaxService extends AbstractTaxService {
   /**
    * Obtiene el código del impuesto para territorios exentos
    */
-  public getTaxExemptCode(postalCode?: string): string {
-    const territoryType = this.getTerritoryType(postalCode);
+  public getTaxExemptCode(countryCode: string, postalCode: string): string;
+  public getTaxExemptCode(postalCode?: string): string;
+  public getTaxExemptCode(
+    countryCodeOrPostalCode?: string,
+    postalCode?: string
+  ): string {
+    const territoryType =
+      postalCode === undefined
+        ? this.getTerritoryType(countryCodeOrPostalCode)
+        : this.getTerritoryType(countryCodeOrPostalCode as string, postalCode);
 
     switch (territoryType) {
       case "canarias":
@@ -200,8 +264,19 @@ class SpanishTaxService extends AbstractTaxService {
   /**
    * Obtiene el nombre del impuesto de envío para territorios exentos
    */
-  public getShippingTaxExemptName(postalCode?: string): string {
-    const territoryType = this.getTerritoryType(postalCode);
+  public getShippingTaxExemptName(
+    countryCode: string,
+    postalCode: string
+  ): string;
+  public getShippingTaxExemptName(postalCode?: string): string;
+  public getShippingTaxExemptName(
+    countryCodeOrPostalCode?: string,
+    postalCode?: string
+  ): string {
+    const territoryType =
+      postalCode === undefined
+        ? this.getTerritoryType(countryCodeOrPostalCode)
+        : this.getTerritoryType(countryCodeOrPostalCode as string, postalCode);
 
     switch (territoryType) {
       case "canarias":
@@ -218,8 +293,19 @@ class SpanishTaxService extends AbstractTaxService {
   /**
    * Obtiene el código del impuesto de envío para territorios exentos
    */
-  public getShippingTaxExemptCode(postalCode?: string): string {
-    const territoryType = this.getTerritoryType(postalCode);
+  public getShippingTaxExemptCode(
+    countryCode: string,
+    postalCode: string
+  ): string;
+  public getShippingTaxExemptCode(postalCode?: string): string;
+  public getShippingTaxExemptCode(
+    countryCodeOrPostalCode?: string,
+    postalCode?: string
+  ): string {
+    const territoryType =
+      postalCode === undefined
+        ? this.getTerritoryType(countryCodeOrPostalCode)
+        : this.getTerritoryType(countryCodeOrPostalCode as string, postalCode);
 
     switch (territoryType) {
       case "canarias":

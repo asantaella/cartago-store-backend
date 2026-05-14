@@ -113,7 +113,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req.scope.resolve("spanishTaxService");
       if (
         spanishTaxService &&
-        spanishTaxService.isTaxExemptAddress(postalCode) &&
+        spanishTaxService.isTaxExemptAddress(countryCode, postalCode) &&
         Array.isArray(data)
       ) {
         data = data.map((opt: any) => {
