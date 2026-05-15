@@ -45,18 +45,22 @@ export default async function handleShipmentCreated({
       return;
     }
 
+    const order = fulfillment.order;
+
     console.log(
-      `[NOTIFICATION] Sending shipment.created notification for order ${fulfillment.order.display_id}`,
+      `[NOTIFICATION] Sending shipment.created notification for order ${order.display_id}`,
     );
 
-    // Enviar la notificación de envío creado con el PDF de la factura
+    // Enviar la notificación de envío creado con el PDF de la factura.
+    // La notificación re-fetcha el pedido desde BD, por lo que verá
+    // el invoice_number recién asignado.
     await shipmentNotificationService.sendNotification(
       OrderService.Events.SHIPMENT_CREATED,
       fulfillment,
     );
 
     console.log(
-      `[NOTIFICATION] Successfully processed shipment.created for order ${fulfillment.order.display_id}`,
+      `[NOTIFICATION] Successfully processed shipment.created for order ${order.display_id}`,
     );
   } catch (error) {
     console.error(

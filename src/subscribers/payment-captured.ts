@@ -2,7 +2,6 @@ import {
   type SubscriberConfig,
   type SubscriberArgs,
   OrderService,
-  PaymentStatus,
   FulfillmentStatus,
 } from "@medusajs/medusa";
 import InvoiceNumberGeneratorService from "../services/invoice-number-generator";
@@ -17,19 +16,15 @@ export default async function handleOrderPlaced({
   pluginOptions,
 }: SubscriberArgs<Record<string, string>>) {
   try {
-    // console.log(
-    //   `[NOTIFICATION] Order placed subscriber triggered for order ${data.id}`
-    // );
-
     const orderService: OrderService = container.resolve("orderService");
+    const invoiceNumberGeneratorService: InvoiceNumberGeneratorService =
+      container.resolve("invoiceNumberGeneratorService");
     const receiptNotificationService: ReceiptNotificationService =
       container.resolve("receiptNotificationService");
     const shipmentNotificationService: ShipmentNotificationService =
       container.resolve("shipmentNotificationService");
     const placeOrderEmailNotificationService: PlaceOrderEmailNotificationService =
       container.resolve("placeOrderEmailNotificationService");
-    const invoiceNumberGenerator: InvoiceNumberGeneratorService =
-      container.resolve("invoiceNumberGeneratorService");
 
     // Obtener el pedido con las relaciones necesarias
     const order = await orderService.retrieveWithTotals(data.id, {
@@ -47,21 +42,16 @@ export default async function handleOrderPlaced({
       ],
     });
 
-    // console.log(
-    //   `[NOTIFICATION] Sending order.placed notification for order ${order.display_id}`
-    // );
-
-    // Establecer el número de factura en el pedido
-    await invoiceNumberGenerator.setOrderInvoiceNumber(order.id);
+    // Asignar número de factura al capturar el pago. El envío reutiliza el
+    // mismo valor ya persistido en metadata.
+    if (!order.metadata?.invoice_number) {
+      await invoiceNumberGeneratorService.setOrderInvoiceNumber(order.id);
+    }
 
     if (order.fulfillment_status === FulfillmentStatus.SHIPPED) {
       await shipmentNotificationService.sendInvoiceNotification(order, {
         showTrackingDeliverySection: false,
       });
-
-      console.log(
-        `[NOTIFICATION] Successfully processed SEPA invoice-created notification for order ${order.display_id}`,
-      );
 
       return;
     }
@@ -74,10 +64,6 @@ export default async function handleOrderPlaced({
 
     console.log(
       `[NOTIFICATION] Successfully processed order.payment_captured for order ${order.display_id}`,
-    );
-
-    console.log(
-      `[NOTIFICATION][ADMIN] Successfully processed order.payment_captured for order ${order.display_id}`,
     );
   } catch (error) {
     console.error(

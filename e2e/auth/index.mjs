@@ -15,6 +15,8 @@ const { access_token } = await medusa.admin.auth.getToken({
   password: "suru",
 });
 
+medusa.client.axiosClient.defaults.headers.common.Authorization = `Bearer ${access_token}`;
+
 console.log("Token response:", JSON.stringify(access_token, null, 2));
 
 export { medusa };

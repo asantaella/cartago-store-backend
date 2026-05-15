@@ -5,13 +5,17 @@ import Roboto from "../fonts/Roboto";
 import LogoCartago from "../types/logo";
 import * as variantUtils from "../utils/variant-utils";
 import { InvoiceMode, OrderInvoice } from "../types/order-invoice.model";
+import InvoiceNumberGeneratorService from "./invoice-number-generator";
 
 class InvoicePdfGeneratorService extends BaseService {
   protected orderService: OrderService;
+  protected invoiceNumberGeneratorService: InvoiceNumberGeneratorService;
 
   constructor(container) {
     super(container);
     this.orderService = container.orderService;
+    this.invoiceNumberGeneratorService =
+      container.invoiceNumberGeneratorService;
   }
 
   async generateInvoice(
@@ -46,10 +50,22 @@ class InvoicePdfGeneratorService extends BaseService {
     const shipping = orderInvoice.getShipping();
     // El total ya está calculado correctamente en la orden
     const total = orderInvoice.getTotal();
-    const invoiceId = orderInvoice.getInvoiceId();
+    const _invoiceId = orderInvoice.getInvoiceId();
     const invoiceFileMode = invoiceMode === "invoice" ? "factura" : "recibo";
-    const invoiceFileName = `Cartago4x4_${invoiceFileMode}_${order.display_id}_${invoiceId}.pdf`;
+    let invoiceId = _invoiceId;
+    try {
+      const lastInvoiceNumber =
+        await this.invoiceNumberGeneratorService.getCounter();
+      const lastInvoiceId =
+        this.invoiceNumberGeneratorService.formatInvoiceNumber(
+          lastInvoiceNumber + 1,
+        ) + " (provisional)";
+      invoiceId = _invoiceId || lastInvoiceId;
+    } catch (error) {
+      console.error("Error generating invoice PDF:", error);
+    }
 
+    const invoiceFileName = `Cartago4x4_${invoiceFileMode}_${order.display_id}_${invoiceId}.pdf`;
     // console.log(`ℹ️ℹ️ℹ️ ORDER With discount: ${JSON.stringify(order)}`);
 
     const printer = new pdfmake(Roboto);
@@ -132,7 +148,7 @@ class InvoicePdfGeneratorService extends BaseService {
             margin: [0, 0, 5, 0],
           },
           {
-            text: orderInvoice.getInvoiceId(),
+            text: invoiceId,
             alignment: "left",
           },
         ],

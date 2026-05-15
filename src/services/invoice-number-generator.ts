@@ -1,72 +1,128 @@
-import { BaseService } from "medusa-interfaces";
-import {
-  FulfillmentStatus,
-  Order,
-  OrderService,
-  OrderStatus,
-  PaymentStatus,
-} from "@medusajs/medusa";
+import { Order, OrderService, TransactionBaseService } from "@medusajs/medusa";
+import { EntityManager } from "typeorm";
+import InvoiceCounterRepository from "../repositories/invoice-counter";
 
-class InvoiceNumberGeneratorService extends BaseService {
+const SINGLETON_ID = "invoice_global";
+
+type InjectedDependencies = {
+  manager: EntityManager;
+  invoiceCounterRepository: typeof InvoiceCounterRepository;
+  orderService: OrderService;
+};
+
+class InvoiceNumberGeneratorService extends TransactionBaseService {
+  static identifier = "invoiceNumberGeneratorService";
+
+  protected invoiceCounterRepository_: typeof InvoiceCounterRepository;
+
   protected orderService_: OrderService;
 
-  constructor(container) {
-    super(container);
-    this.orderService_ = container.orderService;
+  constructor({
+    invoiceCounterRepository,
+    orderService,
+  }: InjectedDependencies) {
+    super(arguments[0]);
+    this.invoiceCounterRepository_ = invoiceCounterRepository;
+    this.orderService_ = orderService;
   }
 
-  /**
-   * Genera el número de factura basado en el display_id del pedido
-   * @param order - El pedido para el cual generar el número de factura
-   * @returns El número de factura formateado o undefined si no se puede generar
-   */
-  async getInvoiceNumber(order: Order): Promise<string | undefined> {
-    if (!order || !process.env.INVOICE_START_REF) {
-      return undefined;
-    }
-
-    const invoiceStartRef = parseInt(process.env.INVOICE_START_REF || "0");
+  public formatInvoiceNumber(counter: number): string {
     const year = new Date().getFullYear();
-
-    // Obtener todas las órdenes y filtrar las que tengan al menos un payment capturado
-    const [orders] = await this.orderService_.listAndCount(
-      {
-        payment_status: [PaymentStatus.CAPTURED],       
-      },
-      { relations: ["payments"] },
-    );
-    const totalOrdersPaid = orders.length;
-    const invoiceNumber = invoiceStartRef + totalOrdersPaid;
-    const invoiceRef = invoiceNumber.toString().padStart(5, "0");
-    return `${year}-${invoiceRef}`;
+    return `${year}-${counter.toString().padStart(5, "0")}`;
   }
 
   /**
-   * Establece el número de factura en los metadatos del pedido
-   * @param orderId - El ID del pedido
-   * @returns El pedido actualizado
+   * Returns the current counter value without incrementing.
    */
-  async setOrderInvoiceNumber(orderId: string): Promise<Order> {
-    const order = await this.orderService_.retrieve(orderId, {
-      relations: ["items", "customer", "shipping_address", "billing_address"],
-    });
-
-    const invoiceNumber = await this.getInvoiceNumber(order);
-
-    if (!invoiceNumber) {
+  async getCounter(): Promise<number> {
+    const repo = this.activeManager_.withRepository(
+      this.invoiceCounterRepository_,
+    );
+    const record = await repo.findOne({ where: { id: SINGLETON_ID } });
+    if (!record) {
       throw new Error(
-        `No se pudo generar el número de factura para el pedido ${order.display_id}`,
+        "Invoice counter singleton not found. Run migrations first.",
       );
     }
+    return record.counter;
+  }
 
-    const updatedOrder = await this.orderService_.update(orderId, {
+  /**
+   * Sets the counter to an explicit value (admin override).
+   */
+  async setCounter(value: number): Promise<number> {
+    return await this.atomicPhase_(
+      async (transactionManager: EntityManager) => {
+        const repo = transactionManager.withRepository(
+          this.invoiceCounterRepository_,
+        );
+        const record = await repo.findOne({ where: { id: SINGLETON_ID } });
+        if (!record) {
+          throw new Error(
+            "Invoice counter singleton not found. Run migrations first.",
+          );
+        }
+        record.counter = value;
+        await repo.save(record);
+        return record.counter;
+      },
+    );
+  }
+
+  /**
+   * Atomically increments the counter and returns the next formatted invoice number.
+   * Uses a pessimistic write lock to prevent duplicate numbers under concurrent load.
+   */
+  async getNextInvoiceNumber(): Promise<string> {
+    return await this.atomicPhase_(
+      async (transactionManager: EntityManager) => {
+        const repo = transactionManager.withRepository(
+          this.invoiceCounterRepository_,
+        );
+
+        const record = await repo.findOne({
+          where: { id: SINGLETON_ID },
+          lock: { mode: "pessimistic_write" },
+        });
+
+        if (!record) {
+          throw new Error(
+            "Invoice counter singleton not found. Run migrations first.",
+          );
+        }
+
+        record.counter += 1;
+        await repo.save(record);
+
+        return this.formatInvoiceNumber(record.counter);
+      },
+    );
+  }
+
+  /**
+   * Assigns the next invoice number to an order's metadata.
+   * Skips assignment if the order already has invoice_number set.
+   * Returns the invoice number (existing or newly assigned).
+   */
+  async setOrderInvoiceNumber(orderId: string): Promise<string> {
+    const order = await this.orderService_.retrieve(orderId, {
+      select: ["id", "metadata"],
+    });
+
+    if (order.metadata?.invoice_number) {
+      return order.metadata.invoice_number as string;
+    }
+
+    const invoiceNumber = await this.getNextInvoiceNumber();
+
+    await this.orderService_.update(orderId, {
       metadata: {
         ...order.metadata,
         invoice_number: invoiceNumber,
       },
     });
 
-    return updatedOrder;
+    return invoiceNumber;
   }
 }
 

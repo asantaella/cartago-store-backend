@@ -8,7 +8,6 @@ import {
   selectPaymentSession,
   createPaymentSession,
 } from "./payment-session.mjs";
-import { LimitOnUpdateNotSupportedError } from "typeorm";
 
 // customer hotmail
 const customer_id = "cus_01J1Z8H31J0DBXA7P1KRPXHN26";
@@ -17,11 +16,6 @@ const customer_id = "cus_01J1Z8H31J0DBXA7P1KRPXHN26";
 //const customer_id = "cus_01JC1NKNV78B8Z6ZZW7Q6TFAWP";
 
 const provider_id = "manual";
-
-await medusa.admin.auth.getToken({
-  email: "cartago4x4@gmail.com",
-  password: "suru",
-});
 
 console.log("ORDER [COMPLETING]...");
 
@@ -50,16 +44,15 @@ const { products } = await medusa.admin.products.list({ limit: 1000 });
 // ];
 
 const product1 = products.find(
-  (p) => p.id === "prod_01HZZEK1KRVMSSZGRZQQ2W08J0"
+  (p) => p.id === "prod_01HZZEK1KRVMSSZGRZQQ2W08J0",
 );
 
 const product2 = products.find(
-  (p) => p.id === "prod_01JS4M40DS0M16BACCYPCY1RCS"
+  (p) => p.id === "prod_01JS4M40DS0M16BACCYPCY1RCS",
 );
 
 const items = [
-  { variant_id: product1.variants[0].id, quantity: 1 },
-  { variant_id: product2.variants[0].id, quantity: 1 },
+  { variant_id: product1.variants[0].id, quantity: 1 }, 
 ];
 
 cart = await createCart(medusa, { items });

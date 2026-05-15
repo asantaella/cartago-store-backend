@@ -23,17 +23,16 @@ try {
   console.log("current STORE_CORS = ", process.env.STORE_CORS);
   console.log(
     "current MEDUSA_ADMIN_BACKEND = ",
-    process.env.MEDUSA_ADMIN_BACKEND_URL
+    process.env.MEDUSA_ADMIN_BACKEND_URL,
   );
   dotenv.config({ path: process.cwd() + "/.env" });
-  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME, override: false });
+  dotenv.config({ path: process.cwd() + "/" + ENV_FILE_NAME, override: true });
   console.log("Loaded ENV file: ", process.cwd() + "/" + ENV_FILE_NAME);
   console.log("ADMIN_CORS = ", process.env.ADMIN_CORS);
   console.log("STORE_CORS = ", process.env.STORE_CORS);
   console.log("MEDUSA_ADMIN_BACKEND = ", process.env.MEDUSA_ADMIN_BACKEND_URL);
   console.log("BUCKET URL = ", process.env.R2_PUBLIC_URL);
 } catch (e) {}
-
 
 const DATABASE_URL =
   process.env.DATABASE_URL || "postgres://localhost/medusa-store";
@@ -68,12 +67,12 @@ const plugins = [
   `medusa-payment-manual`,
   {
     resolve: `./plugins/medusa-payment-paypal`,
-   // resolve: `medusa-payment-paypal`,
+    // resolve: `medusa-payment-paypal`,
     options: {
       client_id: process.env.PAYPAL_CLIENT_ID,
       client_secret: process.env.PAYPAL_CLIENT_SECRET,
       sandbox: process.env.PAYPAL_SANDBOX === "true",
-      auth_webhook_id: process.env.PAYPAL_AUTH_WEBHOOK_ID,      
+      auth_webhook_id: process.env.PAYPAL_AUTH_WEBHOOK_ID,
       capture: true,
     },
   },
@@ -86,7 +85,6 @@ const plugins = [
       automatic_payment_methods: true,
     },
   },
-
 ];
 
 const modules = {

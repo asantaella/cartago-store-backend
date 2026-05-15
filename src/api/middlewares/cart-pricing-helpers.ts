@@ -295,11 +295,9 @@ export function getShippingMethodAdjustedPrice(
   const shippingExtraTotal = method.data?.shipping_extra_total;
 
   if (isValidPrice(dataPrice)) {
-    const adjustedExtra = isValidPrice(shippingExtraTotal)
-      ? getAdjustedPrice(shippingExtraTotal)
-      : 0;
-
-    return Math.round(dataPrice + adjustedExtra);
+    return Math.round(
+      dataPrice + (isValidPrice(shippingExtraTotal) ? shippingExtraTotal : 0),
+    );
   }
 
   return getAdjustedPrice(method.price);
