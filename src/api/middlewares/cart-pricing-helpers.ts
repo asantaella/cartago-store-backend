@@ -11,7 +11,11 @@ export type LineItemEntity = {
   unit_price: number;
   discount_total?: number;
   quantity?: number;
-  metadata?: Record<string, unknown> & { adjusted_unit_price?: number };
+  metadata?: Record<string, unknown> & {
+    adjusted_unit_price?: number;
+    original_discount_total?: number;
+    original_unit_price?: number;
+  };
   subtotal?: number;
   adjustments?: Array<{ description?: string; amount?: number }>;
   variant?: {
@@ -293,11 +297,29 @@ export function getShippingMethodAdjustedPrice(
 ): number {
   const dataPrice = method.data?.adjusted_price;
   const shippingExtraTotal = method.data?.shipping_extra_total;
+  const currentPrice = method.price;
 
   if (isValidPrice(dataPrice)) {
-    return Math.round(
+    const adjustedPrice = Math.round(
       dataPrice + (isValidPrice(shippingExtraTotal) ? shippingExtraTotal : 0),
     );
+
+    const discountedSubtotal = method.subtotal;
+
+    if (
+      isValidPrice(discountedSubtotal) &&
+      discountedSubtotal < adjustedPrice
+    ) {
+      return discountedSubtotal;
+    }
+
+    // If a shipping discount already lowered the persisted method price,
+    // keep that discounted amount instead of restoring the base adjusted price.
+    if (isValidPrice(currentPrice) && currentPrice < adjustedPrice) {
+      return currentPrice;
+    }
+
+    return adjustedPrice;
   }
 
   return getAdjustedPrice(method.price);
@@ -341,6 +363,165 @@ export function calculateShippingTotal(
 export function calculateTotalDiscount(items: LineItemEntity[]): number {
   if (!Array.isArray(items)) return 0;
   return items.reduce((sum, item) => sum + (item.discount_total || 0), 0);
+}
+
+function getOriginalItemDiscountTotal(item: LineItemEntity): number {
+  const metadataDiscount = item.metadata?.original_discount_total;
+
+  if (isValidPrice(metadataDiscount)) {
+    return metadataDiscount;
+  }
+
+  return (
+    calculateDiscountFromAdjustments(item.adjustments) ||
+    item.discount_total ||
+    0
+  );
+}
+
+function calculateOriginalItemsDiscountTotal(items: LineItemEntity[]): number {
+  if (!Array.isArray(items)) return 0;
+
+  return items.reduce(
+    (sum, item) => sum + getOriginalItemDiscountTotal(item),
+    0,
+  );
+}
+
+function calculateAdjustedShippingDiscountTotal(
+  cart: CartEntity,
+  adjustedShippingTotal: number,
+): number {
+  const originalCartDiscountTotal = cart.discount_total || 0;
+
+  if (originalCartDiscountTotal <= 0 || adjustedShippingTotal <= 0) {
+    return 0;
+  }
+
+  const originalItemsDiscountTotal = calculateOriginalItemsDiscountTotal(
+    cart.items || [],
+  );
+  const originalShippingDiscountTotal = Math.max(
+    0,
+    originalCartDiscountTotal - originalItemsDiscountTotal,
+  );
+
+  if (originalShippingDiscountTotal <= 0) {
+    return 0;
+  }
+
+  const currentShippingTotal = Math.max(
+    cart.shipping_total || 0,
+    calculateShippingTotal(cart.shipping_methods || [], false),
+  );
+
+  if (currentShippingTotal <= 0) {
+    return Math.min(originalShippingDiscountTotal, adjustedShippingTotal);
+  }
+
+  return Math.min(
+    adjustedShippingTotal,
+    Math.round(
+      originalShippingDiscountTotal *
+        (adjustedShippingTotal / currentShippingTotal),
+    ),
+  );
+}
+
+export function hasStaleStandardPricing(cart: CartEntity): boolean {
+  const hasAdjustedItems = (cart.items || []).some((item) => {
+    const originalPrice = item.metadata?.original_unit_price;
+    const adjustedPrice = item.metadata?.adjusted_unit_price;
+
+    return (
+      isValidPrice(originalPrice) &&
+      isValidPrice(adjustedPrice) &&
+      item.unit_price !== originalPrice
+    );
+  });
+
+  const territoryType = cart.metadata?.territory_type;
+  const hasStaleTerritory =
+    typeof territoryType === "string" && territoryType !== "standard";
+
+  return hasAdjustedItems || hasStaleTerritory;
+}
+
+export function applyStandardPricingRestoration(
+  cart: CartEntity,
+  taxContext: TaxContext,
+): void {
+  const taxRate = cart.region?.tax_rate ?? cart.tax_rate ?? 0;
+  const giftCardTaxTotal = cart.gift_card_tax_total || 0;
+  const previousItemDiscountTotal = calculateTotalDiscount(cart.items || []);
+  const originalItemsDiscountTotal = calculateOriginalItemsDiscountTotal(
+    cart.items || [],
+  );
+  const shippingDiscountTotal = Math.max(
+    0,
+    (cart.discount_total || 0) - previousItemDiscountTotal,
+  );
+
+  let correctedSubtotal = 0;
+  let correctedItemTaxTotal = 0;
+  let correctedShippingSubtotal = 0;
+  let correctedShippingTaxTotal = 0;
+
+  for (const item of cart.items || []) {
+    const originalPrice = item.metadata?.original_unit_price;
+    const quantity = item.quantity || 1;
+    const restoredUnitPrice = isValidPrice(originalPrice)
+      ? Math.round(originalPrice)
+      : item.unit_price;
+    const restoredDiscountTotal = getOriginalItemDiscountTotal(item);
+    const grossSubtotal = restoredUnitPrice * quantity;
+    const netSubtotal =
+      taxRate > 0
+        ? Math.round(grossSubtotal / (1 + taxRate / 100))
+        : grossSubtotal;
+
+    item.unit_price = restoredUnitPrice;
+    item.discount_total = restoredDiscountTotal;
+    item.subtotal = netSubtotal;
+
+    correctedSubtotal += netSubtotal;
+    correctedItemTaxTotal += grossSubtotal - netSubtotal;
+  }
+
+  for (const method of cart.shipping_methods || []) {
+    const methodSubtotal = method.subtotal ?? method.price ?? 0;
+    const methodTotal = method.total ?? method.price ?? 0;
+    const methodTaxTotal =
+      method.tax_total ?? Math.max(0, methodTotal - methodSubtotal);
+
+    correctedShippingSubtotal += methodSubtotal;
+    correctedShippingTaxTotal += methodTaxTotal;
+  }
+
+  cart.subtotal = correctedSubtotal;
+  cart.shipping_total = correctedShippingSubtotal;
+  cart.item_tax_total = correctedItemTaxTotal;
+  cart.shipping_tax_total = correctedShippingTaxTotal;
+  cart.discount_total = originalItemsDiscountTotal + shippingDiscountTotal;
+  cart.tax_total =
+    correctedItemTaxTotal + correctedShippingTaxTotal - giftCardTaxTotal;
+  cart.total =
+    correctedSubtotal +
+    correctedShippingSubtotal +
+    (cart.tax_total || 0) -
+    (cart.discount_total || 0) -
+    (cart.gift_card_total || 0);
+
+  if (Array.isArray(cart.payment_sessions)) {
+    for (const session of cart.payment_sessions) {
+      session.amount = cart.total || 0;
+    }
+  }
+
+  cart.metadata = {
+    ...cart.metadata,
+    territory_type: taxContext.territoryType,
+  };
 }
 
 /**
@@ -487,17 +668,25 @@ export function recalculateCartTotals(cart: CartEntity): void {
   cart.subtotal =
     cart.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
 
-  cart.shipping_total = calculateShippingTotal(
+  const adjustedShippingTotal = calculateShippingTotal(
     cart.shipping_methods || [],
     true,
   );
+  const adjustedItemsDiscountTotal = calculateTotalDiscount(cart.items || []);
+  const adjustedShippingDiscountTotal = calculateAdjustedShippingDiscountTotal(
+    cart,
+    adjustedShippingTotal,
+  );
+
+  cart.shipping_total = adjustedShippingTotal;
 
   cart.tax_total = 0;
-  cart.discount_total = calculateTotalDiscount(cart.items || []);
+  cart.discount_total =
+    adjustedItemsDiscountTotal + adjustedShippingDiscountTotal;
 
   cart.total =
     cart.subtotal +
-    cart.shipping_total -
+    adjustedShippingTotal -
     cart.discount_total -
     (cart.gift_card_total || 0);
 }
