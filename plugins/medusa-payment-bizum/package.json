@@ -1,0 +1,23 @@
+{
+  "name": "medusa-payment-bizum",
+  "version": "0.0.1",
+  "description": "Bizum payment provider for Medusa Commerce via Stripe",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "watch": "tsc --watch"
+  },
+  "keywords": [
+    "medusa-plugin",
+    "medusa-plugin-payment",
+    "bizum",
+    "stripe"
+  ]
+}

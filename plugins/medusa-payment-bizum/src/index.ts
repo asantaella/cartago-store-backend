@@ -1,0 +1,1 @@
+export { default as BizumProviderService } from "./services/bizum-provider"

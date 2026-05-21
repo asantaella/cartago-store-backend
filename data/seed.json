@@ -16,7 +16,7 @@
       "name": "EU",
       "currency_code": "eur",
       "tax_rate": 21,
-      "payment_providers": ["stripe", "paypal"],
+      "payment_providers": ["stripe", "stripe-bizum", "paypal"],
       "shipping_providers": ["manual"],
       "fulfillment_providers": ["manual"],
       "countries": ["es", "fr", "it", "pt"]
