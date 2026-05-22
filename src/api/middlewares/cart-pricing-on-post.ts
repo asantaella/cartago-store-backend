@@ -110,6 +110,10 @@ export async function adjustCartPricingOnPost(
       previouslyTaxExempt: previouslyTaxExempt,
     });
 
+    const shouldSyncDb = hasChanged || taxContext.isTaxExempt;
+    const shouldAwaitDbRestore =
+      hasChanged && previouslyTaxExempt && !taxContext.isTaxExempt;
+
     // Ejecutar transacción para ajustar o restaurar precios
     await manager.transaction(async (tm: TransactionManager) => {
       const cart = await loadCartWithRelations(tm, cartId);
@@ -152,20 +156,29 @@ export async function adjustCartPricingOnPost(
         }
       }
 
-      // Actualizar metadata del territorio
-      await updateCartMetadata(tm, cartId, taxContext.territoryType, false);
+      // Solo persistir metadata inline cuando no hay una sincronización de precios pendiente.
+      // Si se actualiza a standard antes de restaurar los precios, futuras requests pueden
+      // dejar de detectar el cambio de territorio y el cart se queda con unit_price tax-exempt.
+      if (!shouldSyncDb) {
+        await updateCartMetadata(tm, cartId, taxContext.territoryType, false);
+      }
     });
 
     // Sincronizar BD SOLO cuando hay cambio de territorio o está en zona tax-exempt
     // Esto evita ajustes innecesarios en zonas standard sin cambios
-    if (hasChanged || taxContext.isTaxExempt) {
+    if (shouldSyncDb) {
       const manager2 = resolveManager(req);
       if (manager2) {
         const { adjustCartPricesInDb } =
           await import("./cart-pricing-db-update");
-        adjustCartPricesInDb(manager2, cartId, taxContext).catch((err) =>
-          log(`DB sync error in POST for cart ${cartId}: ${err}`),
-        );
+
+        if (shouldAwaitDbRestore) {
+          await adjustCartPricesInDb(manager2, cartId, taxContext);
+        } else {
+          adjustCartPricesInDb(manager2, cartId, taxContext).catch((err) =>
+            log(`DB sync error in POST for cart ${cartId}: ${err}`),
+          );
+        }
       }
     }
 

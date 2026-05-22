@@ -212,9 +212,16 @@ export function mergeSyncedShippingMethodsIntoCart(
       return method;
     }
 
+    const mergedPrice =
+      typeof method.price === "number" &&
+      typeof syncedMethod.price === "number" &&
+      method.price < syncedMethod.price
+        ? method.price
+        : syncedMethod.price;
+
     return {
       ...method,
-      price: syncedMethod.price,
+      price: mergedPrice,
       data: {
         ...method.data,
         ...syncedMethod.data,

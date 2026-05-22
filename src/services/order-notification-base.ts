@@ -5,7 +5,12 @@ class OrderNotificationBase {
   protected config: any;
 
   constructor(container) {
-    this.orderService = container.orderService;
+    this.orderService =
+      container.orderService || container.resolve?.("orderService");
+
+    if (!this.orderService) {
+      throw new Error("orderService is required to build order notifications");
+    }
 
     this.config = {
       order_placed_url: process.env.MAILERSEND_ORDER_PLACED_URL,

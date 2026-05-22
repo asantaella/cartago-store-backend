@@ -26,7 +26,7 @@ export async function createPaymentIntent(
   cartId,
   amount,
   currency,
-  metadata = {}
+  metadata = {},
 ) {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: Math.round(amount),
@@ -43,12 +43,44 @@ export async function createPaymentIntent(
   return paymentIntent;
 }
 
+export async function retrievePaymentIntent(paymentIntentId) {
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  console.log(`✓ PaymentIntent recuperado: ${paymentIntent.id}`);
+  return paymentIntent;
+}
+
+export async function createCardPaymentMethod({
+  number,
+  expMonth = 12,
+  expYear = 2034,
+  cvc = "123",
+  name = "Juan Pérez",
+  email = "test@example.com",
+} = {}) {
+  const paymentMethod = await stripe.paymentMethods.create({
+    type: "card",
+    card: {
+      number,
+      exp_month: expMonth,
+      exp_year: expYear,
+      cvc,
+    },
+    billing_details: {
+      name,
+      email,
+    },
+  });
+
+  console.log(`✓ Card PaymentMethod creado: ${paymentMethod.id}`);
+  return paymentMethod;
+}
+
 export async function createSepaPaymentIntent(
   cartId,
   amount,
   currency,
   customerEmail,
-  metadata = {}
+  metadata = {},
 ) {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: Math.round(amount),
@@ -69,10 +101,10 @@ export async function createSepaPaymentIntent(
 
 export async function confirmPaymentIntent(
   paymentIntentId,
-  paymentMethodId = "pm_card_visa"
+  paymentMethodId = "pm_card_visa",
 ) {
   console.log(
-    `✓ Confirmando PaymentIntent ${paymentIntentId} con PaymentMethod ${paymentMethodId}`
+    `✓ Confirmando PaymentIntent ${paymentIntentId} con PaymentMethod ${paymentMethodId}`,
   );
 
   const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId, {
@@ -90,7 +122,7 @@ export async function confirmSepaPaymentIntent(
   name = "Juan Pérez",
   email = "test@example.com",
   paymentMethodId = null,
-  mandateData = null
+  mandateData = null,
 ) {
   let paymentMethod = paymentMethodId;
 
@@ -136,7 +168,7 @@ export async function confirmSepaPaymentIntent(
 
   const paymentIntent = await stripe.paymentIntents.confirm(
     paymentIntentId,
-    confirmPayload
+    confirmPayload,
   );
 
   console.log(`✓ SEPA PaymentIntent confirmado: ${paymentIntent.id}`);
@@ -146,6 +178,13 @@ export async function confirmSepaPaymentIntent(
 export const TEST_PAYMENT_METHODS = {
   SUCCESS: "pm_card_visa",
   DECLINE: "pm_card_chargeDeclined",
+  THREE_D_SECURE_REQUIRED: "pm_card_threeDSecure2Required",
+};
+
+export const TEST_3DS_CARD_NUMBERS = {
+  REQUIRED: "4000000000003220",
+  ALWAYS: "4000000000003184",
+  FRICTIONLESS: "4000000032200000",
 };
 
 export const TEST_SEPA_IBANS = {

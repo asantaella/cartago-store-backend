@@ -21,6 +21,8 @@ type ShipmentTemplateName = "invoice-created" | "shipment-created";
 type ShipmentNotificationOptions = {
   templateName?: ShipmentTemplateName;
   showTrackingDeliverySection?: boolean;
+  toClient?: boolean;
+  toAdmin?: boolean;
 };
 
 type ShipmentNotificationContext = {
@@ -172,6 +174,20 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
     return `${firstName}, tu pedido ${templateData.display_id} ha sido enviado`;
   }
 
+  private resolveRecipients(options: ShipmentNotificationOptions): {
+    toClient: boolean;
+    toAdmin: boolean;
+  } {
+    const toClient = options.toClient ?? true;
+    const toAdmin = options.toAdmin ?? true;
+
+    if (!toClient && !toAdmin) {
+      throw new Error("At least one recipient must be enabled");
+    }
+
+    return { toClient, toAdmin };
+  }
+
   private async sendTemplateEmail(
     recipientEmail: string,
     recipientName: string | undefined,
@@ -221,6 +237,7 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
   }> {
     try {
       const { order, fulfillment } = await this.resolveShipmentContext(source);
+      const recipients = this.resolveRecipients(options);
       const { to_email, to_name } =
         this.shipmentTemplateService.getShipmentTemplateData(
           "shipment.created",
@@ -228,7 +245,7 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
           fulfillment,
         );
 
-      if (!to_email) {
+      if (recipients.toClient && !to_email) {
         throw new Error("Recipient email is required");
       }
 
@@ -239,19 +256,29 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
       );
       const attachment = await this.buildPDFAttachment(order);
 
-      await this.sendTemplateEmail(
-        to_email,
-        to_name,
-        "invoice-created",
-        templateData,
-        ["invoice-created", "customer-notification"],
-        attachment,
-      );
+      let deliveredTo = "";
+
+      if (recipients.toClient && to_email) {
+        await this.sendTemplateEmail(
+          to_email,
+          to_name,
+          "invoice-created",
+          templateData,
+          ["invoice-created", "customer-notification"],
+          attachment,
+        );
+
+        deliveredTo = to_email;
+      }
 
       const adminEmail =
         process.env.ADMIN_EMAIL || process.env.MAILERSEND_ADMIN_EMAIL;
 
-      if (adminEmail) {
+      if (recipients.toAdmin && !adminEmail) {
+        throw new Error("Admin email is not configured");
+      }
+
+      if (recipients.toAdmin && adminEmail) {
         await this.sendTemplateEmail(
           adminEmail,
           process.env.MAILERSEND_SENDER_NAME || "Cartago4x4",
@@ -260,10 +287,12 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
           ["invoice-created", "admin-notification"],
           attachment,
         );
+
+        deliveredTo = adminEmail;
       }
 
       return {
-        to: to_email,
+        to: deliveredTo,
         status: "sent",
         data: order as unknown as Record<string, unknown>,
       };
