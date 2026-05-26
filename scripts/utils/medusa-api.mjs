@@ -89,6 +89,37 @@ export async function setPaymentSession(medusa, cartId, providerId) {
   return cart;
 }
 
+export async function setPaymentSessionContext(
+  medusa,
+  cartId,
+  providerId,
+  context = {},
+) {
+  const payload = {
+    provider_id: providerId,
+  };
+
+  if (context.requestThreeDSecurePolicy) {
+    payload.request_three_d_secure_policy = context.requestThreeDSecurePolicy;
+  }
+
+  if (context.riskReviewReason) {
+    payload.risk_review_reason = context.riskReviewReason;
+  }
+
+  const { cart } = await medusa.client.request(
+    "POST",
+    `/store/carts/${cartId}/payment-session-context`,
+    payload,
+    {},
+  );
+
+  console.log(
+    `✓ Payment provider seleccionado: ${providerId} (3DS=${payload.request_three_d_secure_policy ?? "default"})`,
+  );
+  return cart;
+}
+
 export async function completeCart(medusa, cartId) {
   const response = await medusa.carts.complete(cartId);
 

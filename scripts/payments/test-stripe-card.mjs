@@ -7,7 +7,7 @@ import {
   listShippingOptions,
   addShippingMethod,
   createPaymentSessions,
-  setPaymentSession,
+  setPaymentSessionContext,
   loadCartMock,
   logCart,
   getOrder,
@@ -22,7 +22,11 @@ import {
 
 const WEBHOOK_WAIT_MS = 5000;
 
-async function prepareStripeCart(medusa, cartMock) {
+async function prepareStripeCart(
+  medusa,
+  cartMock,
+  { requestThreeDSecurePolicy = "automatic" } = {},
+) {
   const cart = await createCart(medusa, cartMock);
   await updateCart(medusa, cart.id, cartMock);
 
@@ -44,7 +48,14 @@ async function prepareStripeCart(medusa, cartMock) {
   );
 
   await createPaymentSessions(medusa, cart.id);
-  const cartWithSessions = await setPaymentSession(medusa, cart.id, "stripe");
+  const cartWithSessions = await setPaymentSessionContext(
+    medusa,
+    cart.id,
+    "stripe",
+    {
+      requestThreeDSecurePolicy,
+    },
+  );
   const stripeSession = cartWithSessions.payment_sessions?.find(
     (session) => session.provider_id === "stripe",
   );
@@ -56,24 +67,35 @@ async function prepareStripeCart(medusa, cartMock) {
   return {
     cart,
     paymentIntentId: stripeSession.data.id,
+    requestThreeDSecurePolicy,
   };
 }
 
-async function validate3DSSetup(medusa, cartMock) {
-  console.log("\n▶ Validando configuración 3DS para tarjeta");
-  const { paymentIntentId } = await prepareStripeCart(medusa, cartMock);
+async function validate3DSSetup(
+  medusa,
+  cartMock,
+  requestThreeDSecurePolicy = "automatic",
+) {
+  console.log(
+    `\n▶ Validando configuración 3DS para tarjeta (${requestThreeDSecurePolicy})`,
+  );
+  const { paymentIntentId } = await prepareStripeCart(medusa, cartMock, {
+    requestThreeDSecurePolicy,
+  });
 
   const paymentIntent = await retrievePaymentIntent(paymentIntentId);
   const requestThreeDSecure =
     paymentIntent.payment_method_options?.card?.request_three_d_secure;
 
-  if (requestThreeDSecure !== "automatic") {
+  if (requestThreeDSecure !== requestThreeDSecurePolicy) {
     throw new Error(
-      `Se esperaba request_three_d_secure=automatic, pero se obtuvo ${requestThreeDSecure}`,
+      `Se esperaba request_three_d_secure=${requestThreeDSecurePolicy}, pero se obtuvo ${requestThreeDSecure}`,
     );
   }
 
-  console.log("✓ request_three_d_secure=automatic en el PaymentIntent");
+  console.log(
+    `✓ request_three_d_secure=${requestThreeDSecurePolicy} en el PaymentIntent`,
+  );
 
   const threeDSResult = await confirmPaymentIntent(
     paymentIntentId,
@@ -182,7 +204,8 @@ async function main() {
   const medusa = createMedusaClient();
   const cartMock = await loadCartMock();
 
-  await validate3DSSetup(medusa, cartMock);
+  await validate3DSSetup(medusa, cartMock, "automatic");
+  await validate3DSSetup(medusa, cartMock, "any");
   await validateSuccessfulCardPayment(medusa, cartMock);
 }
 
