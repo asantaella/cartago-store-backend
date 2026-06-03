@@ -5,6 +5,7 @@ function buildService() {
     {
       orderService: {},
       invoicePdfGeneratorService: {},
+      orderCsvAttachmentService: {},
     } as any,
     {},
   );
@@ -31,6 +32,10 @@ function buildService() {
   };
 
   const sendTemplateEmail = jest.fn().mockResolvedValue(undefined);
+  const buildCSVAttachment = jest.fn().mockResolvedValue({
+    content: "csv-content",
+    filename: "Cartago4x4_invoice_1.csv",
+  });
 
   (service as any).shipmentTemplateService = shipmentTemplateService;
   (service as any).resolveShipmentContext = jest.fn().mockResolvedValue({
@@ -42,12 +47,14 @@ function buildService() {
     content: "pdf-content",
     filename: "invoice.pdf",
   });
+  (service as any).buildCSVAttachment = buildCSVAttachment;
   (service as any).sendTemplateEmail = sendTemplateEmail;
 
   return {
     service,
     order,
     sendTemplateEmail,
+    buildCSVAttachment,
   };
 }
 
@@ -83,10 +90,12 @@ describe("ShipmentNotificationService.sendInvoiceNotification", () => {
       "invoice-created",
       expect.any(Object),
       ["invoice-created", "customer-notification"],
-      {
-        content: "pdf-content",
-        filename: "invoice.pdf",
-      },
+      [
+        {
+          content: "pdf-content",
+          filename: "invoice.pdf",
+        },
+      ],
     );
     expect(result).toEqual(
       expect.objectContaining({
@@ -97,7 +106,8 @@ describe("ShipmentNotificationService.sendInvoiceNotification", () => {
   });
 
   it("sends only to the admin when requested", async () => {
-    const { service, order, sendTemplateEmail } = buildService();
+    const { service, order, sendTemplateEmail, buildCSVAttachment } =
+      buildService();
 
     const result = await service.sendInvoiceNotification(order, {
       toClient: false,
@@ -111,11 +121,18 @@ describe("ShipmentNotificationService.sendInvoiceNotification", () => {
       "invoice-created",
       expect.any(Object),
       ["invoice-created", "admin-notification"],
-      {
-        content: "pdf-content",
-        filename: "invoice.pdf",
-      },
+      [
+        {
+          content: "pdf-content",
+          filename: "invoice.pdf",
+        },
+        {
+          content: "csv-content",
+          filename: "Cartago4x4_invoice_1.csv",
+        },
+      ],
     );
+    expect(buildCSVAttachment).toHaveBeenCalledWith(order);
     expect(result).toEqual(
       expect.objectContaining({
         to: "admin@example.com",
@@ -125,7 +142,8 @@ describe("ShipmentNotificationService.sendInvoiceNotification", () => {
   });
 
   it("preserves the default behavior of sending to both recipients", async () => {
-    const { service, order, sendTemplateEmail } = buildService();
+    const { service, order, sendTemplateEmail, buildCSVAttachment } =
+      buildService();
 
     const result = await service.sendInvoiceNotification(order);
 
@@ -137,10 +155,12 @@ describe("ShipmentNotificationService.sendInvoiceNotification", () => {
       "invoice-created",
       expect.any(Object),
       ["invoice-created", "customer-notification"],
-      {
-        content: "pdf-content",
-        filename: "invoice.pdf",
-      },
+      [
+        {
+          content: "pdf-content",
+          filename: "invoice.pdf",
+        },
+      ],
     );
     expect(sendTemplateEmail).toHaveBeenNthCalledWith(
       2,
@@ -149,11 +169,18 @@ describe("ShipmentNotificationService.sendInvoiceNotification", () => {
       "invoice-created",
       expect.any(Object),
       ["invoice-created", "admin-notification"],
-      {
-        content: "pdf-content",
-        filename: "invoice.pdf",
-      },
+      [
+        {
+          content: "pdf-content",
+          filename: "invoice.pdf",
+        },
+        {
+          content: "csv-content",
+          filename: "Cartago4x4_invoice_1.csv",
+        },
+      ],
     );
+    expect(buildCSVAttachment).toHaveBeenCalledWith(order);
     expect(result).toEqual(
       expect.objectContaining({
         to: "admin@example.com",

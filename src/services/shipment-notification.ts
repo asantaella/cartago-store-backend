@@ -2,6 +2,7 @@ import { Fulfillment, Order, PaymentStatus } from "@medusajs/medusa";
 import AbstractBrevoEmailNotification from "./abstract-brevo-email-notification";
 import EmailTemplateCompiler from "./email-template-compiler";
 import InvoicePdfGeneratorService from "./invoice-pdf-generator";
+import OrderCsvAttachmentService from "./order-csv-attachment";
 import ShipmentTemplateNotificationService, {
   ShipmentNotificationTemplateData,
 } from "./shipment-template-notification";
@@ -38,12 +39,15 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
 
   protected invoicePdfGeneratorService: InvoicePdfGeneratorService;
 
+  protected orderCsvAttachmentService: OrderCsvAttachmentService;
+
   constructor(container, options) {
     super();
     this.shipmentTemplateService = new ShipmentTemplateNotificationService(
       container,
     );
     this.invoicePdfGeneratorService = container.invoicePdfGeneratorService;
+    this.orderCsvAttachmentService = container.orderCsvAttachmentService;
   }
 
   async buildPDFAttachment(
@@ -56,6 +60,18 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
     return {
       content: invoiceData.buffer.toString("base64"),
       filename: invoiceData.fileName,
+    };
+  }
+
+  async buildCSVAttachment(
+    order: Order,
+  ): Promise<{ content: string; filename: string }> {
+    const csvContent =
+      await this.orderCsvAttachmentService.buildCSVAttachment(order);
+
+    return {
+      content: csvContent,
+      filename: `Cartago4x4_invoice_${order.display_id}.csv`,
     };
   }
 
@@ -194,7 +210,7 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
     templateName: ShipmentTemplateName,
     templateData: ShipmentNotificationTemplateData,
     tags: string[],
-    attachment?: { content: string; filename: string },
+    attachments?: Array<{ content: string; filename: string }>,
   ): Promise<void> {
     const html = this.renderTemplate(templateName, templateData);
     const payload = this.buildEmailPayload(
@@ -203,14 +219,10 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
       html,
       tags,
       recipientName,
-      attachment
-        ? [
-            {
-              content: attachment.content,
-              name: attachment.filename,
-            },
-          ]
-        : undefined,
+      attachments?.map((attachment) => ({
+        content: attachment.content,
+        name: attachment.filename,
+      })),
     );
 
     await this.sendEmailWithRetry(
@@ -254,7 +266,8 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
         fulfillment,
         options.showTrackingDeliverySection ?? true,
       );
-      const attachment = await this.buildPDFAttachment(order);
+      const pdfAttachment = await this.buildPDFAttachment(order);
+      const csvAttachment = await this.buildCSVAttachment(order);
 
       let deliveredTo = "";
 
@@ -265,7 +278,7 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
           "invoice-created",
           templateData,
           ["invoice-created", "customer-notification"],
-          attachment,
+          [pdfAttachment],
         );
 
         deliveredTo = to_email;
@@ -285,7 +298,7 @@ class ShipmentNotificationService extends AbstractBrevoEmailNotification {
           "invoice-created",
           templateData,
           ["invoice-created", "admin-notification"],
-          attachment,
+          [pdfAttachment, csvAttachment],
         );
 
         deliveredTo = adminEmail;

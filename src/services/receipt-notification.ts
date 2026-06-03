@@ -1,21 +1,13 @@
 import {
   AbstractNotificationService,
-  Address,
-  LineItem,
   Order,
-  OrderService,
 } from "@medusajs/medusa";
 import { EntityManager } from "typeorm";
-import { AsyncParser } from "@json2csv/node";
-import { MailerSend, Recipient, EmailParams } from "mailersend";
-// Importar las utilidades
-import { formatMoney, formatDate } from "../utils/format-utils";
+import { MailerSend } from "mailersend";
 
-import OrderPlacedNotificationService, {
-  OrderPlacedNotificationTemplateData,
-} from "./order-placed-notification";
-import { OrderInvoice } from "../types/order-invoice.model";
+import OrderPlacedNotificationService from "./order-placed-notification";
 import { EmailNotification } from "../types/email-notification.model";
+import OrderCsvAttachmentService from "./order-csv-attachment";
 
 class ReceiptNotificationService extends AbstractNotificationService {
   protected manager_: EntityManager;
@@ -25,11 +17,13 @@ class ReceiptNotificationService extends AbstractNotificationService {
   protected config: any;
   private mailerSendService: MailerSend;
   private orderNotificationService: OrderPlacedNotificationService;
+  private orderCsvAttachmentService: OrderCsvAttachmentService;
   constructor(container, options) {
     super(container);
     this.orderNotificationService = new OrderPlacedNotificationService(
       container,
     );
+    this.orderCsvAttachmentService = container.orderCsvAttachmentService;
 
     try {
       this.mailerSendService = new MailerSend({
@@ -46,69 +40,7 @@ class ReceiptNotificationService extends AbstractNotificationService {
   // El método getTemplateData ha sido trasladado a OrderNotificationService
 
   async buildCSVAttachment(order: Order) {
-    const orderInvoice = new OrderInvoice(order);
-    const itemFields = [
-      { label: "title", value: "variant.title" },
-      { label: "sku", value: "variant.sku" },
-      { label: "quantity", value: "quantity" },
-      { label: "unit_price_ex_tax", value: "unit_price_ex_tax" },
-      { label: "unit_price", value: "unit_price" },
-      { label: "subtotal", value: "totals.subtotal" },
-      { label: "discount_total", value: "totals.discount_total" },
-      { label: "total", value: "totals.total" },
-      { label: "ref", value: "variant.barcode" },
-    ];
-
-    const customer = [
-      {
-        customer:
-          orderInvoice.getBillingCompanyName() ||
-          orderInvoice.getCustomerName().toLocaleUpperCase(),
-      },
-      {
-        customer: orderInvoice.getBillingAddress().toLocaleUpperCase(),
-      },
-      {
-        customer:
-          `${orderInvoice.getBillingPostalCode()} ${orderInvoice.getBillingCityCountry()}`.toLocaleUpperCase(),
-      },
-      {
-        customer: `${orderInvoice.getCustomerNifCif()}`,
-      },
-      {
-        customer: formatDate(order.created_at),
-      },
-    ];
-    const currencyCode = order.currency_code?.toUpperCase();
-    const customerFields = [{ label: "customer", value: "customer" }];
-
-    const itemOpts = { fields: itemFields, delimiter: ";" };
-    const customerOpts = { fields: customerFields, delimiter: ";" };
-
-    const itemParser = new AsyncParser(itemOpts);
-    const customerParser = new AsyncParser(customerOpts);
-
-    const orderItems = order.items.map((item: LineItem) => ({
-      ...item,
-      unit_price_ex_tax: formatMoney(
-        item.subtotal / item.quantity,
-        currencyCode,
-      ),
-      unit_price: formatMoney(item.total / item.quantity, currencyCode),
-      totals: {
-        subtotal: formatMoney(item.subtotal, currencyCode),
-        discount_total: formatMoney(item.discount_total, currencyCode),
-        total: formatMoney(item.total, currencyCode),
-      },
-    }));
-
-    const itemsCsv = await itemParser.parse(orderItems).promise();
-    const customerCsv = await customerParser.parse(customer).promise();
-    const shippingMethodCsv = orderInvoice.buildShippingMethodCsv();
-    const csvContent = `${customerCsv}\n\n${itemsCsv}\n${shippingMethodCsv}`;
-    const csvContentSanitized = csvContent.replace(/ €/g, "");
-
-    return Buffer.from(csvContentSanitized).toString("base64");
+    return this.orderCsvAttachmentService.buildCSVAttachment(order);
   }
 
   async sendNotification(
