@@ -292,9 +292,26 @@ export function adjustDraftOrderPricingOnPost(
         territory_type: territoryType,
       };
 
-      // Persistir los precios ajustados en la BD de forma asíncrona (después de enviar la respuesta)
+      // Persistir los precios ajustados en la BD de forma asíncrona
+      // Se ejecuta en paralelo con la respuesta, pero ANTES de que se marque como pagado
+      // El orden de ejecución es: persistencia async → response JSON → Medusa procesa pago
+      // Si el matcher de /pay está registrado, ese middleware ejecutará persistencia síncrona primero
+      // Esta persistencia async es un fallback/respaldo que se ejecuta en paralelo
       setImmediate(async () => {
         try {
+          // Verificar si ya se persisitió (el matcher de /pay debería haberlo hecho)
+          const cartRepoCheck = manager.getRepository("Cart");
+          const existingCart = await cartRepoCheck.findOne({
+            where: { id: cartId },
+          });
+
+          if (existingCart?.metadata?.prices_adjusted === true) {
+            console.log(
+              `[draft-order-pricing] POST async skip - prices already adjusted for cart ${cartId}`
+            );
+            return;
+          }
+
           await manager.transaction(async (tm: any) => {
             const lineItemRepo = tm.getRepository("LineItem");
             const shippingMethodRepo = tm.getRepository("ShippingMethod");
@@ -307,6 +324,11 @@ export function adjustDraftOrderPricingOnPost(
             });
 
             if (!cartEntity) return;
+
+            // Verificar de nuevo si ya se ajustó
+            if (cartEntity.metadata?.prices_adjusted === true) {
+              return;
+            }
 
             // Persistir precios de items
             if (cartEntity.items) {
@@ -345,7 +367,7 @@ export function adjustDraftOrderPricingOnPost(
 
                   await lineItemRepo.save(item);
                   console.log(
-                    `[draft-order-pricing] PERSISTED item ${item.id} - ${originalPrice} → ${adjustedPrice}`
+                    `[draft-order-pricing] POST ASYNC PERSISTED item ${item.id} - ${originalPrice} → ${adjustedPrice}`
                   );
                 }
               }
@@ -368,7 +390,7 @@ export function adjustDraftOrderPricingOnPost(
 
                   await shippingMethodRepo.save(method);
                   console.log(
-                    `[draft-order-pricing] PERSISTED shipping ${method.id} - ${originalPrice} → ${adjustedPrice}`
+                    `[draft-order-pricing] POST ASYNC PERSISTED shipping ${method.id} - ${originalPrice} → ${adjustedPrice}`
                   );
                 }
               }
@@ -383,11 +405,11 @@ export function adjustDraftOrderPricingOnPost(
             await cartRepo.save(cartEntity);
 
             console.log(
-              `[draft-order-pricing] POST persistence completed for cart ${cartId}`
+              `[draft-order-pricing] POST ASYNC persistence completed for cart ${cartId}`
             );
           });
         } catch (err) {
-          console.error(`[draft-order-pricing] Error persisting prices:`, err);
+          console.error(`[draft-order-pricing] Error in async persistence:`, err);
         }
       });
     } catch (error) {

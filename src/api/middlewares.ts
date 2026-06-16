@@ -1,6 +1,7 @@
 import type { MiddlewaresConfig } from "@medusajs/medusa";
 import { raw } from "body-parser";
 import cors from "cors";
+import { parseCorsOrigins } from "medusa-core-utils";
 import {
   adjustCartShippingExtraOnGet,
   adjustCartShippingExtraOnPost,
@@ -13,6 +14,11 @@ import {
   adjustDraftOrderPricingOnPost,
   persistDraftOrderPricing,
 } from "./middlewares/draft-order-pricing";
+
+// CORS origins para admin y store, consistentes con medusa-config.js
+const adminCorsOrigin = parseCorsOrigins(
+  process.env.ADMIN_CORS || "http://localhost:7001"
+);
 
 export const config: MiddlewaresConfig = {
   routes: [
@@ -56,11 +62,28 @@ export const config: MiddlewaresConfig = {
       method: "POST",
       middlewares: [persistCartPricingOnComplete],
     },
-    // Middleware para ajustar precios en GET /admin/draft-orders/:id (solo lectura)
+    // ─── Draft orders ─────────────────────────────────────────────────
+    // Los middlewares custom con method:"POST" crean route layers en Express
+    // que interceptan el preflight OPTIONS sin agregar headers CORS.
+    // Solución: agregar entradas USE (sin method) con cors() ANTES de las
+    // entradas POST/GET, así el preflight OPTIONS recibe headers CORS.
+    // ───────────────────────────────────────────────────────────────────
+    {
+      matcher: "/admin/draft-orders",
+      middlewares: [
+        cors({ origin: adminCorsOrigin, credentials: true }),
+      ],
+    },
+    {
+      matcher: "/admin/draft-orders",
+      method: "POST",
+      middlewares: [adjustDraftOrderPricingOnPost],
+    },
     {
       matcher: "/admin/draft-orders/:id",
-      method: "GET",
-      middlewares: [adjustCartPricingOnGet],
+      middlewares: [
+        cors({ origin: adminCorsOrigin, credentials: true }),
+      ],
     },
     {
       matcher: "/admin/draft-orders/:id",
@@ -71,6 +94,17 @@ export const config: MiddlewaresConfig = {
       matcher: "/admin/draft-orders/:id",
       method: "GET",
       middlewares: [adjustCartPricingOnGet],
+    },
+    {
+      matcher: "/admin/draft-orders/:id/pay",
+      middlewares: [
+        cors({ origin: adminCorsOrigin, credentials: true }),
+      ],
+    },
+    {
+      matcher: "/admin/draft-orders/:id/pay",
+      method: "POST",
+      middlewares: [persistDraftOrderPricing],
     },
   ],
 };
