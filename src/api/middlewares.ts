@@ -96,6 +96,28 @@ export const config: MiddlewaresConfig = {
       middlewares: [adjustCartPricingOnGet],
     },
     {
+      matcher: "/admin/draft-orders/:id/line-items",
+      middlewares: [
+        cors({ origin: adminCorsOrigin, credentials: true }),
+      ],
+    },
+    {
+      matcher: "/admin/draft-orders/:id/line-items",
+      method: "POST",
+      middlewares: [adjustDraftOrderPricingOnPost],
+    },
+    {
+      matcher: "/admin/draft-orders/:id/line-items/:line_id",
+      middlewares: [
+        cors({ origin: adminCorsOrigin, credentials: true }),
+      ],
+    },
+    {
+      matcher: "/admin/draft-orders/:id/line-items/:line_id",
+      method: ["POST", "DELETE"],
+      middlewares: [adjustDraftOrderPricingOnPost],
+    },
+    {
       matcher: "/admin/draft-orders/:id/pay",
       middlewares: [
         cors({ origin: adminCorsOrigin, credentials: true }),

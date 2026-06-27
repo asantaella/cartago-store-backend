@@ -1,7 +1,11 @@
 import { NextFunction, Response } from "express";
 import { MedusaRequest } from "@medusajs/medusa";
 import SpanishTaxService from "../../services/spanish-tax";
-import { calculatePriceWithoutTax } from "./cart-pricing-helpers";
+import {
+  calculatePriceWithoutTax,
+  getLineItemAdjustedPrice,
+  getShippingMethodAdjustedPrice,
+} from "./cart-pricing-helpers";
 
 /**
  * Middleware para ajustar precios en GET de draft orders
@@ -60,15 +64,11 @@ export function adjustDraftOrderPricingOnGet(
       // Ajustar precios de line items
       if (Array.isArray(cart.items) && cart.items.length > 0) {
         for (const item of cart.items) {
-          const priceWithTax = item.unit_price;
+          const basePrice = getLineItemAdjustedPrice(item);
 
-          if (typeof priceWithTax !== "number" || !isFinite(priceWithTax)) {
+          if (!isFinite(basePrice)) {
             continue;
           }
-
-          const adjustedPrice = item.metadata?.adjusted_unit_price;
-          const basePrice =
-            adjustedPrice || calculatePriceWithoutTax(priceWithTax);
 
           item.subtotal = basePrice * (item.quantity || 1);
 
@@ -83,14 +83,11 @@ export function adjustDraftOrderPricingOnGet(
         cart.shipping_methods.length > 0
       ) {
         for (const method of cart.shipping_methods) {
-          const priceWithTax = method.price;
-          if (typeof priceWithTax !== "number" || !isFinite(priceWithTax)) {
+          const baseShippingPrice = getShippingMethodAdjustedPrice(method);
+
+          if (!isFinite(baseShippingPrice)) {
             continue;
           }
-
-          const adjustedShippingPrice = method.data?.adjusted_price;
-          const baseShippingPrice =
-            adjustedShippingPrice || calculatePriceWithoutTax(priceWithTax);
 
           (method as Record<string, unknown>)["price_without_tax"] =
             baseShippingPrice;
@@ -104,26 +101,16 @@ export function adjustDraftOrderPricingOnGet(
           0
         ) || 0;
 
-      // Calcular shipping: si el precio original es 0 (descuento 100%), mantenerlo en 0
+      // Calcular shipping
       const shippingTotal =
         cart.shipping_methods?.reduce((sum: number, method: any) => {
-          const shippingWithTax = method.price;
+          const adjustedPrice = getShippingMethodAdjustedPrice(method);
 
-          // Si el precio es 0, no ajustar (descuento 100%)
-          if (shippingWithTax === 0) {
+          if (!isFinite(adjustedPrice)) {
             return sum;
           }
 
-          const adjustedPrice = method.data?.adjusted_price;
-          if (adjustedPrice) {
-            return sum + adjustedPrice;
-          } else if (
-            typeof shippingWithTax === "number" &&
-            isFinite(shippingWithTax)
-          ) {
-            return sum + calculatePriceWithoutTax(shippingWithTax);
-          }
-          return sum;
+          return sum + adjustedPrice;
         }, 0) || 0;
 
       cart.shipping_total = shippingTotal;
@@ -214,19 +201,18 @@ export function adjustDraftOrderPricingOnPost(
       // Ajustar precios de line items en la respuesta
       if (Array.isArray(cart.items) && cart.items.length > 0) {
         for (const item of cart.items) {
-          const priceWithTax = item.unit_price;
+          const basePrice = getLineItemAdjustedPrice(item);
 
-          if (typeof priceWithTax !== "number" || !isFinite(priceWithTax)) {
+          if (!isFinite(basePrice)) {
             continue;
           }
 
-          const basePrice = calculatePriceWithoutTax(priceWithTax);
           item.subtotal = basePrice * (item.quantity || 1);
 
           console.log(
             `[draft-order-pricing] POST item ${
               item.id
-            } - priceWithTax: ${priceWithTax}, basePrice: ${Math.round(
+            } - basePrice: ${Math.round(
               basePrice
             )}, discount: ${item.discount_total}`
           );
@@ -239,12 +225,12 @@ export function adjustDraftOrderPricingOnPost(
         cart.shipping_methods.length > 0
       ) {
         for (const method of cart.shipping_methods) {
-          const priceWithTax = method.price;
-          if (typeof priceWithTax !== "number" || !isFinite(priceWithTax)) {
+          const baseShippingPrice = getShippingMethodAdjustedPrice(method);
+
+          if (!isFinite(baseShippingPrice)) {
             continue;
           }
 
-          const baseShippingPrice = calculatePriceWithoutTax(priceWithTax);
           (method as Record<string, unknown>)["price_without_tax"] =
             baseShippingPrice;
         }
@@ -257,23 +243,16 @@ export function adjustDraftOrderPricingOnPost(
           0
         ) || 0;
 
-      // Calcular shipping: si el precio original es 0 (descuento 100%), mantenerlo en 0
+      // Calcular shipping
       const shippingTotal =
         cart.shipping_methods?.reduce((sum: number, method: any) => {
-          const shippingWithTax = method.price;
+          const adjustedPrice = getShippingMethodAdjustedPrice(method);
 
-          // Si el precio es 0, no ajustar (descuento 100%)
-          if (shippingWithTax === 0) {
+          if (!isFinite(adjustedPrice)) {
             return sum;
           }
 
-          if (
-            typeof shippingWithTax === "number" &&
-            isFinite(shippingWithTax)
-          ) {
-            return sum + calculatePriceWithoutTax(shippingWithTax);
-          }
-          return sum;
+          return sum + adjustedPrice;
         }, 0) || 0;
 
       cart.shipping_total = shippingTotal;
@@ -333,12 +312,23 @@ export function adjustDraftOrderPricingOnPost(
             // Persistir precios de items
             if (cartEntity.items) {
               for (const item of cartEntity.items) {
-                const originalPrice = item.unit_price;
+                const existingAdjusted = item.metadata?.adjusted_unit_price;
+                const existingOriginal = item.metadata?.original_unit_price;
+
+                // Evitar doble ajuste
+                if (
+                  existingAdjusted !== undefined &&
+                  item.unit_price === existingAdjusted
+                ) {
+                  continue;
+                }
+
+                const originalPrice = existingOriginal || item.unit_price;
                 const adjustedPrice = Math.round(
                   calculatePriceWithoutTax(originalPrice)
                 );
 
-                if (originalPrice !== adjustedPrice) {
+                if (item.unit_price !== adjustedPrice) {
                   item.unit_price = adjustedPrice;
 
                   // Ajustar descuento proporcionalmente
@@ -355,15 +345,15 @@ export function adjustDraftOrderPricingOnPost(
                       item.metadata = {
                         ...item.metadata,
                         original_discount_total: originalDiscount,
-                        adjusted_unit_price: adjustedPrice,
                       };
                     }
-                  } else {
-                    item.metadata = {
-                      ...item.metadata,
-                      adjusted_unit_price: adjustedPrice,
-                    };
                   }
+
+                  item.metadata = {
+                    ...item.metadata,
+                    original_unit_price: originalPrice,
+                    adjusted_unit_price: adjustedPrice,
+                  };
 
                   await lineItemRepo.save(item);
                   console.log(
@@ -376,15 +366,27 @@ export function adjustDraftOrderPricingOnPost(
             // Persistir precios de shipping
             if (cartEntity.shipping_methods) {
               for (const method of cartEntity.shipping_methods) {
-                const originalPrice = method.price;
+                const existingAdjusted = method.data?.adjusted_price;
+                const existingOriginal = method.data?.original_price;
+
+                // Evitar doble ajuste
+                if (
+                  existingAdjusted !== undefined &&
+                  method.price === existingAdjusted
+                ) {
+                  continue;
+                }
+
+                const originalPrice = existingOriginal || method.price;
                 const adjustedPrice = Math.round(
                   calculatePriceWithoutTax(originalPrice)
                 );
 
-                if (originalPrice !== adjustedPrice) {
+                if (method.price !== adjustedPrice) {
                   method.price = adjustedPrice;
                   method.data = {
                     ...method.data,
+                    original_price: originalPrice,
                     adjusted_price: adjustedPrice,
                   };
 
@@ -530,7 +532,8 @@ export async function persistDraftOrderPricing(
       // Persistir precios ajustados en line items
       if (Array.isArray(cart.items) && cart.items.length > 0) {
         for (const item of cart.items) {
-          const originalPrice = item.unit_price;
+          const originalPrice =
+            item.metadata?.original_unit_price || item.unit_price;
           const adjustedPrice =
             item.metadata?.adjusted_unit_price ||
             Math.round(calculatePriceWithoutTax(originalPrice));
@@ -585,7 +588,8 @@ export async function persistDraftOrderPricing(
         cart.shipping_methods.length > 0
       ) {
         for (const method of cart.shipping_methods) {
-          const originalPrice = method.price;
+          const originalPrice =
+            method.data?.original_price || method.price;
           const adjustedPrice =
             method.data?.adjusted_price ||
             Math.round(calculatePriceWithoutTax(originalPrice));
