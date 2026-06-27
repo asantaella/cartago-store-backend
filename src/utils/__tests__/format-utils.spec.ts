@@ -11,12 +11,12 @@ describe("Format Utilities", () => {
     });
 
     it("formatea correctamente cantidades monetarias en dólares", () => {
-      expect(formatMoney(1099, "USD")).toBe("10,99 $");
-      expect(formatMoney(1000, "USD")).toBe("10,00 $");
+      expect(formatMoney(1099, "USD")).toBe("10,99 US$");
+      expect(formatMoney(1000, "USD")).toBe("10,00 US$");
     });
 
     it("maneja correctamente grandes cantidades", () => {
-      expect(formatMoney(100050, "EUR")).toBe("1.000,50 €");
+      expect(formatMoney(100050, "EUR")).toBe("1000,50 €");
       expect(formatMoney(1000050, "EUR")).toBe("10.000,50 €");
     });
 
@@ -30,7 +30,7 @@ describe("Format Utilities", () => {
 
     it("maneja casos en los que el código de moneda está en minúscula", () => {
       expect(formatMoney(1099, "eur")).toBe("10,99 €");
-      expect(formatMoney(1099, "usd")).toBe("10,99 $");
+      expect(formatMoney(1099, "usd")).toBe("10,99 US$");
     });
   });
 

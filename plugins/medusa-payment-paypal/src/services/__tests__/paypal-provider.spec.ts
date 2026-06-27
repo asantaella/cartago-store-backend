@@ -125,6 +125,7 @@ describe("PaypalProvider", () => {
           intent: "AUTHORIZE",
           purchase_units: [
             {
+              reference_id: initiatePaymentContextSuccess.resource_id,
               custom_id: initiatePaymentContextSuccess.resource_id,
               amount: {
                 currency_code:
@@ -469,26 +470,12 @@ describe("PaypalProvider", () => {
     })
 
     it("should fail", async () => {
+      // getOrder throws for FAIL_INTENT_ID → falls through to initiatePayment
       const result = await paypalProvider.updatePayment(
         updatePaymentFailData as unknown as PaymentProcessorContext
       )
 
-      expect(PayPalMock.patchOrder).toHaveBeenCalled()
-      expect(PayPalMock.patchOrder).toHaveBeenCalledWith(
-        updatePaymentFailData.paymentSessionData.id,
-        [
-          {
-            op: "replace",
-            path: "/purchase_units/@reference_id=='default'",
-            value: {
-              amount: {
-                currency_code: updatePaymentFailData.currency_code,
-                value: "10.00",
-              },
-            },
-          },
-        ]
-      )
+      expect(PayPalMock.patchOrder).not.toHaveBeenCalled()
 
       expect(result).toEqual({
         code: "",

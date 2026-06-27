@@ -19,6 +19,7 @@ import {
 } from "../../constants/correos-constants";
 
 import dotenv from "dotenv";
+import { isMobilePhone } from "../../utils/phone-utils";
 dotenv.config();
 export class MedusaOrderToCorreosOrderMapper {
   private readonly contractNumber: string;
@@ -60,8 +61,8 @@ export class MedusaOrderToCorreosOrderMapper {
     if (missingVars.length > 0) {
       throw new Error(
         `Missing required environment variables for Correos integration: ${missingVars.join(
-          ", "
-        )}`
+          ", ",
+        )}`,
       );
     }
   }
@@ -154,6 +155,7 @@ export class MedusaOrderToCorreosOrderMapper {
    */
   private mapShippingAddressToAddressee(order: Order): Addressee {
     const shippingAddress = order.shipping_address;
+    const countryCode = order.shipping_address?.country_code || "";
 
     if (!shippingAddress) {
       throw new Error("Order must have a shipping address");
@@ -164,15 +166,15 @@ export class MedusaOrderToCorreosOrderMapper {
       (shippingAddress.metadata?.address_province_code as string) || "";
 
     return {
-      name: shippingAddress.first_name || "",
-      lastName1: shippingAddress.last_name || "",
+      name: shippingAddress.first_name?.trim() || "",
+      lastName1: shippingAddress.last_name?.trim() || "",
       lastName2: "",
       doiType: "",
       doiNumber: "",
       company: "",
       contactPerson: "",
       addressType: "",
-      address: shippingAddress.address_1 || "",
+      address: shippingAddress.address_1?.trim() || "",
       number: "",
       portal: "",
       block: "",
@@ -180,14 +182,16 @@ export class MedusaOrderToCorreosOrderMapper {
       floor: "",
       door: "",
       addressComplement: "",
-      locality: shippingAddress.city || "",
+      locality: shippingAddress.city?.trim() || "",
       province: provinceCode,
-      cp: shippingAddress.postal_code || "",
+      cp: shippingAddress.postal_code?.trim() || "",
       zip: "",
       country: CORREOS_ADDRESSEE_CONSTANTS.COUNTRY,
       contactPhone: shippingAddress.phone || "",
       email: order.email || "",
-      smsNumber: this.sanitizePhoneNumber(shippingAddress.phone) || "",
+      smsNumber: isMobilePhone(shippingAddress.phone, countryCode)
+        ? this.sanitizePhoneNumber(shippingAddress.phone)
+        : "",
       language: CORREOS_ADDRESSEE_CONSTANTS.LANGUAGE,
       chosenOffice: "",
       homepaqCode: "",

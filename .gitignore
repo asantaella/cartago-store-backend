@@ -31,3 +31,5 @@ build
 plugins/**/dist/*
 plugins/**/node_modules/*
 plugins/**/.yarn
+# Local Pi runtime state
+.atl/
