@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Pre-push hook: ejecuta los tests antes de permitir el push.
+# Si los tests fallan, el push se cancela.
+#
+
+echo "🧪 Ejecutando tests antes del push..."
+
+# Ejecutar tests con el mismo comando que npm run test
+npm run test
+
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "❌ Los tests fallaron. Push cancelado."
+  echo "   Corregí los errores y volvé a intentar."
+  exit 1
+fi
+
+echo "✅ Tests pasaron. Push permitido."
+exit 0

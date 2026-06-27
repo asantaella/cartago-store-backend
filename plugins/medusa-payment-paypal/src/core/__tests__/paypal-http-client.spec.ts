@@ -94,9 +94,7 @@ describe("PaypalHttpClient", function () {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        data: {
-          grant_type: "client_credentials",
-        },
+        data: "grant_type=client_credentials",
       }),
       expect.objectContaining({
         method: "POST",
@@ -118,9 +116,7 @@ describe("PaypalHttpClient", function () {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        data: {
-          grant_type: "client_credentials",
-        },
+        data: "grant_type=client_credentials",
       }),
       expect.objectContaining({
         method: "POST",
@@ -184,9 +180,7 @@ describe("PaypalHttpClient", function () {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        data: {
-          grant_type: "client_credentials",
-        },
+        data: "grant_type=client_credentials",
       }),
       expect.objectContaining({
         method: "POST",
@@ -208,9 +202,7 @@ describe("PaypalHttpClient", function () {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        data: {
-          grant_type: "client_credentials",
-        },
+        data: "grant_type=client_credentials",
       }),
       expect.objectContaining({
         method: "POST",
