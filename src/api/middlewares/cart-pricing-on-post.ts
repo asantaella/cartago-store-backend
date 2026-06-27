@@ -170,7 +170,7 @@ export async function adjustCartPricingOnPost(
       const manager2 = resolveManager(req);
       if (manager2) {
         const { adjustCartPricesInDb } =
-          await import("./cart-pricing-db-update");
+          await import("./cart-pricing-db-update.js");
 
         if (shouldAwaitDbRestore) {
           await adjustCartPricesInDb(manager2, cartId, taxContext);
