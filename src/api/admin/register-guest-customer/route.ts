@@ -1,6 +1,8 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
-import { IsEmail, IsString } from "class-validator";
-import { CustomerService, OrderService } from "@medusajs/medusa/dist/services";
+import { IsBoolean, IsEmail, IsOptional, IsString, validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
+import { CustomerService } from "@medusajs/medusa/dist/services";
+import { transferOrdersFromGuestToCustomer } from "../../utils/transfer-guest-orders";
 
 /**
  * Definición del esquema de validación para la solicitud
@@ -12,55 +14,39 @@ class AdminRegisterGuestRequest {
   @IsString()
   password: string;
 
+  @IsOptional()
   @IsString()
   first_name?: string;
 
+  @IsOptional()
   @IsString()
   last_name?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  delete_guest?: boolean = true;
 }
-
-const unlinkOrdersFromGuestCustomer = async ({
-  scope,
-  email,
-  newCustomer,
-}): Promise<void> => {
-  const customerService: CustomerService = scope.resolve("customerService");
-  const orderService: OrderService = scope.resolve("orderService");
-  // Buscar si existe un cliente invitado con el mismo email
-  const guestCustomers = await customerService.list({
-    email,
-    has_account: false,
-  });
-
-  if (guestCustomers.length > 0) {
-    const guestCustomer = guestCustomers[0];
-
-    // Reasignar las órdenes del cliente invitado al nuevo cliente registrado
-    const orders = await orderService.list({ customer_id: guestCustomer.id });
-    try {
-      for (const order of orders) {
-        console.log("Updating orders: ", order.id);
-        await orderService.update(order.id, { customer_id: newCustomer.id });
-      }
-
-      // Opcional: eliminar el registro del cliente invitado
-      console.log("Deleting guest user...", guestCustomer.id)
-      await customerService.delete(guestCustomer.id);
-    } catch (err) {
-      throw new Error(err.toString());
-    }
-  }
-};
 
 /**
  * Handler para el método POST en /admin/register-guest
  */
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-  const { email, password, first_name, last_name } =
-    req.body as AdminRegisterGuestRequest;
+  // Validar automáticamente el body
+  const dto = plainToInstance(AdminRegisterGuestRequest, req.body);
+  const validationErrors = await validate(dto);
+  if (validationErrors.length > 0) {
+    return res.status(400).json({
+      message: "Validation error",
+      errors: validationErrors.map((err) => ({
+        property: err.property,
+        constraints: err.constraints,
+      })),
+    });
+  }
+
+  const { email, password, first_name, last_name, delete_guest } = dto;
 
   const customerService: CustomerService = req.scope.resolve("customerService");
-  const orderService: OrderService = req.scope.resolve("orderService");
 
   try {
     // Verificar si ya existe un cliente registrado con el mismo email
@@ -70,13 +56,16 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     });
 
     if (existingCustomers.length > 0) {
-      await unlinkOrdersFromGuestCustomer({
+      const result = await transferOrdersFromGuestToCustomer({
         scope: req.scope,
         email,
-        newCustomer: existingCustomers[0],
+        newCustomerId: existingCustomers[0].id,
+        deleteGuest: delete_guest ?? true,
       });
+
       return res.status(200).json({
         message: "Reasignado a cliente registrado con este correo electrónico.",
+        orders_transferred: result.ordersTransferred,
       });
     }
 
@@ -91,19 +80,23 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       has_account: true,
     });
 
-    await unlinkOrdersFromGuestCustomer({
+    const result = await transferOrdersFromGuestToCustomer({
       scope: req.scope,
       email,
-      newCustomer,
+      newCustomerId: newCustomer.id,
+      deleteGuest: delete_guest ?? true,
     });
 
     return res.status(200).json({
       message: "Cliente registrado exitosamente.",
-      // customer: newCustomer,
       customer: email,
+      orders_transferred: result.ordersTransferred,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error al registrar el cliente." });
+    return res.status(500).json({
+      message: "Error al registrar el cliente.",
+      detail: error instanceof Error ? error.message : "Unknown error",
+    });
   }
 };

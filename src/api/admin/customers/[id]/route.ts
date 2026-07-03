@@ -11,7 +11,7 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
     // Verificar si ya existe un cliente registrado con el mismo email
     // Opcional: eliminar el registro del cliente invitado
     console.log("Deleting guest user...", id);
-    await customerService.delete(id);
+    await customerService.delete(id as string);
     return res.status(200).json({
       message: "Cliente borrado exitosamente.",
       // customer: newCustomer,
