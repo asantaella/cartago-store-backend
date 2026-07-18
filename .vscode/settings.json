@@ -19,23 +19,17 @@
     "**/dist": true,
     "**/build": true
   },
-  "typescript.tsserver.maxTsServerMemory": 4096,
-  "typescript.disableAutomaticTypeAcquisition": true,
-  "typescript.tsdk": "node_modules/typescript/lib",
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "always"
   },
   "search.followSymlinks": false,
-  "extensions.ignoreRecommendations": false
-}
-{
-    "editor.formatOnSave": true,
-    "[javascript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
+  "extensions.ignoreRecommendations": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

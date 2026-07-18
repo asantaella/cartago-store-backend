@@ -3,20 +3,37 @@ import {
   type SubscriberArgs,
   ProductService,
   ProductVariantService,
-} from "@medusajs/medusa"
-import AlgoliaService from "../services/algolia"
-import { ProductStatus } from "@medusajs/types"
+} from "@medusajs/medusa";
+import AlgoliaService from "../services/algolia";
+import { ProductStatus } from "@medusajs/types";
 
 async function ensureManageInventory(
   variantId: string,
-  container: SubscriberArgs<Record<string, any>>["container"]
+  container: SubscriberArgs<Record<string, any>>["container"],
 ) {
-  const variantService: ProductVariantService =
-    container.resolve("productVariantService")
-  await variantService.update(variantId, { manage_inventory: true })
+  const variantService: ProductVariantService = container.resolve(
+    "productVariantService",
+  );
+  await variantService.update(variantId, {
+    manage_inventory: true,
+    allow_backorder: false,
+  });
   console.log(
-    `[PRODUCT-UPDATE] manage_inventory=true set on variant ${variantId}`
-  )
+    `[PRODUCT-UPDATE] manage_inventory=true set on variant ${variantId}`,
+  );
+}
+
+async function ensureAllowBackorder(
+  variantId: string,
+  container: SubscriberArgs<Record<string, any>>["container"],
+) {
+  const variantService: ProductVariantService = container.resolve(
+    "productVariantService",
+  );
+  await variantService.update(variantId, { allow_backorder: true });
+  console.log(
+    `[PRODUCT-UPDATE] allow_backorder=true set on variant ${variantId}`,
+  );
 }
 
 // Core logic, extracted so it is directly awaitable from tests and
@@ -28,17 +45,17 @@ export async function processProductUpdate({
   eventName,
   container,
 }: SubscriberArgs<Record<string, any>>) {
-  const productId = data.product_id || data.id
+  const productId = data.product_id || data.id;
   if (!productId) {
     console.warn(
       `[PRODUCT-UPDATE] No se encontró product_id en los datos del evento: ${JSON.stringify(
-        data
-      )}`
-    )
-    return
+        data,
+      )}`,
+    );
+    return;
   }
-  const productService: ProductService = container.resolve("productService")
-  const algoliaService: AlgoliaService = container.resolve("algoliaService")
+  const productService: ProductService = container.resolve("productService");
+  const algoliaService: AlgoliaService = container.resolve("algoliaService");
 
   // Recuperar el producto con todas las relaciones necesarias
   const product = await productService.retrieve(productId, {
@@ -50,63 +67,105 @@ export async function processProductUpdate({
       "tags",
       "images",
       "categories",
+      "collection",
     ],
-  })
+  });
 
   // Sincronizar con Algolia de forma asíncrona
   if (product.status === ProductStatus.PUBLISHED) {
-    await algoliaService.syncProduct(product)
+    await algoliaService.syncProduct(product);
   }
 
   // Default manage_inventory=true on product creation: enforce on
   // every variant the product was created with. Idempotent: a noop
   // when the value is already true.
-  if (eventName === ProductService.Events.CREATED) {
-    const variants = product.variants || []
+  if (
+    eventName === ProductService.Events.CREATED ||
+    eventName === ProductService.Events.UPDATED
+  ) {
+    const variants = product.variants || [];
     for (const variant of variants) {
       if (variant?.id) {
-        await ensureManageInventory(variant.id, container)
+        await ensureManageInventory(variant.id, container);
       }
     }
   }
 
   // Default manage_inventory=true on variant creation. Catches
   // variants added later via addVariant / admin UI / API.
-  if (eventName === ProductVariantService.Events.CREATED) {
-    const variantId = data.variant_id || data.id
+  if (
+    eventName === ProductVariantService.Events.CREATED ||
+    eventName === ProductVariantService.Events.UPDATED
+  ) {
+    const variantId = data.variant_id || data.id;
     if (variantId) {
-      await ensureManageInventory(variantId, container)
+      await ensureManageInventory(variantId, container);
     }
   }
 
-  console.log(
-    `[PRODUCT-UPDATE] Producto ${productId} procesado correctamente`
-  )
+  // allow_backorder=true for products in the shipping exception collection
+  const shippingExceptionCollectionHandle =
+    process.env.COLLECTION_SHIPPING_EXCEPTION;
+  const productCollectionHandle = product.collection?.handle;
+
+  if (
+    shippingExceptionCollectionHandle &&
+    productCollectionHandle === shippingExceptionCollectionHandle
+  ) {
+    if (
+      eventName === ProductService.Events.CREATED ||
+      eventName === ProductService.Events.UPDATED
+    ) {
+      const variants = product.variants || [];
+      for (const variant of variants) {
+        if (variant?.id) {
+          await ensureAllowBackorder(variant.id, container);
+        }
+      }
+    }
+
+    if (
+      eventName === ProductVariantService.Events.CREATED ||
+      eventName === ProductVariantService.Events.UPDATED
+    ) {
+      const variantId = data.variant_id || data.id;
+      if (variantId) {
+        await ensureAllowBackorder(variantId, container);
+      }
+    }
+  }
+
+  console.log(`[PRODUCT-UPDATE] Producto ${productId} procesado correctamente`);
 }
 
 export default async function handleProductUpdate(
-  args: SubscriberArgs<Record<string, any>>
+  args: SubscriberArgs<Record<string, any>>,
 ) {
-  const { data, eventName, container, pluginOptions } = args
+  const { data, eventName, container, pluginOptions } = args;
   try {
     console.log(
       `[PRODUCT-UPDATE] Evento ${eventName} recibido para producto ${JSON.stringify(
-        data
-      )}`
-    )
+        data,
+      )}`,
+    );
     // Usar setTimeout para evitar bloqueos en la respuesta HTTP
     setTimeout(async () => {
       try {
-        await processProductUpdate({ data, eventName, container, pluginOptions })
+        await processProductUpdate({
+          data,
+          eventName,
+          container,
+          pluginOptions,
+        });
       } catch (error) {
         console.error(
           `[PRODUCT-UPDATE] Error procesando producto ${data?.product_id || data?.id}:`,
-          error
-        )
+          error,
+        );
       }
-    }, 100) // Pequeño delay para no bloquear la respuesta
+    }, 100); // Pequeño delay para no bloquear la respuesta
   } catch (error) {
-    console.error(`[PRODUCT-UPDATE] Error en subscriber:`, error)
+    console.error(`[PRODUCT-UPDATE] Error en subscriber:`, error);
   }
 }
 
