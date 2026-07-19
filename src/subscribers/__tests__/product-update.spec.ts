@@ -72,7 +72,7 @@ describe("product-update subscriber — manage_inventory default", () => {
     )
   })
 
-  it("sets manage_inventory=true on every variant when a product is updated", async () => {
+  it("does not apply manage_inventory when a product is updated (loop guard)", async () => {
     const { container, mocks } = buildContainer({ product: baseProduct })
 
     await processProductUpdate({
@@ -82,17 +82,12 @@ describe("product-update subscriber — manage_inventory default", () => {
       pluginOptions: {},
     })
 
-    expect(mocks.productVariantService.update).toHaveBeenCalledTimes(2)
-    expect(mocks.productVariantService.update).toHaveBeenNthCalledWith(
-      1,
-      "var_01",
-      manageInventoryPayload,
-    )
-    expect(mocks.productVariantService.update).toHaveBeenNthCalledWith(
-      2,
-      "var_02",
-      manageInventoryPayload,
-    )
+    // manage_inventory solo en CREATED para evitar loop:
+    // product.updated → ensureManageInventory → variantService.update
+    // → product-variant.updated → ensureManageInventory → ...
+    expect(mocks.productVariantService.update).not.toHaveBeenCalled()
+    // Algolia sync still runs on update
+    expect(mocks.algoliaService.syncProduct).toHaveBeenCalledWith(baseProduct)
   })
 
   it("sets manage_inventory=true on a new variant when a variant is created", async () => {
@@ -112,7 +107,7 @@ describe("product-update subscriber — manage_inventory default", () => {
     )
   })
 
-  it("sets manage_inventory=true on a variant when a variant is updated", async () => {
+  it("does not apply manage_inventory when a variant is updated (loop guard)", async () => {
     const { container, mocks } = buildContainer({ product: baseProduct })
 
     await processProductUpdate({
@@ -122,11 +117,8 @@ describe("product-update subscriber — manage_inventory default", () => {
       pluginOptions: {},
     })
 
-    expect(mocks.productVariantService.update).toHaveBeenCalledTimes(1)
-    expect(mocks.productVariantService.update).toHaveBeenCalledWith(
-      "var_99",
-      manageInventoryPayload,
-    )
+    // Misma proteccion: variant.updated → ensureManageInventory → loop
+    expect(mocks.productVariantService.update).not.toHaveBeenCalled()
   })
 
   it("tolerates a product with no variants on create", async () => {
@@ -222,8 +214,8 @@ describe("product-update subscriber — allow_backorder for shipping exception c
       pluginOptions: {},
     })
 
-    // 2 manage_inventory + 2 allow_backorder
-    expect(mocks.productVariantService.update).toHaveBeenCalledTimes(4)
+    // Solo allow_backorder (2 calls) — manage_inventory NO corre en UPDATED
+    expect(mocks.productVariantService.update).toHaveBeenCalledTimes(2)
     expect(mocks.productVariantService.update).toHaveBeenCalledWith("var_01", {
       allow_backorder: true,
     })
@@ -251,7 +243,7 @@ describe("product-update subscriber — allow_backorder for shipping exception c
     })
   })
 
-  it("sets allow_backorder=true on a variant when a variant is updated with the shipping exception collection", async () => {
+  it("does not apply allow_backorder when a variant is updated (loop guard)", async () => {
     const { container, mocks } = buildContainer({
       product: shippingExceptionProduct,
     })
@@ -263,11 +255,8 @@ describe("product-update subscriber — allow_backorder for shipping exception c
       pluginOptions: {},
     })
 
-    // 1 manage_inventory + 1 allow_backorder
-    expect(mocks.productVariantService.update).toHaveBeenCalledTimes(2)
-    expect(mocks.productVariantService.update).toHaveBeenCalledWith("var_99", {
-      allow_backorder: true,
-    })
+    // Ni manage_inventory ni allow_backorder corren en variant.updated
+    expect(mocks.productVariantService.update).not.toHaveBeenCalled()
   })
 
   it("does not set allow_backorder when the product's collection handle does not match", async () => {
@@ -337,5 +326,79 @@ describe("product-update subscriber — allow_backorder for shipping exception c
         (call[1] as Record<string, unknown>)?.allow_backorder === true,
     )
     expect(allowBackorderCalls).toHaveLength(0)
+  })
+
+  it("resets allow_backorder=false on all variants when a product is updated with non-matching collection", async () => {
+    const nonMatchingProduct = {
+      ...baseProduct,
+      collection: { handle: "other-collection" },
+    }
+    const { container, mocks } = buildContainer({
+      product: nonMatchingProduct,
+    })
+
+    await processProductUpdate({
+      data: { id: "prod_01" },
+      eventName: "product.updated",
+      container: container as any,
+      pluginOptions: {},
+    })
+
+    // manageInventoryPayload (allow_backorder=false) for each variant
+    expect(mocks.productVariantService.update).toHaveBeenCalledTimes(2)
+    expect(mocks.productVariantService.update).toHaveBeenNthCalledWith(
+      1,
+      "var_01",
+      manageInventoryPayload,
+    )
+    expect(mocks.productVariantService.update).toHaveBeenNthCalledWith(
+      2,
+      "var_02",
+      manageInventoryPayload,
+    )
+  })
+
+  it("resets allow_backorder=false when product.updated has no collection (removed)", async () => {
+    const { container, mocks } = buildContainer({ product: baseProduct })
+
+    await processProductUpdate({
+      data: { id: "prod_01" },
+      eventName: "product.updated",
+      container: container as any,
+      pluginOptions: {},
+    })
+
+    // manageInventoryPayload for each variant
+    expect(mocks.productVariantService.update).toHaveBeenCalledTimes(2)
+    expect(mocks.productVariantService.update).toHaveBeenNthCalledWith(
+      1,
+      "var_01",
+      manageInventoryPayload,
+    )
+    expect(mocks.productVariantService.update).toHaveBeenNthCalledWith(
+      2,
+      "var_02",
+      manageInventoryPayload,
+    )
+  })
+
+  it("does not reset allow_backorder on product.update when env var is not set", async () => {
+    delete process.env.COLLECTION_SHIPPING_EXCEPTION
+    const { container, mocks } = buildContainer({
+      product: baseProduct,
+    })
+
+    await processProductUpdate({
+      data: { id: "prod_01" },
+      eventName: "product.updated",
+      container: container as any,
+      pluginOptions: {},
+    })
+
+    // Sin env var, el else-if no se ejecuta → 0 calls
+    expect(mocks.productVariantService.update).not.toHaveBeenCalled()
+
+    // Restore for subsequent tests
+    process.env.COLLECTION_SHIPPING_EXCEPTION = SHIPPING_EXCEPTION_COLLECTION
   })
 })

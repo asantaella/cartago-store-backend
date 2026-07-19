@@ -79,10 +79,11 @@ export async function processProductUpdate({
   // Default manage_inventory=true on product creation: enforce on
   // every variant the product was created with. Idempotent: a noop
   // when the value is already true.
-  if (
-    eventName === ProductService.Events.CREATED ||
-    eventName === ProductService.Events.UPDATED
-  ) {
+  //
+  // ⚠️ Solo CREATED — NO incluir UPDATED para evitar loop infinito:
+  //    variantService.update() dentro del handler de
+  //    product-variant.updated dispara el mismo evento en cadena.
+  if (eventName === ProductService.Events.CREATED) {
     const variants = product.variants || [];
     for (const variant of variants) {
       if (variant?.id) {
@@ -93,10 +94,9 @@ export async function processProductUpdate({
 
   // Default manage_inventory=true on variant creation. Catches
   // variants added later via addVariant / admin UI / API.
-  if (
-    eventName === ProductVariantService.Events.CREATED ||
-    eventName === ProductVariantService.Events.UPDATED
-  ) {
+  //
+  // ⚠️ Solo CREATED — mismo motivo: evitar loop infinito.
+  if (eventName === ProductVariantService.Events.CREATED) {
     const variantId = data.variant_id || data.id;
     if (variantId) {
       await ensureManageInventory(variantId, container);
@@ -112,10 +112,16 @@ export async function processProductUpdate({
     shippingExceptionCollectionHandle &&
     productCollectionHandle === shippingExceptionCollectionHandle
   ) {
+    console.log(
+      `[PRODUCT-UPDATE] Producto ${productId} pertenece a la colección de excepciones de envío.`,
+    );
     if (
       eventName === ProductService.Events.CREATED ||
       eventName === ProductService.Events.UPDATED
     ) {
+      console.log(
+        `[PRODUCT-UPDATE] Evento ${eventName} recibido para producto ${productId}. Asegurando allow_backorder=true en variantes.`,
+      );
       const variants = product.variants || [];
       for (const variant of variants) {
         if (variant?.id) {
@@ -124,13 +130,25 @@ export async function processProductUpdate({
       }
     }
 
-    if (
-      eventName === ProductVariantService.Events.CREATED ||
-      eventName === ProductVariantService.Events.UPDATED
-    ) {
+    if (eventName === ProductVariantService.Events.CREATED) {
       const variantId = data.variant_id || data.id;
       if (variantId) {
         await ensureAllowBackorder(variantId, container);
+      }
+    }
+  } else if (
+    shippingExceptionCollectionHandle &&
+    eventName === ProductService.Events.UPDATED
+  ) {
+    // Product removed from the shipping exception collection →
+    // reset allow_backorder to false on all variants.
+    console.log(
+      `[PRODUCT-UPDATE] Producto ${productId} no pertenece a la colección de excepciones. Resetando allow_backorder=false en variantes.`,
+    );
+    const variants = product.variants || [];
+    for (const variant of variants) {
+      if (variant?.id) {
+        await ensureManageInventory(variant.id, container);
       }
     }
   }
