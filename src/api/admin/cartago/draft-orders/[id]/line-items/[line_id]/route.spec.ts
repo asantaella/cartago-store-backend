@@ -1,8 +1,10 @@
-import { DELETE, POST } from "./route";
+import { DELETE, POST } from "../../../../../draft-orders/[id]/line-items/[line_id]/route";
 import DraftOrderPricingService from "../../../../../../../services/draft-order-pricing";
+import ShippingSurchargeService from "../../../../../../../services/shipping-surcharge";
 
 function makeRequest(body: any = {}) {
   const pricingService = new DraftOrderPricingService({} as any);
+  const surchargeService = new ShippingSurchargeService();
   const cart: any = {
     id: "cart_1",
     region_id: "reg_1",
@@ -71,10 +73,19 @@ function makeRequest(body: any = {}) {
                 shipping_total: 0,
                 total: cart.subtotal,
               })),
+              decorateTotals: jest.fn().mockImplementation(async (currentCart: any) => {
+                currentCart.shipping_total = (currentCart.shipping_methods || [])
+                  .reduce((sum: number, method: any) => sum + method.price, 0);
+                currentCart.total =
+                  (currentCart.subtotal || 0) + currentCart.shipping_total;
+                return currentCart;
+              }),
+              setPaymentSessions: jest.fn().mockResolvedValue(undefined),
             }),
           };
         }
         if (name === "draftOrderPricingService") return pricingService;
+        if (name === "shippingSurchargeService") return surchargeService;
         if (name === "spanishTaxService") {
           return {
             isTaxExemptAddress: jest.fn().mockReturnValue(false),

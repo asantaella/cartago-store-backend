@@ -3,12 +3,13 @@ import { MedusaError } from "medusa-core-utils";
 import {
   defaultAdminDraftOrdersCartFields,
   defaultAdminDraftOrdersCartRelations,
-  defaultAdminDraftOrdersFields,
 } from "@medusajs/medusa/dist/api/routes/admin/draft-orders";
 import { cleanResponseData } from "@medusajs/medusa/dist/utils/clean-response-data";
 import DraftOrderPricingService from "../../../../../../../services/draft-order-pricing";
+import ShippingSurchargeService from "../../../../../../../services/shipping-surcharge";
 
 type DraftShippingSnapshot = {
+  id: string;
   cart_id: string;
   shipping_option_id: string;
   price: number;
@@ -28,6 +29,22 @@ function validateUpdateBody(body: any): Record<string, unknown> {
   const update: Record<string, unknown> = {};
   for (const key of allowed) {
     if (body[key] !== undefined) update[key] = body[key];
+  }
+
+  if (update.title !== undefined && typeof update.title !== "string") {
+    throw new MedusaError(
+      MedusaError.Types.INVALID_DATA,
+      "title must be a string",
+    );
+  }
+  if (
+    update.metadata !== undefined &&
+    (typeof update.metadata !== "object" || update.metadata === null || Array.isArray(update.metadata))
+  ) {
+    throw new MedusaError(
+      MedusaError.Types.INVALID_DATA,
+      "metadata must be an object",
+    );
   }
 
   if (update.quantity !== undefined &&
@@ -54,8 +71,15 @@ async function retrieveDraftOrder(
   manager: any,
 ): Promise<any> {
   const draftOrder = await draftOrderService.withTransaction(manager).retrieve(id, {
-    select: defaultAdminDraftOrdersFields,
-    relations: ["cart", "cart.items", "cart.shipping_methods"],
+    relations: [
+      "cart",
+      "cart.items",
+      "cart.items.tax_lines",
+      "cart.shipping_methods",
+      "cart.shipping_methods.tax_lines",
+      "cart.discounts",
+      "cart.discounts.rule",
+    ],
   });
 
   if (draftOrder.status === "completed") {
@@ -75,10 +99,18 @@ async function retrieveDraftOrder(
 
 function snapshotShippingMethods(cart: any): DraftShippingSnapshot[] {
   return (cart.shipping_methods || []).map((method: any) => ({
+    id: method.id,
     cart_id: cart.id,
     shipping_option_id: method.shipping_option_id,
     price: method.price,
-    data: { ...(method.data || {}) },
+    data: {
+      ...(method.data || {}),
+      free_shipping:
+        method.price === 0 &&
+        cart.discounts?.some(
+          (discount: any) => discount.rule?.type === "free_shipping",
+        ) === true,
+    },
     includes_tax: method.includes_tax === true,
   }));
 }
@@ -96,10 +128,32 @@ async function restoreShippingMethods(
   cart.shipping_methods = methods;
 }
 
+async function removeTaxLinesBeforeNativeMutation(
+  manager: any,
+  cart: any,
+): Promise<void> {
+  const shippingTaxLines = (cart.shipping_methods || []).flatMap(
+    (method: any) => method.tax_lines || [],
+  );
+  if (shippingTaxLines.length > 0) {
+    await manager
+      .getRepository("ShippingMethodTaxLine")
+      .remove(shippingTaxLines);
+  }
+
+  const itemTaxLines = (cart.items || []).flatMap(
+    (item: any) => item.tax_lines || [],
+  );
+  if (itemTaxLines.length > 0) {
+    await manager.getRepository("LineItemTaxLine").remove(itemTaxLines);
+  }
+}
+
 async function reloadDraftOrder(
   draftOrderService: any,
   cartService: any,
   pricingService: DraftOrderPricingService,
+  surchargeService: ShippingSurchargeService,
   spanishTaxService: any,
   draftOrder: any,
   manager: any,
@@ -114,9 +168,9 @@ async function reloadDraftOrder(
   // retrieveWithTotals delegates to Medusa's totals service. Reapply the
   // draft-order-specific aggregate after that read so a stale native aggregate
   // cannot erase shipping or the variant surcharge from the response.
-  pricingService.applyShippingExtra(draftOrder.cart as any);
+  surchargeService.apply(draftOrder.cart as any);
   pricingService.applyTaxPricing(draftOrder.cart as any, spanishTaxService);
-  pricingService.applyTotals(draftOrder.cart as any);
+  await cartService.withTransaction(manager).decorateTotals(draftOrder.cart);
   return cleanResponseData(draftOrder, []);
 }
 
@@ -131,6 +185,9 @@ async function mutateLineItem(
   const pricingService = req.scope.resolve(
     "draftOrderPricingService",
   ) as DraftOrderPricingService;
+  const surchargeService = req.scope.resolve(
+    "shippingSurchargeService",
+  ) as ShippingSurchargeService;
   const spanishTaxService = req.scope.resolve("spanishTaxService") as any;
 
   return manager.transaction(async (transactionManager: any) => {
@@ -139,6 +196,7 @@ async function mutateLineItem(
       id,
       transactionManager,
     );
+    const cartId = draftOrder.cart.id;
     const snapshots = snapshotShippingMethods(draftOrder.cart);
     const lineItem = (draftOrder.cart.items || []).find(
       (item: any) => item.id === line_id,
@@ -151,49 +209,69 @@ async function mutateLineItem(
       );
     }
 
+    await removeTaxLinesBeforeNativeMutation(
+      transactionManager,
+      draftOrder.cart,
+    );
+
     const cartServiceTx = cartService.withTransaction(transactionManager);
     if (operation === "remove") {
-      await cartServiceTx.removeLineItem(draftOrder.cart_id, line_id);
+      await cartServiceTx.removeLineItem(cartId, line_id);
     } else {
       const update = validateUpdateBody((req as any).body);
       if (update.quantity === 0) {
-        await cartServiceTx.removeLineItem(draftOrder.cart_id, line_id);
+        await cartServiceTx.removeLineItem(cartId, line_id);
       } else {
         update.region_id = draftOrder.cart.region_id;
         if (lineItem.variant_id) update.variant_id = lineItem.variant_id;
-        await cartServiceTx.updateLineItem(draftOrder.cart_id, line_id, update);
+        await cartServiceTx.updateLineItem(cartId, line_id, update);
       }
     }
 
     const cartRepository = transactionManager.getRepository("Cart");
     const cart = await cartRepository.findOne({
-      where: { id: draftOrder.cart_id },
+      where: { id: cartId },
       relations: [
         "items",
         "items.variant",
+        "items.tax_lines",
+        "items.adjustments",
         "shipping_methods",
+        "shipping_methods.tax_lines",
         "payment_sessions",
         "shipping_address",
         "region",
+        "region.tax_rates",
+        "region.payment_providers",
+        "discounts",
+        "discounts.rule",
+        "gift_cards",
+
       ],
     });
     if (!cart) {
       throw new MedusaError(
         MedusaError.Types.NOT_FOUND,
-        `Cart ${draftOrder.cart_id} was not found after line-item mutation`,
+        `Cart ${cartId} was not found after line-item mutation`,
       );
     }
 
     await restoreShippingMethods(transactionManager, cart, snapshots);
-    pricingService.applyShippingExtra(cart as any);
+    surchargeService.apply(cart as any);
     pricingService.applyTaxPricing(cart as any, spanishTaxService);
-    pricingService.applyTotals(cart as any);
+    await cartService
+      .withTransaction(transactionManager)
+      .decorateTotals(cart);
+    await cartService
+      .withTransaction(transactionManager)
+      .setPaymentSessions(cart);
     await cartRepository.save(cart);
 
     return reloadDraftOrder(
       draftOrderService,
       cartService,
       pricingService,
+      surchargeService,
       spanishTaxService,
       draftOrder,
       transactionManager,

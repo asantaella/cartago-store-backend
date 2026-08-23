@@ -12,7 +12,7 @@ import {
   safeJsonTransform,
 } from "./cart-pricing-helpers";
 import { adjustCartPricesInDb } from "./cart-pricing-db-update";
-import DraftOrderPricingService from "../../services/draft-order-pricing";
+
 
 /**
  * Middleware que recalcula los precios del carrito en las respuestas GET
@@ -70,17 +70,6 @@ export async function adjustCartPricingOnGet(
               ),
             );
           }
-        }
-
-        // Draft orders use the native admin GET endpoint. Unlike store carts,
-        // they must also expose the variant shipping surcharge in standard
-        // territory; otherwise the admin loses it after a line-item update.
-        if (isDraftOrder) {
-          const draftOrderPricingService = req.scope.resolve(
-            "draftOrderPricingService",
-          ) as DraftOrderPricingService;
-          draftOrderPricingService.applyShippingExtra(cart);
-          draftOrderPricingService.applyTotals(cart);
         }
 
         return responseBody;

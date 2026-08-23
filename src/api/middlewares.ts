@@ -8,12 +8,9 @@ import {
   adjustCartPricingOnPost,
   persistCartPricingOnComplete,
 } from "./middlewares/cart-pricing";
-import {
-  adjustDraftOrderPricingOnGet,
-  adjustDraftOrderPricingOnPost,
-  persistDraftOrderPricing,
-} from "./middlewares/draft-order-pricing";
-import { preserveDraftOrderShippingOnLineItemMutation } from "./middlewares/draft-order-line-item-pricing";
+import { applyDraftOrderSurchargeOnCreate } from "./middlewares/draft-order-surcharge-on-create";
+import { handleDraftOrderLineItemMutation } from "./middlewares/draft-order-line-item-override";
+
 
 export const config: MiddlewaresConfig = {
   routes: [
@@ -53,20 +50,9 @@ export const config: MiddlewaresConfig = {
     },
     // Middleware para persistir precios antes de completar la orden
     {
-      matcher: "/store/carts/:id/complete",
+      matcher: "/admin/draft-orders",
       method: "POST",
-      middlewares: [persistCartPricingOnComplete],
-    },
-    // Middleware para ajustar precios en GET /admin/draft-orders/:id (solo lectura)
-    {
-      matcher: "/admin/draft-orders/:id",
-      method: "GET",
-      middlewares: [adjustCartPricingOnGet],
-    },
-    {
-      matcher: "/admin/draft-orders/:id",
-      method: "POST",
-      middlewares: [adjustDraftOrderPricingOnPost],
+      middlewares: [applyDraftOrderSurchargeOnCreate],
     },
     {
       matcher: "/admin/draft-orders/:id/line-items/*",
@@ -76,7 +62,7 @@ export const config: MiddlewaresConfig = {
           origin: process.env.ADMIN_CORS || "http://localhost:7001",
           credentials: true,
         }),
-        preserveDraftOrderShippingOnLineItemMutation,
+        handleDraftOrderLineItemMutation,
       ],
     },
     {
@@ -88,6 +74,11 @@ export const config: MiddlewaresConfig = {
           credentials: true,
         }),
       ],
+    },
+    {
+      matcher: "/store/carts/:id/complete",
+      method: "POST",
+      middlewares: [persistCartPricingOnComplete],
     },
   ],
 };
