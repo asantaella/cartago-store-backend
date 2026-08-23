@@ -13,6 +13,7 @@ import {
   adjustDraftOrderPricingOnPost,
   persistDraftOrderPricing,
 } from "./middlewares/draft-order-pricing";
+import { preserveDraftOrderShippingOnLineItemMutation } from "./middlewares/draft-order-line-item-pricing";
 
 export const config: MiddlewaresConfig = {
   routes: [
@@ -68,9 +69,25 @@ export const config: MiddlewaresConfig = {
       middlewares: [adjustDraftOrderPricingOnPost],
     },
     {
-      matcher: "/admin/draft-orders/:id",
-      method: "GET",
-      middlewares: [adjustCartPricingOnGet],
+      matcher: "/admin/draft-orders/:id/line-items/*",
+      method: ["POST", "DELETE"],
+      middlewares: [
+        cors({
+          origin: process.env.ADMIN_CORS || "http://localhost:7001",
+          credentials: true,
+        }),
+        preserveDraftOrderShippingOnLineItemMutation,
+      ],
+    },
+    {
+      matcher: "/admin/draft-orders/:id/line-items/*",
+      method: "OPTIONS",
+      middlewares: [
+        cors({
+          origin: process.env.ADMIN_CORS || "http://localhost:7001",
+          credentials: true,
+        }),
+      ],
     },
   ],
 };

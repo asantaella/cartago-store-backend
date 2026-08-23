@@ -37,7 +37,8 @@ try {
 const DATABASE_URL =
   process.env.DATABASE_URL || "postgres://localhost/medusa-store";
 
-const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
+const REDIS_URL = process.env.REDIS_URL?.trim() || "";
+const useRedis = REDIS_URL.length > 0;
 
 const plugins = [
   {
@@ -96,20 +97,29 @@ const plugins = [
   },
 ];
 
-const modules = {
-  eventBus: {
-    resolve: "@medusajs/event-bus-redis",
-    options: {
-      redisUrl: REDIS_URL,
-    },
-  },
-  cacheService: {
-    resolve: "@medusajs/cache-redis",
-    options: {
-      redisUrl: REDIS_URL,
-    },
-  },
-};
+const modules = useRedis
+  ? {
+      eventBus: {
+        resolve: "@medusajs/event-bus-redis",
+        options: {
+          redisUrl: REDIS_URL,
+        },
+      },
+      cacheService: {
+        resolve: "@medusajs/cache-redis",
+        options: {
+          redisUrl: REDIS_URL,
+        },
+      },
+    }
+  : {
+      eventBus: {
+        resolve: "@medusajs/event-bus-local",
+      },
+      cacheService: {
+        resolve: "@medusajs/cache-inmemory",
+      },
+    };
 
 /** @type {import('@medusajs/medusa').ConfigModule["projectConfig"]} */
 const projectConfig = {
@@ -119,7 +129,7 @@ const projectConfig = {
   admin_cors: process.env.ADMIN_CORS,
   auth_cors: process.env.AUTH_CORS,
   database_url: DATABASE_URL,
-  redis_url: REDIS_URL,
+  redis_url: REDIS_URL || undefined,
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule} */
