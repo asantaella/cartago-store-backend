@@ -20,6 +20,24 @@ describe("DraftOrderPricingService", () => {
     expect(cart.shipping_methods[0].data.shipping_extra_total).toBe(375);
   });
 
+  it("keeps free shipping free after reapplying the variant extra", () => {
+    const service = new DraftOrderPricingService({} as any);
+    const cart: any = {
+      items: [{ quantity: 1, variant: { shipping_option_price_extra: 300 } }],
+      shipping_methods: [
+        {
+          price: 0,
+          data: { adjusted_price: 500, shipping_extra_total: 300 },
+        },
+      ],
+    };
+
+    service.applyShippingExtra(cart);
+
+    expect(cart.shipping_methods[0].price).toBe(0);
+    expect(cart.shipping_methods[0].data.shipping_extra_total).toBe(300);
+  });
+
   it("calculates draft totals including shipping and gift cards", () => {
     const service = new DraftOrderPricingService({} as any);
     const cart: any = {
@@ -37,6 +55,7 @@ describe("DraftOrderPricingService", () => {
       tax_total: 0,
       discount_total: 100,
       gift_card_total: 200,
+      gift_card_tax_total: 0,
       total: 2200,
     });
   });
