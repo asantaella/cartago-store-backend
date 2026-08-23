@@ -14,6 +14,7 @@ export type DraftOrderTotals = {
   tax_total: number;
   discount_total: number;
   gift_card_total: number;
+  gift_card_tax_total: number;
   total: number;
 };
 
@@ -37,9 +38,14 @@ class DraftOrderPricingService extends TransactionBaseService {
     for (const method of cart.shipping_methods || []) {
       const data = method.data || {};
       const currentExtra = data.shipping_extra_total || 0;
-      const basePrice = method.price - currentExtra;
+      const hasPersistedAdjustment =
+        typeof data.adjusted_price === "number" || currentExtra > 0;
+      const isFreeShipping = method.price === 0 && hasPersistedAdjustment;
+      const basePrice = isFreeShipping
+        ? 0
+        : method.price - currentExtra;
 
-      method.price = basePrice + extraTotal;
+      method.price = isFreeShipping ? 0 : basePrice + extraTotal;
       method.data = {
         ...data,
         shipping_extra_total: extraTotal,
@@ -118,6 +124,7 @@ class DraftOrderPricingService extends TransactionBaseService {
         0,
       );
     const giftCardTotal = cart.gift_card_total || 0;
+    const giftCardTaxTotal = cart.gift_card_tax_total || 0;
     const taxTotal = itemTaxTotal + shippingTaxTotal;
 
     return {
@@ -128,8 +135,14 @@ class DraftOrderPricingService extends TransactionBaseService {
       tax_total: taxTotal,
       discount_total: discountTotal,
       gift_card_total: giftCardTotal,
+      gift_card_tax_total: giftCardTaxTotal,
       total:
-        subtotal + shippingTotal + taxTotal - discountTotal - giftCardTotal,
+        subtotal +
+        shippingTotal +
+        taxTotal -
+        discountTotal -
+        giftCardTotal -
+        giftCardTaxTotal,
     };
   }
 
