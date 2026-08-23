@@ -86,16 +86,29 @@ class DraftOrderPricingService extends TransactionBaseService {
     const items = cart.items || [];
     const shippingMethods = cart.shipping_methods || [];
     const subtotal = items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
-    const shippingTotal = shippingMethods.reduce(
-      (sum, method) => sum + (method.price || 0),
-      0,
-    );
+    const taxRate = cart.region?.tax_rate ?? cart.tax_rate ?? 0;
+    let shippingTotal = 0;
+    let shippingTaxTotal = 0;
+
+    for (const method of shippingMethods) {
+      const grossPrice = method.price || 0;
+      const includesTax = method.includes_tax === true && taxRate > 0;
+      const methodSubtotal = includesTax
+        ? Math.round(grossPrice / (1 + taxRate / 100))
+        : method.subtotal ?? grossPrice;
+      const methodTaxTotal = includesTax
+        ? grossPrice - methodSubtotal
+        : method.tax_total || 0;
+
+      method.subtotal = methodSubtotal;
+      method.tax_total = methodTaxTotal;
+      method.total = methodSubtotal + methodTaxTotal;
+      shippingTotal += methodSubtotal;
+      shippingTaxTotal += methodTaxTotal;
+    }
+
     const itemTaxTotal = items.reduce(
       (sum, item) => sum + ((item as any).tax_total || 0),
-      0,
-    );
-    const shippingTaxTotal = shippingMethods.reduce(
-      (sum, method) => sum + (method.tax_total || 0),
       0,
     );
     const discountTotal =

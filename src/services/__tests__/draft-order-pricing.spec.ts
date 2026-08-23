@@ -67,4 +67,37 @@ describe("DraftOrderPricingService", () => {
     expect(cart.shipping_total).toBe(700);
     expect(cart.shipping_methods[0].data.shipping_extra_total).toBe(300);
   });
+
+  it("converts tax-included shipping extra to net shipping and tax totals", () => {
+    const service = new DraftOrderPricingService({} as any);
+    const cart: any = {
+      items: [
+        {
+          quantity: 1,
+          subtotal: 2066,
+          tax_total: 434,
+          variant: { shipping_option_price_extra: 1000 },
+        },
+      ],
+      shipping_methods: [
+        {
+          price: 699,
+          includes_tax: true,
+          tax_total: 121,
+          data: { shipping_extra_total: 0 },
+        },
+      ],
+      region: { tax_rate: 21 },
+      gift_card_total: 0,
+    };
+
+    service.applyShippingExtra(cart);
+    const totals = service.applyTotals(cart);
+
+    expect(totals.shipping_total).toBe(1404);
+    expect(totals.shipping_tax_total).toBe(295);
+    expect(totals.tax_total).toBe(729);
+    expect(totals.total).toBe(4199);
+    expect(cart.shipping_methods[0].price).toBe(1699);
+  });
 });
