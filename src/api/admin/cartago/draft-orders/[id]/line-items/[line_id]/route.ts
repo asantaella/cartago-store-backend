@@ -265,6 +265,15 @@ async function mutateLineItem(
     await cartService
       .withTransaction(transactionManager)
       .setPaymentSessions(cart);
+    // Cart.shipping_methods is a non-cascading relation. Persist the
+    // effective shipping price and surcharge metadata explicitly; saving
+    // only the cart leaves the response correct but the next read stale.
+    const shippingMethodRepository = transactionManager.getRepository(
+      "ShippingMethod",
+    );
+    if (cart.shipping_methods?.length) {
+      await shippingMethodRepository.save(cart.shipping_methods);
+    }
     await cartRepository.save(cart);
 
     return reloadDraftOrder(

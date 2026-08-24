@@ -83,6 +83,14 @@ async function persistCreatedDraftOrder(
     pricingService.applyTaxPricing(cart, spanishTaxService);
     await cartService.withTransaction(tm).decorateTotals(cart);
     await cartService.withTransaction(tm).setPaymentSessions(cart);
+
+    // Cart.shipping_methods is a non-cascading relation. Persist the effective
+    // shipping price and surcharge metadata explicitly before saving the cart,
+    // otherwise the response is correct but the next draft-order read loses it.
+    const shippingMethodRepository = tm.getRepository("ShippingMethod");
+    if (cart.shipping_methods?.length) {
+      await shippingMethodRepository.save(cart.shipping_methods);
+    }
     await tm.getRepository("Cart").save(cart);
 
     draftOrder.cart = cart;

@@ -52,7 +52,23 @@ export const config: MiddlewaresConfig = {
     {
       matcher: "/admin/draft-orders",
       method: "POST",
-      middlewares: [applyDraftOrderSurchargeOnCreate],
+      middlewares: [
+        cors({
+          origin: process.env.ADMIN_CORS || "http://localhost:7001",
+          credentials: true,
+        }),
+        applyDraftOrderSurchargeOnCreate,
+      ],
+    },
+    {
+      matcher: "/admin/draft-orders",
+      method: "OPTIONS",
+      middlewares: [
+        cors({
+          origin: process.env.ADMIN_CORS || "http://localhost:7001",
+          credentials: true,
+        }),
+      ],
     },
     {
       matcher: "/admin/draft-orders/:id/line-items/*",
