@@ -1,5 +1,5 @@
 import type { MiddlewaresConfig } from "@medusajs/medusa";
-import { raw } from "body-parser";
+import { json, raw } from "body-parser";
 import cors from "cors";
 import {
   adjustCartShippingExtraOnGet,
@@ -9,6 +9,7 @@ import {
   persistCartPricingOnComplete,
 } from "./middlewares/cart-pricing";
 import { applyDraftOrderSurchargeOnCreate } from "./middlewares/draft-order-surcharge-on-create";
+import { handleDraftOrderLineItemCreation } from "./middlewares/draft-order-line-item-create";
 import { handleDraftOrderLineItemMutation } from "./middlewares/draft-order-line-item-override";
 
 
@@ -62,6 +63,28 @@ export const config: MiddlewaresConfig = {
     },
     {
       matcher: "/admin/draft-orders",
+      method: "OPTIONS",
+      middlewares: [
+        cors({
+          origin: process.env.ADMIN_CORS || "http://localhost:7001",
+          credentials: true,
+        }),
+      ],
+    },
+    {
+      matcher: "/admin/draft-orders/:id/line-items",
+      method: "POST",
+      middlewares: [
+        cors({
+          origin: process.env.ADMIN_CORS || "http://localhost:7001",
+          credentials: true,
+        }),
+        json(),
+        handleDraftOrderLineItemCreation,
+      ],
+    },
+    {
+      matcher: "/admin/draft-orders/:id/line-items",
       method: "OPTIONS",
       middlewares: [
         cors({

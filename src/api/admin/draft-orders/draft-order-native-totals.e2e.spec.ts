@@ -154,5 +154,25 @@ describe("Draft order native totals E2E", () => {
     expect(persistedAfterUpdate.draft_order.cart.shipping_total).toBe(
       expectedShippingTotal(baseShippingPrice + shippingExtra * 2),
     );
+
+    const added = await request<{ draft_order: any }>(
+      `/admin/draft-orders/${encodeURIComponent(draftOrder.id)}/line-items`,
+      {
+        method: "POST",
+        body: JSON.stringify({ variant_id: VARIANT_ID, quantity: 1 }),
+      },
+    );
+    const addedCart = added.draft_order.cart;
+    const addedItem = addedCart.items.find(
+      (item: any) => item.variant_id === VARIANT_ID,
+    );
+    expect(addedItem).toBeDefined();
+    expect(addedItem.quantity).toBe(3);
+    expect(addedCart.shipping_methods[0].price).toBe(
+      baseShippingPrice + shippingExtra * 3,
+    );
+    expect(addedCart.shipping_total).toBe(
+      expectedShippingTotal(baseShippingPrice + shippingExtra * 3),
+    );
   });
 });
