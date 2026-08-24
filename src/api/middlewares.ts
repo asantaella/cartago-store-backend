@@ -1,6 +1,7 @@
 import type { MiddlewaresConfig } from "@medusajs/medusa";
 import { json, raw } from "body-parser";
 import cors from "cors";
+import { parseCorsOrigins } from "medusa-core-utils";
 import {
   adjustCartShippingExtraOnGet,
   adjustCartShippingExtraOnPost,
@@ -12,6 +13,10 @@ import { applyDraftOrderSurchargeOnCreate } from "./middlewares/draft-order-surc
 import { handleDraftOrderLineItemCreation } from "./middlewares/draft-order-line-item-create";
 import { handleDraftOrderLineItemMutation } from "./middlewares/draft-order-line-item-override";
 
+// CORS origins para admin y store, consistentes con medusa-config.js
+const adminCorsOrigin = parseCorsOrigins(
+  process.env.ADMIN_CORS || "http://localhost:7001",
+);
 
 export const config: MiddlewaresConfig = {
   routes: [

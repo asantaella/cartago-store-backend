@@ -25,6 +25,8 @@ class SpanishTaxService extends AbstractTaxService {
     /^51\d{3}$/,
     // Melilla
     /^52\d{3}$/,
+    // Portugal
+    /^7350-074$/,
   ];
 
   private normalizeCountryCode(countryCode?: string): string {
@@ -37,7 +39,7 @@ class SpanishTaxService extends AbstractTaxService {
 
   private resolveAddressParts(
     countryCodeOrPostalCode?: string,
-    postalCode?: string
+    postalCode?: string,
   ): { countryCode: string; postalCode: string } {
     if (typeof postalCode === "string") {
       return {
@@ -55,7 +57,7 @@ class SpanishTaxService extends AbstractTaxService {
   async getTaxLines(
     itemLines: ItemTaxCalculationLine[],
     shippingLines: ShippingTaxCalculationLine[],
-    context: TaxCalculationContext
+    context: TaxCalculationContext,
   ): Promise<ProviderTaxLine[]> {
     const taxLines: ProviderTaxLine[] = [];
 
@@ -122,7 +124,7 @@ class SpanishTaxService extends AbstractTaxService {
         });
       } else {
         const shippingTaxAmount = this.calculateIncludedTaxAmount(
-          line.shipping_method.price
+          line.shipping_method.price,
         );
         taxLines.push({
           rate: 21,
@@ -145,19 +147,22 @@ class SpanishTaxService extends AbstractTaxService {
   public isTaxExemptAddress(postalCode?: string): boolean;
   public isTaxExemptAddress(
     countryCodeOrPostalCode?: string,
-    postalCode?: string
+    postalCode?: string,
   ): boolean {
     const { countryCode, postalCode: resolvedPostalCode } =
       this.resolveAddressParts(countryCodeOrPostalCode, postalCode);
 
-    if (this.normalizeCountryCode(countryCode) !== "ES") {
+    if (
+      this.normalizeCountryCode(countryCode) !== "ES" &&
+      this.normalizeCountryCode(countryCode) !== "PT"
+    ) {
       return false;
     }
 
     if (!resolvedPostalCode) return false;
 
     return this.taxExemptPostalCodes.some((pattern) =>
-      pattern.test(this.normalizePostalCode(resolvedPostalCode))
+      pattern.test(this.normalizePostalCode(resolvedPostalCode)),
     );
   }
 
@@ -183,18 +188,21 @@ class SpanishTaxService extends AbstractTaxService {
   public getTerritoryType(postalCode?: string): string;
   public getTerritoryType(
     countryCodeOrPostalCode?: string,
-    postalCode?: string
+    postalCode?: string,
   ): string {
     const { countryCode, postalCode: resolvedPostalCode } =
       this.resolveAddressParts(countryCodeOrPostalCode, postalCode);
 
-    if (this.normalizeCountryCode(countryCode) !== "ES") {
+    const cleanPostal = this.normalizePostalCode(resolvedPostalCode);
+
+    if (
+      this.normalizeCountryCode(countryCode) !== "ES" &&
+      cleanPostal !== "7350-074"
+    ) {
       return "standard";
     }
 
     if (!resolvedPostalCode) return "standard";
-
-    const cleanPostal = this.normalizePostalCode(resolvedPostalCode);
 
     if (/^35\d{3}$/.test(cleanPostal) || /^38\d{3}$/.test(cleanPostal)) {
       return "canarias";
@@ -216,7 +224,7 @@ class SpanishTaxService extends AbstractTaxService {
   public getTaxExemptName(postalCode?: string): string;
   public getTaxExemptName(
     countryCodeOrPostalCode?: string,
-    postalCode?: string
+    postalCode?: string,
   ): string {
     const territoryType =
       postalCode === undefined
@@ -242,7 +250,7 @@ class SpanishTaxService extends AbstractTaxService {
   public getTaxExemptCode(postalCode?: string): string;
   public getTaxExemptCode(
     countryCodeOrPostalCode?: string,
-    postalCode?: string
+    postalCode?: string,
   ): string {
     const territoryType =
       postalCode === undefined
@@ -266,12 +274,12 @@ class SpanishTaxService extends AbstractTaxService {
    */
   public getShippingTaxExemptName(
     countryCode: string,
-    postalCode: string
+    postalCode: string,
   ): string;
   public getShippingTaxExemptName(postalCode?: string): string;
   public getShippingTaxExemptName(
     countryCodeOrPostalCode?: string,
-    postalCode?: string
+    postalCode?: string,
   ): string {
     const territoryType =
       postalCode === undefined
@@ -295,12 +303,12 @@ class SpanishTaxService extends AbstractTaxService {
    */
   public getShippingTaxExemptCode(
     countryCode: string,
-    postalCode: string
+    postalCode: string,
   ): string;
   public getShippingTaxExemptCode(postalCode?: string): string;
   public getShippingTaxExemptCode(
     countryCodeOrPostalCode?: string,
-    postalCode?: string
+    postalCode?: string,
   ): string {
     const territoryType =
       postalCode === undefined
