@@ -3,6 +3,7 @@ import { AdminPostProductsProductVariantsVariantReq as MedusaAdminPostProductsPr
 import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import {
   IsInt,
+  IsOptional,
   IsString,
   Matches,
   Min,
@@ -10,7 +11,7 @@ import {
 } from "class-validator";
 import type { NextFunction } from "express";
 
-export const STOCK_LOCATION_CODE_PATTERN = /^[A-Z](?:[1-9]|[1-9][0-9]|999)$/;
+export const STOCK_LOCATION_CODE_PATTERN = /^[A-Z](?:[1-9]|[1-9][0-9]|100)$/;
 
 
 /**
@@ -18,7 +19,7 @@ export const STOCK_LOCATION_CODE_PATTERN = /^[A-Z](?:[1-9]|[1-9][0-9]|999)$/;
  * The class name must match Medusa's validator name for the override registry.
  */
 export class AdminPostProductsProductVariantsVariantReq extends MedusaAdminPostProductsProductVariantsVariantReq {
-  @ValidateIf((_object, value) => value !== undefined && value !== null)
+  @IsOptional()
   @IsString()
   @Matches(STOCK_LOCATION_CODE_PATTERN)
   stock_location_code?: string | null;

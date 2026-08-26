@@ -87,6 +87,17 @@ describe("native product variant update validator", () => {
     });
   });
 
+  it.each(["A1", "Z100"])(
+    "accepts a valid stock_location_code %s",
+    async (stock_location_code) => {
+      await expect(
+        validator(AdminPostProductsProductVariantsVariantReq, {
+          stock_location_code,
+        }),
+      ).resolves.toMatchObject({ stock_location_code });
+    },
+  );
+
   it("allows an omitted stock_location_code", async () => {
     await expect(
       validator(AdminPostProductsProductVariantsVariantReq, {
