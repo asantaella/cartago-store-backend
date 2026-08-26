@@ -1,8 +1,11 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import { Order } from "@medusajs/medusa/dist/models";
 import { OrderService } from "@medusajs/medusa/dist/services";
+import { CustomerRepository } from "@medusajs/medusa/dist/repositories/customer";
 import { buildQuery } from "@medusajs/medusa/dist/utils/build-query";
 import { FindOperator, ILike, IsNull, Not, Raw } from "typeorm";
+import { isOrderInCustomerBlacklist } from "../../../utils/customer-blacklist";
+import type { CustomerBlacklistIdentity } from "../../../utils/customer-blacklist";
 
 /**
  * Custom endpoint para listar órdenes con total recalculado
@@ -76,6 +79,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         relations.push(relation);
       }
     };
+
+    // These relations are required to calculate the live blacklist indicator.
+    ensureRelation("customer");
+    ensureRelation("shipping_address");
+    ensureRelation("billing_address");
 
     if (qValue || phoneFilter || firstNameFilter || lastNameFilter) {
       ensureRelation("shipping_address");
@@ -267,6 +275,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       relationLoadStrategy: "join",
     });
     const count = await orderRepo.count(countQuery);
+    const customerRepo = manager.withRepository(CustomerRepository);
+    const blacklistedCustomers = (await customerRepo.find({
+      where: { in_black_list: true } as any,
+    })) as CustomerBlacklistIdentity[];
 
     // Ordenar por relevancia si hay búsqueda de texto
     if (qValue) {
@@ -312,6 +324,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
           total: recalculatedTotal,
           shipping_total: shippingTotal, // Actualizar shipping_total
           original_total: orderWithTotals.total, // Guardar el total original para referencia
+          customer_in_black_list: isOrderInCustomerBlacklist(
+            orderWithTotals as any,
+            blacklistedCustomers,
+          ),
         };
       }),
     );

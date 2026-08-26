@@ -1,20 +1,49 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import { registerOverriddenValidators, validator } from "@medusajs/medusa";
 import { AdminGetCustomersParams } from "@medusajs/medusa/dist/api/routes/admin/customers/list-customers";
+import {
+  AdminPostCustomersCustomerReq as MedusaAdminPostCustomersCustomerReq,
+} from "@medusajs/medusa/dist/api/routes/admin/customers/update-customer";
 import { CustomerRepository } from "@medusajs/medusa/dist/repositories/customer";
 import { buildQuery } from "@medusajs/utils";
 import { isDefined } from "medusa-core-utils";
 import { omit, pickBy } from "lodash";
 import { In, ILike } from "typeorm";
-import { IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsOptional, IsString } from "class-validator";
+import { Transform } from "class-transformer";
+
+const parseBooleanValue = ({ value }: { value: unknown }): unknown => {
+  if (value === "true") {
+    return true;
+  }
+
+  if (value === "false") {
+    return false;
+  }
+
+  return value;
+};
 
 class AdminGetCustomersParamsWithPhone extends AdminGetCustomersParams {
   @IsOptional()
   @IsString()
   phone?: string;
+
+  @IsOptional()
+  @Transform(parseBooleanValue)
+  @IsBoolean()
+  in_black_list?: boolean;
+}
+
+class AdminPostCustomersCustomerReq extends MedusaAdminPostCustomersCustomerReq {
+  @IsOptional()
+  @Transform(parseBooleanValue)
+  @IsBoolean()
+  in_black_list?: boolean;
 }
 
 registerOverriddenValidators(AdminGetCustomersParamsWithPhone);
+registerOverriddenValidators(AdminPostCustomersCustomerReq);
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const validatedQuery = await validator(
