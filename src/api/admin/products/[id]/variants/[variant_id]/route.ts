@@ -2,7 +2,12 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 
 interface VariantShippingExtraBody {
   shipping_option_price_extra?: number;
+  stock_location_code?: string | null;
 }
+
+export const isValidStockLocationCode = (value: unknown): value is string =>
+  typeof value === "string" &&
+  /^[A-Z](?:[1-9]|[1-9][0-9]|100)$/.test(value);
 
 /**
  * PATCH /admin/products/:id/variants/:variant_id
@@ -15,7 +20,7 @@ export const PATCH = async (
   res: MedusaResponse
 ): Promise<void> => {
   const { id: productId, variant_id } = req.params;
-  const { shipping_option_price_extra } = req.body;
+  const { shipping_option_price_extra, stock_location_code } = req.body;
 
   if (shipping_option_price_extra !== undefined) {
     if (
@@ -30,6 +35,19 @@ export const PATCH = async (
       });
       return;
     }
+  }
+
+  if (
+    stock_location_code !== undefined &&
+    stock_location_code !== null &&
+    !isValidStockLocationCode(stock_location_code)
+  ) {
+    res.status(400).json({
+      error: "Validation error",
+      message:
+        "stock_location_code must be an uppercase letter followed by a number from 1 to 100",
+    });
+    return;
   }
 
   try {
@@ -55,6 +73,7 @@ export const PATCH = async (
       ...(shipping_option_price_extra !== undefined && {
         shipping_option_price_extra,
       }),
+      ...(stock_location_code !== undefined && { stock_location_code }),
     });
 
     res.status(200).json({ variant: updatedVariant });

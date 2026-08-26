@@ -6,7 +6,7 @@ export class AddStockLocationCodeToProductVariant1742032800001
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       ALTER TABLE "product_variant"
-      ADD COLUMN IF NOT EXISTS "stock_location_code" varchar(3) NULL
+      ADD COLUMN IF NOT EXISTS "stock_location_code" varchar(4) NULL
     `);
   }
 

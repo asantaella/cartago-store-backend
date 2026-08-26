@@ -12,6 +12,6 @@ export class ProductVariant extends MedusaProductVariant {
   @Column({ type: "integer", nullable: false, default: 0 })
   shipping_option_price_extra: number;
 
-  @Column({ type: "varchar", length: 3, nullable: true })
+  @Column({ type: "varchar", length: 4, nullable: true })
   stock_location_code: string | null;
 }
