@@ -12,6 +12,10 @@ import {
 import { applyDraftOrderSurchargeOnCreate } from "./middlewares/draft-order-surcharge-on-create";
 import { handleDraftOrderLineItemCreation } from "./middlewares/draft-order-line-item-create";
 import { handleDraftOrderLineItemMutation } from "./middlewares/draft-order-line-item-override";
+import {
+  extendProductVariantPatchPayload,
+  extendProductVariantPostPayload,
+} from "./middlewares/product-variant-payload";
 
 // CORS origins para admin y store, consistentes con medusa-config.js
 const adminCorsOrigin = parseCorsOrigins(
@@ -41,6 +45,20 @@ export const config: MiddlewaresConfig = {
         }),
         raw({ type: "application/pdf" }),
       ],
+    },
+    // Extend the native variant update payload with Cartago fields before
+    // Medusa validates the request body.
+    {
+      matcher: "/admin/products/:id/variants/:variant_id",
+      method: "POST",
+      middlewares: [extendProductVariantPostPayload],
+    },
+    // PATCH is a Cartago compatibility route in Medusa v1; keep its payload
+    // aligned with the native POST field names.
+    {
+      matcher: "/admin/products/:id/variants/:variant_id",
+      method: "PATCH",
+      middlewares: [extendProductVariantPatchPayload],
     },
     // Middleware para ajustar precios en GET /store/carts/*
     {

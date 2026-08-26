@@ -10,7 +10,7 @@ type VariantRow = {
   title: string;
   sku: string | null;
   shipping_option_price_extra: number; // cents – persisted value
-  edited: number; // cents – current input value (may differ before save)
+  edited: number | undefined; // cents – current input value (may differ before save)
   saving: boolean;
   error: string | null;
 };
@@ -22,7 +22,7 @@ type State = {
 
 type Action =
   | { type: "SET_ROWS"; rows: VariantRow[] }
-  | { type: "SET_EDITED"; variantId: string; value: number }
+  | { type: "SET_EDITED"; variantId: string; value: number | undefined }
   | { type: "SET_SAVING"; variantId: string; saving: boolean }
   | { type: "SET_ROW_ERROR"; variantId: string; error: string | null }
   | { type: "SAVED"; variantId: string; newExtra: number }
@@ -84,8 +84,9 @@ function centsToEuros(cents: number): string {
   return (cents / 100).toFixed(2);
 }
 
-/** Parse a euro-formatted string to cents, returns NaN if invalid */
-function eurosToCents(euros: string): number {
+/** Parse euros to cents; return undefined for an empty value and NaN if invalid. */
+function eurosToCents(euros: string): number | undefined {
+  if (euros.trim() === "") return undefined;
   const parsed = parseFloat(euros.replace(",", "."));
   if (isNaN(parsed) || parsed < 0) return NaN;
   return Math.round(parsed * 100);
@@ -110,7 +111,7 @@ async function fetchVariant(
   return data.variant ?? null;
 }
 
-async function patchVariant(
+async function updateVariant(
   productId: string,
   variantId: string,
   shipping_option_price_extra: number,
@@ -119,7 +120,7 @@ async function patchVariant(
   const res = await fetch(
     `/admin/products/${productId}/variants/${variantId}`,
     {
-      method: "PATCH",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -190,8 +191,8 @@ const VariantShippingWidget = ({ product, notify }: ProductDetailsWidgetProps) =
   }, [product?.id]);
 
   const handleSave = async (row: VariantRow) => {
-    const cents = row.edited;
-    if (isNaN(cents) || cents < 0) {
+    const cents = row.edited ?? 0;
+    if (!Number.isInteger(cents) || cents < 0) {
       dispatch({
         type: "SET_ROW_ERROR",
         variantId: row.id,
@@ -204,7 +205,7 @@ const VariantShippingWidget = ({ product, notify }: ProductDetailsWidgetProps) =
     dispatch({ type: "SET_ROW_ERROR", variantId: row.id, error: null });
 
     const token = getAdminToken();
-    const result = await patchVariant(product.id, row.id, cents, token);
+    const result = await updateVariant(product.id, row.id, cents, token);
 
     if (result.ok) {
       dispatch({ type: "SAVED", variantId: row.id, newExtra: cents });
@@ -271,13 +272,17 @@ const VariantShippingWidget = ({ product, notify }: ProductDetailsWidgetProps) =
                       type="number"
                       min="0"
                       step="0.01"
-                      value={centsToEuros(row.edited)}
+                      value={
+                        row.edited === undefined
+                          ? ""
+                          : centsToEuros(row.edited)
+                      }
                       onChange={(e) => {
                         const cents = eurosToCents(e.target.value);
                         dispatch({
                           type: "SET_EDITED",
                           variantId: row.id,
-                          value: isNaN(cents) ? row.edited : cents,
+                          value: Number.isNaN(cents) ? row.edited : cents,
                         });
                       }}
                       className="border border-gray-300 rounded px-2 py-1 text-sm w-28 focus:outline-none focus:border-violet-600"
