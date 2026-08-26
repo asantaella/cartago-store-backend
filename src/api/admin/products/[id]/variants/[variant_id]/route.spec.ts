@@ -1,5 +1,6 @@
 import {
   PATCH,
+  POST,
   isValidStockLocationCode,
 } from "./route";
 
@@ -45,6 +46,68 @@ describe("stock location code validation", () => {
       expect(isValidStockLocationCode(value)).toBe(false);
     },
   );
+});
+
+describe("POST product variant", () => {
+  it.each(["A0", "A101", "AA1", "a1", "A01", "", " A1 ", 1, {}])(
+    "returns HTTP 400 for invalid stock_location_code %p without updating",
+    async (value) => {
+      const { req, res, productVariantService } = makeRequest({
+        stock_location_code: value,
+      });
+
+      await POST(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(productVariantService.update).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(["A1", "Z100"])("forwards a valid stock_location_code %s", async (value) => {
+    const { req, res, productVariantService } = makeRequest({
+      stock_location_code: value,
+    });
+
+    await POST(req, res);
+
+    expect(productVariantService.update).toHaveBeenCalledWith("var_1", {
+      stock_location_code: value,
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("forwards explicit null to clear stock_location_code", async () => {
+    const { req, res, productVariantService } = makeRequest({
+      stock_location_code: null,
+    });
+
+    await POST(req, res);
+
+    expect(productVariantService.update).toHaveBeenCalledWith("var_1", {
+      stock_location_code: null,
+    });
+  });
+
+  it("forwards an omitted stock_location_code without injecting it", async () => {
+    const body = { title: "Updated variant" };
+    const { req, res, productVariantService } = makeRequest(body);
+
+    await POST(req, res);
+
+    expect(productVariantService.update).toHaveBeenCalledWith("var_1", body);
+    expect(productVariantService.update.mock.calls[0][1]).not.toHaveProperty(
+      "stock_location_code",
+    );
+  });
+
+  it("forwards standard variant fields alongside stock_location_code", async () => {
+    const body = { title: "Updated variant", stock_location_code: "A1" };
+    const { req, res, productVariantService } = makeRequest(body);
+
+    await POST(req, res);
+
+    expect(productVariantService.update).toHaveBeenCalledWith("var_1", body);
+  });
 });
 
 describe("PATCH product variant", () => {
