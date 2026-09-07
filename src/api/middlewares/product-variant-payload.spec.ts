@@ -1,5 +1,8 @@
 import { validator } from "@medusajs/medusa";
+import { AdminPostProductsReq } from "@medusajs/medusa/dist/api/routes/admin/products/create-product";
+import { AdminPostProductsProductReq } from "@medusajs/medusa/dist/api/routes/admin/products/update-product";
 import { config } from "../middlewares";
+import { AdminPostProductsProductVariantsReq } from "@medusajs/medusa/dist/api/routes/admin/products/create-variant";
 import { AdminPostProductsProductVariantsVariantReq } from "@medusajs/medusa/dist/api/routes/admin/products/update-variant";
 import {
   extendProductVariantPatchPayload,
@@ -156,4 +159,120 @@ describe("native product variant update validator", () => {
       ).rejects.toThrow();
     },
   );
+});
+
+describe("native product variant creation validator", () => {
+  it("accepts stock_location_code when creating a product variant", async () => {
+    await expect(
+      validator(AdminPostProductsProductVariantsReq, {
+        title: "Created variant",
+        prices: [{ amount: 100, currency_code: "eur" }],
+        options: [{ option_id: "opt_1", value: "Blue" }],
+        stock_location_code: "A1",
+      }),
+    ).resolves.toMatchObject({ stock_location_code: "A1" });
+  });
+});
+
+describe("native full product payload validators", () => {
+  const createVariant = {
+    title: "Created variant",
+    prices: [{ amount: 100, currency_code: "eur" }],
+    options: [{ value: "Blue" }],
+    inventory_quantity: 3,
+    stock_location_code: "A1",
+  };
+
+  it("preserves native defaults when options and inventory are omitted on creation", async () => {
+    const { options: _options, inventory_quantity: _inventory_quantity, ...variant } = createVariant;
+    const validated = await validator(AdminPostProductsReq, {
+      title: "Product",
+      variants: [variant],
+    });
+
+    expect(validated.variants![0].inventory_quantity).toBe(0);
+    expect(validated.variants![0].manage_inventory).toBeUndefined();
+    expect(validated.variants![0].options).toEqual([]);
+  });
+
+  it("preserves the native options default when options are omitted on update", async () => {
+    const { options: _options, ...variant } = createVariant;
+    const validated = await validator(AdminPostProductsProductReq, {
+      variants: [{ ...variant, id: "variant_1" }],
+    });
+
+    expect(validated.variants![0].options).toEqual([]);
+  });
+
+  it("accepts stock_location_code in a full product creation variant", async () => {
+    await expect(
+      validator(AdminPostProductsReq, {
+        title: "Product",
+        variants: [createVariant],
+      }),
+    ).resolves.toMatchObject({ variants: [createVariant] });
+  });
+
+  it("accepts stock_location_code in a full product update variant", async () => {
+    const variant = {
+      ...createVariant,
+      options: [{ value: "Blue", option_id: "opt_1" }],
+      id: "variant_1",
+    };
+    await expect(
+      validator(AdminPostProductsProductReq, { variants: [variant] }),
+    ).resolves.toMatchObject({ variants: [variant] });
+  });
+
+  it.each([undefined, null, "A1", "Z100"])(
+    "accepts %p for creation without losing native fields",
+    async (stock_location_code) => {
+      const variant = { ...createVariant, stock_location_code };
+      if (stock_location_code === undefined) delete variant.stock_location_code;
+      await expect(
+        validator(AdminPostProductsReq, { title: "Product", variants: [variant] }),
+      ).resolves.toMatchObject({
+        variants: [expect.objectContaining({
+          title: "Created variant",
+          prices: [{ amount: 100, currency_code: "eur" }],
+          options: [{ value: "Blue" }],
+          inventory_quantity: 3,
+        })],
+      });
+    },
+  );
+
+  it.each(["A0", "A101", "AA1", "a1", "A01", " A1 ", 1, {}])(
+    "rejects invalid stock_location_code %p in full payloads",
+    async (stock_location_code) => {
+      await expect(
+        validator(AdminPostProductsReq, {
+          title: "Product",
+          variants: [{ ...createVariant, stock_location_code }],
+        }),
+      ).rejects.toThrow();
+      await expect(
+        validator(AdminPostProductsProductReq, {
+          variants: [{
+            ...createVariant,
+            options: [{ value: "Blue", option_id: "opt_1" }],
+            id: "variant_1",
+            stock_location_code,
+          }],
+        }),
+      ).rejects.toThrow();
+    },
+  );
+
+  it("does not invent stock_location_code when omitted in an update", async () => {
+    const { stock_location_code: _omitted, ...variant } = createVariant;
+    const validated = await validator(AdminPostProductsProductReq, {
+      variants: [{
+        ...variant,
+        options: [{ value: "Blue", option_id: "opt_1" }],
+        id: "variant_1",
+      }],
+    });
+    expect(validated.variants![0]).not.toHaveProperty("stock_location_code");
+  });
 });
