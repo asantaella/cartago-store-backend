@@ -142,6 +142,45 @@ describe("StripeProviderServiceExtended", () => {
     );
   });
 
+  it.each([
+    ["processing", ["sepa_debit"], { type: "sepa_debit" }, PaymentSessionStatus.AUTHORIZED],
+    ["processing", ["card", "sepa_debit"], { type: "card" }, PaymentSessionStatus.PENDING],
+    ["processing", ["sepa_debit"], null, PaymentSessionStatus.PENDING],
+    ["succeeded", ["sepa_debit"], { type: "sepa_debit" }, PaymentSessionStatus.AUTHORIZED],
+    ["canceled", ["sepa_debit"], { type: "sepa_debit" }, PaymentSessionStatus.CANCELED],
+  ])(
+    "maps %s from actual payment method evidence, not allowed method types",
+    async (status, paymentMethodTypes, paymentMethod, expectedStatus) => {
+      stripeMock.paymentIntents.retrieve.mockResolvedValue(
+        buildPaymentIntent({
+          status,
+          payment_method_types: paymentMethodTypes,
+          payment_method: paymentMethod,
+        }),
+      );
+
+      await expect(stripeProvider.getPaymentStatus({ id: "pi_test" })).resolves.toBe(
+        expectedStatus,
+      );
+    },
+  );
+
+  it("retrieves the selected payment method when classifying processing intents", async () => {
+    stripeMock.paymentIntents.retrieve.mockResolvedValue(
+      buildPaymentIntent({
+        status: "processing",
+        payment_method_types: ["card", "sepa_debit"],
+        payment_method: { type: "sepa_debit" },
+      }),
+    );
+
+    await stripeProvider.getPaymentStatus({ id: "pi_test" });
+
+    expect(stripeMock.paymentIntents.retrieve).toHaveBeenCalledWith("pi_test", {
+      expand: ["latest_charge", "payment_method"],
+    });
+  });
+
   it("preserves upstream status semantics while surfacing 3DS-aware diagnostics", async () => {
     stripeMock.paymentIntents.retrieve.mockResolvedValue(
       buildPaymentIntent({

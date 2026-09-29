@@ -6,7 +6,7 @@ import { describe, expect, it, beforeAll } from "@jest/globals";
 dotenv.config({ path: `${process.cwd()}/.env.local` });
 
 const execFileAsync = promisify(execFile);
-const VARIANT_ID = "variant_01KZYP8V36D92ADRK8ZRKZ2XB8";
+const VARIANT_ID = "variant_01KZRT3589RWGMEDQR6VFZ8YHJ";
 const BASE_URL = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000";
 const REGION_ID = process.env.E2E_REGION_ID || "reg_01HZZEJSR0CWRSVFWSZQ2ANKV7";
 const SHIPPING_OPTION_ID =

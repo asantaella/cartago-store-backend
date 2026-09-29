@@ -32,6 +32,7 @@ type StripePaymentSessionData =
     medusa_payment_diagnostics?: StripePaymentDiagnostics;
     status?: string;
     payment_method_types?: string[];
+    payment_method?: Stripe.PaymentMethod | string | null;
   };
 
 type ConfigurePaymentIntentInput = {
@@ -183,7 +184,7 @@ class StripeProviderServiceExtended extends StripeProviderService {
     const stripe = this.getStripe();
 
     return (await stripe.paymentIntents.retrieve(id, {
-      expand: ["latest_charge"],
+      expand: ["latest_charge", "payment_method"],
     } as never)) as Stripe.PaymentIntent;
   }
 
@@ -191,23 +192,16 @@ class StripeProviderServiceExtended extends StripeProviderService {
     paymentIntent: Pick<
       StripePaymentSessionData,
       "status" | "payment_method_types"
-    >,
+    > & { payment_method?: Stripe.PaymentMethod | string | null },
   ): PaymentSessionStatus {
-    if (
-      paymentIntent.status === "processing" &&
-      paymentIntent.payment_method_types?.includes("sepa_debit")
-    ) {
-      console.log(
-        "SEPA Direct Debit payment is processing, marking as authorized.",
-      );
-      return PaymentSessionStatus.AUTHORIZED;
-    }
-
     switch (paymentIntent.status) {
       case "requires_payment_method":
       case "requires_confirmation":
-      case "processing":
         return PaymentSessionStatus.PENDING;
+      case "processing":
+        return this.isSepaPaymentIntent(paymentIntent)
+          ? PaymentSessionStatus.AUTHORIZED
+          : PaymentSessionStatus.PENDING;
       case "requires_action":
         return PaymentSessionStatus.REQUIRES_MORE;
       case "canceled":
@@ -218,6 +212,15 @@ class StripeProviderServiceExtended extends StripeProviderService {
       default:
         return PaymentSessionStatus.PENDING;
     }
+  }
+
+  private isSepaPaymentIntent(
+    paymentIntent: Pick<StripePaymentSessionData, "payment_method">,
+  ): boolean {
+    return (
+      typeof paymentIntent.payment_method === "object" &&
+      paymentIntent.payment_method?.type === "sepa_debit"
+    );
   }
 
   async configurePaymentIntent(
@@ -256,7 +259,7 @@ class StripeProviderServiceExtended extends StripeProviderService {
             request_three_d_secure: requestThreeDSecurePolicy,
           },
         },
-        expand: ["latest_charge"],
+        expand: ["latest_charge", "payment_method"],
       } as never)) as Stripe.PaymentIntent;
 
       return this.withDiagnostics(updatedPaymentIntent);
@@ -299,7 +302,7 @@ class StripeProviderServiceExtended extends StripeProviderService {
       description,
       amount: Math.round(amount),
       currency: currency_code,
-      expand: ["latest_charge"],
+      expand: ["latest_charge", "payment_method"],
       metadata: this.buildPaymentMetadata({
         resourceId: resource_id,
         requestThreeDSecurePolicy,

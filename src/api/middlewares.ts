@@ -25,6 +25,13 @@ const adminCorsOrigin = parseCorsOrigins(
 export const config: MiddlewaresConfig = {
   routes: [
     {
+      // Stripe signs the exact bytes received; do not let the global JSON
+      // parser consume this request before the source-owned route verifies it.
+      matcher: "/stripe/hooks",
+      bodyParser: false,
+      middlewares: [raw({ type: "application/json" })],
+    },
+    {
       matcher: "/store/orders/*/invoice",
       bodyParser: false,
       middlewares: [
