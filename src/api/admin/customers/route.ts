@@ -8,7 +8,7 @@ import { CustomerRepository } from "@medusajs/medusa/dist/repositories/customer"
 import { buildQuery } from "@medusajs/utils";
 import { isDefined } from "medusa-core-utils";
 import { omit, pickBy } from "lodash";
-import { In, ILike } from "typeorm";
+import { In, ILike, Raw } from "typeorm";
 import { IsBoolean, IsOptional, IsString } from "class-validator";
 import { Transform } from "class-transformer";
 
@@ -110,6 +110,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   if (trimmedQ) {
     const qLike = ILike(`%${trimmedQ}%`);
+    const nameLike = normalizedILike(trimmedQ);
     const baseWhere = Array.isArray(query.where)
       ? query.where[0]
       : query.where ?? {};
@@ -120,8 +121,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     query.where = [
       { ...baseWhere, email: qLike },
-      { ...baseWhere, first_name: qLike },
-      { ...baseWhere, last_name: qLike },
+      { ...baseWhere, first_name: nameLike },
+      { ...baseWhere, last_name: nameLike },
       { ...baseWhere, phone: qLike },
     ];
   }
@@ -152,4 +153,26 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     offset: validatedQuery.offset,
     limit: validatedQuery.limit,
   });
+}
+
+const ACCENTED_CHARACTERS =
+  "áéíóúàèìòùâêîôûãõäëïöüçñÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÄËÏÖÜÇÑ";
+const UNACCENTED_CHARACTERS =
+  "aeiouaeiouaeiouaoaeioucnAEIOUAEIOUAEIOUAOAEIOUCN";
+
+function removeAccents(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function normalizedILike(value: string): ReturnType<typeof Raw> {
+  const normalizedValue = removeAccents(value);
+
+  return Raw(
+    (alias) =>
+      `LOWER(TRANSLATE(${alias}, '${ACCENTED_CHARACTERS}', '${UNACCENTED_CHARACTERS}')) ILIKE :normalizedValue`,
+    { normalizedValue: `%${normalizedValue}%` },
+  );
 }

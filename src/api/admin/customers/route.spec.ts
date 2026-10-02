@@ -50,6 +50,22 @@ describe("GET /admin/customers", () => {
     );
   });
 
+  it("normalizes accents when searching customer names", async () => {
+    const searchText = "Ortuño".normalize("NFD");
+    const { req, customerRepository } = makeRequest({ q: searchText });
+    const res = makeResponse();
+
+    await GET(req, res);
+
+    const query = customerRepository.find.mock.calls[0][0];
+    const nameSearch = query.where[2].last_name as any;
+
+    expect(nameSearch.type).toBe("raw");
+    expect(nameSearch.objectLiteralParameters).toEqual({
+      normalizedValue: "%ortuno%",
+    });
+  });
+
   it("rejects invalid blacklist filter values", async () => {
     const { req } = makeRequest({ in_black_list: "sometimes" });
     const res = makeResponse();

@@ -632,7 +632,7 @@ function normalizedILike(value: string): ReturnType<typeof Raw> {
 
   return Raw(
     (alias) =>
-      `LOWER(REPLACE(TRANSLATE(${alias}, 'áéíóúàèìòùâêîôûãõäëïöüçñÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÄËÏÖÜÇÑ', 'aeiouaeiouaeiouaoaeiouccnAEIOUAEIOUAEIOUAOAEIOUCCN'), ' ', '')) ILIKE :nval`,
+      `LOWER(REPLACE(TRANSLATE(${alias}, 'áéíóúàèìòùâêîôûãõäëïöüçñÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÄËÏÖÜÇÑ', 'aeiouaeiouaeiouaoaeioucnAEIOUAEIOUAEIOUAOAEIOUCN'), ' ', '')) ILIKE :nval`,
     { nval: `%${normalized}%` },
   );
 }
