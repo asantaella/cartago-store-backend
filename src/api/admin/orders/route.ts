@@ -626,14 +626,17 @@ function removeAccents(str: string): string {
  * Aplica normalización para búsquedas tolerantes a tildes y espacios.
  * Usa normalización en JavaScript + SQL simple (no requiere extensiones).
  */
+let normalizedParameterId = 0;
+
 function normalizedILike(value: string): ReturnType<typeof Raw> {
   // Normalizar en JavaScript (remover tildes y espacios)
   const normalized = removeAccents(value).replace(/\s+/g, "");
+  const parameterName = `nval_${normalizedParameterId++}`;
 
   return Raw(
     (alias) =>
-      `LOWER(REPLACE(TRANSLATE(${alias}, 'áéíóúàèìòùâêîôûãõäëïöüçñÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÄËÏÖÜÇÑ', 'aeiouaeiouaeiouaoaeioucnAEIOUAEIOUAEIOUAOAEIOUCN'), ' ', '')) ILIKE :nval`,
-    { nval: `%${normalized}%` },
+      `LOWER(REPLACE(TRANSLATE(${alias}, 'áéíóúàèìòùâêîôûãõäëïöüçñÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÄËÏÖÜÇÑ', 'aeiouaeiouaeiouaoaeioucnAEIOUAEIOUAEIOUAOAEIOUCN'), ' ', '')) ILIKE :${parameterName}`,
+    { [parameterName]: `%${normalized}%` },
   );
 }
 
