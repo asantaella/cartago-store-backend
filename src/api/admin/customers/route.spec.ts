@@ -66,6 +66,105 @@ describe("GET /admin/customers", () => {
     });
   });
 
+  it("passes TypeORM pagination with expanded relations and ordering", async () => {
+    const { req, customerRepository } = makeRequest({
+      expand: "orders,groups",
+      offset: "15",
+      limit: "15",
+      order: "-created_at",
+    });
+    const res = makeResponse();
+
+    await GET(req, res);
+
+    expect(customerRepository.find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        relations: { orders: true, groups: true },
+        order: { created_at: "DESC" },
+        skip: 15,
+        take: 15,
+      }),
+    );
+  });
+
+  it("matches given name and surname together for a two-word query", async () => {
+    const { req, customerRepository } = makeRequest({ q: "Pablo Ortuño" });
+    const res = makeResponse();
+
+    await GET(req, res);
+
+    const query = customerRepository.find.mock.calls[0][0] as any;
+    const namePair = query.where.find((where: Record<string, any>) => {
+      const firstName = where.first_name;
+      const lastName = where.last_name;
+
+      return (
+        firstName?.type === "raw" &&
+        lastName?.type === "raw" &&
+        Object.values(firstName.objectLiteralParameters).includes("%pablo%") &&
+        Object.values(lastName.objectLiteralParameters).includes("%ortuno%")
+      );
+    });
+
+    expect(namePair).toBeDefined();
+    expect(namePair.first_name).toEqual(
+      expect.objectContaining({ type: "raw" }),
+    );
+    expect(namePair.last_name).toEqual(
+      expect.objectContaining({ type: "raw" }),
+    );
+    expect(
+      Object.keys(namePair.first_name.objectLiteralParameters).filter((key) =>
+        Object.prototype.hasOwnProperty.call(
+          namePair.last_name.objectLiteralParameters,
+          key,
+        ),
+      ),
+    ).toEqual([]);
+  });
+
+  it("matches contiguous given names and surnames for a compound query", async () => {
+    const { req, customerRepository } = makeRequest({
+      q: "Pablo José Ortuño García",
+    });
+    const res = makeResponse();
+
+    await GET(req, res);
+
+    const query = customerRepository.find.mock.calls[0][0] as any;
+    const namePair = query.where.find((where: Record<string, any>) => {
+      const firstName = where.first_name;
+      const lastName = where.last_name;
+
+      return (
+        firstName?.type === "raw" &&
+        lastName?.type === "raw" &&
+        Object.values(firstName.objectLiteralParameters).includes(
+          "%pablo jose%",
+        ) &&
+        Object.values(lastName.objectLiteralParameters).includes(
+          "%ortuno garcia%",
+        )
+      );
+    });
+
+    expect(namePair).toBeDefined();
+    expect(namePair.first_name).toEqual(
+      expect.objectContaining({ type: "raw" }),
+    );
+    expect(namePair.last_name).toEqual(
+      expect.objectContaining({ type: "raw" }),
+    );
+    expect(
+      Object.keys(namePair.first_name.objectLiteralParameters).filter((key) =>
+        Object.prototype.hasOwnProperty.call(
+          namePair.last_name.objectLiteralParameters,
+          key,
+        ),
+      ),
+    ).toEqual([]);
+  });
+
   it("rejects invalid blacklist filter values", async () => {
     const { req } = makeRequest({ in_black_list: "sometimes" });
     const res = makeResponse();

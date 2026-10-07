@@ -5,7 +5,7 @@ import {
   AdminPostCustomersCustomerReq as MedusaAdminPostCustomersCustomerReq,
 } from "@medusajs/medusa/dist/api/routes/admin/customers/update-customer";
 import { CustomerRepository } from "@medusajs/medusa/dist/repositories/customer";
-import { buildQuery } from "@medusajs/utils";
+import { buildQuery } from "@medusajs/medusa/dist/utils/build-query";
 import { isDefined } from "medusa-core-utils";
 import { omit, pickBy } from "lodash";
 import { In, ILike, Raw } from "typeorm";
@@ -125,6 +125,24 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       { ...baseWhere, last_name: nameLike },
       { ...baseWhere, phone: qLike },
     ];
+
+    const queryWords = trimmedQ.split(/\s+/);
+    for (let splitIndex = 1; splitIndex < queryWords.length; splitIndex++) {
+      const firstName = queryWords.slice(0, splitIndex).join(" ");
+      const lastName = queryWords.slice(splitIndex).join(" ");
+
+      query.where.push({
+        ...baseWhere,
+        first_name: normalizedILike(
+          firstName,
+          `normalizedValueFirstName${splitIndex}`,
+        ),
+        last_name: normalizedILike(
+          lastName,
+          `normalizedValueLastName${splitIndex}`,
+        ),
+      });
+    }
   }
 
   if (trimmedPhone) {
@@ -167,12 +185,15 @@ function removeAccents(value: string): string {
     .toLowerCase();
 }
 
-function normalizedILike(value: string): ReturnType<typeof Raw> {
+function normalizedILike(
+  value: string,
+  parameterName = "normalizedValue",
+): ReturnType<typeof Raw> {
   const normalizedValue = removeAccents(value);
 
   return Raw(
     (alias) =>
-      `LOWER(TRANSLATE(${alias}, '${ACCENTED_CHARACTERS}', '${UNACCENTED_CHARACTERS}')) ILIKE :normalizedValue`,
-    { normalizedValue: `%${normalizedValue}%` },
+      `LOWER(TRANSLATE(${alias}, '${ACCENTED_CHARACTERS}', '${UNACCENTED_CHARACTERS}')) ILIKE :${parameterName}`,
+    { [parameterName]: `%${normalizedValue}%` },
   );
 }

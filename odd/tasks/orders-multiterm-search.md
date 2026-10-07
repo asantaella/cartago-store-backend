@@ -30,19 +30,21 @@ Ensure a multi-word customer-name search in `GET /admin/orders` does not broaden
 ## Tasks
 
 - [x] **OMS-1 — Add and observe the failing multi-word search regression test.** Route: delegated writer (multi-file implementation trigger). Check: `yarn test --runInBand src/api/admin/orders/route.spec.ts` reached the intended assertion and failed behaviorally: expected 8 distinct placeholder names, received 1 (`nval`).
-- [ ] **OMS-2 — Use unique Raw parameter names and verify the fix.** Route: same delegated writer. Checks: targeted route test GREEN; applicable full Jest suite; parent spot-check of the targeted test.
+- [x] **OMS-2 — Use unique Raw parameter names and verify the fix.** Route: same delegated writer. Checks passed: targeted route test (1 test), full Jest suite (31 suites/282 tests), and independent verifier spot-check.
 
 ## Progress and evidence
 
 - Authorized by user: apply the search fix.
 - Test seam confirmed by user: mocked route GET; inspect generated `Raw` operators without a database.
-- Initial status: OMS-1 completed with observed behavioral RED; OMS-2 in progress.
+- Status: OMS-1 and OMS-2 complete.
 - Regression test: `src/api/admin/orders/route.spec.ts`.
 - RED evidence: `yarn test --runInBand src/api/admin/orders/route.spec.ts` failed at the placeholder uniqueness assertion (expected 8 distinct names, received 1); test setup and module loading passed.
-- Verification evidence: production fix and GREEN/full-suite checks pending.
-- Delivery: leave changes uncommitted unless separately authorized.
+- GREEN and suite evidence: the same targeted command passed (1 test); `yarn test --runInBand` passed (31 suites, 282 tests); the independent verifier repeated both successfully.
+- Commit evidence: `338953a` (`feat(orders): implement multi-term customer search with unique SQL parameter bindings`) contains the route fix, regression test, and this task document. The commit appeared during a shared-worktree branch change; the parent did not create it. User chose to preserve it. No push occurred.
+- Native review: ASSESS initially returned unassessable due undeclared untracked paths; the risk-gated independent verifier passed. A later START returned an expired consent for an unrelated target, with `lineage_created: false`; no review lineage was created and no mutation occurred.
 - Engram mirror status: pending/unavailable; no callable memory tool was exposed.
+- Current unrelated shared-worktree changes are in `src/api/admin/customers/route.ts`, `src/api/admin/customers/route.spec.ts`, and `odd/tasks/customer-search-pagination.md`; the other session confirmed it did not switch branches or create the commit and has paused writes.
 
 ## Next step
 
-Continue the same delegated writer for OMS-2: give each normalized Raw predicate a unique SQL parameter name, then run targeted and applicable full checks.
+No Orders implementation work remains. Preserve the current commit and unrelated customer pagination changes; do not reset or switch branches.
