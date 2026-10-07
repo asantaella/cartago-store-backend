@@ -3,6 +3,7 @@ import { NextFunction } from "express";
 import { cleanResponseData } from "@medusajs/medusa/dist/utils/clean-response-data";
 import DraftOrderPricingService from "../../services/draft-order-pricing";
 import ShippingSurchargeService from "../../services/shipping-surcharge";
+import { applyExplicitLineItemPrice } from "./cart-pricing-helpers";
 
 /**
  * Adds a line item to a draft order without using CartService.addOrUpdateLineItems.
@@ -131,6 +132,9 @@ export async function handleDraftOrderLineItemCreation(
           metadata,
           unit_price,
         });
+      if (unit_price !== undefined) {
+        applyExplicitLineItemPrice(line, unit_price);
+      }
 
       const existingItem = (draft.cart.items || []).find(
         (item: any) =>
@@ -141,10 +145,15 @@ export async function handleDraftOrderLineItemCreation(
 
       const lineItemServiceTx = lineItemService.withTransaction(tm);
       if (existingItem && line.should_merge !== false) {
-        await lineItemServiceTx.update(existingItem.id, {
+        const update: Record<string, unknown> = {
           quantity: existingItem.quantity + quantity,
-          ...(unit_price !== undefined && { unit_price }),
-        });
+        };
+        if (unit_price !== undefined) {
+          applyExplicitLineItemPrice(existingItem, unit_price);
+          update.unit_price = existingItem.unit_price;
+          update.metadata = existingItem.metadata;
+        }
+        await lineItemServiceTx.update(existingItem.id, update);
       } else {
         await lineItemServiceTx.create({
           ...line,

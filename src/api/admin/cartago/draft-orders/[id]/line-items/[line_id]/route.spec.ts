@@ -13,7 +13,12 @@ function makeRequest(body: any = {}) {
         id: "line_1",
         variant_id: "variant_1",
         quantity: 2,
-        subtotal: 2000,
+        unit_price: 2000,
+        subtotal: 4000,
+        metadata: {
+          adjusted_unit_price: 2000,
+          original_unit_price: 2000,
+        },
         variant: { shipping_option_price_extra: 150 },
       },
     ],
@@ -28,6 +33,9 @@ function makeRequest(body: any = {}) {
     payment_sessions: [],
     tax_total: 0,
     gift_card_total: 0,
+    shipping_address: { country_code: "ES", postal_code: "28001" },
+    region: { tax_rate: 21 },
+    metadata: { territory_type: "standard" },
   };
   const draftOrder: any = {
     id: "draft_1",
@@ -37,7 +45,7 @@ function makeRequest(body: any = {}) {
   };
   const cartRepository = {
     findOne: jest.fn().mockResolvedValue(cart),
-    save: jest.fn().mockResolvedValue(cart),
+    save: jest.fn().mockImplementation(async (savedCart: any) => savedCart),
   };
   const manager: any = {
     transaction: async (fn: any) => fn(manager),
@@ -60,12 +68,16 @@ function makeRequest(body: any = {}) {
         if (name === "cartService") {
           return {
             withTransaction: () => ({
-              updateLineItem: jest.fn().mockImplementation(async () => {
-                // Medusa deletes shipping methods before updating a line item.
-                cart.items[0].quantity = 3;
-                cart.shipping_methods = [];
-                return cart;
-              }),
+              updateLineItem: jest.fn().mockImplementation(
+                async (_cartId: string, _lineId: string, update: any) => {
+                  // Medusa deletes shipping methods before updating a line item.
+                  Object.assign(cart.items[0], update);
+                  cart.items[0].subtotal =
+                    cart.items[0].unit_price * cart.items[0].quantity;
+                  cart.shipping_methods = [];
+                  return cart.items[0];
+                },
+              ),
               removeLineItem: jest.fn().mockResolvedValue(undefined),
               retrieveWithTotals: jest.fn().mockImplementation(async () => ({
                 ...cart,
@@ -96,7 +108,7 @@ function makeRequest(body: any = {}) {
       }),
     },
   };
-  return { req, cartRepository };
+  return { req, cart, cartRepository };
 }
 
 function makeResponse() {
@@ -118,6 +130,54 @@ describe("custom draft-order line-item endpoints", () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({ draft_order: expect.anything() }),
     );
+  });
+
+  it("uses an explicit unit price as the canonical price in the response and saved cart", async () => {
+    const { req, cartRepository } = makeRequest({
+      quantity: 2,
+      unit_price: 1250,
+    });
+    const res = makeResponse();
+
+    await POST(req, res);
+
+    const responseItem = res.json.mock.calls[0][0].draft_order.cart.items[0];
+    expect(responseItem.unit_price).toBe(1250);
+    expect(responseItem.metadata).toEqual(
+      expect.objectContaining({
+        adjusted_unit_price: 1250,
+        original_unit_price: 1250,
+      }),
+    );
+
+    const persistedCart =
+      cartRepository.save.mock.calls[cartRepository.save.mock.calls.length - 1][0];
+    expect(persistedCart.items[0].unit_price).toBe(1250);
+    expect(persistedCart.items[0].metadata).toEqual(
+      expect.objectContaining({
+        adjusted_unit_price: 1250,
+        original_unit_price: 1250,
+      }),
+    );
+  });
+
+  it("preserves standard-price restoration for a non-explicit quantity edit", async () => {
+    const { req, cartRepository, cart } = makeRequest({ quantity: 3 });
+    cart.metadata.territory_type = "canarias";
+    cart.items[0].unit_price = 1653;
+    cart.items[0].subtotal = 3306;
+    cart.items[0].metadata = {
+      adjusted_unit_price: 1653,
+      original_unit_price: 2000,
+    };
+    const res = makeResponse();
+
+    await POST(req, res);
+
+    const persistedCart =
+      cartRepository.save.mock.calls[cartRepository.save.mock.calls.length - 1][0];
+    expect(persistedCart.items[0].unit_price).toBe(2000);
+    expect(persistedCart.items[0].quantity).toBe(3);
   });
 
   it("preserves shipping total and variant extra after native shipping removal", async () => {

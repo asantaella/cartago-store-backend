@@ -7,6 +7,7 @@ import {
 import { cleanResponseData } from "@medusajs/medusa/dist/utils/clean-response-data";
 import DraftOrderPricingService from "../../../../../../../services/draft-order-pricing";
 import ShippingSurchargeService from "../../../../../../../services/shipping-surcharge";
+import { applyExplicitLineItemPrice } from "../../../../../../middlewares/cart-pricing-helpers";
 
 type DraftShippingSnapshot = {
   id: string;
@@ -224,6 +225,17 @@ async function mutateLineItem(
       } else {
         update.region_id = draftOrder.cart.region_id;
         if (lineItem.variant_id) update.variant_id = lineItem.variant_id;
+        if (typeof update.unit_price === "number") {
+          const canonicalItem = {
+            ...lineItem,
+            metadata: {
+              ...(lineItem.metadata || {}),
+              ...(update.metadata as Record<string, unknown> | undefined),
+            },
+          };
+          applyExplicitLineItemPrice(canonicalItem, update.unit_price);
+          update.metadata = canonicalItem.metadata;
+        }
         await cartServiceTx.updateLineItem(cartId, line_id, update);
       }
     }

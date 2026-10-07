@@ -264,6 +264,22 @@ export function getLineItemAdjustedPrice(item: LineItemEntity): number {
 }
 
 /**
+ * Marks an explicitly entered price as the item's canonical/original price.
+ * Pricing normalization may otherwise restore the previous metadata price.
+ */
+export function applyExplicitLineItemPrice(
+  item: LineItemEntity,
+  unitPrice: number,
+): void {
+  item.unit_price = unitPrice;
+  item.metadata = {
+    ...item.metadata,
+    adjusted_unit_price: unitPrice,
+    original_unit_price: unitPrice,
+  };
+}
+
+/**
  * Calcula el descuento ajustado proporcionalmente al cambio de precio
  * Fórmula: adjustedDiscount = originalDiscount * (adjustedPrice / originalPrice)
  */
