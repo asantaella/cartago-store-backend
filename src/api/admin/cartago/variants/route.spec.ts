@@ -159,6 +159,10 @@ describe("GET /admin/cartago/variants", () => {
     expect(sql).toMatch(/p\.deleted_at IS NULL/);
     expect(sql).toMatch(/p\.is_giftcard = false/);
     expect(sql).toMatch(/ma\.deleted_at IS NULL/);
+    // Medusa >= 1.18 links prices through product_variant_money_amount; money_amount.variant_id was dropped.
+    expect(sql).toMatch(/JOIN product_variant_money_amount pvma ON pvma\.money_amount_id = ma\.id/);
+    expect(sql).toMatch(/pvma\.variant_id = v\.id AND pvma\.deleted_at IS NULL/);
+    expect(sql).not.toMatch(/\bma\.variant_id/);
   });
 
   it("returns variants with barcode, stock_location_code and prices", async () => {

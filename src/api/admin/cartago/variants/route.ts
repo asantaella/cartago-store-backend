@@ -83,7 +83,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             'price_list_id', ma.price_list_id
           ) ORDER BY ma.id)
           FROM money_amount ma
-          WHERE ma.variant_id = v.id AND ma.deleted_at IS NULL
+          JOIN product_variant_money_amount pvma ON pvma.money_amount_id = ma.id
+          WHERE pvma.variant_id = v.id AND pvma.deleted_at IS NULL
+            AND ma.deleted_at IS NULL
         ), '[]'::json) AS prices
       ${from}
       ORDER BY v.inventory_quantity ${direction}, v.id ASC
