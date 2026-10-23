@@ -392,6 +392,24 @@ class ProductAlertService extends TransactionBaseService {
     });
   }
 
+  /** Notify the administrator when a tracked variant becomes out of stock. */
+  async notifyAdminStockZero(variantId: string): Promise<void> {
+    const variantProduct = await this.validator.validateVariant(variantId);
+    if (!variantProduct) {
+      console.error(
+        `[ProductAlertService] Failed to retrieve variant ${variantId} for stock-zero alert`,
+      );
+      return;
+    }
+
+    const { variant, product } = variantProduct;
+    await this.notifier.sendEmailAdminStockZeroAlert(
+      variant,
+      product,
+      variantId,
+    );
+  }
+
   /**
    * Get all subscriptions for an email
    */

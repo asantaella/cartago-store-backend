@@ -95,6 +95,55 @@ class ProductAlertStockEmailNotification extends AbstractBrevoEmailNotification 
     );
   }
 
+  async sendEmailAdminStockZeroAlert(
+    variant: any,
+    product: any,
+    variantId: string,
+  ): Promise<void> {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail) {
+      console.warn(
+        "[ProductAlertStockEmailNotification] ADMIN_EMAIL is not configured; skipping stock-zero alert",
+      );
+      return;
+    }
+
+    const variantTitle =
+      variant.title && variant.title !== "Default Title"
+        ? `${variant.title}`
+        : product.title;
+    const imageUrl = product.thumbnail || product.images?.[0]?.url;
+    const productUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/products/${product.handle}?variant=${variantId}`;
+    const html = EmailTemplateCompiler.renderTemplate(
+      "stock-zero-alert-admin",
+      {
+        product_name: product.title,
+        variant_name: variantTitle,
+        variant_sku: variant.sku || "N/A",
+        image_url: imageUrl,
+        inventory_quantity: 0,
+        product_url: productUrl,
+        current_year: new Date().getFullYear(),
+      },
+    );
+
+    if (!html) {
+      throw new Error("Failed to render stock-zero admin alert template");
+    }
+
+    const payload = this.buildEmailPayload(
+      adminEmail,
+      `[Alerta] Stock agotado: ${variantTitle}`,
+      html,
+      ["product-alert", "admin-notification", "stock-zero"],
+    );
+
+    await this.sendEmailWithRetry(
+      payload,
+      `Admin stock-zero alert for variant ${variantId}`,
+    );
+  }
+
   sendSubscriptionAdminNotification(
     email: string,
     variant: any,

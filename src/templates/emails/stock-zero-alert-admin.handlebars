@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviso de stock agotado</title>
+    <style>
+      body { margin: 0; background: #f3f6fb; color: #17324d; font-family: Arial, Helvetica, sans-serif; }
+      .shell { max-width: 640px; margin: 24px auto; background: #ffffff; }
+      .hero { padding: 24px 32px; background: #14395c; color: #ffffff; text-align: center; }
+      .content { padding: 28px 32px; }
+      .product { padding: 20px; background: #f7f9fb; border: 1px solid #e5ebf2; }
+      .product img { display: block; max-width: 180px; height: auto; margin: 0 auto 16px; }
+      .label { color: #5b6f84; font-weight: 700; }
+      .button { display: inline-block; margin-top: 16px; padding: 12px 20px; background: #e84d0e; color: #ffffff; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <table class="shell" role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr><td class="hero"><h1>Aviso de stock agotado</h1></td></tr>
+      <tr>
+        <td class="content">
+          <p>Una variante de producto se quedó sin existencias.</p>
+          <div class="product">
+            {{#if image_url}}<img src="{{image_url}}" alt="{{product_name}} - {{variant_name}}">{{/if}}
+            <p><span class="label">Producto:</span> {{product_name}}</p>
+            <p><span class="label">Variante:</span> {{variant_name}}</p>
+            <p><span class="label">SKU:</span> {{variant_sku}}</p>
+            <p><span class="label">Cantidad actual:</span> {{inventory_quantity}}</p>
+            <a class="button" href="{{product_url}}">Ver producto</a>
+          </div>
+        </td>
+      </tr>
+      {{> footer}}
+    </table>
+  </body>
+</html>
