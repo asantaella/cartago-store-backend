@@ -19,6 +19,9 @@ import type { NextFunction } from "express";
 
 export const STOCK_LOCATION_CODE_PATTERN = /^[A-Z](?:[1-9]|[1-9][0-9]|100)$/;
 
+const STOCK_ZERO_SNAPSHOT_METADATA_KEY =
+  "stock_zero_alert_last_inventory_quantity";
+
 
 /**
  * Extends Medusa's native variant update request with Cartago's persisted fields.
@@ -124,6 +127,41 @@ type ProductVariantPayload = Record<string, unknown>;
 
 const isRecord = (value: unknown): value is ProductVariantPayload =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const stripStockSnapshotFromVariant = (variant: unknown): unknown => {
+  if (!isRecord(variant) || !isRecord(variant.metadata)) {
+    return variant;
+  }
+
+  const metadata = { ...variant.metadata };
+  delete metadata[STOCK_ZERO_SNAPSHOT_METADATA_KEY];
+
+  return { ...variant, metadata };
+};
+
+export function stripStockSnapshotFromVariantPayload(
+  req: MedusaRequest,
+  _res: MedusaResponse,
+  next: NextFunction,
+): void {
+  req.body = stripStockSnapshotFromVariant(req.body);
+  next();
+}
+
+export function stripStockSnapshotsFromProductPayload(
+  req: MedusaRequest,
+  _res: MedusaResponse,
+  next: NextFunction,
+): void {
+  if (isRecord(req.body) && Array.isArray(req.body.variants)) {
+    req.body = {
+      ...req.body,
+      variants: req.body.variants.map(stripStockSnapshotFromVariant),
+    };
+  }
+
+  next();
+}
 
 /**
  * Preserves the native variant payload and Cartago's canonical persisted fields.

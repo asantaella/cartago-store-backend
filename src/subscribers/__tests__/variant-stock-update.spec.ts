@@ -130,6 +130,41 @@ describe("variant-stock-update subscriber", () => {
     expect(productAlertService.notifyAdminStockZero).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ["numeric", { [STOCK_SNAPSHOT_KEY]: 4 }, "4"],
+    ["missing", {}, "missing"],
+    ["non-numeric", { [STOCK_SNAPSHOT_KEY]: "4" }, "non-numeric"],
+  ])(
+    "logs a stock snapshot diagnostic with a %s prior snapshot",
+    async (_caseName, metadata, priorSnapshot) => {
+      const originalAdminEmail = process.env.ADMIN_EMAIL;
+      const adminEmail = "admin@example.com";
+      process.env.ADMIN_EMAIL = adminEmail;
+      const diagnostic = jest.spyOn(console, "log").mockImplementation(() => {});
+      const { container } = buildContainer([
+        {
+          id: "var_01",
+          inventory_quantity: 0,
+          metadata,
+        },
+      ]);
+
+      await stockUpdate(container, {
+        id: "var_01",
+        fields: ["inventory_quantity"],
+      });
+
+      expect(diagnostic).toHaveBeenCalledWith(
+        `[STOCK-ZERO-SNAPSHOT-DIAG] variant_id=var_01 prior_snapshot=${priorSnapshot} current_inventory_quantity=0 admin_email_configured=true`,
+      );
+      expect(diagnostic.mock.calls[0][0]).not.toContain(adminEmail);
+
+      diagnostic.mockRestore();
+      if (originalAdminEmail === undefined) delete process.env.ADMIN_EMAIL;
+      else process.env.ADMIN_EMAIL = originalAdminEmail;
+    },
+  );
+
   it("keeps the stock update successful when the admin email fails", async () => {
     const { container, productVariantService, productAlertService } =
       buildContainer([

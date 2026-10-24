@@ -7,6 +7,8 @@ import { AdminPostProductsProductVariantsVariantReq } from "@medusajs/medusa/dis
 import {
   extendProductVariantPatchPayload,
   extendProductVariantPostPayload,
+  stripStockSnapshotFromVariantPayload,
+  stripStockSnapshotsFromProductPayload,
 } from "./product-variant-payload";
 
 function runMiddleware(
@@ -19,6 +21,15 @@ function runMiddleware(
   middleware(req, {}, next);
 
   return { req, next };
+}
+
+function runMiddlewares(middlewares: any[] | undefined, body: unknown) {
+  const req = { body };
+  const next = jest.fn();
+
+  middlewares?.forEach((middleware) => middleware(req, {}, next));
+
+  return { req };
 }
 
 describe("product variant payload middleware", () => {
@@ -36,6 +47,19 @@ describe("product variant payload middleware", () => {
 
     expect(postRoute?.middlewares).toContain(extendProductVariantPostPayload);
     expect(patchRoute?.middlewares).toContain(extendProductVariantPatchPayload);
+    expect(postRoute?.middlewares).toContain(
+      stripStockSnapshotFromVariantPayload,
+    );
+    expect(patchRoute?.middlewares).toContain(
+      stripStockSnapshotFromVariantPayload,
+    );
+    const fullProductRoute = config.routes?.find(
+      (route) =>
+        route.matcher === "/admin/products/:id" && route.method === "POST",
+    );
+    expect(fullProductRoute?.middlewares).toContain(
+      stripStockSnapshotsFromProductPayload,
+    );
   });
 
   it("preserves Cartago fields for POST", () => {
@@ -72,6 +96,63 @@ describe("product variant payload middleware", () => {
 
     expect(req.body).toEqual(body);
     expect(req.body).not.toBe(body);
+  });
+
+  it.each(["POST", "PATCH"])(
+    "removes the server-owned stock snapshot from individual %s while preserving other metadata",
+    (method) => {
+      const route = config.routes?.find(
+        (candidate) =>
+          candidate.matcher === "/admin/products/:id/variants/:variant_id" &&
+          candidate.method === method,
+      );
+      const { req } = runMiddlewares(route?.middlewares as any, {
+        metadata: {
+          stock_zero_alert_last_inventory_quantity: 0,
+          color: "blue",
+        },
+      });
+
+      expect(req.body).toEqual({ metadata: { color: "blue" } });
+    },
+  );
+
+  it("removes stale snapshot metadata from nested variants on full-product update", () => {
+    const route = config.routes?.find(
+      (candidate) =>
+        candidate.matcher === "/admin/products/:id" &&
+        candidate.method === "POST",
+    );
+    expect(route?.middlewares).toBeDefined();
+    if (!route?.middlewares) return;
+
+    const { req } = runMiddlewares(route.middlewares as any, {
+      metadata: { product_note: "keep" },
+      variants: [
+        {
+          id: "var_01",
+          metadata: {
+            stock_zero_alert_last_inventory_quantity: 0,
+            color: "blue",
+          },
+        },
+        {
+          id: "var_02",
+          metadata: {
+            stock_zero_alert_last_inventory_quantity: 4,
+            warehouse_note: "fragile",
+          },
+        },
+      ],
+    });
+
+    expect(req.body).toEqual({
+      metadata: { product_note: "keep" },
+      variants: [
+        { id: "var_01", metadata: { color: "blue" } },
+        { id: "var_02", metadata: { warehouse_note: "fragile" } },
+      ],
+    });
   });
 });
 

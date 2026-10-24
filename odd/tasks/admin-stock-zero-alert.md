@@ -29,6 +29,16 @@ The existing `variant-stock-update` subscriber handles back-in-stock behavior bu
   - Route: delegated direct. Trigger: behavior spans subscriber, email service/template, and state initialization across multiple non-trivial files.
   - Acceptance: detect positive-to-zero using the metadata snapshot; initialize existing and newly created variants; send the specified admin email with retry behavior; skip with a warning when `ADMIN_EMAIL` is unset; do not regress back-in-stock handling.
   - Verification: focused Jest tests for the subscriber and email notification; TypeScript/build check if available.
+- [x] **SZA-2 — Prevent update payloads from overwriting the stock snapshot**
+  - Observed logs: a confirmed diagnostic case was `prior_snapshot=0`, `current_inventory_quantity=0`, `admin_email_configured=true`; an earlier event showed `0→1`, followed by the zero/zero case. The actual request payload was not captured, so this is not proof that a submitted stale key caused that production observation.
+  - Verified overwrite path: full-product updates pass nested variant objects to `productVariantService.update`; Medusa metadata merging lets a supplied key override the current stored value. This makes a stale `stock_zero_alert_last_inventory_quantity` in submitted metadata a reproducible overwrite path.
+  - Route: delegated direct. Trigger: both individual variant updates and full-product nested variant updates must be sanitized, route registration must cover the full-product update endpoint, and both payload shapes require focused regression tests.
+  - Authorized scope: `src/api/middlewares.ts`, `src/api/middlewares/product-variant-payload.ts`, and `src/api/middlewares/product-variant-payload.spec.ts`.
+  - Acceptance: strip only `stock_zero_alert_last_inventory_quantity` from incoming variant metadata on individual POST/PATCH and full-product update POST paths; preserve all unrelated metadata; do not affect product creation, subscriber/email behavior, or migration state.
+  - Verification: `npm test -- --runInBand src/api/middlewares/product-variant-payload.spec.ts`; `npm test -- --runInBand src/subscribers/__tests__/variant-stock-update.spec.ts`; `npx tsc -p tsconfig.json --noEmit`; `git diff --check`.
+  - Outcome: regression tests passed (44 payload tests, 9 subscriber tests); TypeScript and diff checks passed. Independent verification and parent spot-check passed. The risk assessment was unassessable because its temporary index could not be written under `.git`; no native review was run with clone-local RDD disabled.
+  - Independent limitation: the subscriber's existing 100 ms delayed current-state read can still miss fast successive stock transitions.
+  - Engram task mirror: pending because no authoritative session ID is available.
 
 ## Delivery
 - Forecast: approximately 350 authored changed lines, excluding generated files.
@@ -51,4 +61,4 @@ The existing `variant-stock-update` subscriber handles back-in-stock behavior bu
 - `git diff --check` passed before staging.
 
 ## Next Step
-Commit the transition-wiring slice, reassess the accumulated candidate against `bf8dfe9`, then follow any returned RDD transition. Remote PRs and pushes remain pending explicit authorization.
+Commit SZA-2 as a local work-unit slice and record its identity. Then redeploy/restart and verify the 1→0 event produces the alert; keep SZA-1 incomplete until runtime email delivery is confirmed. Preserve the `feature-branch-chain` strategy; remote PRs and pushes remain pending explicit authorization.

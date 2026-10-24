@@ -15,6 +15,8 @@ import { handleDraftOrderLineItemMutation } from "./middlewares/draft-order-line
 import {
   extendProductVariantPatchPayload,
   extendProductVariantPostPayload,
+  stripStockSnapshotFromVariantPayload,
+  stripStockSnapshotsFromProductPayload,
 } from "./middlewares/product-variant-payload";
 
 // CORS origins para admin y store, consistentes con medusa-config.js
@@ -56,16 +58,27 @@ export const config: MiddlewaresConfig = {
     // Extend the native variant update payload with Cartago fields before
     // Medusa validates the request body.
     {
+      matcher: "/admin/products/:id",
+      method: "POST",
+      middlewares: [stripStockSnapshotsFromProductPayload],
+    },
+    {
       matcher: "/admin/products/:id/variants/:variant_id",
       method: "POST",
-      middlewares: [extendProductVariantPostPayload],
+      middlewares: [
+        extendProductVariantPostPayload,
+        stripStockSnapshotFromVariantPayload,
+      ],
     },
     // PATCH is a Cartago compatibility route in Medusa v1; keep its payload
     // aligned with the native POST field names.
     {
       matcher: "/admin/products/:id/variants/:variant_id",
       method: "PATCH",
-      middlewares: [extendProductVariantPatchPayload],
+      middlewares: [
+        extendProductVariantPatchPayload,
+        stripStockSnapshotFromVariantPayload,
+      ],
     },
     // Middleware para ajustar precios en GET /store/carts/*
     {

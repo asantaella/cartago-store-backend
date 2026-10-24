@@ -84,6 +84,16 @@ export async function processVariantStockUpdate({
   const variant = await productVariantService.retrieve(variantId);
   const currentQuantity = variant.inventory_quantity ?? 0;
   const previousQuantity = variant.metadata?.[STOCK_SNAPSHOT_KEY];
+  const previousSnapshotLabel =
+    typeof previousQuantity === "number"
+      ? previousQuantity
+      : previousQuantity === undefined
+        ? "missing"
+        : "non-numeric";
+
+  console.log(
+    `[STOCK-ZERO-SNAPSHOT-DIAG] variant_id=${variantId} prior_snapshot=${previousSnapshotLabel} current_inventory_quantity=${currentQuantity} admin_email_configured=${Boolean(process.env.ADMIN_EMAIL)}`,
+  );
 
   await productVariantService.update(variantId, {
     metadata: {
