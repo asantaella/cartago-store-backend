@@ -8,7 +8,7 @@ const STOCK_SNAPSHOT_KEY = "stock_zero_alert_last_inventory_quantity";
 function buildContainer(variants: Record<string, any>[]) {
   const productVariantService = {
     retrieve: jest.fn().mockImplementation(async () => variants.shift()),
-    update: jest.fn().mockResolvedValue(undefined),
+    updateStockSnapshot: jest.fn().mockResolvedValue(undefined),
   };
   const productAlertService = {
     getPendingCount: jest.fn().mockResolvedValue(1),
@@ -53,12 +53,10 @@ describe("variant-stock-update subscriber", () => {
       fields: ["inventory_quantity"],
     });
 
-    expect(productVariantService.update).toHaveBeenCalledWith("var_01", {
-      metadata: {
-        existing_key: "preserved",
-        [STOCK_SNAPSHOT_KEY]: 0,
-      },
-    });
+    expect(productVariantService.updateStockSnapshot).toHaveBeenCalledWith(
+      "var_01",
+      0,
+    );
     expect(productAlertService.notifyAdminStockZero).toHaveBeenCalledWith(
       "var_01",
     );
@@ -110,12 +108,10 @@ describe("variant-stock-update subscriber", () => {
       pluginOptions: {},
     } as any);
 
-    expect(productVariantService.update).toHaveBeenCalledWith("var_new", {
-      metadata: {
-        existing_key: "preserved",
-        [STOCK_SNAPSHOT_KEY]: 3,
-      },
-    });
+    expect(productVariantService.updateStockSnapshot).toHaveBeenCalledWith(
+      "var_new",
+      3,
+    );
     expect(productAlertService.notifyAdminStockZero).not.toHaveBeenCalled();
   });
 
@@ -183,9 +179,10 @@ describe("variant-stock-update subscriber", () => {
       stockUpdate(container, { id: "var_01", fields: ["inventory_quantity"] }),
     ).resolves.toBeUndefined();
 
-    expect(productVariantService.update).toHaveBeenCalledWith("var_01", {
-      metadata: { [STOCK_SNAPSHOT_KEY]: 0 },
-    });
+    expect(productVariantService.updateStockSnapshot).toHaveBeenCalledWith(
+      "var_01",
+      0,
+    );
     error.mockRestore();
   });
 

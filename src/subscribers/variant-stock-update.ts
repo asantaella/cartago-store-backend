@@ -78,9 +78,14 @@ export async function processVariantStockUpdate({
     return;
   }
 
-  const productVariantService: ProductVariantService = container.resolve(
+  const productVariantService = container.resolve(
     "productVariantService",
-  );
+  ) as ProductVariantService & {
+    updateStockSnapshot(
+      variantId: string,
+      inventoryQuantity: number,
+    ): Promise<unknown>;
+  };
   const variant = await productVariantService.retrieve(variantId);
   const currentQuantity = variant.inventory_quantity ?? 0;
   const previousQuantity = variant.metadata?.[STOCK_SNAPSHOT_KEY];
@@ -95,12 +100,7 @@ export async function processVariantStockUpdate({
     `[STOCK-ZERO-SNAPSHOT-DIAG] variant_id=${variantId} prior_snapshot=${previousSnapshotLabel} current_inventory_quantity=${currentQuantity} admin_email_configured=${Boolean(process.env.ADMIN_EMAIL)}`,
   );
 
-  await productVariantService.update(variantId, {
-    metadata: {
-      ...(variant.metadata || {}),
-      [STOCK_SNAPSHOT_KEY]: currentQuantity,
-    },
-  });
+  await productVariantService.updateStockSnapshot(variantId, currentQuantity);
 
   if (isCreated || typeof previousQuantity !== "number") {
     return;
