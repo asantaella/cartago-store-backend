@@ -67,8 +67,8 @@ The existing `variant-stock-update` subscriber handles back-in-stock behavior bu
 - TypeScript: `npx tsc -p tsconfig.json --noEmit` passed.
 - `git diff --check` passed before staging.
 - SZA-2 payload tests: 44 passed; subscriber tests: 9 passed; TypeScript and diff checks passed. Independent verification and parent spot-check passed.
-- SZA-2 Phase 2 service override tests: 3 passed; subscriber tests: 9 passed; TypeScript and `git diff --check` passed. Parent E2E GREEN passed; the bounded work-unit commit remains pending.
+- SZA-2 Phase 2 service override tests: 3 passed; subscriber tests: 9 passed; TypeScript and `git diff --check` passed. Parent E2E GREEN passed. Work-unit commit `459b1d7` (`fix(notifications): protect stock snapshot from stale metadata`) contains only the six approved SZA-2 paths.
 - Clone-local RDD was disabled at the user's request. Risk assessment was unassessable because its temporary index could not be written under `.git`; no review receipt is claimed.
 
 ## Next Step
-Create the bounded SZA-2 work-unit commit and record its identity. Keep SZA-1 incomplete until inbox receipt is verified; this run did not confirm inbox delivery. Preserve the `feature-branch-chain` strategy; remote PRs and pushes remain pending explicit authorization.
+SZA-2 is committed; no further implementation is pending for this slice. Keep SZA-1 incomplete until inbox receipt is verified; this run did not confirm inbox delivery. Preserve the `feature-branch-chain` strategy; remote PRs and pushes remain pending explicit authorization.
