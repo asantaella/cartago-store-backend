@@ -35,7 +35,7 @@ The invoice PDF currently calculates order taxes and total from the order model.
 - [x] Confirm the public test seam with the user: exercise `generateInvoice`, mock order retrieval and `pdfmake`, and assert the renderer's summary amounts.
 - [x] Add regression coverage for independent overrides, zero, missing/null fallback, invalid values, and two-decimal PDF output.
 - [x] Implement the behavior in the shared PDF generator without changing other `OrderInvoice` consumers.
-- [x] Run the focused test command and record exact outcomes; no standalone lint/typecheck command was run under the delegated focused-verification scope.
+- [x] Run the focused test command and record exact outcomes; typecheck/lint were not run and script availability was not checked.
 - [x] Create one Conventional Commit work unit on `feat/invoice-pdf-metadata-totals`.
 
 **Route:** delegated direct. The behavior and its test touch at least two non-trivial files; a single bounded writer will own the vertical test-first change.
@@ -54,7 +54,7 @@ The invoice PDF currently calculates order taxes and total from the order model.
 - Focused test command: `npm test -- --runTestsByPath src/services/__tests__/invoice-pdf-generator.spec.ts`.
 - RED: the focused command failed before implementation because the renderer received `€21` instead of the metadata override `€5.60`.
 - GREEN: the focused command passed after implementation (8 tests, 1 suite).
-- Typecheck/lint: not run; the delegated verification scope named only the focused Jest command, and no standalone lint/typecheck script is configured.
+- Typecheck/lint: not run; the delegated verification scope named only the focused Jest command, and script availability was not checked.
 - Existing fallback behavior: when `shipping_total` is zero, `OrderInvoice.getTotal()` computes subtotal plus taxes; the test fixture's existing-calculation fallback is therefore `€121.00`.
 - Runtime harness: N/A; this unit exercises the public generator method and a mocked `pdfmake` renderer.
 - Rollback boundary: revert the invoice PDF metadata override and its focused test; no other `OrderInvoice` consumer changes.
@@ -65,11 +65,13 @@ The invoice PDF currently calculates order taxes and total from the order model.
 - Local `master` fast-forwarded from `7db9c93` to `bf8dfe9`, matching `release/1.10.0`; no remote operation was performed.
 - Feature branch `feat/invoice-pdf-metadata-totals` created at `bf8dfe9`.
 - Work-unit commit: `5627299` — `feat(invoice): honor billing metadata totals in PDFs`.
+- Task evidence commit: `d6880d0` — `docs(invoice): record metadata override verification`.
 - `.codegraph/.gitignore` was moved aside after explicit authorization; its bytes matched the target branch's tracked copy, which now occupies the path. The index database, logs, and other `.codegraph/` files were preserved.
 - RDD status observed as `off` from `clone_local`.
 - Engram mirror is pending: the runtime supplied no authoritative session ID, so attributed memory writes are prohibited.
 - `InvoicePdfGeneratorService` now applies finite numeric billing metadata overrides independently, preserves valid zero values, falls back for null/missing values, rejects present invalid values, and formats aggregate taxes/total to two decimals.
 - The focused public-seam test covers both overrides, independent zero/fallback cases, null/missing fallback, non-number/non-finite rejection for both keys, and unchanged subtotal/shipping summary values.
+- Parent spot-check repeated the focused Jest command: 8 tests passed. The committed diff assessed as medium risk and under budget; RDD remained off. Independent verification found no functional/spec regression, with nonzero-shipping and unchanged item/discount rows not separately asserted.
 
 ## Next Step
 
