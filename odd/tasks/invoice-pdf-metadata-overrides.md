@@ -64,6 +64,7 @@ The invoice PDF currently calculates order taxes and total from the order model.
 
 - Local `master` fast-forwarded from `7db9c93` to `bf8dfe9`, matching `release/1.10.0`; no remote operation was performed.
 - Feature branch `feat/invoice-pdf-metadata-totals` created at `bf8dfe9`.
+- Work-unit commit: `5627299` — `feat(invoice): honor billing metadata totals in PDFs`.
 - `.codegraph/.gitignore` was moved aside after explicit authorization; its bytes matched the target branch's tracked copy, which now occupies the path. The index database, logs, and other `.codegraph/` files were preserved.
 - RDD status observed as `off` from `clone_local`.
 - Engram mirror is pending: the runtime supplied no authoritative session ID, so attributed memory writes are prohibited.
