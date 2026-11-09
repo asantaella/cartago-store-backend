@@ -50,16 +50,28 @@ class InvoicePdfGeneratorService extends BaseService {
       key: "order_taxes_total" | "order_total",
       fallback: number,
     ): number => {
-      const value = order.billing_address?.metadata?.[key];
-      if (value === undefined || value === null) {
+      const rawValue = order.billing_address?.metadata?.[key];
+      if (rawValue === undefined || rawValue === null) {
         return fallback;
       }
-      if (typeof value !== "number" || !Number.isFinite(value)) {
+      const decimalString =
+        typeof rawValue === "string" &&
+        /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(
+          rawValue.trim(),
+        );
+      const value =
+        typeof rawValue === "number"
+          ? rawValue
+          : decimalString
+            ? Number(rawValue)
+            : Number.NaN;
+
+      if (!Number.isFinite(value)) {
         throw new Error(
           `Invalid billing address metadata ${key}: expected a finite number`,
         );
       }
-      return value;
+      return Number(value.toFixed(2));
     };
     const taxes = metadataAmount("order_taxes_total", orderInvoice.getTaxes());
     const shipping = orderInvoice.getShipping();

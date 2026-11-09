@@ -101,6 +101,23 @@ describe("InvoicePdfGeneratorService", () => {
     expect(shippingRow[1].text).toBe("€0.00");
   });
 
+  it("converts decimal string metadata to numbers rounded to two decimals", async () => {
+    order.billing_address.metadata.order_taxes_total = "5.678";
+    order.billing_address.metadata.order_total = "10.276";
+
+    await service.generateInvoice("order_123");
+
+    const summaryRows = pdfDefinition.content[0].table.body[1][0].stack[1].table
+      .body;
+    const taxesRow = summaryRows.find((row: any[]) =>
+      row[0].text.startsWith("IVA "),
+    );
+    const totalRow = summaryRows.find((row: any[]) => row[0].text === "TOTAL:");
+
+    expect(taxesRow[1].text).toBe("€5.68");
+    expect(totalRow[1].text).toBe("€10.28");
+  });
+
   it("keeps a zero tax override and falls back to the calculated total when total is null", async () => {
     order.billing_address.metadata.order_taxes_total = 0;
     order.billing_address.metadata.order_total = null;
@@ -153,9 +170,11 @@ describe("InvoicePdfGeneratorService", () => {
   });
 
   it.each([
-    ["order_taxes_total", "5.60"],
+    ["order_taxes_total", "5.60junk"],
+    ["order_taxes_total", ""],
     ["order_taxes_total", Number.POSITIVE_INFINITY],
-    ["order_total", "10.28"],
+    ["order_total", "NaN"],
+    ["order_total", "Infinity"],
     ["order_total", Number.NaN],
   ])("rejects invalid billing metadata amount %s", async (key, value) => {
     order.billing_address.metadata[key] = value;
