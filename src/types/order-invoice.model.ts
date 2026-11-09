@@ -2,6 +2,7 @@ import { Order } from "@medusajs/medusa";
 import { formatMoney } from "../utils/format-utils";
 
 export type InvoiceMode = "invoice" | "receipt";
+export type CountryLabelOptions = { preferMetadataCountryCode?: boolean };
 export class OrderInvoice {
   private readonly order: Order;
 
@@ -114,32 +115,42 @@ export class OrderInvoice {
         }`;
   }
 
-  public getCustomerFullAddress(): string {
-    return `${this.getBillingAddress()}\n${this.getBillingCityCountry()}`;
+  public getCustomerFullAddress(options?: CountryLabelOptions): string {
+    return `${this.getBillingAddress()}\n${this.getBillingCityCountry(options)}`;
   }
 
   /**
    * Obtiene la etiqueta del país de facturación
    */
-  public getBillingCountryLabel(): string {
-    const countryCode = this.order.billing_address
-      ? this.order.billing_address.country_code.toLocaleUpperCase()
-      : this.order.shipping_address.country_code.toLocaleUpperCase();
+  public getBillingCountryLabel(options?: CountryLabelOptions): string {
+    const address = this.order.billing_address ?? this.order.shipping_address;
 
-    return this.countryLabel[countryCode];
+    if (options?.preferMetadataCountryCode) {
+      const metadataCode = address.metadata?.country_code;
+      const label =
+        typeof metadataCode === "string"
+          ? this.countryLabel[metadataCode.trim().toLocaleUpperCase()]
+          : undefined;
+
+      if (label) {
+        return label;
+      }
+    }
+
+    return this.countryLabel[address.country_code.toLocaleUpperCase()];
   }
 
   /**
    * Obtiene la ciudad y país de facturación
    */
-  public getBillingCityCountry(): string {
+  public getBillingCityCountry(options?: CountryLabelOptions): string {
     return this.order.billing_address
       ? `${this.order.billing_address.city} (${
           this.order.billing_address.province
-        }), ${this.getBillingCountryLabel()}`
+        }), ${this.getBillingCountryLabel(options)}`
       : `${this.order.shipping_address.city} (${
           this.order.shipping_address.province
-        }), ${this.getBillingCountryLabel()}`;
+        }), ${this.getBillingCountryLabel(options)}`;
   }
 
   /**

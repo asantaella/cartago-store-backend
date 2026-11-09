@@ -54,10 +54,10 @@ The order service currently supplies these metadata values as strings. Numeric v
 
 ### T2 — Apply address metadata country-code overrides in invoice PDFs
 
-- [ ] Add focused public-seam regression coverage for billing-address metadata override, shipping-address metadata override when billing address is absent, and fallback to the standard address code.
-- [ ] Implement the override only in the invoice PDF's customer-country rendering path; other `OrderInvoice` consumers keep their existing behavior.
-- [ ] Run the focused invoice PDF test command and record exact outcomes.
-- [ ] Create one Conventional Commit work unit on `feat/invoice-pdf-metadata-totals`.
+- [x] Add focused public-seam regression coverage for billing-address metadata override, shipping-address metadata override when billing address is absent, and fallback to the standard address code.
+- [x] Implement the override only in the invoice PDF's customer-country rendering path; other `OrderInvoice` consumers keep their existing behavior.
+- [x] Run the focused invoice PDF test command and record exact outcomes.
+- [x] Create one Conventional Commit work unit on `feat/invoice-pdf-metadata-totals`.
 
 **Route:** delegated direct. This behavior spans the shared PDF generator, its address-label seam, the existing service test, and this feature document; one bounded writer owns test-first implementation. Forecast: approximately 55 authored changed lines, bringing this feature to approximately 330 lines, below the 400-line delivery budget. Delivery strategy: `ask-on-risk` (default).
 
@@ -83,8 +83,10 @@ The order service currently supplies these metadata values as strings. Numeric v
 - Runtime harness: N/A; this unit exercises the public generator method and a mocked `pdfmake` renderer.
 - Rollback boundary: revert the invoice PDF metadata override and its focused test; no other `OrderInvoice` consumer changes.
 - Native RDD: not applicable while clone-local RDD is disabled.
+- T2 RED: the focused command failed with 2 failed / 15 passed; the billing and shipping metadata override cases rendered the standard-code country. The missing/empty/non-string/unmapped fallback cases passed as regression guards.
+- T2 GREEN: the focused command passed with 17 tests / 1 suite. `npx tsc --noEmit` reported no errors. No other spec imports `order-invoice.model`.
 
-### T2 — Pending
+### T2 — Implemented
 
 - New user request: support `shipping_address.metadata.country_code` and `billing_address.metadata.country_code` as optional country-label overrides in generated invoice PDFs.
 - Intended test seam: the existing public `InvoicePdfGeneratorService.generateInvoice` test, asserting the captured `pdfmake` document definition.
@@ -101,6 +103,7 @@ The order service currently supplies these metadata values as strings. Numeric v
 - Task evidence commit: `d6880d0` — `docs(invoice): record metadata override verification`.
 - `.codegraph/.gitignore` was moved aside after explicit authorization; its bytes matched the target branch's tracked copy, which now occupies the path. The index database, logs, and other `.codegraph/` files were preserved.
 - RDD status observed as `off` from `clone_local`.
+- T2: `OrderInvoice.getCustomerFullAddress`, `getBillingCityCountry` and `getBillingCountryLabel` accept an opt-in `{ preferMetadataCountryCode }` option; only `InvoicePdfGeneratorService` passes it, so other consumers (for example the CSV attachment) are unchanged. Metadata codes are trimmed and upper-cased; unusable or unmapped codes fall back to the standard code.
 - Engram mirror is pending: the runtime supplied no authoritative session ID, so attributed memory writes are prohibited.
 - `InvoicePdfGeneratorService` now applies finite numeric billing metadata overrides independently, preserves valid zero values, falls back for null/missing values, rejects present invalid values, and formats aggregate taxes/total to two decimals.
 - The focused public-seam test covers both overrides, independent zero/fallback cases, null/missing fallback, non-number/non-finite rejection for both keys, and unchanged subtotal/shipping summary values.
@@ -111,7 +114,7 @@ The order service currently supplies these metadata values as strings. Numeric v
 
 ## Next Step
 
-T1 implementation and focused verification are complete. T2 remains to be implemented, verified, and recorded in its work-unit commit.
+T1 and T2 implementation and focused verification are complete. T2 is recorded in its work-unit commit.
 
 ## Relevant Files
 

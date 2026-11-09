@@ -183,4 +183,50 @@ describe("InvoicePdfGeneratorService", () => {
       `Invalid billing address metadata ${key}: expected a finite number`,
     );
   });
+
+  const getAddressText = () => {
+    return JSON.stringify(pdfDefinition);
+  };
+
+  it("prefers billing metadata country_code, normalized, over the standard code", async () => {
+    order.billing_address.metadata.country_code = " fr ";
+
+    await service.generateInvoice("order_123");
+
+    expect(getAddressText()).toContain("Cartagena (Murcia), Francia");
+  });
+
+  it("prefers shipping metadata country_code when billing_address is absent", async () => {
+    order.billing_address = null;
+    Object.assign(order.shipping_address, {
+      address_1: "2 Side Street",
+      city: "Lyon",
+      country_code: "es",
+      postal_code: "69001",
+      province: "Rhone",
+    });
+    order.shipping_address.metadata.country_code = "it";
+
+    await service.generateInvoice("order_123");
+
+    expect(getAddressText()).toContain("Lyon (Rhone), Italia");
+  });
+
+  it.each([
+    ["missing", undefined],
+    ["empty", "  "],
+    ["non-string", 33],
+    ["unmapped", "xx"],
+  ])(
+    "falls back to the standard country code when metadata is %s",
+    async (_n, value) => {
+      if (value !== undefined) {
+        order.billing_address.metadata.country_code = value;
+      }
+
+      await service.generateInvoice("order_123");
+
+      expect(getAddressText()).toContain("España");
+    },
+  );
 });

@@ -121,7 +121,9 @@ class InvoicePdfGeneratorService extends BaseService {
           margin: [0, 0, 5, 0],
         },
         {
-          text: orderInvoice.getCustomerFullAddress(),
+          text: orderInvoice.getCustomerFullAddress({
+            preferMetadataCountryCode: true,
+          }),
           alignment: "left",
         },
       ],
