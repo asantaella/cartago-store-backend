@@ -10,7 +10,7 @@ The invoice PDF currently calculates order taxes and total from the order model.
 
 ## Scope
 
-- Fast-forward local `master` to the local `release/1.10.0` commit; leave the checkout on a feature branch based on that commit.
+- Fast-forward local `master` to the local `release/1.10.0` commit; implement on a feature branch based on that commit, then return the checkout to `master` after verification as requested.
 - Apply the overrides in the shared PDF generator, so store, admin, download, and notification PDF callers all receive the same values.
 - Keep the existing EUR symbol and all non-aggregate invoice lines unchanged.
 - Add focused regression coverage through the public `InvoicePdfGeneratorService.generateInvoice` method, mocking order retrieval and `pdfmake` to assert the summary amounts passed to the renderer without adding a PDF parser.
@@ -64,6 +64,7 @@ The invoice PDF currently calculates order taxes and total from the order model.
 
 - Local `master` fast-forwarded from `7db9c93` to `bf8dfe9`, matching `release/1.10.0`; no remote operation was performed.
 - Feature branch `feat/invoice-pdf-metadata-totals` created at `bf8dfe9`.
+- After verification, the checkout was returned to `master`; feature commits remain isolated on `feat/invoice-pdf-metadata-totals`.
 - Work-unit commit: `5627299` — `feat(invoice): honor billing metadata totals in PDFs`.
 - Task evidence commit: `d6880d0` — `docs(invoice): record metadata override verification`.
 - `.codegraph/.gitignore` was moved aside after explicit authorization; its bytes matched the target branch's tracked copy, which now occupies the path. The index database, logs, and other `.codegraph/` files were preserved.
