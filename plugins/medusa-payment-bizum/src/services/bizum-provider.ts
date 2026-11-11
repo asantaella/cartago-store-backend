@@ -1,4 +1,7 @@
-import { PaymentSessionStatus } from "@medusajs/medusa"
+import {
+  PaymentProcessorContext,
+  PaymentSessionStatus,
+} from "@medusajs/medusa"
 import StripeProviderService from "medusa-payment-stripe/dist/services/stripe-provider"
 import {
   PaymentIntentOptions,
@@ -28,6 +31,27 @@ class BizumProviderService extends StripeProviderService {
       payment_method_types: ["bizum"],
       capture_method: "automatic",
     }
+  }
+
+  // The base updatePayment recreates the PaymentIntent whenever
+  // customer.metadata.stripe_id differs from the PI customer (always for
+  // guests). Only regenerate when a real persisted stripe_id differs.
+  async updatePayment(context: PaymentProcessorContext) {
+    const stripeId = context.customer?.metadata?.stripe_id
+    if (stripeId) {
+      return super.updatePayment(context)
+    }
+
+    return super.updatePayment({
+      ...context,
+      customer: {
+        ...(context.customer ?? {}),
+        metadata: {
+          ...(context.customer?.metadata ?? {}),
+          stripe_id: context.paymentSessionData?.customer,
+        },
+      },
+    } as unknown as PaymentProcessorContext)
   }
 
   async getPaymentStatus(paymentSessionData: Record<string, unknown>) {
