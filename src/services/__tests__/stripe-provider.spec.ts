@@ -218,4 +218,68 @@ describe("StripeProviderServiceExtended", () => {
       }),
     );
   });
+  describe("updatePayment", () => {
+    beforeEach(() => {
+      (stripeProvider as any).stripe_ = stripeMock;
+    });
+
+    it("keeps the same payment intent for guests when the amount is unchanged", async () => {
+      const initiateSpy = jest.spyOn(stripeProvider, "initiatePayment");
+
+      const result = await stripeProvider.updatePayment({
+        amount: 1200,
+        currency_code: "eur",
+        resource_id: "cart_test",
+        customer: undefined,
+        paymentSessionData: { id: "pi_test", customer: "cus_x", amount: 1200 },
+        context: {},
+      } as unknown as PaymentProcessorContext);
+
+      expect(result).toBeUndefined();
+      expect(initiateSpy).not.toHaveBeenCalled();
+      expect(stripeMock.paymentIntents.create).not.toHaveBeenCalled();
+      expect(stripeMock.paymentIntents.update).not.toHaveBeenCalled();
+    });
+
+    it("updates the same payment intent for guests when the amount changed", async () => {
+      stripeMock.paymentIntents.update.mockResolvedValue(
+        buildPaymentIntent({ amount: 1500, customer: "cus_x" }),
+      );
+
+      const result = await stripeProvider.updatePayment({
+        amount: 1500,
+        currency_code: "eur",
+        resource_id: "cart_test",
+        customer: { metadata: {} },
+        paymentSessionData: { id: "pi_test", customer: "cus_x", amount: 1200 },
+        context: {},
+      } as unknown as PaymentProcessorContext);
+
+      expect(stripeMock.paymentIntents.update).toHaveBeenCalledWith("pi_test", {
+        amount: 1500,
+      });
+      expect(stripeMock.paymentIntents.create).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        session_data: expect.objectContaining({ id: "pi_test" }),
+      });
+    });
+
+    it("regenerates the payment intent when the persisted stripe_id differs", async () => {
+      const initiateSpy = jest
+        .spyOn(stripeProvider, "initiatePayment")
+        .mockResolvedValue({ session_data: { id: "pi_new" } } as any);
+
+      const result = await stripeProvider.updatePayment({
+        amount: 1200,
+        currency_code: "eur",
+        resource_id: "cart_test",
+        customer: { metadata: { stripe_id: "cus_a" } },
+        paymentSessionData: { id: "pi_test", customer: "cus_b", amount: 1200 },
+        context: {},
+      } as unknown as PaymentProcessorContext);
+
+      expect(initiateSpy).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ session_data: { id: "pi_new" } });
+    });
+  });
 });
