@@ -83,8 +83,10 @@ on carts >= €400 (still pre-payment, so consistent with option c).
     in-process whenever sessions exist, so an address change that clears NIF/CIF keeps the
     selected session alive without passing through the selection middleware. Residual gap
     confirmed → T4.
-- [ ] **T2** RED/GREEN predicate `isNifCifMissingForCart` + unit tests (EUR ≥/< 40000,
-  non-EUR, blank/whitespace NIF, shipping vs billing, missing region). Route: inline.
+- [x] **T2** RED/GREEN predicate `isNifCifMissingForCart` + unit tests (EUR ≥/< 40000,
+  non-EUR, blank/whitespace NIF, shipping vs billing, missing region). Route: inline
+  (one mechanical file + spec, no design open). Evidence: RED = module not found;
+  GREEN = 13/13 passing; `tsc --noEmit` reports no errors in the new files.
 - [ ] **T3** RED/GREEN middleware `nif-cif-on-payment-session` + registration for the four
   entry points; rejects with `nif_cif_required` before the route handler, `next()` otherwise.
   Route: delegated writer (middleware + spec + `middlewares.ts`).
@@ -116,4 +118,5 @@ on carts >= €400 (still pre-payment, so consistent with option c).
 - 2026-11-16: decision — option (c) only; guard moved from completion strategy to
   payment-session entry points.
 - 2026-11-16: T1 done — guard moved from session creation to session selection; residual
-  gap via `POST /store/carts/:id` confirmed (T4). Next: T2.
+  gap via `POST /store/carts/:id` confirmed (T4).
+- 2026-11-16: T2 done — `src/utils/nif-cif-requirement.ts` + spec. Next: T3.
