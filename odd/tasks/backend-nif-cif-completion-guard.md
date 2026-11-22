@@ -105,8 +105,10 @@ on carts >= €400 (still pre-payment, so consistent with option c).
   full suite 37 suites / 350 tests. Known limit: Redis event bus is async, so there is a short
   window between the update and the release; the storefront guard covers that window.
   Risk: item 2 (guard), item 4 (async ordering) → independent verifier at feature end.
-- [ ] **T5** Docs: error contract in `src/api/README.md`; manual check against local backend
-  (payment-session creation on a €400+ EUR cart without NIF/CIF → 400).
+- [~] **T5** Docs: error contract in `docs/nif-cif-requirement.md` (moved from
+  `src/api/README.md`, which is the generic Medusa routes guide) — done. Manual check against
+  local backend (payment-session selection on a €400+ EUR cart without NIF/CIF → 400) —
+  pending: needs the user's local backend, DB and Redis running.
 
 ## Acceptance criteria
 
