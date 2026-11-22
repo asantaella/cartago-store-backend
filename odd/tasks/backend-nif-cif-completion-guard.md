@@ -95,10 +95,16 @@ on carts >= €400 (still pre-payment, so consistent with option c).
   Cart lookup errors go to `next(error)` (fail closed). Totals come from
   `cartService.retrieveWithTotals`, the same totals payment providers receive.
   Risk: item 2 (new guard on store payment endpoints) → one independent verifier at feature end.
-- [ ] **T4** Close the residual gap: `POST /store/carts/:id` that leaves a EUR cart >= €400
-  without NIF/CIF while a payment session is selected. Approach to confirm: middleware after
-  the update clears the selected session (`payment_session` deselect) instead of rejecting the
-  address change, so the customer is forced back through selection. Route: delegated writer.
+- [x] **T4** Close the residual gap: `POST /store/carts/:id` that leaves a EUR cart >= €400
+  without NIF/CIF while a payment session is selected. Implemented as subscriber
+  `src/subscribers/cart-nif-cif-payment-session.ts` on `cart.updated` (emitted 14 times in
+  Medusa `CartService`, payload always carries `id`), so it also covers line-item changes that
+  push a cart over €400. It deletes the selected session only when its status is `pending`
+  (authorized = payment in flight, never touched); failures are logged and swallowed.
+  Route: inline (~120 lines, no writer trigger). Evidence: RED = module not found; GREEN 9/9;
+  full suite 37 suites / 350 tests. Known limit: Redis event bus is async, so there is a short
+  window between the update and the release; the storefront guard covers that window.
+  Risk: item 2 (guard), item 4 (async ordering) → independent verifier at feature end.
 - [ ] **T5** Docs: error contract in `src/api/README.md`; manual check against local backend
   (payment-session creation on a €400+ EUR cart without NIF/CIF → 400).
 
