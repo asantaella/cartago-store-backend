@@ -87,9 +87,14 @@ on carts >= €400 (still pre-payment, so consistent with option c).
   non-EUR, blank/whitespace NIF, shipping vs billing, missing region). Route: inline
   (one mechanical file + spec, no design open). Evidence: RED = module not found;
   GREEN = 13/13 passing; `tsc --noEmit` reports no errors in the new files.
-- [ ] **T3** RED/GREEN middleware `nif-cif-on-payment-session` + registration for the four
+- [x] **T3** RED/GREEN middleware `nif-cif-on-payment-session` + registration for the four
   entry points; rejects with `nif_cif_required` before the route handler, `next()` otherwise.
-  Route: delegated writer (middleware + spec + `middlewares.ts`).
+  Route: inline (one understood unit, ~150 lines; no writer trigger). Evidence: RED = module
+  not found; GREEN = 9/9 in the spec (includes route-registration pin, create route unguarded);
+  `src/api/middlewares` + `src/utils` 123/123; full suite 36 suites / 341 tests passing.
+  Cart lookup errors go to `next(error)` (fail closed). Totals come from
+  `cartService.retrieveWithTotals`, the same totals payment providers receive.
+  Risk: item 2 (new guard on store payment endpoints) → one independent verifier at feature end.
 - [ ] **T4** Close the residual gap: `POST /store/carts/:id` that leaves a EUR cart >= €400
   without NIF/CIF while a payment session is selected. Approach to confirm: middleware after
   the update clears the selected session (`payment_session` deselect) instead of rejecting the
@@ -120,3 +125,4 @@ on carts >= €400 (still pre-payment, so consistent with option c).
 - 2026-11-16: T1 done — guard moved from session creation to session selection; residual
   gap via `POST /store/carts/:id` confirmed (T4).
 - 2026-11-16: T2 done — `src/utils/nif-cif-requirement.ts` + spec. Next: T3.
+- 2026-11-22: T3 done — middleware + registration in `src/api/middlewares.ts`. Next: T4.

@@ -12,6 +12,7 @@ import {
 import { applyDraftOrderSurchargeOnCreate } from "./middlewares/draft-order-surcharge-on-create";
 import { handleDraftOrderLineItemCreation } from "./middlewares/draft-order-line-item-create";
 import { handleDraftOrderLineItemMutation } from "./middlewares/draft-order-line-item-override";
+import { requireNifCifOnPaymentSession } from "./middlewares/nif-cif-on-payment-session";
 import {
   extendProductVariantPatchPayload,
   extendProductVariantPostPayload,
@@ -149,5 +150,17 @@ export const config: MiddlewaresConfig = {
       method: "POST",
       middlewares: [persistCartPricingOnComplete],
     },
+    // NIF/CIF is required for EUR carts of €400 or more before a payment
+    // session can be selected. Session creation is intentionally not guarded.
+    ...[
+      "/store/carts/:id/payment-session",
+      "/store/carts/:id/payment-session-context",
+      "/store/carts/:id/payment-sessions/:provider_id",
+      "/store/carts/:id/payment-sessions/:provider_id/refresh",
+    ].map((matcher) => ({
+      matcher,
+      method: "POST" as const,
+      middlewares: [requireNifCifOnPaymentSession],
+    })),
   ],
 };
