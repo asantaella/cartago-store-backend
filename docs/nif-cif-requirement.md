@@ -16,11 +16,9 @@ that skips the storefront cannot get a payable session.
 | `POST /store/carts/:id/payment-session-context` | Rejected with `400 nif_cif_required` |
 | `POST /store/carts/:id/payment-sessions/:provider_id` | Rejected with `400 nif_cif_required` |
 | `POST /store/carts/:id/payment-sessions/:provider_id/refresh` | Rejected with `400 nif_cif_required` |
-| `cart.updated` event | The selected payment session is deleted when it is still `pending` and the cart no longer complies |
 
 Code: `src/utils/nif-cif-requirement.ts` (rule),
-`src/api/middlewares/nif-cif-on-payment-session.ts` (routes),
-`src/subscribers/cart-nif-cif-payment-session.ts` (cart updates).
+`src/api/middlewares/nif-cif-on-payment-session.ts` (routes).
 
 ## Error contract
 
@@ -47,9 +45,12 @@ the NIF/CIF.
 
 ## Known limits
 
-- The `cart.updated` subscriber runs on the Redis event bus, so there is a short window between
-  a cart update and the session release. The storefront revalidates the active cart before
-  paying, which covers that window.
-- An `authorized` session (payment in flight) is never released.
+- A cart that becomes non-compliant **after** a payment session was selected (NIF/CIF removed
+  from the address, or items added past €400) keeps its selected session: Medusa refreshes
+  sessions in-process on `POST /store/carts/:id` and line-item changes, bypassing the
+  selection middleware. The storefront revalidates the active cart before paying, so only a
+  client that bypasses the storefront can reach this path. Releasing the session from a
+  `cart.updated` subscriber was rejected: the stored session status stays `pending` after the
+  customer confirms in Stripe, so it could cancel a payment already in flight.
 - The rule reads the currency from `cart.region.currency_code`: Medusa v1 carts have no
   `currency_code` of their own.

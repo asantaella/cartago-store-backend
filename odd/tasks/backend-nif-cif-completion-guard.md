@@ -95,7 +95,9 @@ on carts >= €400 (still pre-payment, so consistent with option c).
   Cart lookup errors go to `next(error)` (fail closed). Totals come from
   `cartService.retrieveWithTotals`, the same totals payment providers receive.
   Risk: item 2 (new guard on store payment endpoints) → one independent verifier at feature end.
-- [x] **T4** Close the residual gap: `POST /store/carts/:id` that leaves a EUR cart >= €400
+- [-] **T4** DROPPED 2026-11-22 by user decision ("Eliminar el subscriber"); subscriber removed
+  in a follow-up commit, residual gap documented in `docs/nif-cif-requirement.md`.
+  Original attempt — Close the residual gap: `POST /store/carts/:id` that leaves a EUR cart >= €400
   without NIF/CIF while a payment session is selected. Implemented as subscriber
   `src/subscribers/cart-nif-cif-payment-session.ts` on `cart.updated` (emitted 14 times in
   Medusa `CartService`, payload always carries `id`), so it also covers line-item changes that
@@ -134,3 +136,14 @@ on carts >= €400 (still pre-payment, so consistent with option c).
   gap via `POST /store/carts/:id` confirmed (T4).
 - 2026-11-16: T2 done — `src/utils/nif-cif-requirement.ts` + spec. Next: T3.
 - 2026-11-22: T3 done — middleware + registration in `src/api/middlewares.ts`. Next: T4.
+- 2026-11-22: T4 + T5 committed (`5dcc095`, `83bb3fb`). Independent verifier: T3 PASS
+  (exact Express matching, runs before native routes, `req.params.id` set); T4 BLOCKER —
+  `relations: ["payment_session"]` is invalid (computed in `Cart.afterLoad` from
+  `payment_sessions`), TypeORM throws, catch swallows → subscriber never releases anything.
+  T4 CONCERN — stored session status stays `pending` after the customer confirms in Stripe
+  (`processing` → PENDING; manual capture `requires_capture` would be cancelled), so the
+  subscriber could act after payment, contradicting the option-(c) decision. T4 reopened;
+  awaiting user decision between restricting the release to Stripe intents in a
+  pre-confirmation live status, or dropping the subscriber.
+- 2026-11-22: user chose "Eliminar el subscriber". Subscriber + spec removed; docs updated with
+  the residual gap. Remaining: manual check against the local backend (T5, pending).
