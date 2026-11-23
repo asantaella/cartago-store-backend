@@ -19,6 +19,7 @@ export interface ActiveSubscriptionVariant {
   variant_id: string;
   variant_title: string | null;
   sku: string | null;
+  barcode: string | null;
   inventory_quantity: number | null;
   product_id: string | null;
   product_title: string | null;
@@ -439,6 +440,7 @@ class ProductAlertService extends TransactionBaseService {
       `SELECT s.variant_id,
               v.title AS variant_title,
               v.sku,
+              v.barcode,
               v.inventory_quantity,
               p.id AS product_id,
               p.title AS product_title,
