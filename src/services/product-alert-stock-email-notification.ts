@@ -2,7 +2,16 @@ import { ProductAlertSubscription } from "../models/product-alert-subscription";
 import AbstractBrevoEmailNotification from "./abstract-brevo-email-notification";
 import EmailTemplateCompiler from "./email-template-compiler";
 
+export type BackInStockDelivery = {
+  sentIds: string[];
+  failedIds: string[];
+};
+
 class ProductAlertStockEmailNotification extends AbstractBrevoEmailNotification {
+  // Brevo rate-limits bursts; sending every alert at once makes many of them
+  // fail with 429 and exhaust their retries.
+  static readonly MAX_CONCURRENT_SENDS = 5;
+
   async sendEmailCustomer(
     subscription: ProductAlertSubscription,
     variant: any,
@@ -162,24 +171,53 @@ class ProductAlertStockEmailNotification extends AbstractBrevoEmailNotification 
     variant: any,
     product: any,
     variantId: string,
-  ): Promise<void> {
-    const results = await Promise.allSettled(
-      subscriptions.map((subscription) =>
-        this.sendEmailCustomer(subscription, variant, product, variantId),
-      ),
+  ): Promise<BackInStockDelivery> {
+    const sentIds: string[] = [];
+    const failedIds: string[] = [];
+    let nextIndex = 0;
+
+    // Bounded worker pool: at most MAX_CONCURRENT_SENDS emails in flight.
+    const worker = async (): Promise<void> => {
+      while (nextIndex < subscriptions.length) {
+        const subscription = subscriptions[nextIndex];
+        nextIndex += 1;
+
+        try {
+          await this.sendEmailCustomer(subscription, variant, product, variantId);
+          sentIds.push(subscription.id);
+        } catch (error) {
+          failedIds.push(subscription.id);
+          console.error(
+            `[ProductAlertStockEmailNotification] Back-in-stock notification failed for subscription ${subscription.id}:`,
+            error,
+          );
+        }
+      }
+    };
+
+    const workerCount = Math.min(
+      ProductAlertStockEmailNotification.MAX_CONCURRENT_SENDS,
+      subscriptions.length,
     );
+    await Promise.all(Array.from({ length: workerCount }, () => worker()));
 
-    const failures = results.filter(
-      (result) => result.status === "rejected",
-    ).length;
-
-    if (failures > 0) {
+    if (failedIds.length > 0) {
       console.error(
-        `[ProductAlertStockEmailNotification] ${failures} back-in-stock notifications failed for variant ${variantId}`,
+        `[ProductAlertStockEmailNotification] ${failedIds.length} back-in-stock notifications failed for variant ${variantId}`,
       );
     }
 
-    await this.sendEmailAdmin(subscriptions, variant, product, variantId);
+    // The admin copy must never discard the customer delivery results above.
+    try {
+      await this.sendEmailAdmin(subscriptions, variant, product, variantId);
+    } catch (error) {
+      console.error(
+        `[ProductAlertStockEmailNotification] Admin copy failed for variant ${variantId}:`,
+        error,
+      );
+    }
+
+    return { sentIds, failedIds };
   }
 }
 
