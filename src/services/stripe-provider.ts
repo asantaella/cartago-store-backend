@@ -7,6 +7,7 @@ import {
   PaymentProcessorSessionResponse,
   isPaymentProcessorError,
 } from "@medusajs/medusa";
+import { keepSamePaymentIntentCustomer } from "../utils/payment-session-customer";
 
 type ThreeDSecurePolicy = "automatic" | "any";
 
@@ -56,6 +57,12 @@ class StripeProviderServiceExtended extends StripeProviderService {
     };
 
     super(container, resolvedOptions);
+  }
+
+  async updatePayment(
+    context: PaymentProcessorContext,
+  ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse | void> {
+    return super.updatePayment(keepSamePaymentIntentCustomer(context));
   }
 
   private getRequestThreeDSecurePolicy(value: unknown): ThreeDSecurePolicy {
