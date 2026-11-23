@@ -23,8 +23,7 @@ const args = [
   "listen",
   "--api-key",
   stripeApiKey,
-  "--events",
-  "*",
+  "--all-snapshot",
   "--forward-to",
   forwardTo,
 ];
