@@ -15,6 +15,27 @@ const ProductAlertStockEmailNotification =
 type ProductAlertSubscriptionRepository =
   typeof import("../repositories/product-alert-subscription").default;
 
+export interface ActiveSubscriptionVariant {
+  variant_id: string;
+  variant_title: string | null;
+  sku: string | null;
+  inventory_quantity: number | null;
+  product_id: string | null;
+  product_title: string | null;
+  thumbnail: string | null;
+  subscriber_count: number;
+  last_subscribed_at: Date;
+}
+
+export interface ActiveSubscriber {
+  id: string;
+  email: string;
+  created_at: Date;
+  customer_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+}
+
 interface SubscribeResult {
   success: boolean;
   message: string;
@@ -404,6 +425,66 @@ class ProductAlertService extends TransactionBaseService {
     return this.repoManager.find(
       { email: email.toLowerCase() },
       { created_at: "DESC" },
+    );
+  }
+
+  /**
+   * List variants that have at least one active (pending) subscription,
+   * with product info and subscriber count.
+   */
+  async listVariantsWithActiveSubscriptions(): Promise<
+    ActiveSubscriptionVariant[]
+  > {
+    const rows = await this.activeManager_.query(
+      `SELECT s.variant_id,
+              v.title AS variant_title,
+              v.sku,
+              v.inventory_quantity,
+              p.id AS product_id,
+              p.title AS product_title,
+              p.thumbnail,
+              COUNT(s.id) AS subscriber_count,
+              MAX(s.created_at) AS last_subscribed_at
+         FROM product_alert_subscription s
+         LEFT JOIN product_variant v ON v.id = s.variant_id
+         LEFT JOIN product p ON p.id = v.product_id
+        WHERE s.status = $1
+        GROUP BY s.variant_id, v.id, p.id
+        ORDER BY subscriber_count DESC, last_subscribed_at DESC`,
+      [ProductAlertStatus.PENDING],
+    );
+
+    return rows.map((row) => ({
+      ...row,
+      inventory_quantity:
+        row.inventory_quantity === null ? null : Number(row.inventory_quantity),
+      subscriber_count: Number(row.subscriber_count),
+    }));
+  }
+
+  /**
+   * List active (pending) subscribers of a variant, with the matching
+   * registered customer when one exists.
+   */
+  async listActiveSubscribers(
+    variantId: string,
+  ): Promise<ActiveSubscriber[]> {
+    return this.activeManager_.query(
+      `SELECT s.id,
+              s.email,
+              s.created_at,
+              c.id AS customer_id,
+              c.first_name,
+              c.last_name
+         FROM product_alert_subscription s
+         LEFT JOIN customer c
+           ON c.email = s.email
+          AND c.has_account = true
+          AND c.deleted_at IS NULL
+        WHERE s.variant_id = $1
+          AND s.status = $2
+        ORDER BY s.created_at DESC`,
+      [variantId, ProductAlertStatus.PENDING],
     );
   }
 
