@@ -321,7 +321,10 @@ class ProductAlertService extends TransactionBaseService {
    * Process back in stock notification for a variant
    */
   async processBackInStock(variantId: string): Promise<void> {
-    return this.atomicPhase_(async (manager) => {
+    // 1. Read pending subscriptions and the variant inside a transaction.
+    //    Nothing is marked yet: a subscription only becomes "notified" once its
+    //    email has been accepted by the provider.
+    const plan = await this.atomicPhase_(async (manager) => {
       const repo = manager.withRepository(
         this.productAlertSubscriptionRepository_,
       );
@@ -336,60 +339,76 @@ class ProductAlertService extends TransactionBaseService {
         console.log(
           `[ProductAlertService] No pending subscriptions for variant ${variantId}`,
         );
-        return;
+        return null;
       }
-
-      console.log(
-        `[ProductAlertService] Processing ${pendingSubscriptions.length} subscriptions for variant ${variantId} (emails will be sent asynchronously)`,
-      );
 
       const variantProduct = await this.validator.validateVariant(variantId);
       if (!variantProduct) {
         console.error(
-          `[ProductAlertService] Failed to retrieve variant ${variantId}`,
+          `[ProductAlertService] Failed to retrieve variant ${variantId}; ${pendingSubscriptions.length} subscriptions stay pending`,
         );
-        return;
+        return null;
       }
-      const { variant, product } = variantProduct;
 
-      // await this.brevoOps.syncVariant(variant, product);
+      return {
+        pendingSubscriptions,
+        variant: variantProduct.variant,
+        product: variantProduct.product,
+      };
+    });
 
-      const variantTitle =
-        variant.title !== "Default Title" ? `${variant.title}` : product.title;
-      const imageUrl = product.thumbnail || product.images?.[0]?.url;
-      const productUrl = `${process.env.STORE_URL || "https://cartago4x4.es"}/products/${product.handle}?variant=${variantId}`;
+    if (!plan) {
+      return;
+    }
 
-      // Send back-in-stock notifications asynchronously
-      setImmediate(async () => {
-        try {
-          await this.notifier.sendBackInStockNotifications(
-            pendingSubscriptions,
-            variant,
-            product,
-            variantId,
-          );
-        } catch (error) {
-          console.error(
-            `[ProductAlertService] Failed to send back-in-stock notifications asynchronously:`,
-            error,
-          );
-        }
-      });
-      const now = new Date();
-      for (const subscription of pendingSubscriptions) {
+    const { pendingSubscriptions, variant, product } = plan;
+
+    // 2. Send emails outside the transaction so no DB transaction stays open
+    //    during network calls. Failed sends keep their PENDING status and are
+    //    retried on the next restock event.
+    let sentIds: string[];
+    try {
+      ({ sentIds } = await this.notifier.sendBackInStockNotifications(
+        pendingSubscriptions,
+        variant,
+        product,
+        variantId,
+      ));
+    } catch (error) {
+      console.error(
+        `[ProductAlertService] Back-in-stock notifications failed for variant ${variantId}; all subscriptions stay pending`,
+        error,
+      );
+      return;
+    }
+
+    if (sentIds.length === 0) {
+      return;
+    }
+
+    // 3. Mark only the subscriptions whose email was accepted.
+    const sentSet = new Set(sentIds);
+    const sentSubscriptions = pendingSubscriptions.filter((subscription) =>
+      sentSet.has(subscription.id),
+    );
+    const now = new Date();
+
+    await this.atomicPhase_(async (manager) => {
+      const repo = manager.withRepository(
+        this.productAlertSubscriptionRepository_,
+      );
+      this.repoManager = new ProductAlertRepositoryManager(repo);
+
+      for (const subscription of sentSubscriptions) {
         subscription.status = ProductAlertStatus.NOTIFIED;
         subscription.notified_at = now;
         await this.repoManager.save(subscription);
       }
-
-      console.log(
-        `[ProductAlertService] Marked ${pendingSubscriptions.length} subscriptions as notified`,
-      );
-
-      console.log(
-        `[ProductAlertService] Completed processing back in stock for variant ${variantId}`,
-      );
     });
+
+    console.log(
+      `[ProductAlertService] Marked ${sentSubscriptions.length}/${pendingSubscriptions.length} subscriptions as notified for variant ${variantId}`,
+    );
   }
 
   /**
