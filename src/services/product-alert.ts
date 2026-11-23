@@ -24,7 +24,8 @@ export interface ActiveSubscriptionVariant {
   product_id: string | null;
   product_title: string | null;
   thumbnail: string | null;
-  subscriber_count: number;
+  pending_count: number;
+  notified_count: number;
   last_subscribed_at: Date;
 }
 
@@ -32,6 +33,8 @@ export interface ActiveSubscriber {
   id: string;
   email: string;
   created_at: Date;
+  status: ProductAlertStatus;
+  notified_at: Date | null;
   customer_id: string | null;
   first_name: string | null;
   last_name: string | null;
@@ -445,27 +448,29 @@ class ProductAlertService extends TransactionBaseService {
               p.id AS product_id,
               p.title AS product_title,
               p.thumbnail,
-              COUNT(s.id) AS subscriber_count,
+              COUNT(s.id) FILTER (WHERE s.status = $1) AS pending_count,
+              COUNT(s.id) FILTER (WHERE s.status = $2) AS notified_count,
               MAX(s.created_at) AS last_subscribed_at
          FROM product_alert_subscription s
          LEFT JOIN product_variant v ON v.id = s.variant_id
          LEFT JOIN product p ON p.id = v.product_id
-        WHERE s.status = $1
+        WHERE s.status IN ($1, $2)
         GROUP BY s.variant_id, v.id, p.id
-        ORDER BY subscriber_count DESC, last_subscribed_at DESC`,
-      [ProductAlertStatus.PENDING],
+        ORDER BY last_subscribed_at DESC`,
+      [ProductAlertStatus.PENDING, ProductAlertStatus.NOTIFIED],
     );
 
     return rows.map((row) => ({
       ...row,
       inventory_quantity:
         row.inventory_quantity === null ? null : Number(row.inventory_quantity),
-      subscriber_count: Number(row.subscriber_count),
+      pending_count: Number(row.pending_count),
+      notified_count: Number(row.notified_count),
     }));
   }
 
   /**
-   * List active (pending) subscribers of a variant, with the matching
+   * List pending and notified subscribers of a variant, with the matching
    * registered customer when one exists.
    */
   async listActiveSubscribers(
@@ -475,6 +480,8 @@ class ProductAlertService extends TransactionBaseService {
       `SELECT s.id,
               s.email,
               s.created_at,
+              s.status,
+              s.notified_at,
               c.id AS customer_id,
               c.first_name,
               c.last_name
@@ -484,9 +491,9 @@ class ProductAlertService extends TransactionBaseService {
           AND c.has_account = true
           AND c.deleted_at IS NULL
         WHERE s.variant_id = $1
-          AND s.status = $2
+          AND s.status IN ($2, $3)
         ORDER BY s.created_at DESC`,
-      [variantId, ProductAlertStatus.PENDING],
+      [variantId, ProductAlertStatus.PENDING, ProductAlertStatus.NOTIFIED],
     );
   }
 

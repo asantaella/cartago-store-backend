@@ -2,7 +2,7 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import ProductAlertService from "../../../../../services/product-alert";
 
 // GET /admin/product-alerts/variants/:variant_id
-// Lists the active (pending) subscribers of a variant.
+// Lists the pending and notified subscribers of a variant.
 export const GET = async (
   req: MedusaRequest,
   res: MedusaResponse,

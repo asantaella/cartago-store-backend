@@ -2,7 +2,8 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import ProductAlertService from "../../../services/product-alert";
 
 // GET /admin/product-alerts
-// Lists variants with active (pending) back-in-stock subscriptions.
+// Lists variants with pending or notified back-in-stock subscriptions,
+// with the count of each status.
 export const GET = async (
   req: MedusaRequest,
   res: MedusaResponse,

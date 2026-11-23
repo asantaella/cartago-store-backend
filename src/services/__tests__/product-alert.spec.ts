@@ -14,7 +14,7 @@ const buildService = (query: jest.Mock) =>
   });
 
 describe("ProductAlertService active subscriptions", () => {
-  it("lists variants with pending subscriptions and casts numeric columns", async () => {
+  it("lists variants with pending or notified subscriptions and casts numeric columns", async () => {
     const lastSubscribedAt = new Date("2026-11-20T10:00:00Z");
     const query = jest.fn().mockResolvedValue([
       {
@@ -25,7 +25,8 @@ describe("ProductAlertService active subscriptions", () => {
         product_id: "prod_1",
         product_title: "Bumper",
         thumbnail: null,
-        subscriber_count: "3",
+        pending_count: "3",
+        notified_count: "2",
         last_subscribed_at: lastSubscribedAt,
       },
       {
@@ -36,7 +37,8 @@ describe("ProductAlertService active subscriptions", () => {
         product_id: null,
         product_title: null,
         thumbnail: null,
-        subscriber_count: "1",
+        pending_count: "0",
+        notified_count: "1",
         last_subscribed_at: lastSubscribedAt,
       },
     ]);
@@ -45,23 +47,25 @@ describe("ProductAlertService active subscriptions", () => {
 
     expect(query).toHaveBeenCalledWith(
       expect.stringContaining("FROM product_alert_subscription"),
-      ["pending"],
+      ["pending", "notified"],
     );
     expect(result).toEqual([
       expect.objectContaining({
         variant_id: "variant_1",
         inventory_quantity: 0,
-        subscriber_count: 3,
+        pending_count: 3,
+        notified_count: 2,
       }),
       expect.objectContaining({
         variant_id: "variant_deleted",
         inventory_quantity: null,
-        subscriber_count: 1,
+        pending_count: 0,
+        notified_count: 1,
       }),
     ]);
   });
 
-  it("lists pending subscribers of a variant", async () => {
+  it("lists pending and notified subscribers of a variant", async () => {
     const subscriber = {
       id: "pas_1",
       email: "jane@example.com",
@@ -69,6 +73,8 @@ describe("ProductAlertService active subscriptions", () => {
       customer_id: "cus_1",
       first_name: "Jane",
       last_name: "Doe",
+      status: "notified",
+      notified_at: new Date("2026-11-21T10:00:00Z"),
     };
     const query = jest.fn().mockResolvedValue([subscriber]);
 
@@ -76,7 +82,7 @@ describe("ProductAlertService active subscriptions", () => {
 
     expect(query).toHaveBeenCalledWith(
       expect.stringContaining("WHERE s.variant_id = $1"),
-      ["variant_1", "pending"],
+      ["variant_1", "pending", "notified"],
     );
     expect(result).toEqual([subscriber]);
   });
