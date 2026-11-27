@@ -2,6 +2,8 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import SoldVariantsService from "../../../services/sold-variants";
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const DEFAULT_LIMIT = 20;
+const MAX_LIMIT = 100;
 
 export const isValidDay = (value: unknown): value is string => {
   if (typeof value !== "string" || !DATE_PATTERN.test(value)) {
@@ -11,9 +13,14 @@ export const isValidDay = (value: unknown): value is string => {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(value);
 };
 
-// GET /admin/sold-variants?date=YYYY-MM-DD
-// Lists the line items of completed orders placed on that Europe/Madrid day,
-// most recent sale first.
+const toInt = (value: unknown, fallback: number): number => {
+  const parsed = Number.parseInt(String(value ?? ""), 10);
+  return Number.isNaN(parsed) ? fallback : parsed;
+};
+
+// GET /admin/sold-variants?date=YYYY-MM-DD&limit=20&offset=0
+// Lists one page of the line items sold on that Europe/Madrid day, most recent
+// sale first, with a summary of the whole day (not only the page).
 export const GET = async (
   req: MedusaRequest,
   res: MedusaResponse,
@@ -28,14 +35,23 @@ export const GET = async (
     return;
   }
 
+  const limit = Math.min(
+    Math.max(toInt(req.query.limit, DEFAULT_LIMIT), 1),
+    MAX_LIMIT,
+  );
+  const offset = Math.max(toInt(req.query.offset, 0), 0);
+
   const soldVariantsService: SoldVariantsService = req.scope.resolve(
     "soldVariantsService",
   );
 
   try {
-    const sold = await soldVariantsService.listByDate(date);
+    const { sold, summary } = await soldVariantsService.listByDate(date, {
+      limit,
+      offset,
+    });
 
-    res.status(200).json({ sold, count: sold.length, date });
+    res.status(200).json({ sold, count: summary.count, summary, limit, offset, date });
   } catch (error: any) {
     console.error("[SoldVariants Admin] list sold variants error:", error);
     res.status(500).json({
